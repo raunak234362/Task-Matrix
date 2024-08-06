@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable prettier/prettier */
 import React, { useState } from "react";
 import { Button, Input } from "../index";
 import Logo from "../../assets/logo.png";
