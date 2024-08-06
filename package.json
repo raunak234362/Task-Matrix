@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "An Electron application with React",
   "main": "./out/main/index.js",
-  "author": "example.com",
+  "author": "सफ़ेदतख़्ता प्रौद्योगिकियों प्रा. लिमिटेड",
   "homepage": "https://whiteboardtec.com",
   "scripts": {
     "format": "prettier --write .",
