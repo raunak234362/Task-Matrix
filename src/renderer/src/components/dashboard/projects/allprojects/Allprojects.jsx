@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
 import { Button, ProjectPie, Project, Header, BarView } from "../../../index";
