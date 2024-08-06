@@ -30,10 +30,14 @@ jobs:
       env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ github.repository }}
-        release_name: Release ${{ github.repository_id }}
+        tag_name: ${{ github.run_attempt }}
+        release_name: Release ${{ github.ref_name }}
         draft: false
         prerelease: false
+    
+    - name: Print Upload URL
+      run: |
+        `echo "Upload URL: ${{ steps.create_release.outputs.upload_url }}"`
     
     - name: Upload Windows Installer
       uses: actions/upload-release-asset@v1
@@ -41,6 +45,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: dist/taskmatrix-*.exe
+        asset_path: dist/taskmatrix-setup.exe
         asset_name: taskmatrix-setup.exe
         asset_content_type: application/octet-stream
