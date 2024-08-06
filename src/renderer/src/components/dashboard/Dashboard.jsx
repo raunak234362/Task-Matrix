@@ -1,3 +1,5 @@
+/* eslint-disable prettier/prettier */
+/* eslint-disable no-unused-vars */
 // src/components/AdminLayout.js
 import React, { useState } from 'react';
 import { Route, Routes } from 'react-router-dom';
