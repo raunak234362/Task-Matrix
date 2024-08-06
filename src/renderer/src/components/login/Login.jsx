@@ -34,7 +34,11 @@ const Login = () => {
         sessionStorage.setItem("username", userData?.username);
         sessionStorage.setItem("token", token); 
         dispatch(authLogin({ token, userType })); 
-        navigate("/dashboard");
+        if(userType != "user"){
+          navigate("/dashboard");
+        }else{
+          navigate("/dashboard/my-profile");
+        }
       } else {
         // Handle case where session or token is missing
         setError("Invalid credentials. Please check your username and password.");
