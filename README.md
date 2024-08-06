@@ -1,50 +1,59 @@
 # Task Matrix 🚀
 
-Welcome to **Task Matrix**, an innovative application built using modern technologies to streamline your workflow. This project integrates a powerful frontend with a robust backend to deliver an exceptional user experience.
+**Task Matrix** is a comprehensive desktop application designed to enhance productivity and streamline task management. Built with modern technologies, it combines a sleek user interface with a robust backend to deliver a seamless experience.
 
 ## 🎯 Overview
 
-**Task Matrix** is a desktop application that leverages the following technologies:
+**Task Matrix** utilizes the following technologies:
 
-- **[Electron](https://www.electronjs.org/)**: To build cross-platform desktop applications with web technologies.
-- **[Vite](https://vitejs.dev/)**: For a faster and more efficient build process during development.
-- **[React](https://reactjs.org/)**: To create a dynamic and interactive user interface.
-- **[Redux](https://redux.js.org/)**: For state management, ensuring a consistent and manageable state across the application.
-- **[Tailwind CSS](https://tailwindcss.com/)**: For utility-first CSS styling, making the design process more intuitive and flexible.
-- **[Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API)**: To make network requests to the backend.
-- **[Django](https://www.djangoproject.com/)**: Our backend framework for building the API. More details can be found [here](https://github.com/anuragbhatt1805/ProjHub).
+- **[Electron](https://www.electronjs.org/)**: A framework for building cross-platform desktop applications using web technologies.
+- **[Vite](https://vitejs.dev/)**: A fast build tool that significantly improves development speed and efficiency.
+- **[React](https://reactjs.org/)**: A powerful library for building dynamic and interactive user interfaces.
+- **[Redux](https://redux.js.org/)**: A state management library that ensures a consistent application state.
+- **[Tailwind CSS](https://tailwindcss.com/)**: A utility-first CSS framework for rapid and customizable design.
+- **[Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API)**: A modern interface for making network requests to the backend.
+- **[Django](https://www.djangoproject.com/)**: A high-level Python web framework that powers the backend API. Detailed documentation is available [here](https://github.com/anuragbhatt1805/ProjHub).
 
 ## 🔧 Installation
 
-To get started with **Task Matrix**, follow these steps:
+To install **Task Matrix**, follow these steps:
 
-1. **Download the Installer**: 
+1. **Download the Installer**:
    - [Windows Setup](https://github.com/raunak234362/Task-Matrix/releases/download/v1.0.0/taskmatrix-setup.exe)
-   - You can find more releases in the [Releases section](https://github.com/raunak234362/Task-Matrix/releases/tag/v1.0.0).
+   - For additional releases, visit the [Releases section](https://github.com/raunak234362/Task-Matrix/releases/tag/v1.0.0).
 
-2. **Run the Installer** and follow the prompts to complete the installation.
+2. **Run the Installer** and follow the on-screen instructions to complete the setup.
+
+## 📚 Documentation
+
+- **User Documentation**: Comprehensive guides and information for end-users can be found [here](https://whiteboardtec.notion.site/Task-Matrix-f04a5072de474987ace779df2d6c2291).
+- **Developer Documentation**: Coming soon. Check back later for detailed information on contributing and development.
 
 ## 💻 Development
 
-For those looking to contribute or understand the development process:
+For developers interested in understanding or contributing to the project:
 
-- **Frontend**: Built using React, Redux, Tailwind CSS, and Electron.
-- **Backend**: Powered by Django. More details available [here](https://github.com/anuragbhatt1805/ProjHub).
+- **Frontend**: Developed using React, Redux, Tailwind CSS, and Electron to create a responsive and interactive UI.
+- **Backend**: Powered by Django. Detailed backend documentation is available [here](https://github.com/anuragbhatt1805/ProjHub).
 
-## 👨‍💻 Developers
+## 👨‍💻 Team
 
 - **Anurag Bhatt** (Software Engineer)  
-  Role: Backend & Deployment  
+  Role: Backend Development & Deployment  
   [GitHub Profile](https://github.com/anuragbhatt1805)
 
 - **Raunak Deep Srivastava** (Software Developer)  
-  Role: Frontend & Connection with Backend  
+  Role: Frontend Development & Backend Integration  
   [GitHub Profile](https://github.com/raunak234362)
 
 ## 🤝 Contributing
 
-We welcome contributions! Please check our [contributing guide](CONTRIBUTING.md) for more information.
+We encourage contributions from the community! For guidelines on contributing, please refer to our [contributing guide](CONTRIBUTING.md).
 
 ## 📜 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License. For more details, see the [LICENSE](LICENSE) file.
+
+---
+
+Thank you for checking out **Task Matrix**. We hope you find it valuable and look forward to any feedback or contributions!
