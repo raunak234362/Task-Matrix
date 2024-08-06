@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable prettier/prettier */
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/solid';
@@ -15,7 +17,7 @@ import {
   startOfToday,
 } from "date-fns";
 import Service from "../../../../api/configAPI";
-import Header from '../../Header';
+import {Header, Input} from '../../../index'
 
 const colStartClasses = [
   "", // Sunday (no extra classes)
@@ -38,6 +40,7 @@ function Calendar() {
   let [listTask, setListTask] = useState([]);
   let [level, setLevel] = useState("");
   let firstDayCurrentMonth = parse(currentMonth, "MMM-yyyy", new Date());
+  let [user, setUser] = useState(null);
 
   let days = eachDayOfInterval({
     start: firstDayCurrentMonth,
@@ -60,7 +63,7 @@ function Calendar() {
   }
 
   async function getTasks(dates) {
-    const data = await Service.fetchCalendar(dates, null);
+    const data = await Service.fetchCalendar(dates, user);
     if (data) {
       setListTask(data);
       return data;
@@ -78,10 +81,10 @@ function Calendar() {
       }
     }
     fetchData();
-  }, [level, selectedDay]);
+  }, [level, selectedDay, user]);
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen">
       <Header title={"Calendar"} />
       <div className="py-12">
         <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -134,7 +137,15 @@ function Calendar() {
               ))}
             </div>
           </div>
+         
           <section className="mt-12 bg-white shadow-lg rounded-lg p-6">
+          <Input
+            type="text"
+            placeholder="Filter task by username"
+            value={user}
+            onChange={(e) => setUser(e.target.value)}
+            className="p-2 border border-gray-300 rounded-lg mb-6"
+          />
             <h2 className="text-xl font-bold text-gray-900 mb-4">
               Task Scheduled for{" "}
               <time dateTime={format(selectedDay, "yyyy-MM-dd")}>{format(selectedDay, "MMM dd, yyyy")}</time>
