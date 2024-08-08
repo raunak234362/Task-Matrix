@@ -1,3 +1,5 @@
+/* eslint-disable react/no-unknown-property */
+/* eslint-disable prettier/prettier */
 /* eslint-disable no-unused-vars */
 import React from 'react'
 import { Button, Input } from '../../../index'
@@ -12,10 +14,9 @@ const AddCSV = () => {
   } = useForm()
 
   const handleCSV = async (csvData) => {
-    console.log('-----------------')
     try {
       const data = await Service.addUserCSV(
-        csvData?.csv_file,
+        csvData,
       )
       console.log(data)
       alert('Successfully added users from CSV')
@@ -43,7 +44,7 @@ const AddCSV = () => {
   }
   return (
     <div className="rounded-lg shadow-lg shadow-black/15 p-8 mt-8">
-      <form onSubmit={handleSubmit(handleCSV)} enctype="multipart/form-data">
+      <form onSubmit={handleSubmit(handleCSV)}>
         <Input
           label="Upload User Through CSV file"
           name="csv_file"
@@ -61,7 +62,7 @@ const AddCSV = () => {
           >
             Download Sample CSV
           </Button>
-          <Button type="button" onClick={handleCSV}>
+          <Button type="submit" onClick={handleCSV}>
             Upload
           </Button>
         </div>
