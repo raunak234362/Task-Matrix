@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable no-unused-vars */
 import React, { useState } from 'react'
-import { Button, Header, Input, Select } from '../../../index'
+import { AddCSV, Button, Header, Input, Select } from '../../../index'
 import { useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
 import { setUserData } from '../../../../store/userSlice'
@@ -107,7 +107,7 @@ const AddUser = () => {
           
         </div>
       </form>
-              {/* <AddCSV/> */}
+              <AddCSV/>
      
     </div>
   )

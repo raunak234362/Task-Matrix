@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable prettier/prettier */
 import { BASE_URL } from '../config/constant'
 
@@ -72,32 +73,35 @@ class Service {
       throw error
     }
   }
-  static async addUserCSV({csv_file}) {
-    const token = sessionStorage.getItem('token')
-    const csv = csv_file
-    console.log(csv[0])
+  static async addUserCSV({ csv_file }) {
+    const token = sessionStorage.getItem('token');
+    const file = csv_file[0];
+  
+    if (!file) {
+      console.error('No file selected');
+      return;
+    }
     try {
-      const formData = new FormData()
-      const blob = new Blob([csv], { type: 'text/csv' })
-      formData.append('csv_file', blob, csv.name)
-      console.log(formData)
+      const formData = new FormData();
+      formData.append('csv_file', file, file.name);
+  
       const response = await fetch(`${BASE_URL}api/user/emp/add_csv/`, {
         method: 'POST',
         headers: {
           Authorization: `Token ${token}`,
-          // 'Content-Type': 'multipart/form-data',
+          // 'Content-Type': 'multipart/form-data', // Do not set this header, the browser will do it automatically
         },
         body: formData,
-      })
-      console.log(response , "======================")
-      const data = await response.json()
-      console.log(data)
-      return data
+      });
+      // const data = await response.json();
+      // console.log(data);
+      return true;
     } catch (error) {
-      console.log('Error in adding User: ', error)
-      throw error
+      console.log('Error in adding User: ', error);
+      throw error;
     }
   }
+  
   static async sampleCSV() {
     try {
       const token = sessionStorage.getItem('token')
