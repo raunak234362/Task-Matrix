@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { BASE_URL } from '../config/constant'
 
 class Service {
@@ -71,20 +72,24 @@ class Service {
       throw error
     }
   }
-  static async addUserCSV(csv_file) {
+  static async addUserCSV({csv_file}) {
     const token = sessionStorage.getItem('token')
+    const csv = csv_file
+    console.log(csv[0])
     try {
-      const csv = csv_file ? csv_file[0] : null
       const formData = new FormData()
-      formData.append('csv_file', csv)
+      const blob = new Blob([csv], { type: 'text/csv' })
+      formData.append('csv_file', blob, csv.name)
       console.log(formData)
       const response = await fetch(`${BASE_URL}api/user/emp/add_csv/`, {
         method: 'POST',
         headers: {
           Authorization: `Token ${token}`,
+          // 'Content-Type': 'multipart/form-data',
         },
         body: formData,
       })
+      console.log(response , "======================")
       const data = await response.json()
       console.log(data)
       return data
