@@ -23,7 +23,7 @@ const AddCSV = () => {
       return data
     } catch (error) {
       console.error('Error adding users from CSV', error)
-      alert(`Error adding users from CSV: ${error.message}`)
+      // alert(`Error adding users from CSV: ${error.message}`)
     }
   }
 
