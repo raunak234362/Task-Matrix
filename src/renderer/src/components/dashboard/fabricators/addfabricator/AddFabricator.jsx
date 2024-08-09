@@ -93,7 +93,7 @@ const AddFabricator = () => {
                 className="w-full"
                 {...register("name", { required: "Fabricator Name is required" })}
               />
-              {errors.fabname && <p>{errors.fabname.message}</p>}
+              {errors.fabname && <p className='text-red-600'>{errors.fabname.message}</p>}
             </div>
             <div className="flex flex-wrap gap-5 mt-5">
               <Select
@@ -112,7 +112,7 @@ const AddFabricator = () => {
                 {...register("country", { required: "Country is required" })}
                 onChange={(e) => setCountry(e.target.value)} // Add this line to set the value in setCountry
               />
-              {errors.country && <p>{errors.country.message}</p>}
+              {errors.country && <p className='text-red-600'>{errors.country.message}</p>}
 
               <Select
                 label="State: "
@@ -128,7 +128,7 @@ const AddFabricator = () => {
                 {...register("state", { required: "State is required" })}
                 onChange={(e) => setState(e.target.value)}
               />
-              {errors.state && <p>{errors.state.message}</p>}
+              {errors.state && <p className='text-red-600'>{errors.state.message}</p>}
 
               <Select
                 label="City: "
@@ -140,18 +140,18 @@ const AddFabricator = () => {
                 ]}
                 {...register("city", { required: "City is required" })}
               />
-              {errors.city && <p>{errors.city.message}</p>}
+              {errors.city && <p className='text-red-600'>{errors.city.message}</p>}
               <Input
                 label="Zipcode: "
                 placeholder="Zipcode"
                 className="w-full"
 
                 {...register("zipCode", {
-                   required: "Zipcode is required",
-                   pattern: {
-                    value: /^[0-9]{6}$/,
-                    message: "Zipcode must be a 6-digit integer",
-                  },
+                  required: "Zipcode is required",
+                  //  pattern: {
+                  //   value: /^[0-9]{6}$/,
+                  //   message: "Zipcode must be a 6-digit integer",
+                  // },
                   })}
               />
               {errors.zipCode && <p className='text-red-600'>{errors.zipCode.message}</p>}
@@ -173,7 +173,7 @@ const AddFabricator = () => {
                     <p>Standard Design: {contractName}</p>
                   </div>
                 )}
-                {errors.contract && <p>{errors.contract.message}</p>}
+                {errors.contract && <p className='text-red-600'>{errors.contract.message}</p>}
               </div>
             </div>
 
