@@ -1,6 +1,8 @@
+/* eslint-disable prettier/prettier */
 /* eslint-disable no-unused-vars */
-import React, { useCallback, useState } from "react";
-import { Button, Header, Input } from "../../../index";
+import React, { useCallback, useState, useEffect } from "react";
+import { State, City }  from 'country-state-city';
+import { Button, Header, Input, Select } from "../../../index";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { setFabricatorData } from '../../../../store/fabricatorSlice';
@@ -13,9 +15,43 @@ const AddFabricator = () => {
     formState: { errors },
   } = useForm();
 
+  
+
   const dispatch = useDispatch();
   const [contractName, setContractName] = useState(""); 
   const [contract, setContractFile] = useState(null); 
+  const [country, setCountry] = useState("");
+  const [state, setState]= useState("");
+  const [stateList, setStateList] = useState([{
+    label: "Select State",
+    value: "",
+  }])
+
+  const [cityList, setCityList] = useState([{
+    label: "Select City",
+    value: "",
+  }])
+
+  const countryList = {
+    "United States":"US",
+    "Canada":"CA",
+    "India":"IN",
+  }
+
+  useEffect(() => {
+      const stateListObject = {};
+      State.getStatesOfCountry(countryList[country])?.forEach((state1) => {
+        stateListObject[state1.name] = state1.isoCode;
+      });
+      setStateList(stateListObject);
+    }, [country]);
+
+  useEffect(() => {
+    setCityList(City.getCitiesOfState(countryList[country], stateList[state])?.map((city) => ({
+      label: city?.name,
+      value: city?.name,
+    })))
+  }, [state])
 
   const handleContractChange = (e) => {
     const file = e.target.files[0];
@@ -24,9 +60,8 @@ const AddFabricator = () => {
     setContractFile(URL.createObjectURL(file));
   };
 
- 
-
   const onSubmit = async (fabricatorData) => {
+    console.log(fabricatorData)
     try { 
       const token = sessionStorage.getItem("token");
       if(!token){
@@ -61,26 +96,48 @@ const AddFabricator = () => {
               {errors.fabname && <p>{errors.fabname.message}</p>}
             </div>
             <div className="flex flex-wrap gap-5 mt-5">
-              <Input
+              <Select
                 label="Country: "
                 placeholder="Country"
                 className="w-full"
+                options={
+                  [
+                    { label: "Select Country", value: "" },
+                    ...Object.keys(countryList).map((country) => ({
+                      label: country,
+                      value: country,
+                    }))
+                  ]
+                }
                 {...register("country", { required: "Country is required" })}
+                onChange={(e) => setCountry(e.target.value)} // Add this line to set the value in setCountry
               />
               {errors.country && <p>{errors.country.message}</p>}
 
-              <Input
+              <Select
                 label="State: "
                 placeholder="State"
                 className="w-full"
+                options={[
+                  { label: "Select State", value: "" },
+                  ...Object.keys(stateList).map((state1) => ({
+                    label: state1,
+                    value: state1,
+                  }))
+                ]}
                 {...register("state", { required: "State is required" })}
+                onChange={(e) => setState(e.target.value)}
               />
               {errors.state && <p>{errors.state.message}</p>}
 
-              <Input
+              <Select
                 label="City: "
                 placeholder="City"
                 className="w-full"
+                options={[
+                  { label: "Select City", value: "" },
+                  ...cityList
+                ]}
                 {...register("city", { required: "City is required" })}
               />
               {errors.city && <p>{errors.city.message}</p>}
@@ -88,9 +145,16 @@ const AddFabricator = () => {
                 label="Zipcode: "
                 placeholder="Zipcode"
                 className="w-full"
-                {...register("zipCode", { required: "Zipcode is required" })}
+
+                {...register("zipCode", {
+                   required: "Zipcode is required",
+                   pattern: {
+                    value: /^[0-9]{6}$/,
+                    message: "Zipcode must be a 6-digit integer",
+                  },
+                  })}
               />
-              {errors.zipCode && <p>{errors.zipCode.message}</p>}
+              {errors.zipCode && <p className='text-red-600'>{errors.zipCode.message}</p>}
 
               
               <div className="mt-5 w-full">
@@ -101,10 +165,7 @@ const AddFabricator = () => {
                   className="appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-green-500 peer"
                   type="file"
                   id="contract"
-                  accept=".pdf, image/*"
-                  // onChange={handleContractChange}
-                  // onClick={handleContractChange}
-
+                  accept=".pdf, image/* .zip .rar .iso"
                   {...register("design")}
                 />
                 {contractName && (
