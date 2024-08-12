@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import React, { useId, useState } from 'react';
 
 function Toggle({
@@ -35,7 +36,7 @@ function Toggle({
       />
       {
         checked && (
-          <span className="text-green-700 font-medium">Selected</span>
+          <span className="text-green-500 font-bold">S</span>
         )
       }
     </div>

@@ -172,12 +172,11 @@ const AddTask = () => {
                 {...register("status")}
               />
             </div>
-            <div className="mt-5">
+            <div className="mt-5 w-36">
               <Input
                 label="Due Date:"
                 name="due_date"
                 type="date"
-                placeholder="Date"
                 className="w-full"
                 {...register("due_date")}
               />

@@ -165,30 +165,32 @@ const AddProject = () => {
                   </div>
                 </div>
               </div>
-              <div className="mt-5">
-                <Input
-                  label="Start Date:"
-                  name="startDate"
-                  type="date"
-                  className="w-1/2"
-                  {...register('startDate', {
-                    required: 'Start Date is required'
-                  })}
-                />
+              <div className="flex flex-row gap-24">
+                <div className="mt-5 w-36">
+                  <Input
+                    label="Start Date:"
+                    name="startDate"
+                    type="date"
+                    className="w-full"
+                    {...register('startDate', {
+                      required: 'Start Date is required'
+                    })}
+                  />
+                  {errors.startDate && <p className="text-red-600">{errors.startDate.message}</p>}
+                </div>
+                <div className="mt-5 w-36">
+                  <Input
+                    label="Approval Date:"
+                    name="endDate"
+                    type="date"
+                    className="w-full"
+                    {...register('endDate', {
+                      required: 'Approval Date  is required'
+                    })}
+                  />
+                  {errors.endDate && <p className="text-red-600">{errors.endDate.message}</p>}
+                </div>
               </div>
-              {errors.startDate && <p className="text-red-600">{errors.startDate.message}</p>}
-              <div className="mt-5">
-                <Input
-                  label="Approval Date:"
-                  name="endDate"
-                  type="date"
-                  className="w-full"
-                  {...register('endDate', {
-                    required: 'Approval Date  is required'
-                  })}
-                />
-              </div>
-              {errors.endDate && <p className="text-red-600">{errors.endDate.message}</p>}
               <div className="mt-5">
                 <Input
                   label="Duration:"
