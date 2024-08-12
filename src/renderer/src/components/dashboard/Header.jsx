@@ -16,7 +16,7 @@ const Header = ({title}) => {
         </h1>
         <div className="text-lg flex flex-col">
           <div className="font-bold">
-             {role.toLocaleUpperCase()} - {username}
+            {role.toLocaleUpperCase()} - {username}
           </div>
           
         </div>
