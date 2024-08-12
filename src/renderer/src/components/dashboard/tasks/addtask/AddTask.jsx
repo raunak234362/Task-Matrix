@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 /* eslint-disable no-unused-vars */
 import React, { useCallback, useEffect, useState } from "react";
 import { Button, Header, Input, Select } from "../../../index";
@@ -25,10 +26,10 @@ const AddTask = () => {
     const fetchProjects = async () => {
       try {
         const projects = await Service.getAllProject();
-        const options = projects.map((project) => ({
+        const options = projects.filter((project) => (project.team)).map((project) => ({
           label: project.name,
           value: project.id,
-        }));
+        }))
         setPtojectOptions(options);
         console.log(projects);
       } catch (error) {

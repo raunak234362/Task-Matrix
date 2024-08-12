@@ -9,6 +9,8 @@ import { useForm } from 'react-hook-form'
 const Project = ({ project, isOpen, onClose, setProject }) => {
   const [members, setMembers] = useState({})
   const userType = sessionStorage.getItem('userType')
+  const token = sessionStorage.getItem("token");
+  const [teamOption, setTeamOption] =useState([])
   const { register, handleSubmit, setValue } = useForm({
     defaultValues: {
       status: project?.status || '',
@@ -31,6 +33,23 @@ const Project = ({ project, isOpen, onClose, setProject }) => {
       setMembers(teamMembers)
     }
 
+    const fetchTeams = async () => {
+      try {
+        const teamData = await Service.getAllTeam(token);
+        const options= teamData.map((team)=>{
+          return {
+            label: team?.name,
+            value: team?.id
+          }
+        })
+        setTeamOption(options)
+        console.log("Team fetched in project",teamData)
+      } catch (error) {
+        console.error("Error fetching teams:", error);
+      }
+    };
+
+    fetchTeams();
     segerateTeam()
   }, [project])
 
@@ -170,6 +189,19 @@ const Project = ({ project, isOpen, onClose, setProject }) => {
                       </div>
                       <hr className="my-2" />
                       <form onSubmit={handleSubmit(onSubmit)}>
+                        <Select
+                          label="Team"
+                          name="team"
+                          className="text-base"
+                          options={[
+                            {
+                              label: 'Select Team',
+                              value: ''
+                            },
+                            ...teamOption
+                          ]}
+                          {...register('team')}
+                        />
                         <Select
                           label="Status"
                           name="status"
