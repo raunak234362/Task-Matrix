@@ -184,7 +184,7 @@ const AddProject = () => {
                   type="date"
                   className="w-full"
                   {...register('endDate', {
-                    required: 'End Date is required'
+                    required: 'Approval Date  is required'
                   })}
                 />
               </div>
@@ -214,7 +214,7 @@ const AddProject = () => {
                   ]}
                   className="w-full"
                   {...register('manager', {
-                    required: 'Fabricator is required'
+                    required: 'Manager is required'
                   })}
                 />
               </div>

@@ -13,7 +13,6 @@ const AddUser = () => {
   const [csvFile, setCsvFile] = useState(null)
 
   const onSubmit = async (userData) => {
-    console.log('---------', userData)
     try {
       const data = await Service.addUser(userData)
       dispatch(setUserData(data))
@@ -48,6 +47,7 @@ const AddUser = () => {
                     })}
                   />
                 </div>
+                {errors.username && <p className="text-red-500">{errors.username.message}</p>}
               </div>
             </div>
             <div className="mt-5">
@@ -61,6 +61,7 @@ const AddUser = () => {
                 })}
               />
             </div>
+            {errors.name && <p className="text-red-500">{errors.name.message}</p>}
             <div className="mt-3">
               <Input
                 label="Email: "
@@ -68,11 +69,10 @@ const AddUser = () => {
                 type="email"
                 name="email"
                 className="w-full"
-                {...register('email', {
-                  required: 'Email is required',
-                })}
+                {...register('email')}
               />
             </div>
+            {errors.email && <p className="text-red-500">{errors.email.message}</p>}
             <div className="mt-3">
               <Select
                 label="Permission Access"
@@ -82,13 +82,16 @@ const AddUser = () => {
                   { label: 'Manager', value: 'manager' },
                   { label: 'User', value: 'user' },
                 ]}
-                {...register('accessPermission')}
+                {...register('accessPermission', {
+                  required: 'Access permission is required',
+                })}
                 onChange={(e) => {
                   const value = e.target.value
                   setValue('is_superuser', value === 'admin')
                   setValue('is_staff', value !== 'user')
                 }}
               />
+              {errors.accessPermission && <p className="text-red-500">{errors.accessPermission.message}</p>}
               <div className="mt-3">
                 <Input
                   label="Password: "
@@ -99,6 +102,7 @@ const AddUser = () => {
                   {...register('password')}
                 />
               </div>
+              {errors.password && <p className="text-red-500">{errors.password.message}</p>}
             </div>
             <div className="mt-5 w-full">
               <Button type="submit">Add User</Button>

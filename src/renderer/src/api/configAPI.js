@@ -44,11 +44,12 @@ class Service {
     username,
     email,
     name,
-    is_staff,
-    is_superuser,
+    accessPermission,
     password,
   }) {
     console.log('Successfully Added User: ', username, email, name)
+    const is_staff = accessPermission === 'manager' || accessPermission === 'admin';
+    const is_superuser = accessPermission === 'admin';
     try {
       const token = sessionStorage.getItem('token')
       const response = await fetch(`${BASE_URL}api/user/emp/`, {
