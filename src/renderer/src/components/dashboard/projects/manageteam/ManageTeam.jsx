@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable prettier/prettier */
 import React, { useEffect, useState } from "react";
 import Service from "../../../../api/configAPI";
 import {Button, Header, TeamView} from "../../../index"

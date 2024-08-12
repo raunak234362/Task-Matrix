@@ -1,26 +1,44 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable no-unused-vars */
 // src/components/AdminLayout.js
-import React, { useState } from 'react';
-import { Route, Routes } from 'react-router-dom';
-import { Sidebar, Home, AddUser, AddProject,AddTask, Calendar, AddFabricator, ManageTeam, TaskRecord, MyTask, MyProfile, AllFabricators, Allprojects, AllUser, AddTeam, AllTask, ApproveAssignee } from '../index';
-
+import React, { useState } from 'react'
+import { Route, Routes } from 'react-router-dom'
+import {
+  Sidebar,
+  Home,
+  AddUser,
+  AddProject,
+  AddTask,
+  Calendar,
+  AddFabricator,
+  ManageTeam,
+  TaskRecord,
+  MyTask,
+  MyProfile,
+  AllFabricators,
+  Allprojects,
+  AllUser,
+  AddTeam,
+  AllTask,
+  ApproveAssignee,
+  Header
+} from '../index'
 
 const Dashboard = () => {
-  
-  const [isSubMenuOpen, setIsSubMenuOpen] = useState(false);
+  const [isSubMenuOpen, setIsSubMenuOpen] = useState(false)
 
- 
   return (
     <div className="flex min-h-screen">
       <div className={`${isSubMenuOpen ? 'w-16' : 'w-20'} h-screen flex-shrink-0`}>
         <Sidebar isSubMenuOpen={isSubMenuOpen} setIsSubMenuOpen={setIsSubMenuOpen} />
       </div>
-      <div className={`flex-1 overflow-y-auto p-2 transition-all duration-300 ${isSubMenuOpen ? 'ml-60' : ''}`}>
-          
+      <div
+        className={`flex-1 overflow-y-auto p-2 transition-all duration-300 ${
+          isSubMenuOpen ? 'ml-60' : ''
+        }`}
+      >
         <div className="rounded-lg h-auto pt-2 pb-20 ">
           <Routes>
-            <Route path="/" element={<Home />} />
             <Route path="/" element={<Home />} />
             <Route path="/add-user" element={<AddUser />} />
             <Route path="/all-user" element={<AllUser />} />
@@ -41,7 +59,7 @@ const Dashboard = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Dashboard;
+export default Dashboard

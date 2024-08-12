@@ -1,92 +1,85 @@
-/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable prettier/prettier */
+
 /* eslint-disable no-unused-vars */
-import React, { useState, useEffect } from "react";
-import {
-  Button,
-  Input,
-  Select,
-  MultiSelectCheckbox,
-  AddTeam,
-  Header,
-  Toggle,
-} from "../../../index";
-import { useForm } from "react-hook-form";
-import { useDispatch, useSelector } from "react-redux";
-import { setProjectData } from "../../../../store/projectSlice";
-import Service from "../../../../api/configAPI";
+import React, { useState, useEffect } from 'react'
+import { Button, Input, Select, MultiSelectCheckbox, AddTeam, Header, Toggle } from '../../../index'
+import { useForm } from 'react-hook-form'
+import { useDispatch, useSelector } from 'react-redux'
+import { setProjectData } from '../../../../store/projectSlice'
+import Service from '../../../../api/configAPI'
 
 const AddProject = () => {
-  const [fabricatorOptions, setFabricatorOptions] = useState([]);
-  const [managerOptions, setManagerOptions] = useState([]);
+  const [fabricatorOptions, setFabricatorOptions] = useState([])
+  const [managerOptions, setManagerOptions] = useState([])
 
-  const token = sessionStorage.getItem("token");
-  const dispatch = useDispatch();
+  const token = sessionStorage.getItem('token')
+  const dispatch = useDispatch()
   const {
     register,
     handleSubmit,
-    formState: { errors },
-  } = useForm();
+    formState: { errors }
+  } = useForm()
 
   useEffect(() => {
     const fetchFabricators = async () => {
       try {
-        const fabricators = await Service.getAllFabricator();
-        console.log(fabricators);
+        const fabricators = await Service.getAllFabricator()
+        console.log(fabricators)
         const options = fabricators.map((fab) => ({
           label: fab.name,
-          value: fab.id,
-        }));
-        setFabricatorOptions(options);
+          value: fab.id
+        }))
+        setFabricatorOptions(options)
       } catch (error) {
-        console.error("Error fetching fabricators:", error);
+        console.error('Error fetching fabricators:', error)
       }
-    };
+    }
     const fetchUsers = async () => {
       try {
-        const usersData = await Service.getAllUser(token);
+        const usersData = await Service.getAllUser(token)
         const options = usersData
           .filter((user) => user.is_staff === true)
           .map((user) => {
             return {
               label: user.name,
-              value: user.id,
-            };
-          });
-        setManagerOptions(options);
+              value: user.id
+            }
+          })
+        setManagerOptions(options)
       } catch (error) {
-        console.error("Error fetching users:", error);
+        console.error('Error fetching users:', error)
       }
-    };
-    fetchUsers();
-    fetchFabricators();
-  }, []);
+    }
+    fetchUsers()
+    fetchFabricators()
+  }, [])
 
   const onSubmit = async (projectData) => {
     try {
-      const token = sessionStorage.getItem("token");
+      const token = sessionStorage.getItem('token')
       if (!token) {
-        throw new Error("Token not found");
+        throw new Error('Token not found')
       }
-      projectData.duration = parseInt(projectData.duration);
+      projectData.duration = parseInt(projectData.duration)
       const data = await Service.addProject({
         ...projectData,
-        token: token,
-      });
-      console.log("Response from addProject:", projectData);
+        token: token
+      })
+      console.log('Response from addProject:', projectData)
 
-      dispatch(setProjectData(data));
-      console.log("Project added:", data);
-      alert("Successfully added new Project", projectData?.name);
+      dispatch(setProjectData(data))
+      console.log('Project added:', data)
+      alert('Successfully added new Project', projectData?.name)
     } catch (error) {
-      console.error("Error adding project:", error);
-      console.log("Project data:", projectData);
+      console.error('Error adding project:', error)
+      console.log('Project data:', projectData)
     }
-  };
+  }
 
   return (
     <div>
-      <div>
-        <Header title={"Add Project"} />
+      <div className="sticky top-2">
+        <Header title={'Add Project'} />
       </div>
       <form onSubmit={handleSubmit(onSubmit)} className="w-full p-5">
         <div className="p-5 flex flex-col justify-between gap-5">
@@ -99,93 +92,103 @@ const AddProject = () => {
                   name="fabricator"
                   options={[
                     {
-                      label: "Select Fabricator",
-                      value: "",
+                      label: 'Select Fabricator',
+                      value: ''
                     },
-                    ...fabricatorOptions,
+                    ...fabricatorOptions
                   ]}
                   className="w-full"
-                  {...register("fabricator", {
-                    required: "Fabricator is required",
+                  {...register('fabricator', {
+                    required: 'Fabricator is required'
                   })}
                 />
               </div>
+              {errors.fabricator && <p className="text-red-600">{errors.fabricator.message}</p>}
               <div className="mt-5">
                 <Input
                   label="Project Name: "
                   name="name"
                   placeholder="Project"
                   className="w-full"
-                  {...register("name", {
-                    required: "Project Name is required",
+                  {...register('name', {
+                    required: 'Project Name is required'
                   })}
                 />
               </div>
+              {errors.name && <p className="text-red-600">{errors.name.message}</p>}
               <div className="mt-5">
                 <Input
                   label="Description: "
                   name="description"
                   placeholder="Description"
-                  className="w-full h-40"
-                  {...register("description", {
-                    required: "Description is required",
+                  className="w-full"
+                  {...register('description', {
+                    required: 'Description is required'
                   })}
                 />
               </div>
+              {errors.description && <p className="text-red-600">{errors.description.message}</p>}
               <div className="mt-5">
                 <Select
                   label="Tools: "
                   name="tool"
                   options={[
                     {
-                      label: "Select Tools",
-                      value: "",
+                      label: 'Select Tools',
+                      value: ''
                     },
-                    { label: "TEKLA", value: "TEKLA" },
-                    { label: "SDS-2", value: "SDS-2" },
+                    { label: 'TEKLA', value: 'TEKLA' },
+                    { label: 'SDS-2', value: 'SDS-2' }
                   ]}
                   className="w-full"
-                  {...register("tool", {
-                    required: "Tools is required",
+                  {...register('tool', {
+                    required: 'Tools is required'
                   })}
                 />
               </div>
-                <div className="mt-5">
-                  <Toggle
-                    label="Connection Design"
-                    name="connectionDesign"
-                    {...register("connectionDesign")}
-                  />
+              {errors.tool && <p className="text-red-600">{errors.tool.message}</p>}
+              <div>
+                <div className="text-xl font-bold mt-2">Connection Design:</div>
+                <div className="flex flex-row gap-10">
+                  <div className="">
+                    <Toggle
+                      label="Main"
+                      name="connectionDesign"
+                      {...register('connectionDesign')}
+                    />
+                  </div>
+                  <div className="">
+                    <Toggle label="Misc" name="miscDesign" {...register('miscDesign')} />
+                  </div>
+                  <div className="">
+                    <Toggle label="Customer" name="customer" {...register('customer')} />
+                  </div>
                 </div>
-                <div className="mt-5">
-                  <Toggle
-                    label="Misc Design"
-                    name="miscDesign"
-                    {...register("miscDesign")}
-                  />
-                </div>
+              </div>
               <div className="mt-5">
                 <Input
                   label="Start Date:"
                   name="startDate"
                   type="date"
-                  className="w-full"
-                  {...register("startDate", {
-                    required: "Start Date is required",
+                  className="w-1/2"
+                  {...register('startDate', {
+                    required: 'Start Date is required'
                   })}
                 />
               </div>
+              {errors.startDate && <p className="text-red-600">{errors.startDate.message}</p>}
               <div className="mt-5">
                 <Input
                   label="Approval Date:"
                   name="endDate"
                   type="date"
                   className="w-full"
-                  {...register("endDate", {
-                    required: "End Date is required",
+                  {...register('endDate', {
+                    required: 'End Date is required'
                   })}
                 />
               </div>
+              {errors.endDate && <p className="text-red-600">{errors.endDate.message}</p>}
               <div className="mt-5">
                 <Input
                   label="Duration:"
@@ -194,26 +197,28 @@ const AddProject = () => {
                   className="w-[25%]"
                   placeholder="No. of Weeks"
                   min={1}
-                  {...register("duration")}
+                  {...register('duration')}
                 />
               </div>
+
               <div className="mt-5">
                 <Select
                   label="Manager"
                   name="manager"
                   options={[
                     {
-                      label: "Select Manager",
-                      value: "",
+                      label: 'Select Manager',
+                      value: ''
                     },
-                    ...managerOptions,
+                    ...managerOptions
                   ]}
                   className="w-full"
-                  {...register("manager", {
-                    required: "Fabricator is required",
+                  {...register('manager', {
+                    required: 'Fabricator is required'
                   })}
                 />
               </div>
+              {errors.manager && <p className="text-red-600">{errors.manager.message}</p>}
             </>
             {/* )} */}
 
@@ -242,7 +247,7 @@ const AddProject = () => {
         </div>
       </form>
     </div>
-  );
-};
+  )
+}
 
-export default AddProject;
+export default AddProject
