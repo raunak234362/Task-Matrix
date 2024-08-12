@@ -1,97 +1,99 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable no-unused-vars */
-import React, { useCallback, useEffect, useState } from "react";
-import { Button, Header, Input, Select } from "../../../index";
-import Service from "../../../../api/configAPI";
-import { setTaskData } from "../../../../store/taskSlice";
-import { useDispatch } from "react-redux";
-import { useForm } from "react-hook-form";
+import React, { useCallback, useEffect, useState } from 'react'
+import { Button, Header, Input, Select } from '../../../index'
+import Service from '../../../../api/configAPI'
+import { setTaskData } from '../../../../store/taskSlice'
+import { useDispatch } from 'react-redux'
+import { useForm } from 'react-hook-form'
 
 const AddTask = () => {
-  const [projectOptions, setPtojectOptions] = useState([]);
-  const [project, setProject] = useState({});
-  const [parentTaskOptions, setParentTaskOptions] = useState([]);
-  const [assignedUser, setAssignedUser] = useState([]);
-  const token = sessionStorage.getItem("token");
-  const dispatch = useDispatch();
+  const [projectOptions, setPtojectOptions] = useState([])
+  const [project, setProject] = useState({})
+  const [parentTaskOptions, setParentTaskOptions] = useState([])
+  const [assignedUser, setAssignedUser] = useState([])
+  const token = sessionStorage.getItem('token')
+  const dispatch = useDispatch()
   const {
     register,
     handleSubmit,
-    formState: { errors },
-  } = useForm();
+    formState: { errors }
+  } = useForm()
 
   // FETCH task related to project
   // Fetch project details
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const projects = await Service.getAllProject();
-        const options = projects.filter((project) => (project.team)).map((project) => ({
-          label: project.name,
-          value: project.id,
-        }))
-        setPtojectOptions(options);
-        console.log(projects);
+        const projects = await Service.getAllProject()
+        const options = projects
+          .filter((project) => project.team != null)
+          .map((project) => ({
+            label: `${project.name} - ${project.fabricator.name}`,
+            value: project.id
+          }))
+        setPtojectOptions(options)
+        console.log(projects)
       } catch (error) {
-        console.error("Error fetching projects:", error);
+        console.error('Error fetching projects:', error)
       }
-    };
-    fetchProjects();
-  }, []);
+    }
+    fetchProjects()
+  }, [])
 
   const handleProjectChange = async (projectId) => {
     try {
-      const project = await Service.getProject(projectId);
-      setProject(project);
+      const project = await Service.getProject(projectId)
+      setProject(project)
       const assigned = project?.team?.members?.map((member) => ({
         label: `${member?.role} - ${member?.employee?.name}`,
-        value: member?.employee?.id,
-      }));
-      setAssignedUser(assigned);
+        value: member?.employee?.id
+      }))
+      setAssignedUser(assigned)
     } catch (error) {
-      console.error("Error fetching project details:", error);
+      console.error('Error fetching project details:', error)
     }
-  };
+  }
 
   const handleParentTasks = async (projectId) => {
     try {
-      const parentTasks = await Service.getParentTasks(projectId);
+      const parentTasks = await Service.getParentTasks(projectId)
       const options = parentTasks?.map((task) => ({
         label: task?.name,
-        value: task?.id,
-      }));
-      setParentTaskOptions(options);
+        value: task?.id
+      }))
+      setParentTaskOptions(options)
     } catch (error) {
-      console.error("Error fetching parent tasks:", error);
+      console.error('Error fetching parent tasks:', error)
     }
-  };
+  }
 
   const onSubmit = async (taskData) => {
     try {
-      const token = sessionStorage.getItem("token");
-      console.log(taskData.project);
+      const token = sessionStorage.getItem('token')
+      console.log(taskData.project)
       if (!token) {
-        throw new Error("Token not found");
+        throw new Error('Token not found')
       }
       const data = await Service.addTask({
         ...taskData,
-        token: token,
-      });
-      console.log("Response from task:", taskData);
+        token: token
+      })
+      console.log('Response from task:', taskData)
 
-      dispatch(setTaskData(data));
-      console.log("Task added:", data);
-      alert("Successfully added new Task", taskData?.name);
+      dispatch(setTaskData(data))
+      console.log('Task added:', data)
+      alert('Successfully added new Task', taskData?.name)
     } catch (error) {
-      console.error("Error adding task:", error);
-      console.log("Project data:", taskData);
+      console.error('Error adding task:', error)
+      console.log('Project data:', taskData)
     }
-  };
+  }
 
   return (
     <div>
       <div>
-      <Header title={"Add Task"}/>
+        <Header title={'Add Task'} />
       </div>
       <form onSubmit={handleSubmit(onSubmit)} className="w-full p-5">
         <div className="p-5 flex flex-col justify-between gap-5">
@@ -104,15 +106,15 @@ const AddTask = () => {
                 className="w-full"
                 options={[
                   {
-                    label: "Select Project",
-                    value: "",
+                    label: 'Select Project',
+                    value: ''
                   },
-                  ...projectOptions,
+                  ...projectOptions
                 ]}
                 onChange={async (e) => {
-                  await handleParentTasks(e.target.value);
-                  await handleProjectChange(e.target.value);
-                  register("project", { value: e.target.value });
+                  await handleParentTasks(e.target.value)
+                  await handleProjectChange(e.target.value)
+                  register('project', { value: e.target.value })
                 }}
               />
             </div>
@@ -124,12 +126,12 @@ const AddTask = () => {
                 className="w-full"
                 options={[
                   {
-                    label: "Select Parent Task",
-                    value: "",
+                    label: 'Select Parent Task',
+                    value: ''
                   },
-                  ...parentTaskOptions,
+                  ...parentTaskOptions
                 ]}
-                {...register("parent")}
+                {...register('parent')}
               />
             </div>
             <div className="mt-5">
@@ -138,38 +140,38 @@ const AddTask = () => {
                 label="Task Name: "
                 placeholder="Task Name"
                 className="w-full"
-                {...register("name")}
+                {...register('name')}
               />
             </div>
             <div className="mt-5">
               <Select
-                label="Priority"
+                label="Priority:"
                 name="priority"
                 options={[
-                  { label: "LOW", value: 0 },
-                  { label: "MEDIUM", value: 1 },
-                  { label: "HIGH", value: 2 },
-                  { label: "Critical", value: 3 },
+                  { label: 'LOW', value: 0 },
+                  { label: 'MEDIUM', value: 1 },
+                  { label: 'HIGH', value: 2 },
+                  { label: 'Critical', value: 3 }
                 ]}
                 className="w-full"
-                {...register("priority")}
+                {...register('priority')}
               />
             </div>
             <div className="mt-5">
               <Select
-                label="Status"
+                label="Status:"
                 name="status"
                 options={[
-                  { label: "ASSIGNED", value: "ASSINGED" },
-                  { label: "IN PROGRESS", value: "IN-PROGRESS" },
-                  { label: "ON HOLD", value: "ON-HOLD" },
-                  { label: "BREAK", value: "BREAK" },
-                  { label: "IN REVIEW", value: "IN-REVIEW" },
-                  { label: "COMPLETED", value: "COMPLETE" },
-                  { label: "APPROVED", value: "APPROVED" },
+                  { label: 'ASSIGNED', value: 'ASSINGED' },
+                  { label: 'IN PROGRESS', value: 'IN-PROGRESS' },
+                  { label: 'ON HOLD', value: 'ON-HOLD' },
+                  { label: 'BREAK', value: 'BREAK' },
+                  { label: 'IN REVIEW', value: 'IN-REVIEW' },
+                  { label: 'COMPLETED', value: 'COMPLETE' },
+                  { label: 'APPROVED', value: 'APPROVED' }
                 ]}
                 className="w-full"
-                {...register("status")}
+                {...register('status')}
               />
             </div>
             <div className="mt-5 w-36">
@@ -178,29 +180,41 @@ const AddTask = () => {
                 name="due_date"
                 type="date"
                 className="w-full"
-                {...register("due_date")}
+                {...register('due_date')}
               />
             </div>
             <div className="mt-5">
-              <Input
-                label="Duration:"
-                type="text"
-                name="duration"
-                placeholder="Date"
-                className="w-full"
-                {...register("duration")}
-              />
+              <div className="text-lg font-bold">
+              Duration:
+                </div>
+              <div className="flex flex-row gap-5 w-1/5">
+                <div>
+                  <Input
+                    type="number"
+                    name="hour"
+                    placeholder="HH"
+                    className="w-full"
+                    {...register('hour')}
+                  />
+                </div>
+                <div>
+                  <Input
+                    type="number"
+                    name="min"
+                    placeholder="MM"
+                    className="w-full"
+                    {...register('min')}
+                  />
+                </div>
+              </div>
             </div>
             <div className="mt-5">
               <Select
-                label="Assign User"
+                label="Assign User:"
                 name="user"
-                options={[
-                  { label: "Select User", value: "" },
-                  ...assignedUser,
-                ]}
+                options={[{ label: 'Select User', value: '' }, ...assignedUser]}
                 className="w-full"
-                {...register("user")}
+                {...register('user')}
               />
             </div>
             <div className="mt-5">
@@ -208,8 +222,8 @@ const AddTask = () => {
                 label="Description: "
                 name="description"
                 placeholder="Description"
-                className="w-full h-44"
-                {...register("description")}
+                className="w-full"
+                {...register('description')}
               />
             </div>
             <div className="mt-5 w-full">
@@ -219,7 +233,7 @@ const AddTask = () => {
         </div>
       </form>
     </div>
-  );
-};
+  )
+}
 
-export default AddTask;
+export default AddTask

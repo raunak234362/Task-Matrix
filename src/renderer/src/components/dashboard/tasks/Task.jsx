@@ -1,5 +1,6 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable no-unused-vars */
 /* eslint-disable prettier/prettier */
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react'
 import Service from '../../../api/configAPI'
 import { Button, Input, Select } from '../../index'
@@ -119,6 +120,7 @@ const Task = ({ taskId, setDisplay }) => {
   function handleStart(id = tasks?.record) {
     Service.startTask(id)
       .then((res) => {
+        alert("Tasked Started")
         console.log('Started Task: ', res)
       })
       .catch((err) => {
@@ -129,6 +131,7 @@ const Task = ({ taskId, setDisplay }) => {
   function handlePause() {
     Service.pauseTask(tasks?.record)
       .then((res) => {
+        alert("Tasked Paused")
         console.log('Paused Task: ', res)
       })
       .catch((err) => {
@@ -139,6 +142,7 @@ const Task = ({ taskId, setDisplay }) => {
   function handleResume() {
     Service.resumeTask(tasks?.record)
       .then((res) => {
+        alert("Tasked Resumed")
         console.log('Resumed Task: ', res)
       })
       .catch((err) => {
@@ -149,6 +153,7 @@ const Task = ({ taskId, setDisplay }) => {
   function handleEnd() {
     Service.endTask(tasks?.record)
       .then((res) => {
+        alert("Tasked Ended")
         console.log('Ended Task: ', res)
       })
       .catch((err) => {

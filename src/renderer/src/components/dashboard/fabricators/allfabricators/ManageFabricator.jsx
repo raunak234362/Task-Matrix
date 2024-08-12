@@ -1,8 +1,11 @@
+/* eslint-disable prettier/prettier */
+/* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 import React, { useState } from 'react'
 import { Button, Header, Input } from '../../../index'
 import { useForm } from 'react-hook-form'
 import Service from '../../../../api/configAPI'
+import { Link } from 'react-router-dom'
 
 const ManageFabricator = ({ fabricator, isOpen, onClose }) => {
   const {
@@ -80,6 +83,9 @@ const ManageFabricator = ({ fabricator, isOpen, onClose }) => {
             </div>
             <div>
               <strong>Zipcode:</strong> {fabricator.zipCode}
+            </div>
+            <div>
+              <strong>Shop Design:</strong> <Link to={fabricator?.design}  className="text-blue-700" target='_blank'> Open File</Link>
             </div>
           </div>
           {userType === 'admin' && (

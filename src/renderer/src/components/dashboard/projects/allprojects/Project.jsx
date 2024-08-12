@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react'
 import { Button, Select } from '../../../index'
 import Service from '../../../../api/configAPI'
 import { useForm } from 'react-hook-form'
+import { BASE_URL } from '../../../../config/constant'
 
 const Project = ({ project, isOpen, onClose, setProject }) => {
   const [members, setMembers] = useState({})
@@ -149,10 +150,10 @@ const Project = ({ project, isOpen, onClose, setProject }) => {
                     Fabricator Shop Standard:
                   </strong>{' '}
                   <a
-                    href={project?.fabricator?.contract}
+                    href={`${BASE_URL}${project?.fabricator?.design}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-blue-500 hover:text-blue-700"
+                    className="text-blue-500 cursor-pointer hover:text-blue-700"
                   >
                     View standard
                   </a>
