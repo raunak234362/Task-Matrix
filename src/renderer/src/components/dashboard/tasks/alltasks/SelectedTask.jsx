@@ -1,3 +1,5 @@
+/* eslint-disable prettier/prettier */
+/* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react'
 import { Button, Input, Select } from '../../../index'
@@ -23,6 +25,11 @@ const SelectedTask = ({ task, isOpen, onClose, setTasks }) => {
   }
   const handleSaveClick = () => {
     setIsEditing(false)
+  }
+
+  function durToHour(params) {
+    const [hours, minutes] = params.split(":");
+    return `${hours}h ${minutes}m`;
   }
 
   const addComment = async (commentData) => {
@@ -125,6 +132,10 @@ const SelectedTask = ({ task, isOpen, onClose, setTasks }) => {
               <p className="mb-2">
                 <strong className="text-gray-700">Due Date:</strong>{' '}
                 {getTaskById?.toDateString()}
+              </p>
+              <p className="mb-2">
+                <strong className="text-gray-700">Duration:</strong>{' '}
+                {durToHour(task?.duration)}
               </p>
               <div className="flex flex-row justify-between">
                 <form onSubmit={handleSubmit(onSubmit)}>

@@ -1,5 +1,5 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable array-callback-return */
-/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react'
 import { Button, Input, Select } from '../../../index'
@@ -31,13 +31,18 @@ const TeamView = ({ team, isOpen, onClose }) => {
   const addMembers = async (memberData) => {
     try {
       console.log(memberData)
+      if (!memberData?.employee)
+        return alert('Please Select Employee')
       const data = await Service.addTeamMember({
         ...memberData,
         teamId: team?.id,
         token: token,
       })
       console.log('Member Added Successfully', data)
+      alert(`${memberData?.role} Added Successfully`);
       dispatch(addTeamMember(data))
+      onClose();
+      // eslint-disable-next-line prettier/prettier
     } catch (error) {
       console.log(error)
       throw error

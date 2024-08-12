@@ -60,7 +60,7 @@ return (
             precision: 0, // No decimal places
             stepSize: 1,
             font: {
-                size: 3, // Increased font size for better readability
+                size: 12, // Increased font size for better readability
                 weight: 'bold' // Bold font for emphasis
             }
             },
@@ -68,7 +68,7 @@ return (
             display: true,
             text: 'Number of Projects',
             font: {
-                size: 5, // Title font size
+                size: 15, // Title font size
                 weight: 'bold' // Bold font for title
             }
             },
@@ -88,7 +88,7 @@ return (
             display: true,
             text: 'Stages',
             font: {
-                size: 10, // Title font size
+                size: 15, // Title font size
                 weight: 'bold' // Bold font for title
             }
             },
