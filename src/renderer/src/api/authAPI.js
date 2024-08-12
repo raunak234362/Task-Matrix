@@ -6,7 +6,7 @@ class AuthService {
   static async login({ username, password,token,userType }) {
     try {
       const formData = new URLSearchParams();
-      formData.append('username', username);
+      formData.append('username', username.toUpperCase());
       formData.append('password', password);
 
       const response = await fetch(`${AuthService.BASE_URL}api/user/login/`, {

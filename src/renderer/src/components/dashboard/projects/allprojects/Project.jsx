@@ -1,3 +1,6 @@
+/* eslint-disable prettier/prettier */
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
 import React, { useEffect, useState } from 'react'
 import { Button, Select } from '../../../index'
 import Service from '../../../../api/configAPI'
@@ -102,6 +105,10 @@ const Project = ({ project, isOpen, onClose, setProject }) => {
               <p className="mb-2">
                 <strong className="text-gray-700">Misc Design:</strong>{' '}
                 {project?.miscDesign ? 'REQUIRED' : 'Not Required'}
+              </p>
+              <p className="mb-2">
+                <strong className="text-gray-700">Customer:</strong>{' '}
+                {project?.customer ? 'REQUIRED' : 'Not Required'}
               </p>
               <div className="mb-2">
                 <strong className="text-gray-700">Team:</strong>{' '}

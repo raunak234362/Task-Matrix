@@ -35,7 +35,7 @@ function Toggle({
       />
       {
         checked && (
-          <span className="text-red-700">Selected</span>
+          <span className="text-green-700 font-medium">Selected</span>
         )
       }
     </div>

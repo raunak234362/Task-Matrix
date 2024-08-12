@@ -1,4 +1,4 @@
-/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable prettier/prettier */
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -65,7 +65,7 @@ const AddTeam = () => {
                 className="w-full"
                 {...register("name", { required: "Team Name is required" })}
               />
-              {errors.teamName && <p>{errors.teamName.message}</p>}
+              {errors.teamName && <p className="text-red-500">{errors.teamName.message}</p>}
             </div>
 
             {/* <div className="mt-5">
@@ -93,7 +93,7 @@ const AddTeam = () => {
                   required: "Team Leader is required",
                 })}
               />
-              {errors.teamLeader && <p>{errors.teamLeader.message}</p>}
+              {errors.teamLeader && <p className="text-red-500">{errors.teamLeader.message}</p>}
             </div>
           <div className="mt-5 flex justify-between">
             <Button type="submit" className="bg-slate-500 text-white">
