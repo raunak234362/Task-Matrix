@@ -529,7 +529,7 @@ const Sidebar = ({ isSubMenuOpen, setIsSubMenuOpen }) => {
                         to="/dashboard/approve-assignee"
                         onClick={() => handleSubMenuClick('approve-assignee')}
                         className={`block py-2 ${
-                          activeSubMenu === 'approve-task'
+                          activeSubMenu === 'approve-assignee'
                             ? 'bg-white text-gray-900 pl-5 font-bold'
                             : ''
                         }`}
