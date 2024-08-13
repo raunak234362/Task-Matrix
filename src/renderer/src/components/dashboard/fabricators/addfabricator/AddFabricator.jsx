@@ -93,7 +93,7 @@ const AddFabricator = () => {
                 className="w-full"
                 {...register("name", { required: "Fabricator Name is required" })}
               />
-              {errors.fabname && <p className='text-red-600'>{errors.fabname.message}</p>}
+              {errors.name && <p className='text-red-600'>{errors.name.message}</p>}
             </div>
             <div className="flex flex-wrap gap-5 mt-5">
               <Select

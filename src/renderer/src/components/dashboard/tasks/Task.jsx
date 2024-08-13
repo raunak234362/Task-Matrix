@@ -566,8 +566,8 @@ const Task = ({ taskId, setDisplay }) => {
                     <div className="flex flex-row w-full">
                       <div className="w-full">
                         <Input
-                          type="text"
-                          className="w-3/4 h-32"
+                          type="textarea"
+                          className="w-3/4 h-20"
                           placeholder="Add Comment"
                           // value={newComment}
                           // onChange={(e) => setNewComment(e.target.value)}

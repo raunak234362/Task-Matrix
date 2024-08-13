@@ -65,7 +65,7 @@ const AddTeam = () => {
                 className="w-full"
                 {...register("name", { required: "Team Name is required" })}
               />
-              {errors.teamName && <p className="text-red-500">{errors.teamName.message}</p>}
+              {errors.name && <p className="text-red-500">{errors.name.message}</p>}
             </div>
 
             {/* <div className="mt-5">
@@ -93,7 +93,7 @@ const AddTeam = () => {
                   required: "Team Leader is required",
                 })}
               />
-              {errors.teamLeader && <p className="text-red-500">{errors.teamLeader.message}</p>}
+              {errors.leader && <p className="text-red-500">{errors.leader.message}</p>}
             </div>
           <div className="mt-5 flex justify-between">
             <Button type="submit" className="bg-slate-500 text-white">
