@@ -80,7 +80,7 @@ const Project = ({ project, isOpen, onClose, setProject }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-white p-8 rounded-lg shadow-lg w-11/12 max-w-4xl">
+      <div className="bg-white h-fit p-8 rounded-lg shadow-lg w-11/12 max-w-4xl">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-3xl font-bold text-gray-800">Project Details</h2>
           <button
@@ -91,7 +91,7 @@ const Project = ({ project, isOpen, onClose, setProject }) => {
           </button>
         </div>
 
-        <div className="h-[60vh] overflow-y-auto p-4 rounded-lg">
+        <div className="h-fit overflow-y-auto p-4 rounded-lg">
           <div className="grid grid-cols-2 gap-8">
             <div>
               <p className="mb-2">
@@ -236,7 +236,7 @@ const Project = ({ project, isOpen, onClose, setProject }) => {
                             { label: 'BFC', value: 'BFC' },
                             { label: 'RIFC', value: 'RIFC' },
                             { label: 'REV', value: 'REV' },
-                            { label: 'Completed', value: 'CO#' },
+                            { label: 'CO#', value: 'CO#' },
                           ]}
                           defaultValue={project?.stage}
                           {...register('stage')}

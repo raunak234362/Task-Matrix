@@ -8,7 +8,7 @@ import { useForm } from 'react-hook-form'
 
 const SelectedTask = ({ task, isOpen, onClose, setTasks }) => {
   const [isEditing, setIsEditing] = useState(false)
-
+  const username = sessionStorage.getItem('username')
   const [newComment, setNewComment] = useState('')
   const userType = sessionStorage.getItem('userType')
   const {
@@ -102,7 +102,7 @@ const SelectedTask = ({ task, isOpen, onClose, setTasks }) => {
 
   return (
     <div className="fixed inset-0  bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-white  p-8 rounded-lg shadow-lg w-[80vw]">
+      <div className="bg-white max-h-[87vh] overflow-y-auto p-8 rounded-lg shadow-lg w-[80vw]">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-3xl font-bold text-gray-800">Task Details</h2>
         <button
@@ -113,7 +113,7 @@ const SelectedTask = ({ task, isOpen, onClose, setTasks }) => {
         </button>
         </div>
 
-        <div className="h-[80vh]  overflow-y-auto p-4 rounded-lg">
+        <div className="h-fit  overflow-y-auto p-4 rounded-lg">
           <div className="grid grid-cols-[60%_40%] gap-x-5 divide-x-2 px-1">
             <div>
               <p className="mb-2">
@@ -262,6 +262,84 @@ const SelectedTask = ({ task, isOpen, onClose, setTasks }) => {
               </div>
             </div>
           </div>
+          <div className="shadow-xl rounded-lg w-full p-5 bg-gray-50">
+                    <div className="font-bold text-gray-800 mb-4">
+                      People Assigned:
+                    </div>
+                    <div className="flex items-center">
+                      <table className="min-w-full bg-white">
+                        <thead className="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+                          <tr>
+                            <th className="py-3 px-6 text-left">S.No</th>
+                            <th className="py-3 px-6 text-left">Assigned By</th>
+                            <th className="py-3 px-6 text-left">Assigned To</th>
+                            <th className="py-3 px-6 text-left">Assigned On</th>
+                            <th className="py-3 px-6 text-left">Approved By</th>
+                            <th className="py-3 px-6 text-left">Approved On</th>
+                            {(userType === 'admin' ||
+                              username ===
+                                task?.project?.manager?.username) && (
+                              <th className="py-3 px-6 text-left">Action</th>
+                            )}
+                          </tr>
+                        </thead>
+                        <tbody className="text-gray-600 text-sm font-medium">
+                          {task?.assigned?.map((tasks, index) => (
+                            <tr
+                              key={tasks.id}
+                              className="border-b border-gray-200 hover:bg-gray-100"
+                            >
+                              <td className="py-3 px-6 text-left whitespace-nowrap">
+                                {index + 1}
+                              </td>
+
+                              <td className="py-3 px-6 text-left">
+                                {tasks?.assigned_by?.name}
+                              </td>
+                              <td className="py-3 px-6 text-left">
+                                {tasks?.assigned_to?.name}
+                              </td>
+                              <td className="py-3 px-6 text-left">
+                                {new Date(tasks?.assigned_on).toDateString()}
+                              </td>
+                              <td className="py-3 px-6 text-left">
+                                {tasks?.approved_by?.name || (
+                                  <span className="text-red-500">
+                                    Yet Not Approved
+                                  </span>
+                                )}
+                              </td>
+                              <td className="py-3 px-6 text-left">
+                                {tasks?.approved_on ? (
+                                  new Date(tasks?.approved_on).toDateString()
+                                ) : (
+                                  <span className="text-red-500">
+                                    Yet Not Approved
+                                  </span>
+                                )}
+                              </td>
+                              {(userType === 'admin' ||
+                                username ===
+                                  tasks.project?.manager?.username) && (
+                                <td className="py-3 px-6 text-left">
+                                  <Button
+                                    className={`${
+                                      tasks?.approved_on
+                                        ? 'bg-gray-300 text-gray-700'
+                                        : 'bg-green-300 text-green-900'
+                                    } px-2 py-0.5 rounded-full`}
+                                    disabled={tasks?.approved_on}
+                                  >
+                                    {tasks?.approved_on ? 'Approved' : 'Approve'}
+                                  </Button>
+                                </td>
+                              )}
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
           <div className="flex flex-col justify-center mx-auto  shadow-xl gap-5 rounded-lg  w-[90%] p-5 mt-5 bg-gray-50">
             <div className="font-bold text-gray-800 text-2xl">Comments:</div>
             <div className="flex flex-row w-full">
@@ -270,8 +348,8 @@ const SelectedTask = ({ task, isOpen, onClose, setTasks }) => {
                   <div className="flex flex-row w-full">
                     <div className="w-full">
                       <Input
-                        type="text"
-                        className="w-3/4 h-32"
+                        type="textarea"
+                        className="w-3/4 h-20"
                         placeholder="Add Comment"
                         {...register('comment')}
                       />
@@ -295,6 +373,7 @@ const SelectedTask = ({ task, isOpen, onClose, setTasks }) => {
                 </form>
               </div>
             </div>
+           
             {task?.comments?.length > 0 && (
               <div className=" shadow-xl bg-slate-200/50 rounded-lg p-5">
                 <div className="space-y-4">

@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 /* eslint-disable react/prop-types */
 /* eslint-disable array-callback-return */
 /* eslint-disable no-unused-vars */
@@ -109,7 +110,7 @@ const TeamView = ({ team, isOpen, onClose }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-white p-8 rounded-lg shadow-lg w-11/12 max-w-4xl">
+      <div className="bg-white max-h-[60vh] overflow-y-auto p-8 rounded-lg shadow-lg w-11/12 max-w-4xl">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-3xl font-bold text-gray-800">Team Details</h2>
           <button
@@ -120,7 +121,7 @@ const TeamView = ({ team, isOpen, onClose }) => {
           </button>
         </div>
 
-        <div className="h-[80vh] overflow-y-auto p-4 rounded-lg">
+        <div className="h-fit overflow-y-auto p-4 rounded-lg">
           <div>
             <form onSubmit={handleSubmit(editTeam)}>
               <div>

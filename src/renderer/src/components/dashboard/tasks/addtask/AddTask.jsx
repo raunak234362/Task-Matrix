@@ -100,9 +100,9 @@ const AddTask = () => {
           <div className="flex rounded-lg flex-col shadow-lg shadow-black/15 p-8">
             <div className="mt-5">
               <Select
-                label="Project: "
+                label="Project:"
                 placeholder="Project"
-                // name="project"
+                name="project"
                 className="w-full"
                 options={[
                   {
@@ -114,9 +114,10 @@ const AddTask = () => {
                 onChange={async (e) => {
                   await handleParentTasks(e.target.value)
                   await handleProjectChange(e.target.value)
-                  register('project', { value: e.target.value })
+                  register('project', { required: 'Select a project', value: e.target.value })
                 }}
               />
+              {errors.project && <p className="text-red-600">{errors.project.message}</p>}
             </div>
             <div className="mt-5">
               <Select
@@ -140,8 +141,9 @@ const AddTask = () => {
                 label="Task Name: "
                 placeholder="Task Name"
                 className="w-full"
-                {...register('name')}
+                {...register('name', { required: 'Task Name is required' })}
               />
+              {errors.name && <p className="text-red-600">{errors.name.message}</p>}
             </div>
             <div className="mt-5">
               <Select
@@ -154,8 +156,9 @@ const AddTask = () => {
                   { label: 'Critical', value: 3 }
                 ]}
                 className="w-full"
-                {...register('priority')}
+                {...register('priority', { required: 'Priority is required' })}
               />
+              {errors.priority && <p className="text-red-600">{errors.priority.message}</p>}
             </div>
             <div className="mt-5">
               <Select
@@ -171,8 +174,9 @@ const AddTask = () => {
                   { label: 'APPROVED', value: 'APPROVED' }
                 ]}
                 className="w-full"
-                {...register('status')}
+                {...register('status', { required: 'Status is required' })}
               />
+              {errors.status && <p className="text-red-600">{errors.status.message}</p>}
             </div>
             <div className="mt-5 w-36">
               <Input
@@ -180,13 +184,12 @@ const AddTask = () => {
                 name="due_date"
                 type="date"
                 className="w-full"
-                {...register('due_date')}
+                {...register('due_date', { required: 'Due Date is required' })}
               />
+              {errors.due_date && <p className="text-red-600">{errors.due_date.message}</p>}
             </div>
             <div className="mt-5">
-              <div className="text-lg font-bold">
-              Duration:
-                </div>
+              <div className="text-lg font-bold">Duration:</div>
               <div className="flex flex-row gap-5 w-1/5">
                 <div>
                   <Input
@@ -194,8 +197,9 @@ const AddTask = () => {
                     name="hour"
                     placeholder="HH"
                     className="w-full"
-                    {...register('hour')}
+                    {...register('hour', { required: 'Hours is required in Duration' })}
                   />
+                  {errors.hour && <p className="text-red-600">{errors.hour.message}</p>}
                 </div>
                 <div>
                   <Input
@@ -203,8 +207,9 @@ const AddTask = () => {
                     name="min"
                     placeholder="MM"
                     className="w-full"
-                    {...register('min')}
+                    {...register('min', { required: 'Minutes is required in Duration' })}
                   />
+                  {errors.min && <p className="text-red-600">{errors.min.message}</p>}
                 </div>
               </div>
             </div>
@@ -214,17 +219,20 @@ const AddTask = () => {
                 name="user"
                 options={[{ label: 'Select User', value: '' }, ...assignedUser]}
                 className="w-full"
-                {...register('user')}
+                {...register('user', { required: 'Assigning User is required' })}
               />
+              {errors.user && <p className="text-red-600">{errors.user.message}</p>}
             </div>
             <div className="mt-5">
               <Input
+                type="textarea"
                 label="Description: "
                 name="description"
                 placeholder="Description"
                 className="w-full"
-                {...register('description')}
+                {...register('description', { required: 'Description is required' })}
               />
+              {errors.description && <p className="text-red-600">{errors.description.message}</p>}
             </div>
             <div className="mt-5 w-full">
               <Button type="submit">Add Task</Button>
