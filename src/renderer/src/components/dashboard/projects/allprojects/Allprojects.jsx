@@ -135,7 +135,7 @@ const Allprojects = () => {
                       filteredProjects.map((project, index) => (
                         <tr key={project.id}>
                           <td className="border px-1 py-2">{index + 1}</td>
-                          <td className="border px-1 py-2">{project?.name}</td>
+                          <td className="border px-5 py-2 text-left">{project?.name}</td>
                           <td className="border px-1 py-2">{project?.manager?.name}</td>
                           <td className="border px-1 py-2">
                             {new Date(project?.startDate).toDateString()}
