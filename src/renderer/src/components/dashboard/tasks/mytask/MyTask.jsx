@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import React, { useEffect, useState } from "react";
 import Task from "../Task";
 import {Button, Header} from "../../../index"
@@ -122,7 +123,6 @@ const MyTask = () => {
                 <td className="px-6 py-4 whitespace-nowrap">{index + 1}</td>
                 <td className="px-6 py-4 whitespace-nowrap">{task?.project?.name}</td>
                 <td className="px-6 py-4 whitespace-nowrap">{task?.name}</td>
-             
                 <td className="px-6 py-4 whitespace-nowrap">
                   {new Date(task?.created_on).toDateString()}
                 </td>

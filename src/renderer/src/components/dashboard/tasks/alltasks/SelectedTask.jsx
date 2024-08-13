@@ -14,7 +14,7 @@ const SelectedTask = ({ task, isOpen, onClose, setTasks }) => {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors }
   } = useForm()
 
   if (!isOpen) return null
@@ -28,17 +28,13 @@ const SelectedTask = ({ task, isOpen, onClose, setTasks }) => {
   }
 
   function durToHour(params) {
-    const [hours, minutes] = params.split(":");
-    return `${hours}h ${minutes}m`;
+    const [hours, minutes] = params.split(':')
+    return `${hours}h ${minutes}m`
   }
 
   const addComment = async (commentData) => {
     try {
-      const response = await Service.addComment(
-        task?.id,
-        commentData?.comment,
-        commentData?.file,
-      )
+      const response = await Service.addComment(task?.id, commentData?.comment, commentData?.file)
       console.log('Comment Response: ', response)
       alert('Comment Added Successfully')
     } catch (error) {
@@ -105,37 +101,32 @@ const SelectedTask = ({ task, isOpen, onClose, setTasks }) => {
       <div className="bg-white max-h-[87vh] overflow-y-auto p-8 rounded-lg shadow-lg w-[80vw]">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-3xl font-bold text-gray-800">Task Details</h2>
-        <button
-          className="text-xl font-bold bg-gray-600 text-white px-5 rounded-lg"
-          onClick={onClose}
-        >
-          Close
-        </button>
+          <button
+            className="text-xl font-bold bg-gray-600 text-white px-5 rounded-lg"
+            onClick={onClose}
+          >
+            Close
+          </button>
         </div>
 
         <div className="h-fit  overflow-y-auto p-4 rounded-lg">
           <div className="grid grid-cols-[60%_40%] gap-x-5 divide-x-2 px-1">
             <div>
               <p className="mb-2">
-                <strong className="text-gray-700">Task Name:</strong>{' '}
-                {task?.name}
+                <strong className="text-gray-700">Task Name:</strong> {task?.name}
               </p>
               <p className="mb-2">
-                <strong className="text-gray-700">Description:</strong>{' '}
-                {task?.description}
+                <strong className="text-gray-700">Description:</strong> {task?.description}
               </p>
               <p className="mb-2">
-                <strong className="text-gray-700">Current User:</strong>{' '}
-                {task?.user?.name}
+                <strong className="text-gray-700">Current User:</strong> {task?.user?.name}
               </p>
 
               <p className="mb-2">
-                <strong className="text-gray-700">Due Date:</strong>{' '}
-                {getTaskById?.toDateString()}
+                <strong className="text-gray-700">Due Date:</strong> {getTaskById?.toDateString()}
               </p>
               <p className="mb-2">
-                <strong className="text-gray-700">Duration:</strong>{' '}
-                {durToHour(task?.duration)}
+                <strong className="text-gray-700">Duration:</strong> {durToHour(task?.duration)}
               </p>
               <div className="flex flex-row justify-between">
                 <form onSubmit={handleSubmit(onSubmit)}>
@@ -154,7 +145,7 @@ const SelectedTask = ({ task, isOpen, onClose, setTasks }) => {
                               { label: 'BREAK', value: 'BREAK' },
                               { label: 'IN-REVIEW', value: 'IN-REVIEW' },
                               { label: 'COMPLETE', value: 'COMPLETE' },
-                              { label: 'APPROVED', value: 'APPROVED' },
+                              { label: 'APPROVED', value: 'APPROVED' }
                             ]}
                             defaultValue={task?.status}
                             {...register('status')}
@@ -175,7 +166,7 @@ const SelectedTask = ({ task, isOpen, onClose, setTasks }) => {
                               { label: 'LOW', value: 0 },
                               { label: 'MEDIUM', value: 1 },
                               { label: 'HIGH', value: 2 },
-                              { label: 'CRITICAL', value: 3 },
+                              { label: 'CRITICAL', value: 3 }
                             ]}
                             defaultValue={task?.priority}
                             {...register('priority')}
@@ -184,7 +175,7 @@ const SelectedTask = ({ task, isOpen, onClose, setTasks }) => {
                       ) : (
                         <span
                           className={`text-sm text-center font-semibold px-3 py-0.5 mx-2 rounded-full border ${color(
-                            task?.priority,
+                            task?.priority
                           )}`}
                         >
                           {setPriorityValue(task?.priority)}
@@ -233,18 +224,13 @@ const SelectedTask = ({ task, isOpen, onClose, setTasks }) => {
                 </p>
               </div> */}
               <div>
-                <div className="text-xl font-bold text-gray-900">
-                  Project Detail:
-                </div>
+                <div className="text-xl font-bold text-gray-900">Project Detail:</div>
                 <hr className="m-2" />
                 <p className="mb-2">
-                  <strong className="text-gray-700">Project Name:</strong>{' '}
-                  {task?.project?.name}
+                  <strong className="text-gray-700">Project Name:</strong> {task?.project?.name}
                 </p>
                 <p className="mb-2">
-                  <strong className="text-gray-700">
-                    Project Description:
-                  </strong>{' '}
+                  <strong className="text-gray-700">Project Description:</strong>{' '}
                   {task?.project?.description}
                 </p>
                 <p className="mb-2">
@@ -252,94 +238,73 @@ const SelectedTask = ({ task, isOpen, onClose, setTasks }) => {
                   {task?.project?.manager?.name}
                 </p>
                 <p className="mb-2">
-                  <strong className="text-gray-700">Project Stage:</strong>{' '}
-                  {task?.project?.stage}
+                  <strong className="text-gray-700">Project Stage:</strong> {task?.project?.stage}
                 </p>
                 <p className="mb-2">
-                  <strong className="text-gray-700">Project Status:</strong>{' '}
-                  {task?.project?.status}
+                  <strong className="text-gray-700">Project Status:</strong> {task?.project?.status}
                 </p>
               </div>
             </div>
           </div>
           <div className="shadow-xl rounded-lg w-full p-5 bg-gray-50">
-                    <div className="font-bold text-gray-800 mb-4">
-                      People Assigned:
-                    </div>
-                    <div className="flex items-center">
-                      <table className="min-w-full bg-white">
-                        <thead className="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
-                          <tr>
-                            <th className="py-3 px-6 text-left">S.No</th>
-                            <th className="py-3 px-6 text-left">Assigned By</th>
-                            <th className="py-3 px-6 text-left">Assigned To</th>
-                            <th className="py-3 px-6 text-left">Assigned On</th>
-                            <th className="py-3 px-6 text-left">Approved By</th>
-                            <th className="py-3 px-6 text-left">Approved On</th>
-                            {(userType === 'admin' ||
-                              username ===
-                                task?.project?.manager?.username) && (
-                              <th className="py-3 px-6 text-left">Action</th>
-                            )}
-                          </tr>
-                        </thead>
-                        <tbody className="text-gray-600 text-sm font-medium">
-                          {task?.assigned?.map((tasks, index) => (
-                            <tr
-                              key={tasks.id}
-                              className="border-b border-gray-200 hover:bg-gray-100"
-                            >
-                              <td className="py-3 px-6 text-left whitespace-nowrap">
-                                {index + 1}
-                              </td>
+            <div className="font-bold text-gray-800 mb-4">People Assigned:</div>
+            <div className="flex items-center">
+              <table className="min-w-full bg-white">
+                <thead className="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+                  <tr>
+                    <th className="py-3 px-6 text-left">S.No</th>
+                    <th className="py-3 px-6 text-left">Assigned By</th>
+                    <th className="py-3 px-6 text-left">Assigned To</th>
+                    <th className="py-3 px-6 text-left">Assigned On</th>
+                    <th className="py-3 px-6 text-left">Approved By</th>
+                    <th className="py-3 px-6 text-left">Approved On</th>
+                    {(userType === 'admin' || username === task?.project?.manager?.username) && (
+                      <th className="py-3 px-6 text-left">Action</th>
+                    )}
+                  </tr>
+                </thead>
+                <tbody className="text-gray-600 text-sm font-medium">
+                  {task?.assigned?.map((tasks, index) => (
+                    <tr key={tasks.id} className="border-b border-gray-200 hover:bg-gray-100">
+                      <td className="py-3 px-6 text-left whitespace-nowrap">{index + 1}</td>
 
-                              <td className="py-3 px-6 text-left">
-                                {tasks?.assigned_by?.name}
-                              </td>
-                              <td className="py-3 px-6 text-left">
-                                {tasks?.assigned_to?.name}
-                              </td>
-                              <td className="py-3 px-6 text-left">
-                                {new Date(tasks?.assigned_on).toDateString()}
-                              </td>
-                              <td className="py-3 px-6 text-left">
-                                {tasks?.approved_by?.name || (
-                                  <span className="text-red-500">
-                                    Yet Not Approved
-                                  </span>
-                                )}
-                              </td>
-                              <td className="py-3 px-6 text-left">
-                                {tasks?.approved_on ? (
-                                  new Date(tasks?.approved_on).toDateString()
-                                ) : (
-                                  <span className="text-red-500">
-                                    Yet Not Approved
-                                  </span>
-                                )}
-                              </td>
-                              {(userType === 'admin' ||
-                                username ===
-                                  tasks.project?.manager?.username) && (
-                                <td className="py-3 px-6 text-left">
-                                  <Button
-                                    className={`${
-                                      tasks?.approved_on
-                                        ? 'bg-gray-300 text-gray-700'
-                                        : 'bg-green-300 text-green-900'
-                                    } px-2 py-0.5 rounded-full`}
-                                    disabled={tasks?.approved_on}
-                                  >
-                                    {tasks?.approved_on ? 'Approved' : 'Approve'}
-                                  </Button>
-                                </td>
-                              )}
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
+                      <td className="py-3 px-6 text-left">{tasks?.assigned_by?.name}</td>
+                      <td className="py-3 px-6 text-left">{tasks?.assigned_to?.name}</td>
+                      <td className="py-3 px-6 text-left">
+                        {new Date(tasks?.assigned_on).toDateString()}
+                      </td>
+                      <td className="py-3 px-6 text-left">
+                        {tasks?.approved_by?.name || (
+                          <span className="text-red-500">Yet Not Approved</span>
+                        )}
+                      </td>
+                      <td className="py-3 px-6 text-left">
+                        {tasks?.approved_on ? (
+                          new Date(tasks?.approved_on).toDateString()
+                        ) : (
+                          <span className="text-red-500">Yet Not Approved</span>
+                        )}
+                      </td>
+                      {(userType === 'admin' || username === tasks.project?.manager?.username) && (
+                        <td className="py-3 px-6 text-left">
+                          <Button
+                            className={`${
+                              tasks?.approved_on
+                                ? 'bg-gray-300 text-gray-700'
+                                : 'bg-green-300 text-green-900'
+                            } px-2 py-0.5 rounded-full`}
+                            disabled={tasks?.approved_on}
+                          >
+                            {tasks?.approved_on ? 'Approved' : 'Approve'}
+                          </Button>
+                        </td>
+                      )}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
           <div className="flex flex-col justify-center mx-auto  shadow-xl gap-5 rounded-lg  w-[90%] p-5 mt-5 bg-gray-50">
             <div className="font-bold text-gray-800 text-2xl">Comments:</div>
             <div className="flex flex-row w-full">
@@ -373,28 +338,20 @@ const SelectedTask = ({ task, isOpen, onClose, setTasks }) => {
                 </form>
               </div>
             </div>
-           
+
             {task?.comments?.length > 0 && (
               <div className=" shadow-xl bg-slate-200/50 rounded-lg p-5">
                 <div className="space-y-4">
                   {task?.comments?.map((comment, index) => (
-                    <div
-                      className="bg-white p-4 rounded-lg shadow-md"
-                      key={index}
-                    >
+                    <div className="bg-white p-4 rounded-lg shadow-md" key={index}>
                       <div className="flex items-center mb-2">
-                        <span className="font-bold text-gray-800">
-                          {comment?.user?.name}
-                        </span>
+                        <span className="font-bold text-gray-800">{comment?.user?.name}</span>
                         <span className="text-gray-500 text-sm ml-2">
-                          {new Date(comment?.created_on).toLocaleDateString(
-                            'en-US',
-                            {
-                              year: 'numeric',
-                              month: 'short',
-                              day: 'numeric',
-                            },
-                          )}
+                          {new Date(comment?.created_on).toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric'
+                          })}
                         </span>
                       </div>
                       <div className="text-gray-600">
