@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable prettier/prettier */
 import React, { useEffect, useState } from "react";
 import Task from "../Task";
