@@ -1,3 +1,6 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable prettier/prettier */
+/* eslint-disable react/prop-types */
 import React from "react";
 
 const Approve = ({ task, isOpen, onClose, onApprove, onReject }) => {
