@@ -1,10 +1,9 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react'
-import { Button, ProjectPie, Project, Header, BarView } from '../../../index'
+import { Button, Project, Header, BarView } from '../../../index'
 import Service from '../../../../api/configAPI'
 import SegregateProject from '../../../../util/SegregateProject'
-import { TableView } from './TableView'
 
 const Allprojects = () => {
   const [projects, setProjects] = useState([])
@@ -33,11 +32,24 @@ const Allprojects = () => {
   }, [selectedProject])
 
   useEffect(() => {
-    const results = projects.filter((project) =>
+    let results = projects.filter((project) =>
       project.name.toLowerCase().includes(searchTerm.toLowerCase())
     )
+
+    if (sortConfig.key) {
+      results = results.sort((a, b) => {
+        if (a[sortConfig.key] < b[sortConfig.key]) {
+          return sortConfig.direction === 'ascending' ? -1 : 1
+        }
+        if (a[sortConfig.key] > b[sortConfig.key]) {
+          return sortConfig.direction === 'ascending' ? 1 : -1
+        }
+        return 0
+      })
+    }
+
     setFilteredProjects(results)
-  }, [searchTerm, projects])
+  }, [searchTerm, projects, sortConfig])
 
   const handleViewClick = async (projectId) => {
     try {
@@ -60,17 +72,6 @@ const Allprojects = () => {
       direction = 'descending'
     }
     setSortConfig({ key, direction })
-
-    const sortedProjects = [...filteredProjects].sort((a, b) => {
-      if (a[key] < b[key]) {
-        return direction === 'ascending' ? -1 : 1
-      }
-      if (a[key] > b[key]) {
-        return direction === 'ascending' ? 1 : -1
-      }
-      return 0
-    })
-    setFilteredProjects(sortedProjects)
   }
 
   const handleSortChange = (event) => {
@@ -110,6 +111,7 @@ const Allprojects = () => {
                 <option value="">Sort by</option>
                 <option value="name">Name</option>
                 <option value="startDate">Start Date</option>
+                <option value="endDate">End Date</option>
               </select>
             </div>
             <div className="h-[40vh] overflow-y-auto">
@@ -117,45 +119,61 @@ const Allprojects = () => {
                 <thead>
                   <tr className="bg-gray-200">
                     <th className="px-1 py-2">S.no</th>
-                    <th className="px-1 py-2">Project Name</th>
-                    <th className="px-1 py-2">Project Manager</th>
-                    <th className="px-1 py-2">Start Date</th>
-                    <th className="px-3 py-2">Approval Date</th>
+                    <th className="px-1 py-2">
+                      <button onClick={() => sortProjects('name')}>
+                        Project Name {sortConfig.key === 'name' ? (sortConfig.direction === 'ascending' ? '↑' : '↓') : ''}
+                      </button>
+                    </th>
+                    <th className="px-1 py-2">
+                      <button onClick={() => sortProjects('manager.name')}>
+                        Project Manager {sortConfig.key === 'manager.name' ? (sortConfig.direction === 'ascending' ? '↑' : '↓') : ''}
+                      </button>
+                    </th>
+                    <th className="px-1 py-2">
+                      <button onClick={() => sortProjects('startDate')}>
+                        Start Date {sortConfig.key === 'startDate' ? (sortConfig.direction === 'ascending' ? '↑' : '↓') : ''}
+                      </button>
+                    </th>
+                    <th className="px-3 py-2">
+                      <button onClick={() => sortProjects('endDate')}>
+                        Approval Date {sortConfig.key === 'endDate' ? (sortConfig.direction === 'ascending' ? '↑' : '↓') : ''}
+                      </button>
+                    </th>
                     <th className="px-3 py-2">Detail</th>
                   </tr>
                 </thead>
-                  <tbody>
-                    {filteredProjects.length === 0 ? (
-                      <tr className="bg-white">
-                        <td colSpan="7" className="text-center">
-                          No Projects Found
+                <tbody>
+                  {filteredProjects.length === 0 ? (
+                    <tr className="bg-white">
+                      <td colSpan="6" className="text-center">
+                        No Projects Found
+                      </td>
+                    </tr>
+                  ) : (
+                    filteredProjects.map((project, index) => (
+                      <tr key={project.id}>
+                        <td className="border px-1 py-2">{index + 1}</td>
+                        <td className="border px-5 py-2 text-left">{project.name}</td>
+                        <td className="border px-1 py-2">{project.manager?.name}</td>
+                        <td className="border px-1 py-2">
+                          {new Date(project.startDate).toDateString()}
+                        </td>
+                        <td className="border px-3 py-2">
+                          {new Date(project.endDate).toDateString()}
+                        </td>
+                        <td className="border px-3 py-2">
+                          <div className="flex justify-center">
+                            <Button onClick={() => handleViewClick(project.id)}>View</Button>
+                          </div>
                         </td>
                       </tr>
-                    ) : (
-                      filteredProjects.map((project, index) => (
-                        <tr key={project.id}>
-                          <td className="border px-1 py-2">{index + 1}</td>
-                          <td className="border px-5 py-2 text-left">{project?.name}</td>
-                          <td className="border px-1 py-2">{project?.manager?.name}</td>
-                          <td className="border px-1 py-2">
-                            {new Date(project?.startDate).toDateString()}
-                          </td>
-                          <td className="border px-3 py-2">
-                            {new Date(project?.endDate).toDateString()}
-                          </td>
-                          <td className="border px-3 py-2">
-                            <div className="flex justify-center">
-                              <Button onClick={() => handleViewClick(project.id)}>View</Button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
-              </div>
+                    ))
+                  )}
+                </tbody>
+              </table>
             </div>
           </div>
+        </div>
       </div>
 
       {selectedProject && (
