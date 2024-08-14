@@ -44,6 +44,7 @@ function Calendar() {
   let [sortedUsers, setSortedUsers] = useState([])
   let firstDayCurrentMonth = parse(currentMonth, 'MMM-yyyy', new Date())
   const token = sessionStorage.getItem('token')
+  const userType = sessionStorage.getItem('userType')
 
   let days = eachDayOfInterval({
     start: firstDayCurrentMonth,
@@ -75,14 +76,14 @@ function Calendar() {
 
   useEffect(() => {
     const fetchUsers = async () => {
-        try {
-            const usersData = await Service.getAllUser(token)
-            setUsers(usersData)
-            setSortedUsers(usersData) // initialize sortedUsers
-            console.log(usersData)
-        } catch (error) {
-            console.error("Error fetching users:", error)
-        }
+      try {
+        const usersData = await Service.getAllUser(token)
+        setUsers(usersData)
+        setSortedUsers(usersData) // initialize sortedUsers
+        console.log(usersData)
+      } catch (error) {
+        console.error('Error fetching users:', error)
+      }
     }
     fetchUsers()
   }, [token])
@@ -175,11 +176,16 @@ function Calendar() {
                 onChange={(e) => setUser(e.target.value)}
                 className="p-2 border border-gray-300 rounded-lg"
               />
-              <Select
-                options={[{ value: '', label: 'Select user' }, ...sortedUsers.map((u) => ({ value: u.username, label: u.name }))]}
-                onChange={(e) => setUser(e.target.value)}
-                placeholder="Select user"
-              />
+              {userType !== 'user' && (
+                <Select
+                  options={[
+                    { value: '', label: 'Select user' },
+                    ...sortedUsers.map((u) => ({ value: u.username, label: u.name }))
+                  ]}
+                  onChange={(e) => setUser(e.target.value)}
+                  placeholder="Select user"
+                />
+              )}
             </div>
             <h2 className="text-xl font-bold text-gray-900 mb-4">
               Task Scheduled for{' '}
