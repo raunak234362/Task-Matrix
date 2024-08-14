@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable prettier/prettier */
 import React, { useEffect, useState } from "react";
 import Service from "../../../../api/configAPI";
 import { Approve, Header } from "../../../index";
@@ -10,7 +12,6 @@ const username = sessionStorage.getItem("username");
 const [selectedTask, setSelectedTask] = useState(null);
 const [isModalOpen, setIsModalOpen] = useState(false);
 const [isApproveOpen, setIsApproveOpen] = useState(false);
-
 const token = sessionStorage.getItem("token");
 
 const handleViewClick = async (taskId) => {
