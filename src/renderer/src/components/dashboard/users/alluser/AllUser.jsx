@@ -38,7 +38,6 @@ const AllUser = () => {
                     ? a.name.localeCompare(b.name)
                     : b.name.localeCompare(a.name);
             } else {
-                // Sorting by role
                 const roleOrder = ['Admin', 'Manager', 'Employee'];
                 const roleA = a.is_superuser ? 'Admin' : a.is_staff ? 'Manager' : 'Employee';
                 const roleB = b.is_superuser ? 'Admin' : b.is_staff ? 'Manager' : 'Employee';
