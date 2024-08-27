@@ -139,7 +139,7 @@ const SelectedTask = ({ task, isOpen, onClose, setTasks }) => {
                             name="status"
                             className="text-base"
                             options={[
-                              { label: 'ASSIGNED', value: 'ASSIGNED' },
+                              { label: 'ASSIGNED', value: 'ASSINGED' },
                               { label: 'IN-PROGRESS', value: 'IN-PROGRESS' },
                               { label: 'ON-HOLD', value: 'ON-HOLD' },
                               { label: 'BREAK', value: 'BREAK' },

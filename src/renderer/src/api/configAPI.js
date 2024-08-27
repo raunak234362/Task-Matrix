@@ -591,7 +591,6 @@ class Service {
     console.log(user)
     const token = sessionStorage.getItem('token')
     try {
-
       const response = await fetch(`${BASE_URL}api/user/record?user=${user}`, {
         method: 'GET',
         headers: {
