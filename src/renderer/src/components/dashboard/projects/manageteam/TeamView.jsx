@@ -1,3 +1,4 @@
+/* eslint-disable no-empty */
 /* eslint-disable prettier/prettier */
 /* eslint-disable react/prop-types */
 /* eslint-disable array-callback-return */
@@ -23,6 +24,7 @@ const TeamView = ({ team, isOpen, onClose }) => {
 
   const editTeam = async () => {
     try {
+      
     } catch (error) {
       console.log(error)
       throw error
@@ -80,12 +82,6 @@ const TeamView = ({ team, isOpen, onClose }) => {
         // console.log(team?.members);
         // console.log(usersData);
         const options = usersData
-          .filter(
-            (user) =>
-              !team?.members?.some(
-                (member) => member?.employee?.id === user.id,
-              ),
-          )
           .map((user) => {
             return {
               label: user?.name,
