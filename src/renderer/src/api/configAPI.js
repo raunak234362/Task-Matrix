@@ -606,6 +606,25 @@ class Service {
       throw error
     }
   }
+  static async userTaskRecord() {
+    
+    const token = sessionStorage.getItem('token')
+    try {
+      const response = await fetch(`${BASE_URL}api/user/record`, {
+        method: 'GET',
+        headers: {
+          Authorization: `Token ${token}`,
+          'Content-Type': 'application/json',
+        },
+      })
+      const data = await response.json()
+      console.log('Users Task Record: ', data)
+      return data
+    } catch (error) {
+      console.log('Error in getting Task Record: ', error)
+      throw error
+    }
+  }
   static async acceptTask(id) {
     const token = sessionStorage.getItem('token')
     try {

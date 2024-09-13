@@ -130,7 +130,13 @@ const AddTask = () => {
                     label: 'Select Parent Task',
                     value: ''
                   },
-                  ...parentTaskOptions
+                  { label: 'MODELLING', value: 'MODELLING' },
+                  { label: 'CHECKING', value: 'CHECKING' },
+                  { label: 'ERECTION DRG', value: 'ERECTION DRG' },
+                  { label: 'DETAIL DRG', value: 'DETAIL DRG' },
+                  { label: 'GATHER SHEETS', value: 'GATHER SHEETS' },
+                  { label: 'RFI', value: 'RFI' },
+                  
                 ]}
                 {...register('parent')}
               />

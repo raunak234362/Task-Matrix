@@ -13,6 +13,7 @@ import Layout from './Layout'
 import AddUser from './dashboard//users/adduser/AddUser'
 import AllUser from './dashboard/users/alluser/AllUser';
 import MyProfile from './dashboard/users/myprofile/MyProfile';
+import UsersTaskRecord from './dashboard/users/taskrecord/UsersTaskRecord'
 
 import MyTask from './dashboard/tasks/mytask/MyTask';
 import AddFabricator from './dashboard/fabricators/addfabricator/AddFabricator'
@@ -60,6 +61,7 @@ export {
   SelectedTask,
   TaskSelected,
   ApproveAssignee,
+  UsersTaskRecord,
   Select,
   Input,
   TeamView,
