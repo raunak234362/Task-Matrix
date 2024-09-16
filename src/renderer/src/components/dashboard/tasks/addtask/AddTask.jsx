@@ -127,16 +127,10 @@ const AddTask = () => {
                 className="w-full"
                 options={[
                   {
-                    label: 'Select Parent Task',
+                    label: 'Select Project',
                     value: ''
                   },
-                  { label: 'MODELLING', value: '1' },
-                  { label: 'CHECKING', value: '2' },
-                  { label: 'ERECTION DRG', value: '3' },
-                  { label: 'DETAIL DRG', value: '4' },
-                  { label: 'GATHER SHEETS', value: '5' },
-                  { label: 'RFI', value: '6' },
-                  
+                  ...parentTaskOptions
                 ]}
                 {...register('parent')}
               />
