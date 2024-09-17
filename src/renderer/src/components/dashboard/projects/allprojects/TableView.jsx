@@ -1,3 +1,6 @@
+/* eslint-disable prettier/prettier */
+/* eslint-disable react/prop-types */
+/* eslint-disable react/jsx-key */
 export const TableView = ({ segregateProject, setProject, setFabricator }) => {
   const stages = [
     "Fabricators",

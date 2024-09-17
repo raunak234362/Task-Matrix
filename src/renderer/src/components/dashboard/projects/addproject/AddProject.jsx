@@ -197,9 +197,12 @@ const AddProject = () => {
                   name="duration"
                   type="number"
                   className="w-[25%]"
-                  placeholder="No. of Weeks"
+                  placeholder="No. of Days"
                   min={1}
                   {...register('duration')}
+                  onBlur={(e) => {
+                    if (e.target.value < 0) e.target.value = 0
+                  }}
                 />
               </div>
 
