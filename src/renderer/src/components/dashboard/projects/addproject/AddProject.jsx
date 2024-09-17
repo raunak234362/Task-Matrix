@@ -17,8 +17,13 @@ const AddProject = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors }
+    formState: { errors },
+    setValue,
+    watch
   } = useForm()
+
+  const startDate = watch('startDate')
+  const endDate = watch('endDate')
 
   useEffect(() => {
     const fetchFabricators = async () => {
@@ -53,6 +58,28 @@ const AddProject = () => {
     fetchUsers()
     fetchFabricators()
   }, [])
+
+  useEffect(() => {
+    if (endDate && startDate && new Date(endDate) < new Date(startDate)) {
+      setValue('endDate', startDate);
+    }
+    if (startDate && endDate) {
+      const start = new Date(startDate)
+      const end = new Date(endDate)
+      let duration = 0
+      let currentDate = new Date(start)
+
+      while (currentDate <= end) {
+      const dayOfWeek = currentDate.getDay()
+      if (dayOfWeek !== 0 && dayOfWeek !== 6) { // Exclude Sundays (0) and Saturdays (6)
+        duration++
+      }
+      currentDate.setDate(currentDate.getDate() + 1)
+      }
+
+      setValue('duration', duration > 0 ? duration : 0)
+    }
+  }, [startDate, endDate, setValue])
 
   const onSubmit = async (projectData) => {
     try {
@@ -191,16 +218,27 @@ const AddProject = () => {
                   {errors.endDate && <p className="text-red-600">{errors.endDate.message}</p>}
                 </div>
               </div>
-              <div className="mt-5">
+              <div className="mt-5 text-lg font-bold">
+                Duration
+              </div>
+              <div className="flex flex-row items-center gap-x-3 w-fit">
                 <Input
-                  label="Duration:"
+                  // label="Duration:"
                   name="duration"
                   type="number"
-                  className="w-[25%]"
-                  placeholder="No. of Weeks"
+                  className="w-[full]"
+                  placeholder="No. of Days"
                   min={1}
                   {...register('duration')}
+                  onBlur={(e) => {
+                    if (e.target.value < 0) e.target.value = 0
+                  }}
                 />
+                {
+                  watch('duration') && (
+                    <span className='text-lg'> {(watch('duration')>1)? 'Days':'Day'}</span>
+                  )
+                }
               </div>
 
               <div className="mt-5">

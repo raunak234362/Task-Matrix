@@ -17,6 +17,7 @@ const AddTask = () => {
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors }
   } = useForm()
 
@@ -71,12 +72,14 @@ const AddTask = () => {
   const onSubmit = async (taskData) => {
     try {
       const token = sessionStorage.getItem('token')
-      console.log(taskData.project)
       if (!token) {
         throw new Error('Token not found')
       }
+      const TaskName = `${taskData.type} - ${taskData.taskname}`
+      console.log('Project data:', TaskName)
       const data = await Service.addTask({
         ...taskData,
+        name: TaskName,
         token: token
       })
       console.log('Response from task:', taskData)
@@ -135,15 +138,45 @@ const AddTask = () => {
                 {...register('parent')}
               />
             </div>
-            <div className="mt-5">
-              <Input
-                name="name"
-                label="Task Name: "
-                placeholder="Task Name"
-                className="w-full"
-                {...register('name', { required: 'Task Name is required' })}
-              />
-              {errors.name && <p className="text-red-600">{errors.name.message}</p>}
+            <div className="mt-5 flex flex-row gap-x-2">
+              <div className="w-[30%]">
+                <Select
+                  label="Task Type: "
+                  name="type"
+                  placeholder="Task Type"
+                  className="w-full"
+                  options={[
+                    {
+                      label: 'Select Task',
+                      value: ''
+                    },
+                    { label: 'Modeling', value: 'MODELING' },
+                    { label: 'Checking', value: 'CHECKING' },
+                    { label: 'Erection', value: 'ERECTION' },
+                    { label: 'Detailing', value: 'DETAILING' },
+                    { label: 'Others', value: 'OTHERS' }
+                  ]}
+                  {...register('type', { required: 'Task Type is required' })}
+                />
+                {errors.type && <p className="text-red-600">{errors.type.message}</p>}
+              </div>
+              <div className="w-full">
+                <Input
+                  name="taskname"
+                  label="Task Name: "
+                  placeholder="Task Name"
+                  className="w-full"
+                  {...register('taskname', {
+                    validate: (value) => {
+                      if (watch('type') === 'OTHERS' && (!value || value.trim() === '')) {
+                        return "With Task Type 'Others', Task name is required"
+                      }
+                      return true
+                    }
+                  })}
+                />
+                {errors.taskname && <p className="text-red-600">{errors.taskname.message}</p>}
+              </div>
             </div>
             <div className="mt-5">
               <Select
@@ -191,26 +224,34 @@ const AddTask = () => {
             <div className="mt-5">
               <div className="text-lg font-bold">Duration:</div>
               <div className="flex flex-row gap-5 w-1/5">
-                <div>
+                <div className="w-full">
                   <Input
                     type="number"
                     name="hour"
                     placeholder="HH"
-                    className="w-full"
+                    className="w-20"
+                    min={0}
                     {...register('hour', { required: 'Hours is required in Duration' })}
+                    onBlur={(e) => {
+                      if (e.target.value < 0) e.target.value = 0
+                    }}
                   />
-                  {errors.hour && <p className="text-red-600">{errors.hour.message}</p>}
                 </div>
-                <div>
+                <div className="w-full">
                   <Input
                     type="number"
                     name="min"
                     placeholder="MM"
-                    className="w-full"
+                    className="w-20"
+                    min={0}
+                    max={60}
                     {...register('min', { required: 'Minutes is required in Duration' })}
+                    onBlur={(e) => {
+                      if (e.target.value < 0) e.target.value = 0
+                    }}
                   />
-                  {errors.min && <p className="text-red-600">{errors.min.message}</p>}
                 </div>
+                  {errors.min && <p className="text-red-600">{errors.min.message}</p>}
               </div>
             </div>
             <div className="mt-5">
