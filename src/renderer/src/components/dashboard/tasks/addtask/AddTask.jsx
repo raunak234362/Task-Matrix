@@ -127,7 +127,7 @@ const AddTask = () => {
                 className="w-full"
                 options={[
                   {
-                    label: 'Select Project',
+                    label: 'Select Task',
                     value: ''
                   },
                   ...parentTaskOptions
