@@ -5,7 +5,7 @@ import Service from '../../../../api/configAPI'
 import Header from '../../Header'
 import { Input, Select } from '../../../index'
 
-const TaskRecord = () => {
+const UsersTaskRecord = () => {
   const [record, setRecord] = useState([])
   const [user, setUser] = useState('')
   const [searchUser, setSearchUser] = useState([])
@@ -84,8 +84,8 @@ const TaskRecord = () => {
 
   return (
     <div>
-      <Header title={'My Task Record'} />
-      {/* {userType !== 'user' && (
+      <Header title={'Task Record'} />
+      {userType !== 'user' && (
         <div className="flex w-1/2 flex-row gap-5 mt-5">
           <Input
             type="text"
@@ -103,7 +103,7 @@ const TaskRecord = () => {
             placeholder="Select user"
           />
         </div>
-      )} */}
+      )}
       <div className="shadow-xl rounded-lg w-full p-5 bg-gray-50">
         <table className="mt-5 min-w-full divide-y text-md divide-gray-200">
           <thead className="bg-slate-200">
@@ -155,4 +155,4 @@ const TaskRecord = () => {
   )
 }
 
-export default TaskRecord
+export default UsersTaskRecord

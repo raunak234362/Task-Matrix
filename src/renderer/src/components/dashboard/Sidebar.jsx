@@ -1,3 +1,6 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable no-unused-vars */
+/* eslint-disable prettier/prettier */
 import { Link } from 'react-router-dom'
 import { useState } from 'react'
 import { IoMdPeople, IoMdCheckmarkCircle } from 'react-icons/io'
@@ -137,6 +140,19 @@ const Sidebar = ({ isSubMenuOpen, setIsSubMenuOpen }) => {
                             : ''
                         }`}
                       >
+                        My Task Records
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        to="/dashboard/users-task-record"
+                        onClick={() => handleSubMenuClick('users-task-record')}
+                        className={`block py-2 ${
+                          activeSubMenu === 'users-task-record'
+                            ? 'bg-white text-gray-900 pl-5 font-bold'
+                            : ''
+                        }`}
+                      >
                         Task Records
                       </Link>
                     </li>
@@ -202,6 +218,19 @@ const Sidebar = ({ isSubMenuOpen, setIsSubMenuOpen }) => {
                         onClick={() => handleSubMenuClick('task-record')}
                         className={`block py-2 ${
                           activeSubMenu === 'task-record'
+                            ? 'bg-white text-gray-900 pl-5 font-bold'
+                            : ''
+                        }`}
+                      >
+                        My Task Records
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        to="/dashboard/users-task-record"
+                        onClick={() => handleSubMenuClick('users-task-record')}
+                        className={`block py-2 ${
+                          activeSubMenu === 'users-task-record'
                             ? 'bg-white text-gray-900 pl-5 font-bold'
                             : ''
                         }`}

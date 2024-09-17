@@ -163,7 +163,7 @@ const AllTask = () => {
                     <th className="px-1 py-2">S.no</th>
                     <th className="px-1 py-2">Project Name</th>
                     <th className="px-1 py-2">Task Name</th>
-                    <th className="px-1 py-2">Project Manager</th>
+                    <th className="px-1 py-2">Current User</th>
                     <th className="px-1 py-2">Status</th>
                     <th className="px-1 py-2">Priority</th>
                     <th className="px-1 py-2">Due Date</th>
@@ -186,7 +186,7 @@ const AllTask = () => {
                         </td>
                         <td className="border px-1 py-2">{task?.name}</td>
                         <td className="border px-1 py-2">
-                          {task?.project?.manager?.name}
+                          {task?.user?.name}
                         </td>
                         <td className="border px-1 py-2">
                           {task?.status}

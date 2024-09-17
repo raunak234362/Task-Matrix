@@ -465,7 +465,7 @@ class Service {
         },
       })
       const data = await response.json()
-      console.log('My Task list: ', data)
+      // console.log('My Task list: ', data)
       return data
     } catch (error) {
       console.log('Error in getting Task: ', error)
@@ -591,7 +591,6 @@ class Service {
     console.log(user)
     const token = sessionStorage.getItem('token')
     try {
-
       const response = await fetch(`${BASE_URL}api/user/record?user=${user}`, {
         method: 'GET',
         headers: {
@@ -601,6 +600,25 @@ class Service {
       })
       const data = await response.json()
       console.log('Task Record: ', data)
+      return data
+    } catch (error) {
+      console.log('Error in getting Task Record: ', error)
+      throw error
+    }
+  }
+  static async userTaskRecord() {
+    
+    const token = sessionStorage.getItem('token')
+    try {
+      const response = await fetch(`${BASE_URL}api/user/record`, {
+        method: 'GET',
+        headers: {
+          Authorization: `Token ${token}`,
+          'Content-Type': 'application/json',
+        },
+      })
+      const data = await response.json()
+      console.log('Users Task Record: ', data)
       return data
     } catch (error) {
       console.log('Error in getting Task Record: ', error)
@@ -682,7 +700,7 @@ class Service {
       throw error
     }
   }
-
+ 
   static async endTask(id) {
     const token = sessionStorage.getItem('token')
     try {

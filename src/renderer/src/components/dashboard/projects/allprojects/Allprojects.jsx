@@ -121,22 +121,22 @@ const Allprojects = () => {
                     <th className="px-1 py-2">S.no</th>
                     <th className="px-1 py-2">
                       <button onClick={() => sortProjects('name')}>
-                        Project Name {sortConfig.key === 'name' ? (sortConfig.direction === 'ascending' ? '↑' : '↓') : ''}
+                        Project Name {sortConfig.key === 'name' ? (sortConfig.direction === 'ascending' ? '' : '') : ''}
                       </button>
                     </th>
                     <th className="px-1 py-2">
                       <button onClick={() => sortProjects('manager.name')}>
-                        Project Manager {sortConfig.key === 'manager.name' ? (sortConfig.direction === 'ascending' ? '↑' : '↓') : ''}
+                        Project Manager {sortConfig.key === 'manager.name' ? (sortConfig.direction === 'ascending' ? '' : '') : ''}
                       </button>
                     </th>
                     <th className="px-1 py-2">
                       <button onClick={() => sortProjects('startDate')}>
-                        Start Date {sortConfig.key === 'startDate' ? (sortConfig.direction === 'ascending' ? '↑' : '↓') : ''}
+                        Start Date {sortConfig.key === 'startDate' ? (sortConfig.direction === 'ascending' ? '' : '') : ''}
                       </button>
                     </th>
                     <th className="px-3 py-2">
                       <button onClick={() => sortProjects('endDate')}>
-                        Approval Date {sortConfig.key === 'endDate' ? (sortConfig.direction === 'ascending' ? '↑' : '↓') : ''}
+                        Approval Date {sortConfig.key === 'endDate' ? (sortConfig.direction === 'ascending' ? '' : '') : ''}
                       </button>
                     </th>
                     <th className="px-3 py-2">Detail</th>

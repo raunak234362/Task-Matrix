@@ -21,6 +21,7 @@ import {
   AddTeam,
   AllTask,
   ApproveAssignee,
+  UsersTaskRecord,
   Header
 } from '../index'
 
@@ -51,6 +52,7 @@ const Dashboard = () => {
             <Route path="/manage-team" element={<ManageTeam />} />
             <Route path="/add-team" element={<AddTeam />} />
             <Route path="/task-record" element={<TaskRecord />} />
+            <Route path="/users-task-record" element={<UsersTaskRecord />} />
             <Route path="/my-task" element={<MyTask />} />
             <Route path="/all-task" element={<AllTask />} />
             <Route path="/my-profile" element={<MyProfile />} />
