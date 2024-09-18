@@ -297,7 +297,7 @@ const Task = ({ taskId, setDisplay }) => {
                   <div className="flex flex-row mt-2 items-center">
                     <span className="font-bold text-gray-800 w-40">Task Actions:</span>
 
-                    {tasks?.status === 'ASSIGNED' || tasks?.status === 'ON-HOLD' ? (
+                    {tasks?.status === 'ASSINGED' || tasks?.status === 'ON-HOLD' ? (
                       <>
                         <Button
                           className="bg-green-500 flex justify-center font-semibold items-center rounded-full w-28 hover:bg-green-800"
