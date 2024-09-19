@@ -21,7 +21,7 @@ const MyTask = () => {
       }
     };
     fetchTask();
-  }, []);
+  }, [tasks]);
 
   function durToHour(params) {
     const [hours, minutes] = params.split(":");

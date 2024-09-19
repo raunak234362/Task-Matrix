@@ -18,18 +18,18 @@ const Task = ({ taskId, setDisplay }) => {
   const { register, handleSubmit } = useForm()
   const [record, setRecord] = useState({})
 
-  useEffect(() => {
-    const fetchTask = async () => {
-      try {
-        console.log(taskId)
-        const task = await Service.getTaskById(taskId)
-        setTasks(task)
-        // console.log('My Task: ', task)
-      } catch (error) {
-        console.log('Error in fetching task: ', error)
-      }
+  const fetchTask = async () => {
+    try {
+      console.log(taskId)
+      const task = await Service.getTaskById(taskId)
+      setTasks(task)
+      // console.log('My Task: ', task)
+    } catch (error) {
+      console.log('Error in fetching task: ', error)
     }
+  }
 
+  useEffect(() => {
     fetchTask()
   }, [])
 
@@ -112,28 +112,33 @@ const Task = ({ taskId, setDisplay }) => {
         if (window.confirm('Task Accepted \n\nDo you wish to start now?')) {
           handleStart(res?.id)
         }
+        fetchTask()
       })
       .catch((err) => {
         console.log('Error in accepting task: ', err)
       })
   }
 
-  function handleStart(id = tasks?.record) {
+  function handleStart() {
+    const id = tasks?.record;
+    console.log('Task ID: ', id)
     Service.startTask(id)
       .then((res) => {
         alert('Tasked Started')
         console.log('Started Task: ', res)
+        fetchTask()
       })
       .catch((err) => {
         console.log('Error in starting task: ', err)
       })
   }
 
-  function handlePause() {
+  async function handlePause() {
     Service.pauseTask(tasks?.record)
       .then((res) => {
         alert('Tasked Paused')
         console.log('Paused Task: ', res)
+        fetchTask()
       })
       .catch((err) => {
         console.log('Error in pausing task: ', err)
@@ -146,6 +151,7 @@ const Task = ({ taskId, setDisplay }) => {
         setRecord(fetchResume)
         alert('Tasked Resumed')
         console.log('Resumed Task: ', res)
+        fetchTask()
       })
       .catch((err) => {
         console.log('Error in resuming task: ', err)
@@ -159,22 +165,27 @@ const Task = ({ taskId, setDisplay }) => {
       .then((res) => {
         alert('Tasked Ended')
         console.log('Ended Task: ', res)
+        fetchTask()
       })
       .catch((err) => {
         console.log('Error in ending task: ', err)
       })
   }
 
-  function handleAddAssigne() {
-    Service.addAssigne(tasks?.id, assignedTo)
-      .then((res) => {
-        console.log('Assigned Task: ', res)
-        alert('Task Assigned Successfully')
-      })
-      .catch((err) => {
-        console.log('Error in assigning task: ', err)
-      })
+  async function handleAddAssigne() {
+    await handlePause().then(
+      Service.addAssigne(tasks?.id, assignedTo)
+        .then((res) => {
+          console.log('Assigned Task: ', res)
+          alert('Task Assigned Successfully')
+          fetchTask()
+        })
+        .catch((err) => {
+          console.log('Error in assigning task: ', err)
+        })
+    );
   }
+  
 
   const onSubmit = async (commentData) => {
     try {
@@ -183,26 +194,11 @@ const Task = ({ taskId, setDisplay }) => {
       const response = await Service.addComment(tasks?.id, commentData?.comment, commentData?.file)
       console.log('Comment Response: ', response)
       alert('Comment Added Successfully')
+      fetchTask()
     } catch (error) {
       console.error('Error in adding comment: ', error)
     }
   }
-
-  // const fetchTaskRecord = async (id) => {
-  //   try {
-  //     const taskRecord = await Service.resumeTaskDetail(id);
-  //     setRecord(taskRecord);
-  //     console.log('Task Record:', taskRecord);
-  //   } catch (error) {
-  //     console.error('Failed to fetch task record:', error);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   if (taskId) {
-  //     fetchTaskRecord(taskId);
-  //   }
-  // }, [taskId]);
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
