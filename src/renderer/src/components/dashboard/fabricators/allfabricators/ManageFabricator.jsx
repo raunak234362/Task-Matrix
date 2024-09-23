@@ -12,46 +12,53 @@ const ManageFabricator = ({ fabricator, isOpen, onClose }) => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm()
+  } = useForm();
   const [newInput, setNewInput] = useState({
     name: '',
     designation: '',
     phone: '',
     email: '',
-  })
-  const [addNew, setAddNew] = useState(false)
-  const userType = sessionStorage.getItem('userType')
+  });
+  const [addNew, setAddNew] = useState(false);
+  const userType = sessionStorage.getItem('userType');
+  console.log("show fabricator ", fabricator.id);
 
   function handleAddNewContact() {
-    setAddNew((prev) => !prev)
+    setAddNew((prev) => !prev);
   }
 
-  const handleDeleteFabricator = (id) => {
-    const data = Service.deleteFabricator(id)
-    // console.log(data);
+  function handleDeleteFabricator(id) {
+    Service.deleteFabricator(id)
+      .then(() => {
+        alert("Task Deleted Successfully");
+        onClose();
+      })
+      .catch((error) => {
+        console.error("Error deleting fabricator:", error);
+        alert("Failed to delete fabricator. Please try again.");
+      });
   }
 
   const handleAddContact = () => {
-    setAddNew((prev) => !prev)
-    fabricator?.connections?.push(newInput)
-    const data = Service.addConnection(fabricator?.id, newInput)
+    setAddNew((prev) => !prev);
+    fabricator?.connections?.push(newInput);
+    const data = Service.addConnection(fabricator?.id, newInput);
     setNewInput({
       name: '',
       designation: '',
       phone: '',
       email: '',
-    })
-    console.log(data)
-  }
+    });
+  };
 
-  const [contractName, setContractName] = useState('')
-  const [contract, setContractFile] = useState(null)
+  const [contractName, setContractName] = useState('');
+  const [contract, setContractFile] = useState(null);
 
   const handleContractChange = (e) => {
-    const file = e.target.files[0]
-    setContractName(file?.name)
-    setContractFile(file)
-  }
+    const file = e.target.files[0];
+    setContractName(file?.name);
+    setContractFile(file);
+  };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
@@ -69,28 +76,19 @@ const ManageFabricator = ({ fabricator, isOpen, onClose }) => {
         </div>
         <div className="flex flex-row justify-between">
           <div>
+            <div><strong>Fabricator Name:</strong> {fabricator.name}</div>
+            <div><strong>Country:</strong> {fabricator.country}</div>
+            <div><strong>State:</strong> {fabricator.state}</div>
+            <div><strong>City:</strong> {fabricator.city}</div>
+            <div><strong>Zipcode:</strong> {fabricator.zipCode}</div>
             <div>
-              <strong>Fabricator Name:</strong> {fabricator.name}
-            </div>
-            <div>
-              <strong>Country:</strong> {fabricator.country}
-            </div>
-            <div>
-              <strong>State:</strong> {fabricator.state}
-            </div>
-            <div>
-              <strong>City:</strong> {fabricator.city}
-            </div>
-            <div>
-              <strong>Zipcode:</strong> {fabricator.zipCode}
-            </div>
-            <div>
-              <strong>Shop Design:</strong> <Link to={fabricator?.design}  className="text-blue-700" target='_blank'> Open File</Link>
+              <strong>Shop Design:</strong> 
+              <Link to={fabricator?.design} className="text-blue-700" target='_blank'> Open File</Link>
             </div>
           </div>
           {userType === 'admin' && (
             <div>
-              <Button className="" onClick={handleDeleteFabricator}>
+              <Button onClick={() => handleDeleteFabricator(fabricator?.id)}>
                 Delete
               </Button>
             </div>
@@ -99,60 +97,36 @@ const ManageFabricator = ({ fabricator, isOpen, onClose }) => {
 
         <div className="mt-5">
           <div className="text-xl font-bold">Contact Details</div>
-          <table className=" min-w-full divide-y divide-gray-200">
+          <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-slate-200">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  S.no
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Name
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Designation
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Phone
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Email
-                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">S.no</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Designation</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {fabricator?.connections?.map((connection, index) => (
                 <tr key={index}>
                   <td className="px-2 py-4 whitespace-nowrap">{index + 1}</td>
-                  <td className="px-2 py-4 whitespace-nowrap">
-                    {connection?.name}
-                  </td>
-
-                  <td className="px-2 py-4 whitespace-nowrap">
-                    {connection?.designation}
-                  </td>
-                  <td className="px-2 py-4 whitespace-nowrap">
-                    {connection?.phone}
-                  </td>
-                  <td className="px-2 py-4 whitespace-nowrap">
-                    {connection?.email}
-                  </td>
+                  <td className="px-2 py-4 whitespace-nowrap">{connection?.name}</td>
+                  <td className="px-2 py-4 whitespace-nowrap">{connection?.designation}</td>
+                  <td className="px-2 py-4 whitespace-nowrap">{connection?.phone}</td>
+                  <td className="px-2 py-4 whitespace-nowrap">{connection?.email}</td>
                 </tr>
               ))}
               {addNew && (
                 <tr>
-                  <td className="px-2 py-4 whitespace-nowrap">
-                    {fabricator?.connections?.length + 1}
-                  </td>
+                  <td className="px-2 py-4 whitespace-nowrap">{fabricator?.connections?.length + 1}</td>
                   <td className="px-2 py-4 whitespace-nowrap">
                     <Input
                       placeholder="Name"
                       value={newInput.name}
                       required={true}
                       onChange={(e) => {
-                        setNewInput({
-                          ...newInput,
-                          name: e.target.value,
-                        })
+                        setNewInput({ ...newInput, name: e.target.value });
                       }}
                     />
                   </td>
@@ -162,10 +136,7 @@ const ManageFabricator = ({ fabricator, isOpen, onClose }) => {
                       value={newInput.designation}
                       required={true}
                       onChange={(e) => {
-                        setNewInput({
-                          ...newInput,
-                          designation: e.target.value,
-                        })
+                        setNewInput({ ...newInput, designation: e.target.value });
                       }}
                     />
                   </td>
@@ -175,10 +146,7 @@ const ManageFabricator = ({ fabricator, isOpen, onClose }) => {
                       value={newInput.phone}
                       required={true}
                       onChange={(e) => {
-                        setNewInput({
-                          ...newInput,
-                          phone: e.target.value,
-                        })
+                        setNewInput({ ...newInput, phone: e.target.value });
                       }}
                     />
                   </td>
@@ -188,10 +156,7 @@ const ManageFabricator = ({ fabricator, isOpen, onClose }) => {
                       value={newInput.email}
                       required={true}
                       onChange={(e) => {
-                        setNewInput({
-                          ...newInput,
-                          email: e.target.value,
-                        })
+                        setNewInput({ ...newInput, email: e.target.value });
                       }}
                     />
                   </td>
@@ -203,29 +168,9 @@ const ManageFabricator = ({ fabricator, isOpen, onClose }) => {
             {addNew ? 'Save' : 'New'}
           </Button>
         </div>
-
-        {/* Add details */}
-        {/* <div>
-          <div className="mt-5 w-full">
-            <label htmlFor="contract">Upload Standard Design</label>
-            <input
-              className="appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-green-500 peer"
-              type="file"
-              id="contract"
-              accept=".pdf, image/*"
-              onChange={handleContractChange}
-            />
-            {contractName && (
-              <div className="mt-2">
-                <p>Standard Design: {contractName}</p>
-              </div>
-            )}
-            {errors.contract && <p>{errors.contract.message}</p>}
-          </div>
-        </div> */}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default ManageFabricator
+export default ManageFabricator;
