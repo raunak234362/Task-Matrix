@@ -1,4 +1,4 @@
-/* eslint-disable react-refresh/only-export-components */
+/* eslint-disable prettier/prettier */
 /* eslint-disable react/prop-types */
 import React, { useId, useState } from 'react'
 import { Input as InputField, Textarea } from '@material-tailwind/react'
