@@ -166,7 +166,7 @@ const AddFabricator = () => {
                   type="file"
                   id="contract"
                   accept=".pdf, image/* .zip .rar .iso"
-                  {...register("design")}
+                  {...register("design",{required:'This field is required'})}
                 />
                 {contractName && (
                   <div className="mt-2">

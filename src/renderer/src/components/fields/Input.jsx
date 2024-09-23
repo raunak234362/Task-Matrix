@@ -1,11 +1,11 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable react/prop-types */
 import React, { useId, useState } from 'react'
-import { Input as InputField, Textarea } from '@material-tailwind/react'
+// import { Input as InputField, Textarea } from '@material-tailwind/react'
 import { FiEye, FiEyeOff } from "react-icons/fi";
 
 function Input(
-  { label, type = 'text', className, placeholder, variant, ...props },
+  { label, type = 'text', className, placeholder,  ...props },
   ref,
 ) {
   const id = useId()
@@ -17,10 +17,15 @@ function Input(
 
   return (
     <div className="w-full items-center">
+       {label && (
+      <label className="block mb-1 font-bold text-lg text-black" htmlFor={id}>
+        {label}
+      </label>
+    )}
       {type === 'textarea' ? (
-        <Textarea
+        <textarea
           label={label}
-          className={`px-3 py-1 w-full rounded-lg bg-white text-gray-700 border-2 border-gray-300 focus:border-gray-600 focus:bg-slate-300 focus:bg-opacity-60 duration-200 ${className}`}
+          className={`px-3 py-1 w-full rounded-lg bg-white text-gray-700 border-2 border-gray-800 focus:border-gray-600 focus:bg-slate-300 focus:bg-opacity-60 duration-200 ${className}`}
           ref={ref}
           placeholder={placeholder}
           {...props}
@@ -28,11 +33,11 @@ function Input(
         />
       ) : (
         <div className="relative w-full">
-          <InputField
-            variant={variant}
+          <input
+            // variant={variant}
             label={label}
             type={showPassword && type === 'password' ? 'text' : type}
-            className={`px-3 py-1 w-full rounded-lg bg-white text-gray-700 focus:bg-slate-300 focus:bg-opacity-60 duration-200 ${className}`}
+            className={`px-3 py-1 w-full rounded-lg bg-white border-2 border-gray-400 text-gray-700 focus:bg-slate-300 focus:bg-opacity-60 duration-200 ${className}`}
             ref={ref}
             placeholder={label}
             {...props}

@@ -252,7 +252,7 @@ class Service {
     const token = sessionStorage.getItem('token')
     try {
       const response = await fetch(
-        `${BASE_URL}api/fabricator/fabricator/${id}`,
+        `${BASE_URL}api/fabricator/fabricator/${id}/`,
         {
           method: 'DELETE',
           headers: {
