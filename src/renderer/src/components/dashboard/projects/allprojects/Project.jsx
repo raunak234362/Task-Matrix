@@ -1,58 +1,74 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import React, { useEffect, useState } from 'react'
-import { Button, Select } from '../../../index'
-import Service from '../../../../api/configAPI'
-import { useForm } from 'react-hook-form'
-import { BASE_URL } from '../../../../config/constant'
+import React, { useEffect, useState } from 'react';
+import { Button, GaantChart, Select } from '../../../index'; // Ensure GanttChart is imported correctly
+import Service from '../../../../api/configAPI';
+import { useForm } from 'react-hook-form';
+import { BASE_URL } from '../../../../config/constant';
+import SegregateTeam from '../../../../util/SegragateTeam';
 
 const Project = ({ project, isOpen, onClose, setProject }) => {
-  const [members, setMembers] = useState({})
-  const userType = sessionStorage.getItem('userType')
+  const [members, setMembers] = useState({});
+  const [teamTask, setTeamTask] = useState([]);
+  const userType = sessionStorage.getItem('userType');
   const token = sessionStorage.getItem("token");
-  const [teamOption, setTeamOption] =useState([])
+  const [teamOption, setTeamOption] = useState([]);
+  const [taskDetail, setTaskDetail] = useState();
   const { register, handleSubmit, setValue } = useForm({
     defaultValues: {
       status: project?.status || '',
       stage: project?.stage || '',
     },
-  })
+  });
 
   useEffect(() => {
-    function segerateTeam() {
-      let teamMembers = {}
+    function segregateTeam() {
+      let teamMembers = {};
+      let memb = [];
       project?.team?.members?.forEach((member) => {
+        memb.push({
+          employee: member?.employee,
+          date: project?.endDate,
+          role: member?.role,
+        });
         if (member?.role !== 'MANAGER' && member?.role !== 'LEADER') {
           if (member?.role in teamMembers) {
-            teamMembers[member?.role].push(member)
+            teamMembers[member?.role].push(member);
           } else {
-            teamMembers[member?.role] = [member]
+            teamMembers[member?.role] = [member];
           }
         }
-      })
-      setMembers(teamMembers)
+      });
+      setMembers(teamMembers);
+      setTeamTask(memb);
     }
 
     const fetchTeams = async () => {
       try {
         const teamData = await Service.getAllTeam(token);
-        const options= teamData.map((team)=>{
-          return {
-            label: team?.name,
-            value: team?.id
-          }
-        })
-        setTeamOption(options)
-        console.log("Team fetched in project",teamData)
+        const options = teamData.map((team) => ({
+          label: team?.name,
+          value: team?.id,
+        }));
+        setTeamOption(options);
       } catch (error) {
         console.error("Error fetching teams:", error);
       }
     };
 
     fetchTeams();
-    segerateTeam()
-  }, [project])
+    segregateTeam();
+  }, [project]);
+
+  useEffect(() => {
+    async function fetchTasks() {
+      const data1 = await SegregateTeam(teamTask);
+      setTaskDetail(data1);
+    }
+
+    fetchTasks();
+  }, [teamTask]);
 
   useEffect(() => {
     if (project) {
@@ -64,10 +80,8 @@ const Project = ({ project, isOpen, onClose, setProject }) => {
   const onSubmit = async (data) => {
     try {
       const response = await Service.editProject(project?.id, data)
-      // console.log(response);
-      // const updatedProject = await Service.getProject(project?.id);
       setProject(response)
-      onClose() // Close the modal after successful update
+      onClose() 
     } catch (error) {
       console.log(error)
     }
@@ -80,7 +94,7 @@ const Project = ({ project, isOpen, onClose, setProject }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-white h-fit p-8 rounded-lg shadow-lg w-11/12 max-w-4xl">
+      <div className="bg-white h-[80vh] overflow-x-auto p-8 rounded-lg shadow-lg w-11/12 ">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-3xl font-bold text-gray-800">Project Details</h2>
           <button
@@ -89,6 +103,9 @@ const Project = ({ project, isOpen, onClose, setProject }) => {
           >
             Close
           </button>
+        </div>
+        <div>
+        <GaantChart taskData={taskDetail} />
         </div>
 
         <div className="h-fit overflow-y-auto p-4 rounded-lg">

@@ -42,7 +42,7 @@ import BarView from './dashboard/projects/allprojects/BarView'
 import BarViews from './dashboard/projects/allprojects/BarViews'
 import FabricatorCharts from './dashboard/projects/allprojects/FabricatorChart'
 import AddCSV from './dashboard/users/adduser/AddCSV'
-
+import GaantChart from './dashboard/charts/GhantChart'
 export {
   AllUser,
   Project,
@@ -50,6 +50,7 @@ export {
   Toggle,
   AddCSV,
   BarView,
+  GaantChart,
   FabricatorCharts,
   MyProfile,
   EditProject,
