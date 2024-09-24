@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 async function SegregateProject(projects) {
     const blankStages = {
         RFI: [],

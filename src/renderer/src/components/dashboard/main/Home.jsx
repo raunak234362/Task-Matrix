@@ -2,7 +2,7 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react'
 import Service from '../../../api/configAPI'
-import { BarViews, Header } from '../../index'
+import { BarViews, FabricatorCharts, Header } from '../../index'
 import SegregateProject from '../../../util/SegregateProject'
 import { Link, NavLink } from 'react-router-dom'
 
@@ -106,11 +106,19 @@ const Home = () => {
             <p className="mt-2 text-xl font-semibold">Total No. of Users</p>
             </NavLink>
           </div>
-          <div className="bg-green-200 shadow-md p-2 flex flex-col items-center rounded-lg text-center text-gray-800">
+          <div className="bg-gray-200 shadow-md p-2 flex flex-col items-center rounded-lg text-center text-gray-800">
             <NavLink to="manage-team">
             <span className="text-4xl font-bold text-gray-900">{team.length}</span>
             <p className="mt-2 text-xl font-semibold">Total No. of Team</p>
             </NavLink>
+          </div>
+        </div>
+        <div className='bg-gray-200 p-2 mt-5 rounded-lg'>
+          <div>
+          <FabricatorCharts 
+            segregateProject={segregateProject}
+          />
+
           </div>
         </div>
         <div className="grid grid-cols-[69%,30%]  gap-2">
