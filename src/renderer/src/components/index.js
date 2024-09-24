@@ -40,7 +40,7 @@ import ManageFabricator from './dashboard/fabricators/allfabricators/ManageFabri
 import Toggle from './fields/Toggle'
 import BarView from './dashboard/projects/allprojects/BarView'
 import BarViews from './dashboard/projects/allprojects/BarViews'
-
+import FabricatorCharts from './dashboard/projects/allprojects/FabricatorChart'
 import AddCSV from './dashboard/users/adduser/AddCSV'
 
 export {
@@ -50,6 +50,7 @@ export {
   Toggle,
   AddCSV,
   BarView,
+  FabricatorCharts,
   MyProfile,
   EditProject,
   Login,
