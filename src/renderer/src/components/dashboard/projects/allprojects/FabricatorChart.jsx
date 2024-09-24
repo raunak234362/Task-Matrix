@@ -102,6 +102,12 @@ const FabricatorCharts = ({ segregateProject }) => {
                             ]
                         };
 
+                        // Helper function to get project names for tooltip
+                        const getProjectNames = (stage) => {
+                            const projects = fabricatorData[stage]?.map(project => project.name) || [];
+                            return projects.length ? projects : ['No projects'];
+                        };
+
                         return (
                             <div key={fabricatorIndex} className="border p-4 rounded-lg shadow-md bg-white">
                                 <h3 className="text-lg font-bold mb-4">{fabricator}</h3>
@@ -156,6 +162,18 @@ const FabricatorCharts = ({ segregateProject }) => {
                                             plugins: {
                                                 legend: {
                                                     display: false
+                                                },
+                                                tooltip: {
+                                                    callbacks: {
+                                                        label: (tooltipItem) => {
+                                                            const stage = tooltipItem.label;
+                                                            const projects = getProjectNames(stage);
+                                                            return [
+                                                                // `${stage}:`,
+                                                                ...projects.map(project => ` - ${project}`) // Format project names
+                                                            ];
+                                                        }
+                                                    }
                                                 }
                                             },
                                             maintainAspectRatio: true
@@ -173,6 +191,18 @@ const FabricatorCharts = ({ segregateProject }) => {
                                                         font: {
                                                             size: 10,
                                                             weight: 'bold'
+                                                        }
+                                                    }
+                                                },
+                                                tooltip: {
+                                                    callbacks: {
+                                                        label: (tooltipItem) => {
+                                                            const stage = tooltipItem.label;
+                                                            const projects = getProjectNames(stage);
+                                                            return [
+                                                                // `${stage}:`,
+                                                                ...projects.map(project => ` - ${project}`) // Format project names
+                                                            ];
                                                         }
                                                     }
                                                 }
