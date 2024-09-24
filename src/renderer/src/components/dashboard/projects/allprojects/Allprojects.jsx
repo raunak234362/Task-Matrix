@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react'
-import { Button, Project, Header, BarView } from '../../../index'
+import { Button, Project, Header, BarView, FabricatorCharts } from '../../../index'
 import Service from '../../../../api/configAPI'
 import SegregateProject from '../../../../util/SegregateProject'
 
@@ -84,11 +84,21 @@ const Allprojects = () => {
 
       {userType !== 'user' && segregateProject && (
         <div className="flex-grow bg-white shadow-lg rounded-lg p-6">
-          <BarView
+           <div className='bg-gray-200 p-2 mt-5 rounded-lg'>
+          <div>
+          <FabricatorCharts
             segregateProject={segregateProject}
-            setProject={setProjects}
-            setFabricator={setFabricator}
           />
+
+          </div>
+        </div>
+          <div>
+            <BarView
+              segregateProject={segregateProject}
+              setProject={setProjects}
+              setFabricator={setFabricator}
+            />
+          </div>
         </div>
       )}
 
@@ -121,22 +131,42 @@ const Allprojects = () => {
                     <th className="px-1 py-2">S.no</th>
                     <th className="px-1 py-2">
                       <button onClick={() => sortProjects('name')}>
-                        Project Name {sortConfig.key === 'name' ? (sortConfig.direction === 'ascending' ? '' : '') : ''}
+                        Project Name{' '}
+                        {sortConfig.key === 'name'
+                          ? sortConfig.direction === 'ascending'
+                            ? ''
+                            : ''
+                          : ''}
                       </button>
                     </th>
                     <th className="px-1 py-2">
                       <button onClick={() => sortProjects('manager.name')}>
-                        Project Manager {sortConfig.key === 'manager.name' ? (sortConfig.direction === 'ascending' ? '' : '') : ''}
+                        Project Manager{' '}
+                        {sortConfig.key === 'manager.name'
+                          ? sortConfig.direction === 'ascending'
+                            ? ''
+                            : ''
+                          : ''}
                       </button>
                     </th>
                     <th className="px-1 py-2">
                       <button onClick={() => sortProjects('startDate')}>
-                        Start Date {sortConfig.key === 'startDate' ? (sortConfig.direction === 'ascending' ? '' : '') : ''}
+                        Start Date{' '}
+                        {sortConfig.key === 'startDate'
+                          ? sortConfig.direction === 'ascending'
+                            ? ''
+                            : ''
+                          : ''}
                       </button>
                     </th>
                     <th className="px-3 py-2">
                       <button onClick={() => sortProjects('endDate')}>
-                        Approval Date {sortConfig.key === 'endDate' ? (sortConfig.direction === 'ascending' ? '' : '') : ''}
+                        Approval Date{' '}
+                        {sortConfig.key === 'endDate'
+                          ? sortConfig.direction === 'ascending'
+                            ? ''
+                            : ''
+                          : ''}
                       </button>
                     </th>
                     <th className="px-3 py-2">Detail</th>
