@@ -80,7 +80,7 @@ const TeamView = ({ team, isOpen, onClose }) => {
       try {
         const usersData = await Service.getAllUser(token)
         // console.log(team?.members);
-        // console.log(usersData);
+        console.log(usersData);
         const options = usersData
           .map((user) => {
             return {

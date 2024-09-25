@@ -156,7 +156,7 @@ class Service {
         },
       })
       const data = await response.json()
-      console.log('Team fetched: ', data)
+      // console.log('Team fetched: ', data)
       return data
     } catch (error) {
       console.log('Error in getting team list: ', error)
@@ -873,7 +873,11 @@ class Service {
   //Calendar API
   static async fetchCalendar(date, user) {
     const token = sessionStorage.getItem('token')
+    console.log(date, "==================")
     if (date) date = new Date(date)
+    console.log(`?date=${date.getFullYear()}-${
+          date.getMonth() + 1
+        }-${date.getDate()}`)
     try {
       let url = `${BASE_URL}api/task/tasks/calender/`
       if (date && user) {
@@ -887,6 +891,28 @@ class Service {
       } else if (user) {
         url += `?user=${user}`
       }
+
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          Authorization: `Token ${token}`,
+          'Content-Type': 'application/json',
+        },
+      })
+      const data = await response.json()
+      console.log('Calendar: ', data)
+      return data
+    } catch (error) {
+      console.log('Error in getting Calendar: ', error)
+      throw error
+    }
+  }
+
+
+  static async fetchCalendar2(date, user) {
+    const token = sessionStorage.getItem('token')
+    try {
+      let url = `${BASE_URL}api/task/tasks/calender/?date=${date.substring(0, 10)}&user=${user}`
 
       const response = await fetch(url, {
         method: 'GET',

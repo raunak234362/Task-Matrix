@@ -17,11 +17,11 @@ async function SegregateProject(projects) {
     const result = {};
 
     await projects?.forEach((project) => {
-        console.log('segrate data-------',project)
+        // console.log('segrate data-------',project)
         const fabricatorName = project?.fabricator?.name;
         const stage = project?.stage;
         const projectName = project?.name; // Assuming `project` has a `name` property
-        console.log('segrated data-------',projectName )
+        // console.log('segrated data-------',projectName )
         if (fabricatorName) {
             if (!result[fabricatorName]) {
                 result[fabricatorName] = Object.keys(blankStages).reduce((acc, stage) => {

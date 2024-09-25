@@ -68,6 +68,7 @@ function Calendar() {
 
   async function getTasks(dates) {
     const data = await Service.fetchCalendar(dates, user)
+    console.log(data);
     if (data) {
       setListTask(data)
       return data
