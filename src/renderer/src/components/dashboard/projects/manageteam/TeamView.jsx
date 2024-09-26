@@ -19,12 +19,11 @@ const TeamView = ({ team, isOpen, onClose }) => {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors }
   } = useForm()
 
   const editTeam = async () => {
     try {
-      
     } catch (error) {
       console.log(error)
       throw error
@@ -34,17 +33,16 @@ const TeamView = ({ team, isOpen, onClose }) => {
   const addMembers = async (memberData) => {
     try {
       console.log(memberData)
-      if (!memberData?.employee)
-        return alert('Please Select Employee')
+      if (!memberData?.employee) return alert('Please Select Employee')
       const data = await Service.addTeamMember({
         ...memberData,
         teamId: team?.id,
-        token: token,
+        token: token
       })
       console.log('Member Added Successfully', data)
-      alert(`${memberData?.role} Added Successfully`);
+      alert(`${memberData?.role} Added Successfully`)
       dispatch(addTeamMember(data))
-      onClose();
+      // onClose();
       // eslint-disable-next-line prettier/prettier
     } catch (error) {
       console.log(error)
@@ -80,14 +78,13 @@ const TeamView = ({ team, isOpen, onClose }) => {
       try {
         const usersData = await Service.getAllUser(token)
         // console.log(team?.members);
-        console.log(usersData);
-        const options = usersData
-          .map((user) => {
-            return {
-              label: user?.name,
-              value: parseInt(user?.id),
-            }
-          })
+        console.log(usersData)
+        const options = usersData.map((user) => {
+          return {
+            label: user?.name,
+            value: parseInt(user?.id)
+          }
+        })
         setMemberOptions(options)
       } catch (error) {
         console.error('Error fetching users:', error)
@@ -122,16 +119,13 @@ const TeamView = ({ team, isOpen, onClose }) => {
             <form onSubmit={handleSubmit(editTeam)}>
               <div>
                 <div className="mb-2">
-                  <strong className="text-gray-700">Team Name:</strong>{' '}
-                  {team?.name}
+                  <strong className="text-gray-700">Team Name:</strong> {team?.name}
                 </div>
                 <p className="mb-2">
-                  <strong className="text-gray-700">Manager:</strong>{' '}
-                  {team?.created_by?.name}
+                  <strong className="text-gray-700">Manager:</strong> {team?.created_by?.name}
                 </p>
                 <p className="mb-2">
-                  <strong className="text-gray-700">Leader:</strong>{' '}
-                  {team?.leader?.name}
+                  <strong className="text-gray-700">Leader:</strong> {team?.leader?.name}
                 </p>
                 {/* <div className="flex justify-end mt-4">
                   <Button
@@ -163,9 +157,7 @@ const TeamView = ({ team, isOpen, onClose }) => {
                 ))}
               </div>
               <div>
-                <strong className="text-gray-700 text-lg">
-                  Add Team Member:
-                </strong>
+                <strong className="text-gray-700 text-lg">Add Team Member:</strong>
                 <form onSubmit={handleSubmit(addMembers)}>
                   <div>
                     <Select
@@ -187,7 +179,7 @@ const TeamView = ({ team, isOpen, onClose }) => {
                         { label: 'CHECKER', value: 'CHECKER' },
                         { label: 'DETAILER', value: 'DETAILER' },
                         { label: 'ERECTER', value: 'ERECTER' },
-                        { label: 'ADMIN', value: 'ADMIN' },
+                        { label: 'ADMIN', value: 'ADMIN' }
                       ]}
                       {...register('role')}
                     />

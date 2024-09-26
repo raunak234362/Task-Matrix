@@ -17,7 +17,7 @@ import {
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement);
 
 const FabricatorCharts = ({ segregateProject }) => {
-    const [chartType, setChartType] = useState('bar'); // Default to bar chart
+    const [chartType, setChartType] = useState('pie'); // Default to pie chart
     const stages = ['RFI', 'IFA', 'BFA', 'BFA-M', 'RIFA', 'RBFA', 'IFC', 'BFC', 'RIFC', 'REV', 'CO#'];
 
     const generateColors = (count) => {
@@ -58,7 +58,8 @@ const FabricatorCharts = ({ segregateProject }) => {
         return colors;
     };
 
-    const fabricators = Object.keys(segregateProject);
+    // Sort fabricators by name
+    const fabricators = Object.keys(segregateProject).sort((a, b) => a.localeCompare(b));
 
     return (
         <div className="w-full mx-auto">
@@ -66,7 +67,7 @@ const FabricatorCharts = ({ segregateProject }) => {
             <div className="flex justify-end mb-4">
                 <button
                     className="px-4 py-2 bg-blue-500 text-white rounded-md"
-                    onClick={() => setChartType(chartType === 'bar' ? 'pie' : 'bar')}
+                    onClick={() => setChartType(chartType === 'pie' ? 'bar' : 'pie')}
                 >
                     {chartType === 'bar' ? 'Switch to Pie Chart' : 'Switch to Bar Chart'}
                 </button>
@@ -169,7 +170,6 @@ const FabricatorCharts = ({ segregateProject }) => {
                                                             const stage = tooltipItem.label;
                                                             const projects = getProjectNames(stage);
                                                             return [
-                                                                // `${stage}:`,
                                                                 ...projects.map(project => ` - ${project}`) // Format project names
                                                             ];
                                                         }
@@ -200,7 +200,6 @@ const FabricatorCharts = ({ segregateProject }) => {
                                                             const stage = tooltipItem.label;
                                                             const projects = getProjectNames(stage);
                                                             return [
-                                                                // `${stage}:`,
                                                                 ...projects.map(project => ` - ${project}`) // Format project names
                                                             ];
                                                         }

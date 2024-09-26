@@ -143,9 +143,8 @@ return (
 <div>
     <Header title={"Approve Assignee"} />
     <div className="shadow-xl rounded-lg w-full p-5 bg-gray-50">
-    <div className="font-bold text-gray-800 mb-4">Approve Assignee:</div>
     <div className="flex items-center">
-        <table className="min-w-full bg-white">
+        <table className="min-w-full  bg-white">
         <thead className="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
             <tr>
             <th className="py-3 px-6 text-left">S.No</th>

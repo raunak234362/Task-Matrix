@@ -128,12 +128,12 @@ function Calendar() {
               </button>
             </div>
             <div className="grid grid-cols-7 gap-2 text-center font-bold text-gray-700">
+              <div className="text-red-500">S</div>
               <div>M</div>
               <div>T</div>
               <div>W</div>
               <div>T</div>
               <div>F</div>
-              <div className="text-red-500">S</div>
               <div className="text-red-500">S</div>
             </div>
             <div className="grid grid-cols-7 gap-2 mt-2">
