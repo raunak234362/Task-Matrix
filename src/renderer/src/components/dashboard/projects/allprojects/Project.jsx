@@ -2,7 +2,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import React, { useEffect, useState } from 'react';
-import { Button, GaantChart, Select } from '../../../index'; // Ensure GanttChart is imported correctly
+import { Button, GhantChart, Select } from '../../../index'; // Ensure GanttChart is imported correctly
 import Service from '../../../../api/configAPI';
 import { useForm } from 'react-hook-form';
 import { BASE_URL } from '../../../../config/constant';
@@ -105,7 +105,7 @@ const Project = ({ project, isOpen, onClose, setProject }) => {
           </button>
         </div>
         <div>
-        <GaantChart taskData={taskDetail} />
+        <GhantChart taskData={taskDetail} />
         </div>
 
         <div className="h-fit overflow-y-auto p-4 rounded-lg">

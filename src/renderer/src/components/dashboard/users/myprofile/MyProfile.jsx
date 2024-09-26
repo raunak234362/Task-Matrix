@@ -1,4 +1,6 @@
-/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable prettier/prettier */
+/* eslint-disable no-unused-vars */
+
 import React, { useEffect, useState } from "react";
 import Service from "../../../../api/configAPI";
 import Header from "../../Header";

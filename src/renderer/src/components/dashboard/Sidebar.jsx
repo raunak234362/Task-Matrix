@@ -132,6 +132,19 @@ const Sidebar = ({ isSubMenuOpen, setIsSubMenuOpen }) => {
                     </li>
                     <li>
                       <Link
+                        to="/dashboard/gaant"
+                        onClick={() => handleSubMenuClick('gaant')}
+                        className={`block py-2 ${
+                          activeSubMenu === 'gaant'
+                            ? 'bg-white text-gray-900 pl-5 font-bold'
+                            : ''
+                        }`}
+                      >
+                        Gaant Chart
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
                         to="/dashboard/task-record"
                         onClick={() => handleSubMenuClick('task-record')}
                         className={`block py-2 ${

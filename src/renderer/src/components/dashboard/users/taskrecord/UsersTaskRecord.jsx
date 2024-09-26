@@ -60,14 +60,18 @@ const UsersTaskRecord = () => {
     filterTasks()
   }, [user, listTask, userType])
 
+  // Function to convert durations like '2 08:00:00' to total hours (56h for 2 days and 8 hours)
   function durToHour(params) {
-    const [hours, minutes] = params.split(':')
-    return `${hours}h ${minutes}m`
+    const [days, time] = params.split(' ') // Split into days and time if days are present
+    const [hours, minutes] = time.split(':') // Split time into hours and minutes
+    const totalHours = parseInt(days) * 24 + parseInt(hours) // Convert days to hours and add to the hours
+    return `${totalHours}h ${minutes}m`
   }
 
+  // Function to convert seconds to hours, even for durations > 24 hours
   function secToHour(params) {
-    const hours = Math.floor(params / 3600)
-    const minutes = Math.floor((params % 3600) / 60)
+    const hours = Math.floor(params / 3600) // Calculate total hours (including any that exceed 24)
+    const minutes = Math.floor((params % 3600) / 60) // Calculate remaining minutes
     return `${hours}h ${minutes}m`
   }
 
@@ -77,8 +81,10 @@ const UsersTaskRecord = () => {
   }
 
   function convertToSeconds(duration) {
-    const [hours, minutes, seconds] = duration.split(':')
-    const totalSeconds = parseInt(hours) * 3600 + parseInt(minutes) * 60 + parseInt(seconds)
+    const [days, time] = duration.split(' ')
+    const [hours, minutes, seconds] = time.split(':')
+    const totalSeconds =
+      (parseInt(days) * 24 * 3600) + parseInt(hours) * 3600 + parseInt(minutes) * 60 + parseInt(seconds)
     return totalSeconds
   }
 
@@ -138,7 +144,7 @@ const UsersTaskRecord = () => {
                 <td className="px-6 py-4 whitespace-nowrap">{durToHour(rec?.task?.duration)}</td>
                 <td
                   className={`px-6 py-4 whitespace-nowrap ${
-                    compare(rec?.task?.duration, rec?.time_taken)
+                    compare(durToHour(rec?.task?.duration), rec?.time_taken)
                       ? 'text-green-600'
                       : 'text-red-600'
                   }`}

@@ -41,11 +41,25 @@ const AllTask = () => {
       results = results.filter(task => task.status === statusFilter);
     }
 
+    // Sort results if sortConfig is set
+    if (sortConfig.key) {
+      results.sort((a, b) => {
+        const isAsc = sortConfig.direction === 'ascending';
+        if (a[sortConfig.key] < b[sortConfig.key]) {
+          return isAsc ? -1 : 1;
+        }
+        if (a[sortConfig.key] > b[sortConfig.key]) {
+          return isAsc ? 1 : -1;
+        }
+        return 0;
+      });
+    }
+
     setFilteredTasks(results);
-  }, [searchTerm, tasks, priorityFilter, statusFilter]);
+  }, [searchTerm, tasks, priorityFilter, statusFilter, sortConfig]);
 
   const handleViewClick = async (taskId) => {
-    console.log(taskId)
+    console.log(taskId);
     try {
       const task = await Service.getTaskById(taskId);
       setSelectedTask(task);
@@ -66,17 +80,6 @@ const AllTask = () => {
       direction = 'descending';
     }
     setSortConfig({ key, direction });
-
-    const sortedTasks = [...filteredTasks].sort((a, b) => {
-      if (a[key] < b[key]) {
-        return direction === 'ascending' ? -1 : 1;
-      }
-      if (a[key] > b[key]) {
-        return direction === 'ascending' ? 1 : -1;
-      }
-      return 0;
-    });
-    setFilteredTasks(sortedTasks);
   };
 
   const handleSortChange = (event) => {
@@ -124,6 +127,13 @@ const AllTask = () => {
     }
   };
 
+  const getSortIndicator = (key) => {
+    if (sortConfig.key === key) {
+      return sortConfig.direction === 'ascending' ? ' ↑' : ' ↓';
+    }
+    return null;
+  };
+
   return (
     <div>
       <Header title={"All Task"} />
@@ -160,13 +170,13 @@ const AllTask = () => {
               <table className="w-full table-auto border-collapse text-center rounded-xl">
                 <thead>
                   <tr className="bg-gray-200">
-                    <th className="px-1 py-2">S.no</th>
-                    <th className="px-1 py-2">Project Name</th>
-                    <th className="px-1 py-2">Task Name</th>
-                    <th className="px-1 py-2">Current User</th>
-                    <th className="px-1 py-2">Status</th>
-                    <th className="px-1 py-2">Priority</th>
-                    <th className="px-1 py-2">Due Date</th>
+                    <th className="px-1 py-2 cursor-pointer" onClick={() => sortTasks('id')}>S.no {getSortIndicator('id')}</th>
+                    <th className="px-1 py-2 cursor-pointer" onClick={() => sortTasks('project.name')}>Project Name {getSortIndicator('project.name')}</th>
+                    <th className="px-1 py-2 cursor-pointer" onClick={() => sortTasks('name')}>Task Name {getSortIndicator('name')}</th>
+                    <th className="px-1 py-2 cursor-pointer" onClick={() => sortTasks('user.name')}>Current User {getSortIndicator('user.name')}</th>
+                    <th className="px-1 py-2 cursor-pointer" onClick={() => sortTasks('status')}>Status {getSortIndicator('status')}</th>
+                    <th className="px-1 py-2 cursor-pointer" onClick={() => sortTasks('priority')}>Priority {getSortIndicator('priority')}</th>
+                    <th className="px-1 py-2 cursor-pointer" onClick={() => sortTasks('due_date')}>Due Date {getSortIndicator('due_date')}</th>
                     <th className="px-1 py-2">Option</th>
                   </tr>
                 </thead>
@@ -178,29 +188,19 @@ const AllTask = () => {
                       </td>
                     </tr>
                   ) : (
-                    filteredTasks?.map((task, index) => (
+                    filteredTasks.map((task, index) => (
                       <tr key={task.id}>
                         <td className="border px-1 py-2">{index + 1}</td>
-                        <td className="border px-1 py-2">
-                          {task?.project?.name}
-                        </td>
+                        <td className="border px-1 py-2">{task?.project?.name}</td>
                         <td className="border px-1 py-2">{task?.name}</td>
-                        <td className="border px-1 py-2">
-                          {task?.user?.name}
-                        </td>
-                        <td className="border px-1 py-2">
-                          {task?.status}
-                        </td>
+                        <td className="border px-1 py-2">{task?.user?.name}</td>
+                        <td className="border px-1 py-2">{task?.status}</td>
                         <td className={`border px-1 py-2`}>
                           <span className={`text-sm text-center font-semibold px-3 py-0.5 mx-2 rounded-full border ${color(task?.priority)}`}>{setPriorityValue(task?.priority)}</span>
                         </td>
-                        <td className="border px-1 py-2">
-                          {new Date(task?.due_date).toDateString()}
-                        </td>
+                        <td className="border px-1 py-2">{new Date(task?.due_date).toDateString()}</td>
                         <td className="border px-3 flex justify-center py-2">
-                          <Button onClick={() => handleViewClick(task?.id)}>
-                            View
-                          </Button>
+                          <Button onClick={() => handleViewClick(task?.id)}>View</Button>
                         </td>
                       </tr>
                     ))
@@ -216,7 +216,6 @@ const AllTask = () => {
           task={selectedTask}
           isOpen={isModalOpen}
           onClose={handleCloseModal}
-          setTasks={setSelectedTask}
         />
       )}
     </div>

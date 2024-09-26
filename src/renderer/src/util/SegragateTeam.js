@@ -26,8 +26,6 @@ async function SegregateTeam(team) {
       //   startDate: task.startDate,
       //   endDate: task.endDate,
       // }));
-
-      // yahan api call karo aur phir tasks ka ek array banao
       
   
       if (role && tasks) {

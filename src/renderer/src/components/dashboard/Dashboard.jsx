@@ -22,7 +22,8 @@ import {
   AllTask,
   ApproveAssignee,
   UsersTaskRecord,
-  Header
+  Header,
+  GaantChart
 } from '../index'
 
 const Dashboard = () => {
@@ -44,6 +45,7 @@ const Dashboard = () => {
             <Route path="/add-user" element={<AddUser />} />
             <Route path="/all-user" element={<AllUser />} />
             <Route path="/calendar" element={<Calendar />} />
+            <Route path="/gaant" element={<GaantChart />} />
             <Route path="/add-project" element={<AddProject />} />
             <Route path="/add-task" element={<AddTask />} />
             <Route path="/all-project" element={<Allprojects />} />
