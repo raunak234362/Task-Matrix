@@ -153,6 +153,12 @@ const UsersTaskRecord = () => {
                 Task Title
               </th>
               <th className="px-6 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">
+                Start Date
+              </th>
+              <th className="px-6 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">
+                Due Date
+              </th>
+              <th className="px-6 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">
                 Time Alloted
               </th>
               <th className="px-6 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">
@@ -166,9 +172,12 @@ const UsersTaskRecord = () => {
           <tbody className="bg-white divide-y divide-gray-200 font-medium">
             {record?.map((rec, index) => (
               <tr key={rec?.id} className="hover:bg-slate-200">
+                {/* {console.log(rec?.task?.)} */}
                 <td className="px-6 py-4 whitespace-nowrap">{index + 1}</td>
                 <td className="px-6 py-4 whitespace-nowrap">{rec?.task?.project?.name || 'N/A'}</td>
                 <td className="px-6 py-4 whitespace-nowrap">{rec?.task?.name || 'N/A'}</td>
+                <td className="px-6 py-4 whitespace-nowrap">{rec?.task?.created_on || 'N/A'}</td>
+                <td className="px-6 py-4 whitespace-nowrap">{rec?.task?.due_date || 'N/A'}</td>
                 <td className="px-6 py-4 whitespace-nowrap">{durToHour(rec?.task?.duration)}</td>
                 <td
                   className={`px-6 py-4 whitespace-nowrap ${
