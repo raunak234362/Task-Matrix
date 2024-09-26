@@ -72,7 +72,7 @@ const TeamView = ({ team, isOpen, onClose }) => {
         }
       })
       setMembers(teamMembers)
-    }
+    } 
 
     const fetchUsers = async () => {
       try {

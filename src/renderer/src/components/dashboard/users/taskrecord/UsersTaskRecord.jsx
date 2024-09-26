@@ -42,7 +42,9 @@ const UsersTaskRecord = () => {
       }
     }
 
-    fetchTask()
+    if (user) {
+      fetchTask()
+    }
   }, [user])
 
   useEffect(() => {
@@ -62,29 +64,56 @@ const UsersTaskRecord = () => {
 
   // Function to convert durations like '2 08:00:00' to total hours (56h for 2 days and 8 hours)
   function durToHour(params) {
-    const [days, time] = params.split(' ') // Split into days and time if days are present
-    const [hours, minutes] = time.split(':') // Split time into hours and minutes
-    const totalHours = parseInt(days) * 24 + parseInt(hours) // Convert days to hours and add to the hours
+    if (!params) return 'N/A'
+    
+    const parts = params.split(' ')
+    let days = 0
+    let timePart = params
+
+    // If duration contains days part, it will have two parts
+    if (parts.length === 2) {
+      days = parseInt(parts[0], 10) // extract days
+      timePart = parts[1] // extract the time part
+    }
+
+    // Time part is in format HH:MM:SS
+    const [hours, minutes, seconds] = timePart.split(':').map(Number)
+
+    const totalHours = days * 24 + hours // Convert days to hours and add them
     return `${totalHours}h ${minutes}m`
   }
 
   // Function to convert seconds to hours, even for durations > 24 hours
   function secToHour(params) {
+    if (!params && params !== 0) return 'N/A'
     const hours = Math.floor(params / 3600) // Calculate total hours (including any that exceed 24)
     const minutes = Math.floor((params % 3600) / 60) // Calculate remaining minutes
     return `${hours}h ${minutes}m`
   }
 
+  // Comparing if the time taken is greater than or equal to allotted duration
   function compare(duration, time) {
     const durationInSeconds = convertToSeconds(duration)
     return durationInSeconds >= time
   }
 
+  // Converting duration (in format '2 08:00:00') into total seconds for comparison
   function convertToSeconds(duration) {
-    const [days, time] = duration.split(' ')
-    const [hours, minutes, seconds] = time.split(':')
-    const totalSeconds =
-      (parseInt(days) * 24 * 3600) + parseInt(hours) * 3600 + parseInt(minutes) * 60 + parseInt(seconds)
+    if (!duration) return 0
+
+    const parts = duration.split(' ')
+    let days = 0
+    let timePart = duration
+
+    if (parts.length === 2) {
+      days = parseInt(parts[0], 10) // extract days
+      timePart = parts[1] // extract the time part
+    }
+
+    // Time part is in format HH:MM:SS
+    const [hours, minutes, seconds] = timePart.split(':').map(Number)
+
+    const totalSeconds = (days * 24 * 3600) + (hours * 3600) + (minutes * 60) + (seconds || 0)
     return totalSeconds
   }
 
@@ -136,22 +165,21 @@ const UsersTaskRecord = () => {
           </thead>
           <tbody className="bg-white divide-y divide-gray-200 font-medium">
             {record?.map((rec, index) => (
-              <tr key={rec?.id} className=" hover:bg-slate-200">
-                {console.log('usertask&&&&&&&&&&&&&&', record)}
+              <tr key={rec?.id} className="hover:bg-slate-200">
                 <td className="px-6 py-4 whitespace-nowrap">{index + 1}</td>
-                <td className="px-6 py-4 whitespace-nowrap">{rec?.task?.project?.name}</td>
-                <td className="px-6 py-4 whitespace-nowrap">{rec?.task?.name}</td>
+                <td className="px-6 py-4 whitespace-nowrap">{rec?.task?.project?.name || 'N/A'}</td>
+                <td className="px-6 py-4 whitespace-nowrap">{rec?.task?.name || 'N/A'}</td>
                 <td className="px-6 py-4 whitespace-nowrap">{durToHour(rec?.task?.duration)}</td>
                 <td
                   className={`px-6 py-4 whitespace-nowrap ${
-                    compare(durToHour(rec?.task?.duration), rec?.time_taken)
+                    compare(rec?.task?.duration, rec?.time_taken)
                       ? 'text-green-600'
                       : 'text-red-600'
                   }`}
                 >
                   {secToHour(rec?.time_taken)}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap">{rec?.task?.status}</td>
+                <td className="px-6 py-4 whitespace-nowrap">{rec?.task?.status || 'N/A'}</td>
               </tr>
             ))}
           </tbody>
