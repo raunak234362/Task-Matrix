@@ -51,7 +51,7 @@ const Task = ({ taskId, setDisplay }) => {
     }
 
     handleProjectChange()
-  }, [tasks])
+  }, [])
 
   useEffect(() => {
     switch (tasks?.priority) {
@@ -158,7 +158,6 @@ const Task = ({ taskId, setDisplay }) => {
       })
   }
 
-  console.log(record)
 
   function handleEnd() {
     Service.endTask(tasks?.record)
@@ -200,9 +199,29 @@ const Task = ({ taskId, setDisplay }) => {
     }
   }
 
+  function durToHour(params) {
+    if (!params) return 'N/A'
+    
+    const parts = params.split(' ')
+    let days = 0
+    let timePart = params
+
+    // If duration contains days part, it will have two parts
+    if (parts.length === 2) {
+      days = parseInt(parts[0], 10) // extract days
+      timePart = parts[1] // extract the time part
+    }
+
+    // Time part is in format HH:MM:SS
+    const [hours, minutes, seconds] = timePart.split(':').map(Number)
+
+    const totalHours = days * 24 + hours // Convert days to hours and add them
+    return `${totalHours}h ${minutes}m`
+  }
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-white p-8 rounded-lg shadow-lg w-11/12 h-[85vh] overflow-hidden ">
+      <div className="bg-white p-8 rounded-lg shadow-lg w-screen h-screen overflow-hidden ">
         <div className="flex justify-between mb-5">
           <div className="text-2xl">
             <span className="font-bold text-gray-800">Task Name:</span> {tasks?.name}
@@ -240,7 +259,9 @@ const Task = ({ taskId, setDisplay }) => {
 
                   <div className="flex items-center">
                     <span className="font-bold text-gray-800 w-40">Duration:</span>{' '}
-                    <span className="text-lg">{tasks?.duration}</span>
+                    <span className="text-lg">{durToHour(tasks?.duration)}
+
+                    </span>
                   </div>
                   <div className="flex items-center py-2">
                     <span className="font-bold text-gray-800 w-40">Status:</span>{' '}

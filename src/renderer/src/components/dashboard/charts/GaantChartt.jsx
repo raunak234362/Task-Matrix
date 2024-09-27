@@ -99,7 +99,7 @@ const GanttChartt = ({ taskData }) => {
             {filteredTeam?.map((taskGroup, index) => (
               <div
                 key={taskGroup.id}
-                className={`h-12 flex items-center px-2 font-medium text-sm text-gray-700 truncate bg-gray-200 border-b ${
+                className={`h-12 flex items-center px-2 font-medium text-sm text-gray-400 truncate bg-gray-200 border-b ${
                   index === filteredTeam.length - 1 ? '' : 'border-b border-gray-400'
                 }`}
               >
