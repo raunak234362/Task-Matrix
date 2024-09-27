@@ -139,32 +139,32 @@ const UsersTaskRecord = () => {
           />
         </div>
       )}
-      <div className="shadow-xl rounded-lg w-[95vw] p-5 bg-gray-50">
-        <table className="mt-5 w-[93vw] overflow-x-auto text-md ">
+      <div className="shadow-xl rounded-lg p-5 bg-gray-50 overflow-x-auto">
+        <table className="mt-5 min-w-full text-md ">
           <thead className="bg-slate-200">
             <tr>
-              <th className="px-6 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-2 py-3 text-left font-medium text-gray-500 uppercase tracking-wider min-w-[50px]">
                 S.no
               </th>
-              <th className="px-6 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-2 py-3 text-left font-medium text-gray-500 uppercase tracking-wider min-w-[120px]">
                 Project
               </th>
-              <th className="px-6 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-2 py-3 text-left font-medium text-gray-500 uppercase tracking-wider min-w-[180px] break-words">
                 Task Title
               </th>
-              <th className="px-6 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-2 py-3 text-left font-medium text-gray-500 uppercase tracking-wider min-w-[120px]">
                 Start Date
               </th>
-              <th className="px-6 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-2 py-3 text-left font-medium text-gray-500 uppercase tracking-wider min-w-[120px]">
                 Due Date
               </th>
-              <th className="px-6 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-2 py-3 text-left font-medium text-gray-500 uppercase tracking-wider min-w-[100px]">
                 Time Alloted
               </th>
-              <th className="px-6 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-2 py-3 text-left font-medium text-gray-500 uppercase tracking-wider min-w-[100px]">
                 Time Taken
               </th>
-              <th className="px-6 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-2 py-3 text-left font-medium text-gray-500 uppercase tracking-wider min-w-[100px]">
                 Task Status
               </th>
             </tr>
@@ -172,15 +172,14 @@ const UsersTaskRecord = () => {
           <tbody className="bg-white divide-y divide-gray-200 font-medium">
             {record?.map((rec, index) => (
               <tr key={rec?.id} className="hover:bg-slate-200">
-                {/* {console.log(rec?.task?.)} */}
-                <td className="px-6 py-4 whitespace-nowrap">{index + 1}</td>
-                <td className="px-6 py-4 whitespace-nowrap">{rec?.task?.project?.name || 'N/A'}</td>
-                <td className="px-6 py-4 whitespace-nowrap">{rec?.task?.name || 'N/A'}</td>
-                <td className="px-6 py-4 whitespace-nowrap">
+                <td className="px-1 py-4 whitespace-nowrap">{index + 1}</td>
+                <td className="px-2 py-4 whitespace-nowrap">{rec?.task?.project?.name || 'N/A'}</td>
+                <td className="px-2 py-4 whitespace-nowrap break-words">{rec?.task?.name || 'N/A'}</td>
+                <td className="px-2 py-4 whitespace-nowrap">
                   {rec?.task?.created_on ? new Date(rec.task.created_on).toISOString().slice(0, 10) : 'N/A'}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap">{rec?.task?.due_date || 'N/A'}</td>
-                <td className="px-6 py-4 whitespace-nowrap">{durToHour(rec?.task?.duration)}</td>
+                <td className="px-2 py-4 whitespace-nowrap">{rec?.task?.due_date || 'N/A'}</td>
+                <td className="px-2 py-4 whitespace-nowrap">{durToHour(rec?.task?.duration)}</td>
                 <td
                   className={`px-6 py-4 whitespace-nowrap ${
                     compare(rec?.task?.duration, rec?.time_taken)
