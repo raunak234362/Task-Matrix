@@ -50,6 +50,7 @@ const AddTask = () => {
         label: `${member?.role} - ${member?.employee?.name}`,
         value: member?.employee?.id
       }))
+      console.log('Assigned users---',assigned)
       setAssignedUser(assigned)
     } catch (error) {
       console.error('Error fetching project details:', error)

@@ -176,7 +176,9 @@ const UsersTaskRecord = () => {
                 <td className="px-6 py-4 whitespace-nowrap">{index + 1}</td>
                 <td className="px-6 py-4 whitespace-nowrap">{rec?.task?.project?.name || 'N/A'}</td>
                 <td className="px-6 py-4 whitespace-nowrap">{rec?.task?.name || 'N/A'}</td>
-                <td className="px-6 py-4 whitespace-nowrap">{rec?.task?.created_on || 'N/A'}</td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  {rec?.task?.created_on ? new Date(rec.task.created_on).toISOString().slice(0, 10) : 'N/A'}
+                </td>
                 <td className="px-6 py-4 whitespace-nowrap">{rec?.task?.due_date || 'N/A'}</td>
                 <td className="px-6 py-4 whitespace-nowrap">{durToHour(rec?.task?.duration)}</td>
                 <td

@@ -94,7 +94,7 @@ const Project = ({ project, isOpen, onClose, setProject }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-white h-[80vh] overflow-x-auto p-8 rounded-lg shadow-lg w-11/12 ">
+      <div className="bg-white h-screen overflow-x-auto p-8 rounded-lg shadow-lg w-screen ">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-3xl font-bold text-gray-800">Project Details</h2>
           <button

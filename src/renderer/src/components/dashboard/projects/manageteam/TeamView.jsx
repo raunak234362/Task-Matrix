@@ -71,6 +71,7 @@ const TeamView = ({ team, isOpen, onClose }) => {
           }
         }
       })
+      console.log(teamMembers)
       setMembers(teamMembers)
     } 
 
@@ -78,7 +79,7 @@ const TeamView = ({ team, isOpen, onClose }) => {
       try {
         const usersData = await Service.getAllUser(token)
         // console.log(team?.members);
-        console.log(usersData)
+        // console.log(usersData)
         const options = usersData.map((user) => {
           return {
             label: user?.name,
@@ -103,7 +104,7 @@ const TeamView = ({ team, isOpen, onClose }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-white max-h-[60vh] overflow-y-auto p-8 rounded-lg shadow-lg w-11/12 max-w-4xl">
+      <div className="bg-white h-screen overflow-y-auto p-8 rounded-lg shadow-lg w-screen">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-3xl font-bold text-gray-800">Team Details</h2>
           <button

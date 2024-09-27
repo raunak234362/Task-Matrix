@@ -23,9 +23,26 @@ const MyTask = () => {
     fetchTask();
   }, [tasks]);
 
+  
+  // Function to convert durations like '2 08:00:00' to total hours (56h for 2 days and 8 hours)
   function durToHour(params) {
-    const [hours, minutes] = params.split(":");
-    return `${hours}h ${minutes}m`;
+    if (!params) return 'N/A'
+    
+    const parts = params.split(' ')
+    let days = 0
+    let timePart = params
+
+    // If duration contains days part, it will have two parts
+    if (parts.length === 2) {
+      days = parseInt(parts[0], 10) // extract days
+      timePart = parts[1] // extract the time part
+    }
+
+    // Time part is in format HH:MM:SS
+    const [hours, minutes, seconds] = timePart.split(':').map(Number)
+
+    const totalHours = days * 24 + hours // Convert days to hours and add them
+    return `${totalHours}h ${minutes}m`
   }
 
   function statusColor(status) {
