@@ -212,14 +212,15 @@ const Project = ({ project, isOpen, onClose, setProject }) => {
                           name="team"
                           className="text-base"
                           options={[
-                            {
-                              label: 'Select Team',
-                              value: ''
-                            },
+                            // {
+                            //   label: 'Select Team',
+                            //   value: ''
+                            // },
                             ...teamOption
                           ]}
+                          defaultValue={project?.team}
                           {...register('team')}
-                        />
+                          />
                         <Select
                           label="Status"
                           name="status"
