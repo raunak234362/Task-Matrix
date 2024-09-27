@@ -139,8 +139,8 @@ const UsersTaskRecord = () => {
           />
         </div>
       )}
-      <div className="shadow-xl rounded-lg w-full p-5 bg-gray-50">
-        <table className="mt-5 min-w-full divide-y text-md divide-gray-200">
+      <div className="shadow-xl rounded-lg w-[95vw] p-5 bg-gray-50">
+        <table className="mt-5 w-[93vw] overflow-x-auto text-md ">
           <thead className="bg-slate-200">
             <tr>
               <th className="px-6 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">
