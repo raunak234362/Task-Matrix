@@ -78,8 +78,6 @@ const TeamView = ({ team, isOpen, onClose }) => {
     const fetchUsers = async () => {
       try {
         const usersData = await Service.getAllUser(token)
-        // console.log(team?.members);
-        // console.log(usersData)
         const options = usersData.map((user) => {
           return {
             label: user?.name,
