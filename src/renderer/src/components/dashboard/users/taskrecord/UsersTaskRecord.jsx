@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react'
 import Service from '../../../../api/configAPI'
 import Header from '../../Header'
 import { Input, Select } from '../../../index'
+import UsersTask from './UsersTask'
 
 const UsersTaskRecord = () => {
   const [record, setRecord] = useState([])
@@ -11,6 +12,8 @@ const UsersTaskRecord = () => {
   const [searchUser, setSearchUser] = useState([])
   const [sortedUser, setSortedUser] = useState([])
   const [listTask, setListTask] = useState([])
+  const [selectedTask, setSelectedTask] = useState(null) // For the selected task
+  const [showModal, setShowModal] = useState(false) // Modal state
   const token = sessionStorage.getItem('token')
   const userType = sessionStorage.getItem('userType')
 
@@ -62,7 +65,6 @@ const UsersTaskRecord = () => {
     filterTasks()
   }, [user, listTask, userType])
 
-  // Function to convert durations like '2 08:00:00' to total hours (56h for 2 days and 8 hours)
   function durToHour(params) {
     if (!params) return 'N/A'
     
@@ -70,34 +72,28 @@ const UsersTaskRecord = () => {
     let days = 0
     let timePart = params
 
-    // If duration contains days part, it will have two parts
     if (parts.length === 2) {
-      days = parseInt(parts[0], 10) // extract days
-      timePart = parts[1] // extract the time part
+      days = parseInt(parts[0], 10)
+      timePart = parts[1]
     }
 
-    // Time part is in format HH:MM:SS
-    const [hours, minutes, seconds] = timePart.split(':').map(Number)
-
-    const totalHours = days * 24 + hours // Convert days to hours and add them
+    const [hours, minutes] = timePart.split(':').map(Number)
+    const totalHours = days * 24 + hours
     return `${totalHours}h ${minutes}m`
   }
 
-  // Function to convert seconds to hours, even for durations > 24 hours
   function secToHour(params) {
     if (!params && params !== 0) return 'N/A'
-    const hours = Math.floor(params / 3600) // Calculate total hours (including any that exceed 24)
-    const minutes = Math.floor((params % 3600) / 60) // Calculate remaining minutes
+    const hours = Math.floor(params / 3600)
+    const minutes = Math.floor((params % 3600) / 60)
     return `${hours}h ${minutes}m`
   }
 
-  // Comparing if the time taken is greater than or equal to allotted duration
   function compare(duration, time) {
     const durationInSeconds = convertToSeconds(duration)
     return durationInSeconds >= time
   }
 
-  // Converting duration (in format '2 08:00:00') into total seconds for comparison
   function convertToSeconds(duration) {
     if (!duration) return 0
 
@@ -106,15 +102,23 @@ const UsersTaskRecord = () => {
     let timePart = duration
 
     if (parts.length === 2) {
-      days = parseInt(parts[0], 10) // extract days
-      timePart = parts[1] // extract the time part
+      days = parseInt(parts[0], 10)
+      timePart = parts[1]
     }
 
-    // Time part is in format HH:MM:SS
     const [hours, minutes, seconds] = timePart.split(':').map(Number)
-
     const totalSeconds = (days * 24 * 3600) + (hours * 3600) + (minutes * 60) + (seconds || 0)
     return totalSeconds
+  }
+
+  const handleRowClick = (task) => {
+    setSelectedTask(task) // Set the clicked task
+    setShowModal(true) // Open the modal
+  }
+
+  const closeModal = () => {
+    setSelectedTask(null)
+    setShowModal(false) // Close the modal
   }
 
   return (
@@ -143,35 +147,19 @@ const UsersTaskRecord = () => {
         <table className="mt-5 min-w-full text-md ">
           <thead className="bg-slate-200">
             <tr>
-              <th className="px-2 py-3 text-left font-medium text-gray-500 uppercase tracking-wider min-w-[50px]">
-                S.no
-              </th>
-              <th className="px-2 py-3 text-left font-medium text-gray-500 uppercase tracking-wider min-w-[120px]">
-                Project
-              </th>
-              <th className="px-2 py-3 text-left font-medium text-gray-500 uppercase tracking-wider min-w-[180px] break-words">
-                Task Title
-              </th>
-              <th className="px-2 py-3 text-left font-medium text-gray-500 uppercase tracking-wider min-w-[120px]">
-                Start Date
-              </th>
-              <th className="px-2 py-3 text-left font-medium text-gray-500 uppercase tracking-wider min-w-[120px]">
-                Due Date
-              </th>
-              <th className="px-2 py-3 text-left font-medium text-gray-500 uppercase tracking-wider min-w-[100px]">
-                Time Alloted
-              </th>
-              <th className="px-2 py-3 text-left font-medium text-gray-500 uppercase tracking-wider min-w-[100px]">
-                Time Taken
-              </th>
-              <th className="px-2 py-3 text-left font-medium text-gray-500 uppercase tracking-wider min-w-[100px]">
-                Task Status
-              </th>
+              <th className="px-2 py-3 text-left font-medium text-gray-500 uppercase tracking-wider min-w-[50px]">S.no</th>
+              <th className="px-2 py-3 text-left font-medium text-gray-500 uppercase tracking-wider min-w-[120px]">Project</th>
+              <th className="px-2 py-3 text-left font-medium text-gray-500 uppercase tracking-wider min-w-[180px] break-words">Task Title</th>
+              <th className="px-2 py-3 text-left font-medium text-gray-500 uppercase tracking-wider min-w-[120px]">Start Date</th>
+              <th className="px-2 py-3 text-left font-medium text-gray-500 uppercase tracking-wider min-w-[120px]">Due Date</th>
+              <th className="px-2 py-3 text-left font-medium text-gray-500 uppercase tracking-wider min-w-[100px]">Time Allotted</th>
+              <th className="px-2 py-3 text-left font-medium text-gray-500 uppercase tracking-wider min-w-[100px]">Time Taken</th>
+              <th className="px-2 py-3 text-left font-medium text-gray-500 uppercase tracking-wider min-w-[100px]">Task Status</th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200 font-medium">
             {record?.map((rec, index) => (
-              <tr key={rec?.id} className="hover:bg-slate-200">
+              <tr key={rec?.id} className="hover:bg-slate-200 cursor-pointer" onClick={() => handleRowClick(rec)}>
                 <td className="px-1 py-4 whitespace-nowrap">{index + 1}</td>
                 <td className="px-2 py-4 whitespace-nowrap">{rec?.task?.project?.name || 'N/A'}</td>
                 <td className="px-2 py-4 whitespace-nowrap break-words">{rec?.task?.name || 'N/A'}</td>
@@ -182,9 +170,7 @@ const UsersTaskRecord = () => {
                 <td className="px-2 py-4 whitespace-nowrap">{durToHour(rec?.task?.duration)}</td>
                 <td
                   className={`px-6 py-4 whitespace-nowrap ${
-                    compare(rec?.task?.duration, rec?.time_taken)
-                      ? 'text-green-600'
-                      : 'text-red-600'
+                    compare(rec?.task?.duration, rec?.time_taken) ? 'text-green-600' : 'text-red-600'
                   }`}
                 >
                   {secToHour(rec?.time_taken)}
@@ -195,6 +181,11 @@ const UsersTaskRecord = () => {
           </tbody>
         </table>
       </div>
+
+      {/* Modal to show selected task details */}
+      {showModal && (
+        <UsersTask task={selectedTask} onClose={closeModal} />
+      )}
     </div>
   )
 }

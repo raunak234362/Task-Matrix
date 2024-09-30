@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react'
 import Service from "../api/configAPI";
 
 async function getTask(employee, dates){
-  console.log(dates, employee)
+  // console.log(dates, employee)
   const tasks = await Service.fetchCalendar2(dates, employee);
   return tasks;
 }

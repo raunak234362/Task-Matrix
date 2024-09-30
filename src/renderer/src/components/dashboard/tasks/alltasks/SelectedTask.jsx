@@ -9,43 +9,45 @@ import { useForm } from 'react-hook-form'
 const SelectedTask = ({ task, isOpen, onClose, setTasks }) => {
   const [isEditing, setIsEditing] = useState(false)
   const username = sessionStorage.getItem('username')
-  const [newComment, setNewComment] = useState('')
   const userType = sessionStorage.getItem('userType')
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors }
   } = useForm()
 
   if (!isOpen) return null
 
-  const handleEditClick = (e) => {
-    e.preventDefault()
+  const handleEditClick = () => {
     setIsEditing(true)
+    // Populate the form with current task data
+    setValue('name', task.name)
+    setValue('description', task.description)
+    setValue('due_date', task.due_date)
+    setValue('duration', task.duration)
+    setValue('status', task.status)
+    setValue('priority', task.priority)
   }
+
   const handleSaveClick = () => {
     setIsEditing(false)
   }
 
-  
-  // Function to convert durations like '2 08:00:00' to total hours (56h for 2 days and 8 hours)
-  function durToHour(params) {
+  const durToHour = (params) => {
     if (!params) return 'N/A'
-    
+
     const parts = params.split(' ')
     let days = 0
     let timePart = params
 
-    // If duration contains days part, it will have two parts
     if (parts.length === 2) {
-      days = parseInt(parts[0], 10) // extract days
-      timePart = parts[1] // extract the time part
+      days = parseInt(parts[0], 10)
+      timePart = parts[1]
     }
 
-    // Time part is in format HH:MM:SS
     const [hours, minutes, seconds] = timePart.split(':').map(Number)
-
-    const totalHours = days * 24 + hours // Convert days to hours and add them
+    const totalHours = days * 24 + hours
     return `${totalHours}h ${minutes}m`
   }
 
@@ -61,60 +63,60 @@ const SelectedTask = ({ task, isOpen, onClose, setTasks }) => {
 
   const onSubmit = async (taskData) => {
     try {
-      const response = await Service.editTask(task?.id, taskData)
+      const updatedTask = {
+        name: taskData.name,
+        description: taskData.description,
+        due_date: taskData.due_date,
+        duration: taskData.duration,
+        status: taskData.status,
+        priority: taskData.priority
+      }
+
+      const response = await Service.editTask(task?.id, updatedTask)
       console.log(response)
-      setTasks(response)
+      // setTasks(response)
       alert('Task Updated Successfully')
-      onClose()
+      // onClose()
     } catch (error) {
       console.log('Error in updating task: ', error)
       throw error
     }
   }
 
-  function color(priority) {
+  const color = (priority) => {
     switch (priority) {
       case 0:
         return 'bg-green-200 border-green-800 text-green-800'
-
       case 1:
         return 'bg-yellow-200 border-yellow-800 text-yellow-800'
-
       case 2:
         return 'bg-purple-200 border-purple-800 text-purple-800'
-
       case 3:
         return 'bg-red-200 border-red-700 text-red-700'
-
       default:
         break
     }
   }
 
-  function setPriorityValue(value) {
+  const setPriorityValue = (value) => {
     switch (value) {
       case 0:
         return 'LOW'
-
       case 1:
         return 'MEDIUM'
-
       case 2:
         return 'HIGH'
-
       case 3:
         return 'CRITICAL'
-
       default:
         break
     }
   }
 
   const getTaskById = new Date(task?.due_date)
-  const endDate = new Date(task?.endDate)
 
   return (
-    <div className="fixed inset-0  bg-black bg-opacity-50 flex justify-center items-center z-50">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
       <div className="bg-white h-screen overflow-y-auto p-8 rounded-lg shadow-lg w-screen">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-3xl font-bold text-gray-800">Task Details</h2>
@@ -126,120 +128,114 @@ const SelectedTask = ({ task, isOpen, onClose, setTasks }) => {
           </button>
         </div>
 
-        <div className="h-fit  overflow-y-auto p-4 rounded-lg">
+        <div className="h-fit overflow-y-auto p-4 rounded-lg">
           <div className="grid grid-cols-[60%_40%] gap-x-5 divide-x-2 px-1">
             <div>
-              <p className="mb-2">
-                <strong className="text-gray-700">Task Name:</strong> {task?.name}
-              </p>
-              <p className="mb-2">
-                <strong className="text-gray-700">Description:</strong> {task?.description}
-              </p>
-              <p className="mb-2">
-                <strong className="text-gray-700">Current User:</strong> {task?.user?.name}
-              </p>
-
-              <p className="mb-2">
-                <strong className="text-gray-700">Due Date:</strong> {getTaskById?.toDateString()}
-              </p>
-              <p className="mb-2">
-                <strong className="text-gray-700">Duration:</strong> {durToHour(task?.duration)}
-              </p>
-              <div className="flex flex-row justify-between">
-                <form onSubmit={handleSubmit(onSubmit)}>
-                  <div>
-                    <p className="mb-2 flex flex-row">
-                      <strong className="text-gray-700">Status: </strong>{' '}
-                      <div className="w-full">
-                        {userType !== 'user' && isEditing === true ? (
-                          <Select
-                            name="status"
-                            className="text-base"
-                            options={[
-                              { label: 'ASSIGNED', value: 'ASSINGED' },
-                              { label: 'IN-PROGRESS', value: 'IN-PROGRESS' },
-                              { label: 'ON-HOLD', value: 'ON-HOLD' },
-                              { label: 'BREAK', value: 'BREAK' },
-                              { label: 'IN-REVIEW', value: 'IN-REVIEW' },
-                              { label: 'COMPLETE', value: 'COMPLETE' },
-                              { label: 'APPROVED', value: 'APPROVED' }
-                            ]}
-                            defaultValue={task?.status}
-                            {...register('status')}
-                          />
-                        ) : (
-                          <div>{task?.status}</div>
-                        )}
-                      </div>
-                    </p>
-                    <div className="flex items-center py-2">
-                      <span className="font-bold text-gray-800">Priority:</span>{' '}
-                      {isEditing === true ? (
-                        <div className="w-full">
-                          <Select
-                            name="priority"
-                            className="text-base"
-                            options={[
-                              { label: 'LOW', value: 0 },
-                              { label: 'MEDIUM', value: 1 },
-                              { label: 'HIGH', value: 2 },
-                              { label: 'CRITICAL', value: 3 }
-                            ]}
-                            defaultValue={task?.priority}
-                            {...register('priority')}
-                          />
-                        </div>
-                      ) : (
-                        <span
-                          className={`text-sm text-center font-semibold px-3 py-0.5 mx-2 rounded-full border ${color(
-                            task?.priority
-                          )}`}
-                        >
-                          {setPriorityValue(task?.priority)}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                  <div>
-                    {isEditing ? (
-                      <Button type="submit">Save</Button>
-                    ) : (
-                      <Button onClick={handleEditClick}>Update</Button>
-                    )}
-                  </div>
-                </form>
-              </div>
-            </div>
-            <div className="flex flex-col justify-between pl-4 gap-y-5">
-              {/* <div>
-                <div className="text-xl font-bold text-gray-900">
-                  Fabricator Detail:
+              <form onSubmit={handleSubmit(onSubmit)}>
+                <div className="mb-2">
+                  <strong className="text-gray-700">Task Name:</strong>
+                  {isEditing ? (
+                    <Input {...register('name')} className="mt-1" />
+                  ) : (
+                    <div>{task?.name}</div>
+                  )}
                 </div>
 
-                <hr className="m-2" />
-                <p className="mb-2">
-                  <strong className="text-gray-700">Fabricator Name:</strong>{" "}
-                  {task?.fabricator?.name}
-                </p>
-                <p className="mb-2">
-                  <strong className="text-gray-700">
-                    Fabricator Contact Country:
-                  </strong>{" "}
-                  {task?.fabricator?.country}
-                </p>
-                <p className="mb-2">
-                  <strong className="text-gray-700">
-                    Fabricator Contact State:
-                  </strong>{" "}
-                  {task?.fabricator?.state}
-                </p>
-                <p className="mb-2">
-                  <strong className="text-gray-700">
-                    Fabricator Contact City:
-                  </strong>{" "}
-                  {task?.fabricator?.city}
-                </p>
-              </div> */}
+                <div className="mb-2">
+                  <strong className="text-gray-700">Description:</strong>
+                  {isEditing ? (
+                    <Input {...register('description')} className="mt-1" />
+                  ) : (
+                    <div>{task?.description}</div>
+                  )}
+                </div>
+
+                <div className="mb-2">
+                  <strong className="text-gray-700">Current User:</strong> {task?.user?.name}
+                </div>
+
+                <div className="mb-2">
+                  <strong className="text-gray-700">Due Date:</strong>
+                  {isEditing ? (
+                    <Input
+                      type="date"
+                      {...register('due_date')}
+                      className="mt-1"
+                    />
+                  ) : (
+                    <div>{getTaskById?.toDateString()}</div>
+                  )}
+                </div>
+
+                <div className="mb-2">
+                  <strong className="text-gray-700">Duration:</strong>
+                  {isEditing ? (
+                    <Input {...register('duration')} className="mt-1" />
+                  ) : (
+                    <div>{durToHour(task?.duration)}</div>
+                  )}
+                </div>
+
+                <div className="flex flex-row justify-between mb-4">
+                  <div>
+                    <strong className="text-gray-700">Status:</strong>
+                    {isEditing ? (
+                      <Select
+                        name="status"
+                        options={[
+                          { label: 'ASSIGNED', value: 'ASSINGED' },
+                          { label: 'IN-PROGRESS', value: 'IN-PROGRESS' },
+                          { label: 'ON-HOLD', value: 'ON-HOLD' },
+                          { label: 'BREAK', value: 'BREAK' },
+                          { label: 'IN-REVIEW', value: 'IN-REVIEW' },
+                          { label: 'COMPLETE', value: 'COMPLETE' },
+                          { label: 'APPROVED', value: 'APPROVED' }
+                        ]}
+                        defaultValue={task?.status}
+                        {...register('status')}
+                      />
+                    ) : (
+                      <div>{task?.status}</div>
+                    )}
+                  </div>
+
+                  <div>
+                    <strong className="text-gray-700">Priority:</strong>
+                    {isEditing ? (
+                      <Select
+                        name="priority"
+                        options={[
+                          { label: 'LOW', value: 0 },
+                          { label: 'MEDIUM', value: 1 },
+                          { label: 'HIGH', value: 2 },
+                          { label: 'CRITICAL', value: 3 }
+                        ]}
+                        defaultValue={task?.priority}
+                        {...register('priority')}
+                      />
+                    ) : (
+                      <span
+                        className={`text-sm font-semibold px-3 py-0.5 mx-2 rounded-full border ${color(
+                          task?.priority
+                        )}`}
+                      >
+                        {setPriorityValue(task?.priority)}
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                <div>
+                  {isEditing ? (
+                    <Button type="submit">Save</Button>
+                  ) : (
+                    <Button onClick={handleSubmit(handleEditClick)}>Update</Button>
+                  )}
+                </div>
+                  </form>
+            </div>
+
+            <div className="flex flex-col justify-between pl-4 gap-y-5">
               <div>
                 <div className="text-xl font-bold text-gray-900">Project Detail:</div>
                 <hr className="m-2" />

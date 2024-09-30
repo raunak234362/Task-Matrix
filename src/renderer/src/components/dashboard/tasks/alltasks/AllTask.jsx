@@ -216,6 +216,7 @@ const AllTask = () => {
           task={selectedTask}
           isOpen={isModalOpen}
           onClose={handleCloseModal}
+          setTasks={setTasks}
         />
       )}
     </div>

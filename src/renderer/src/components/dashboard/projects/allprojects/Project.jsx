@@ -1,91 +1,118 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import React, { useEffect, useState } from 'react';
-import { Button, GhantChart, Select } from '../../../index'; // Ensure GanttChart is imported correctly
-import Service from '../../../../api/configAPI';
-import { useForm } from 'react-hook-form';
-import { BASE_URL } from '../../../../config/constant';
-import SegregateTeam from '../../../../util/SegragateTeam';
+import React, { useEffect, useState } from 'react'
+import { Button, GhantChart, Input, Select } from '../../../index' // Ensure GanttChart is imported correctly
+import Service from '../../../../api/configAPI'
+import { useForm } from 'react-hook-form'
+import { BASE_URL } from '../../../../config/constant'
+import SegregateTeam from '../../../../util/SegragateTeam'
 
 const Project = ({ project, isOpen, onClose, setProject }) => {
-  const [members, setMembers] = useState({});
-  const [teamTask, setTeamTask] = useState([]);
-  const userType = sessionStorage.getItem('userType');
-  const token = sessionStorage.getItem("token");
-  const [teamOption, setTeamOption] = useState([]);
-  const [taskDetail, setTaskDetail] = useState();
-  const { register, handleSubmit, setValue } = useForm({
-    defaultValues: {
-      status: project?.status || '',
-      stage: project?.stage || '',
-    },
-  });
+  const [members, setMembers] = useState({})
+  const [teamTask, setTeamTask] = useState([])
+  const userType = sessionStorage.getItem('userType')
+  const token = sessionStorage.getItem('token')
+  const [teamOption, setTeamOption] = useState([])
+  const [taskDetail, setTaskDetail] = useState()
+  const [isEditing, setIsEditing] = useState(false)
+  const { register, handleSubmit, setValue } = useForm()
 
   useEffect(() => {
     function segregateTeam() {
-      let teamMembers = {};
-      let memb = [];
+      let teamMembers = {}
+      let memb = []
       project?.team?.members?.forEach((member) => {
         memb.push({
           employee: member?.employee,
           date: project?.endDate,
-          role: member?.role,
-        });
+          role: member?.role
+        })
         if (member?.role !== 'MANAGER' && member?.role !== 'LEADER') {
           if (member?.role in teamMembers) {
-            teamMembers[member?.role].push(member);
+            teamMembers[member?.role].push(member)
           } else {
-            teamMembers[member?.role] = [member];
+            teamMembers[member?.role] = [member]
           }
         }
-      });
-      setMembers(teamMembers);
-      setTeamTask(memb);
+      })
+      setMembers(teamMembers)
+      setTeamTask(memb)
     }
 
     const fetchTeams = async () => {
       try {
-        const teamData = await Service.getAllTeam(token);
+        const teamData = await Service.getAllTeam(token)
         const options = teamData.map((team) => ({
           label: team?.name,
-          value: team?.id,
-        }));
-        setTeamOption(options);
+          value: team?.id
+        }))
+        setTeamOption(options)
       } catch (error) {
-        console.error("Error fetching teams:", error);
+        console.error('Error fetching teams:', error)
       }
-    };
+    }
 
-    fetchTeams();
-    segregateTeam();
-  }, [project]);
+    fetchTeams()
+    segregateTeam()
+  }, [project])
 
   useEffect(() => {
     async function fetchTasks() {
-      const data1 = await SegregateTeam(teamTask);
-      setTaskDetail(data1);
+      const data1 = await SegregateTeam(teamTask)
+      setTaskDetail(data1)
     }
 
-    fetchTasks();
-  }, [teamTask]);
-
-  useEffect(() => {
-    if (project) {
-      setValue('status', project?.status || '')
-      setValue('stage', project?.stage || '')
-    }
-  }, [project, setValue])
+    fetchTasks()
+  }, [teamTask])
 
   const onSubmit = async (data) => {
+    // Prepare the data to include all fields
+    const updatedData = {
+      description: data.description || project.description,
+      startDate: data.startDate || project.startDate,
+      endDate: data.endDate || project.endDate,
+      tool: data.tool || project.tool,
+      team: data.team || project.team?.name,
+      status: data.status || project.status,
+      stage: data.stage || project.stage
+    }
+
     try {
-      const response = await Service.editProject(project?.id, data)
+      const response = await Service.editProject(project?.id, updatedData)
       setProject(response)
-      onClose() 
+      setIsEditing(false)
+      alert('Successfully Updated')
+      // onClose();
     } catch (error) {
+      alert('Something went wrong')
       console.log(error)
     }
   }
+
+  const handleEditClick = () => {
+    setIsEditing(true)
+    // Populate the form with current task data
+    setValue('description', project.description || '')
+    setValue('startDate', project.startDate || '')
+    setValue('endDate', project.endDate || '')
+    setValue('tool', project.tool || '')
+    setValue('team', project?.team?.name || '')
+    setValue('status', project.status || '')
+    setValue('stage', project.stage || '')
+  }
+
+  useEffect(() => {
+    if (project) {
+      setValue('description', project.description || '')
+      setValue('startDate', project.startDate || '')
+      setValue('endDate', project.endDate || '')
+      setValue('tool', project.tool || '')
+      setValue('team', project?.team?.name || '')
+      setValue('status', project.status || '')
+      setValue('stage', project.stage || '')
+    }
+  }, [project, setValue])
 
   if (!isOpen) return null
 
@@ -105,82 +132,156 @@ const Project = ({ project, isOpen, onClose, setProject }) => {
           </button>
         </div>
         <div>
-        <GhantChart taskData={taskDetail} />
+          <GhantChart taskData={taskDetail} />
         </div>
 
         <div className="h-fit overflow-y-auto p-4 rounded-lg">
           <div className="grid grid-cols-2 gap-8">
-            <div>
-              <p className="mb-2">
-                <strong className="text-gray-700">Fabricator Name:</strong>{' '}
-                {project?.fabricator?.name}
-              </p>
-              <p className="mb-2">
-                <strong className="text-gray-700">Project Name:</strong>{' '}
-                {project?.name}
-              </p>
-              <p className="mb-2">
-                <strong className="text-gray-700">Description:</strong>{' '}
-                {project?.description}
-              </p>
-              <p className="mb-2">
-                <strong className="text-gray-700">Start Date:</strong>{' '}
-                {startDate?.toDateString()}
-              </p>
-              <p className="mb-2">
-                <strong className="text-gray-700">Approval Date:</strong>{' '}
-                {endDate?.toDateString()}
-              </p>
-              <p className="mb-2">
-                <strong className="text-gray-700">Tools:</strong>{' '}
-                {project?.tool}
-              </p>
-              <p className="mb-2">
-                <strong className="text-gray-700">Connection Design:</strong>{' '}
-                {project?.connectionDesign ? 'REQUIRED' : 'Not Required'}
-              </p>
-              <p className="mb-2">
-                <strong className="text-gray-700">Misc Design:</strong>{' '}
-                {project?.miscDesign ? 'REQUIRED' : 'Not Required'}
-              </p>
-              <p className="mb-2">
-                <strong className="text-gray-700">Customer:</strong>{' '}
-                {project?.customer ? 'REQUIRED' : 'Not Required'}
-              </p>
-              <div className="mb-2">
-                <strong className="text-gray-700">Team:</strong>{' '}
-                {project?.team?.name}
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <div>
+                <div className="mb-2 flex">
+                  <strong className="text-gray-700">Project Name:</strong>
+
+                  <div>{project?.name}</div>
+                </div>
+                <div className="mb-2 flex">
+                  <strong className="text-gray-700">Description:</strong>
+                  {isEditing ? (
+                    <Input {...register('description')} className="mt-1" />
+                  ) : (
+                    <div>{project?.description}</div>
+                  )}
+                </div>
+                <div className="mb-2 flex">
+                  <strong className="text-gray-700">Start Date:</strong>
+                  {isEditing ? (
+                    <Input type="date" {...register('startDate')} className="mt-1" />
+                  ) : (
+                    <div>{startDate?.toDateString()}</div>
+                  )}
+                </div>
+                <div className="mb-2">
+                  <strong className="text-gray-700">Approval Date:</strong>
+                  {isEditing ? (
+                    <Input type="date" {...register('endDate')} className="mt-1" />
+                  ) : (
+                    <div>{endDate?.toDateString()}</div>
+                  )}
+                </div>
+
+                <p className="mb-2">
+                  <strong className="text-gray-700">Tools:</strong> {project?.tool}
+                </p>
+                <p className="mb-2">
+                  <strong className="text-gray-700">Connection Design:</strong>{' '}
+                  {project?.connectionDesign ? 'REQUIRED' : 'Not Required'}
+                </p>
+                <p className="mb-2">
+                  <strong className="text-gray-700">Misc Design:</strong>{' '}
+                  {project?.miscDesign ? 'REQUIRED' : 'Not Required'}
+                </p>
+                <p className="mb-2">
+                  <strong className="text-gray-700">Customer:</strong>{' '}
+                  {project?.customer ? 'REQUIRED' : 'Not Required'}
+                </p>
+                <div>
+                  <strong className="text-gray-700">Team:</strong>
+                  {isEditing ? (
+                    <Select
+                      name="team"
+                      className="text-base"
+                      options={[
+                        ...teamOption
+                      ]}
+                      defaultValue={project?.team?.name}
+                      {...register('team')}
+                    />
+                  ) : (
+                    <div>{project?.team?.name}</div>
+                  )}
+                </div>
+                <div>
+                  <strong className="text-gray-700">Status:</strong>
+                  {isEditing ? (
+                    <Select
+                      name="status"
+                      options={[
+                        { label: 'ACTIVE', value: 'ACTIVE' },
+                        { label: 'ON-HOLD', value: 'ON-HOLD' },
+                        { label: 'INACTIVE', value: 'INACTIVE' },
+                        { label: 'DELAY', value: 'DELAY' },
+                        { label: 'REOPEN', value: 'REOPEN' },
+                        { label: 'COMPLETE', value: 'COMPLETE' },
+                        { label: 'SUBMIT', value: 'SUBMIT' },
+                        { label: 'SUSPEND', value: 'SUSPEND' },
+                        { label: 'CANCEL', value: 'CANCEL' }
+                      ]}
+                      defaultValue={project?.status}
+                      {...register('status')}
+                    />
+                  ) : (
+                    <div>{project?.status}</div>
+                  )}
+                </div>
+                <div>
+                  <strong className="text-gray-700">Stage:</strong>
+                  {isEditing ? (
+                    <Select
+                      name="status"
+                      options={[
+                        { label: 'RFI', value: 'RFI' },
+                        { label: 'IFA', value: 'IFA' },
+                        { label: 'BFA', value: 'BFA' },
+                        { label: 'BFA-Markup', value: 'BFA-M' },
+                        { label: 'RIFA', value: 'RIFA' },
+                        { label: 'RBFA', value: 'RBFA' },
+                        { label: 'IFC', value: 'IFC' },
+                        { label: 'BFC', value: 'BFC' },
+                        { label: 'RIFC', value: 'RIFC' },
+                        { label: 'REV', value: 'REV' },
+                        { label: 'CO#', value: 'CO#' }
+                      ]}
+                      defaultValue={project?.stage}
+                      {...register('stage')}
+                    />
+                  ) : (
+                    <div>{project?.stage}</div>
+                  )}
+                </div>
               </div>
-              <p className="mb-2">
-                <strong className="text-gray-700">Status: </strong>{' '}
-                {project?.status}
-              </p>
-              <p className="mb-2">
-                <strong className="text-gray-700">Stage:</strong>{' '}
-                {project?.stage}
-              </p>
-            </div>
+              {userType !== 'user' && (
+                <div>
+                  {isEditing ? (
+                    <Button type="submit">Save</Button>
+                  ) : (
+                    <Button onClick={handleSubmit(handleEditClick)}>Update</Button>
+                  )}
+                </div>
+              )}
+            </form>
             <div>
               {userType !== 'user' && (
-                <p className="mb-2">
-                  <strong className="text-gray-700">
-                    Fabricator Shop Standard:
-                  </strong>{' '}
-                  <a
-                    href={`${BASE_URL}${project?.fabricator?.design}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-500 cursor-pointer hover:text-blue-700"
-                  >
-                    View standard
-                  </a>
-                </p>
+                <div>
+                  <p className="mb-2">
+                    <strong className="text-gray-700">Fabricator Name:</strong>{' '}
+                    {project?.fabricator?.name}
+                  </p>
+                  <p className="mb-2">
+                    <strong className="text-gray-700">Fabricator Shop Standard:</strong>{' '}
+                    <a
+                      href={`${BASE_URL}${project?.fabricator?.design}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-500 cursor-pointer hover:text-blue-700"
+                    >
+                      View standard
+                    </a>
+                  </p>
+                </div>
               )}
 
               <div>
-                <div className="text-xl font-bold text-gray-800">
-                  Team Members:
-                </div>
+                <div className="text-xl font-bold text-gray-800">Team Members:</div>
                 <h3 className="text-sm font-bold text-gray-800">Manager</h3>
                 <li>{project?.manager?.name}</li>
 
@@ -199,12 +300,10 @@ const Project = ({ project, isOpen, onClose, setProject }) => {
                     </ol>
                   </div>
                 ))}
-                {userType === 'admin' || userType === 'manager' ? (
+                {/* {userType === 'admin' || userType === 'manager' ? (
                   <div className="flex mt-4">
                     <div>
-                      <div className="text-xl font-bold text-gray-800">
-                        Update Project Report:
-                      </div>
+                      <div className="text-xl font-bold text-gray-800">Update Project Report:</div>
                       <hr className="my-2" />
                       <form onSubmit={handleSubmit(onSubmit)}>
                         <Select
@@ -220,7 +319,7 @@ const Project = ({ project, isOpen, onClose, setProject }) => {
                           ]}
                           defaultValue={project?.team}
                           {...register('team')}
-                          />
+                        />
                         <Select
                           label="Status"
                           name="status"
@@ -234,7 +333,7 @@ const Project = ({ project, isOpen, onClose, setProject }) => {
                             { label: 'COMPLETE', value: 'COMPLETE' },
                             { label: 'SUBMIT', value: 'SUBMIT' },
                             { label: 'SUSPEND', value: 'SUSPEND' },
-                            { label: 'CANCEL', value: 'CANCEL' },
+                            { label: 'CANCEL', value: 'CANCEL' }
                           ]}
                           defaultValue={project?.status}
                           {...register('status')}
@@ -254,7 +353,7 @@ const Project = ({ project, isOpen, onClose, setProject }) => {
                             { label: 'BFC', value: 'BFC' },
                             { label: 'RIFC', value: 'RIFC' },
                             { label: 'REV', value: 'REV' },
-                            { label: 'CO#', value: 'CO#' },
+                            { label: 'CO#', value: 'CO#' }
                           ]}
                           defaultValue={project?.stage}
                           {...register('stage')}
@@ -269,7 +368,7 @@ const Project = ({ project, isOpen, onClose, setProject }) => {
                       </form>
                     </div>
                   </div>
-                ) : null}
+                ) : null} */}
               </div>
             </div>
           </div>
