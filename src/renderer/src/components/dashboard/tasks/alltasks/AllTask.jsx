@@ -20,7 +20,6 @@ const AllTask = () => {
         const task = await Service.getAllTask();
         setTasks(task);
         setFilteredTasks(task);
-        console.log("My Task: ", task);
       } catch (error) {
         console.log("Error in fetching task: ", error);
       }
@@ -29,7 +28,7 @@ const AllTask = () => {
   }, [selectedTask]);
 
   useEffect(() => {
-    let results = tasks.filter(task =>
+    let results = tasks?.filter(task =>
       task.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
@@ -59,7 +58,6 @@ const AllTask = () => {
   }, [searchTerm, tasks, priorityFilter, statusFilter, sortConfig]);
 
   const handleViewClick = async (taskId) => {
-    console.log(taskId);
     try {
       const task = await Service.getTaskById(taskId);
       setSelectedTask(task);

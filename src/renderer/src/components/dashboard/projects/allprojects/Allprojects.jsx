@@ -23,7 +23,7 @@ const Allprojects = () => {
         setProjects(projects)
         setFilteredProjects(projects)
         setSegreateProject(await SegregateProject(projects))
-        // console.log(projects)
+        console.log(projects)
       } catch (error) {
         console.error('Error fetching projects:', error)
       }

@@ -1,7 +1,8 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable prettier/prettier */
+import axios from 'axios'
 import { BASE_URL } from '../config/constant'
-
+const token = sessionStorage.getItem('token')
 class Service {
   //Users APIs
   static async getCurrentUser(token) {
@@ -163,22 +164,20 @@ class Service {
       throw error
     }
   }
-  static async getTeam(id) {
-    const token = sessionStorage.getItem('token')
+  static async getTeam(projectId) {
+    const token = sessionStorage.getItem('token');
     try {
-      const response = await fetch(`${BASE_URL}api/team/teams/${id}`, {
-        method: 'GET',
+      const response = await axios.get(`${BASE_URL}api/team/teams/${projectId}`, {
         headers: {
           Authorization: `Token ${token}`,
           'Content-Type': 'application/json',
         },
-      })
-      const data = await response.json()
-      console.log('Team fetched: ', data)
-      return data
+      });
+      console.log('Team fetched: ', response.data);
+      return response.data;
     } catch (error) {
-      console.log('Error in getting team: ', error)
-      throw error
+      console.log('Error in getting team: ', error);
+      throw error;
     }
   }
   static async addTeamMember({ role, employee, teamId }) {
@@ -419,16 +418,31 @@ class Service {
   static async editProject(id, projectData) {
     const token = sessionStorage.getItem('token')
     try {
-      const response = await fetch(`${BASE_URL}api/project/projects/${id}/`, {
-        method: 'PATCH',
+      const response = await axios.patch(`${BASE_URL}api/project/projects/${id}/`, projectData,{
         headers: {
           Authorization: `Token ${token}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(projectData),
       })
-      const data = await response.json()
-      return data
+      return response.data;
+    } catch (error) {
+      console.log('Error in getting Project:', error)
+      throw error
+    }
+  }
+
+  static async DeleteProject(id){
+    const token = sessionStorage.getItem('token')
+    try {
+      const response = await fetch(`${BASE_URL}api/project/projects/${id}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Token ${token}`,
+          'Content-Type': 'application/json',
+        },
+      })
+      if (response) return true
+      return false
     } catch (error) {
       console.log('Error in getting Project:', error)
       throw error
@@ -519,7 +533,6 @@ class Service {
         },
       })
       const data = await response.json()
-      console.log('Parent Task: ', data)
       return data
     } catch (error) {
       console.log('Error in getting Parent Task: ', error)
@@ -539,7 +552,7 @@ class Service {
     user,
   }) {
     try {
-      const formData = JSON.stringify({
+      const formData = {
         name,
         description,
         due_date,
@@ -549,23 +562,25 @@ class Service {
         project,
         parent,
         user,
-      })
-      console.log(formData)
-      const token = sessionStorage.getItem('token')
-      const response = await fetch(`${BASE_URL}api/task/tasks/`, {
-        method: 'POST',
+      };
+      
+      console.log(formData);
+  
+      const token = sessionStorage.getItem('token');
+  
+      // Using Axios to make the POST request
+      const response = await axios.post(`${BASE_URL}api/task/tasks/`, formData, {
         headers: {
           Authorization: `Token ${token}`,
           'Content-Type': 'application/json',
         },
-        body: formData,
-      })
-      const data = await response.json()
-      console.log(data)
-      return data
+      });
+  
+      console.log(response.data);
+      return response.data; // Return the response data
     } catch (error) {
-      console.log('Error in adding Task: ', error)
-      throw error
+      console.log('Error in adding Task: ', error);
+      throw error; // Rethrow the error after logging
     }
   }
   static async editTask(id, taskData) {
@@ -581,6 +596,24 @@ class Service {
       })
       const data = await response.json()
       return data
+    } catch (error) {
+      console.log('Error in getting Project:', error)
+      throw error
+    }
+  }
+
+  static async deleteTask(id) {
+    const token = sessionStorage.getItem('token')
+    try {
+      const response = await fetch(`${BASE_URL}api/task/tasks/${id}/`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Token ${token}`,
+          'Content-Type': 'application/json',
+        },
+      })
+      if (response) return true
+      return false
     } catch (error) {
       console.log('Error in getting Project:', error)
       throw error

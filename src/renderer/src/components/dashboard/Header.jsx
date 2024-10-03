@@ -7,7 +7,7 @@ const Header = ({title}) => {
   const username = sessionStorage.getItem("username");
   const role = sessionStorage.getItem("userType");
   return (
-    <div className="sticky w-full z-50 top-0 flex font-bold justify-between items-center uppercase bg-slate-500 text-white rounded-md px-3 py-2 ">
+    <div className="sticky w-full z-50 top-0 flex font-bold justify-between items-center uppercase bg-green-500 text-white rounded-md px-3 py-2 ">
         
         <div>
           <img src={LOGO} alt="logo" className=" h-14 object-cover bg-white/50 shadow-white shadow-sm rounded-xl py-0" />

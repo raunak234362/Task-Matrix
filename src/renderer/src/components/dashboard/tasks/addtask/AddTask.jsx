@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable no-unused-vars */
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button, Header, Input, Select } from '../../../index'
 import Service from '../../../../api/configAPI'
 import { setTaskData } from '../../../../store/taskSlice'
@@ -8,21 +8,45 @@ import { useDispatch } from 'react-redux'
 import { useForm } from 'react-hook-form'
 
 const AddTask = () => {
-  const [projectOptions, setPtojectOptions] = useState([])
-  const [project, setProject] = useState({})
+  const [projectID, setProjectID] = useState()
+  const [projectOptions, setProjectOptions] = useState([])
   const [parentTaskOptions, setParentTaskOptions] = useState([])
   const [assignedUser, setAssignedUser] = useState([])
-  const token = sessionStorage.getItem('token')
   const dispatch = useDispatch()
   const {
     register,
     handleSubmit,
+    setValue,
     watch,
-    formState: { errors }
+    formState: { errors },
   } = useForm()
 
-  // FETCH task related to project
-  // Fetch project details
+  const projectId = watch('project')
+
+  console.log(projectId)
+
+  const fetchAssignee = async () => {
+    try {
+      const project = await Service?.getTeam(projectId)
+      console.log(project)
+      // const assigned = project?.team?.members?.map((member) => ({
+      //   label: `${member?.role} - ${member?.employee?.name}`,
+      //   value: member?.employee?.id,
+      // }))
+      // setAssignedUser(assigned)
+      console.log(assignedUser)
+    } catch (error) {
+      console.error('Error fetching project details:', error)
+    }
+  }
+
+  useEffect(()=>{
+    fetchAssignee()
+  },[])
+
+
+
+  // Fetch all projects
   useEffect(() => {
     const fetchProjects = async () => {
       try {
@@ -31,10 +55,9 @@ const AddTask = () => {
           .filter((project) => project.team != null)
           .map((project) => ({
             label: `${project.name} - ${project.fabricator.name}`,
-            value: project.id
+            value: project.id,
           }))
-        setPtojectOptions(options)
-        console.log(projects)
+        setProjectOptions(options)
       } catch (error) {
         console.error('Error fetching projects:', error)
       }
@@ -42,55 +65,73 @@ const AddTask = () => {
     fetchProjects()
   }, [])
 
-  const handleProjectChange = async (projectId) => {
-    try {
-      const project = await Service.getProject(projectId)
-      setProject(project)
-      const assigned = project?.team?.members?.map((member) => ({
-        label: `${member?.role} - ${member?.employee?.name}`,
-        value: member?.employee?.id
-      }))
-      console.log('Assigned users---',assigned)
-      setAssignedUser(assigned)
-    } catch (error) {
-      console.error('Error fetching project details:', error)
-    }
-  }
+  // const handleProjectChange = async (projectId) => {
+  //   try {
+  //     const project = await Service.getProject(projectId)
+  //     const assigned = project?.team?.members?.map((member) => ({
+  //       label: `${member?.role} - ${member?.employee?.name}`,
+  //       value: member?.employee?.id
+  //     }))
+  //     setAssignedUser(assigned)
+  //   } catch (error) {
+  //     console.error('Error fetching project details:', error)
+  //   }
+  // }
 
-  const handleParentTasks = async (projectId) => {
-    try {
-      const parentTasks = await Service.getParentTasks(projectId)
-      const options = parentTasks?.map((task) => ({
-        label: task?.name,
-        value: task?.id
-      }))
-      setParentTaskOptions(options)
-    } catch (error) {
-      console.error('Error fetching parent tasks:', error)
-    }
-  }
+  // const handleParentTasks = async (projectId) => {
+  //   try {
+  //     const parentTasks = await Service.getParentTasks(projectId)
+  //     const options = parentTasks?.map((task) => ({
+  //       label: task?.name,
+  //       value: task?.id
+  //     }))
+  //     setParentTaskOptions(options)
+  //   } catch (error) {
+  //     console.error('Error fetching parent tasks:', error)
+  //   }
+  // }
+
+  // useEffect(() => {
+  //   if (projectOptions) {
+  //     projectOptions.map((project) => {
+  //       setValue('projectId', projectOptions.value || '')
+  //       setProjectID(project?.value)
+  //       console.log(projectID)
+  //     })
+  //   }
+
+  // }, [projectOptions])
+
+  // const handleAssigneeList = async () => {
+  //   try {
+  //     const project = await Service.getProject(projectID)
+  //     const assigned = project?.team?.members?.map((member) => ({
+  //       label: `${member?.role} - ${member?.employee?.name}`,
+  //       value: member?.employee?.id,
+  //     }))
+  //     setAssignedUser(assigned)
+  //   } catch (error) {
+  //     console.error('Error fetching project details:', error)
+  //   }
+  // }
 
   const onSubmit = async (taskData) => {
+    console.log(taskData)
     try {
       const token = sessionStorage.getItem('token')
       if (!token) {
         throw new Error('Token not found')
       }
       const TaskName = `${taskData.type} - ${taskData.taskname}`
-      console.log('Project data:', TaskName)
-      const data = await Service.addTask({
-        ...taskData,
-        name: TaskName,
-        token: token
-      })
-      console.log('Response from task:', taskData)
-
-      dispatch(setTaskData(data))
-      console.log('Task added:', data)
-      alert('Successfully added new Task', taskData?.name)
+      // const data = await Service.addTask({
+      //   ...taskData,
+      //   name: TaskName,
+      //   token
+      // })
+      // dispatch(setTaskData(data))
+      alert('Successfully added new Task')
     } catch (error) {
       console.error('Error adding task:', error)
-      console.log('Project data:', taskData)
     }
   }
 
@@ -105,23 +146,14 @@ const AddTask = () => {
             <div className="mt-5">
               <Select
                 label="Project:"
-                placeholder="Project"
-                name="project"
-                className="w-full"
-                options={[
-                  {
-                    label: 'Select Project',
-                    value: ''
-                  },
-                  ...projectOptions
-                ]}
-                onChange={async (e) => {
-                  await handleParentTasks(e.target.value)
-                  await handleProjectChange(e.target.value)
-                  register('project', { required: 'Select a project', value: e.target.value })
-                }}
+                placeholder="Select Project"
+                options={projectOptions}
+                {...register('project', { required: 'Select a project' })}
+                onChange={setValue}
               />
-              {errors.project && <p className="text-red-600">{errors.project.message}</p>}
+              {errors.project && (
+                <p className="text-red-600">{errors.project.message}</p>
+              )}
             </div>
             <div className="mt-5">
               <Select
@@ -132,9 +164,9 @@ const AddTask = () => {
                 options={[
                   {
                     label: 'Select Task',
-                    value: ''
+                    value: '',
                   },
-                  ...parentTaskOptions
+                  ...parentTaskOptions,
                 ]}
                 {...register('parent')}
               />
@@ -149,17 +181,19 @@ const AddTask = () => {
                   options={[
                     {
                       label: 'Select Task',
-                      value: ''
+                      value: '',
                     },
                     { label: 'Modeling', value: 'MODELING' },
                     { label: 'Checking', value: 'CHECKING' },
                     { label: 'Erection', value: 'ERECTION' },
                     { label: 'Detailing', value: 'DETAILING' },
-                    { label: 'Others', value: 'OTHERS' }
+                    { label: 'Others', value: 'OTHERS' },
                   ]}
                   {...register('type', { required: 'Task Type is required' })}
                 />
-                {errors.type && <p className="text-red-600">{errors.type.message}</p>}
+                {errors.type && (
+                  <p className="text-red-600">{errors.type.message}</p>
+                )}
               </div>
               <div className="w-full">
                 <Input
@@ -169,14 +203,19 @@ const AddTask = () => {
                   className="w-full"
                   {...register('taskname', {
                     validate: (value) => {
-                      if (watch('type') === 'OTHERS' && (!value || value.trim() === '')) {
+                      if (
+                        watch('type') === 'OTHERS' &&
+                        (!value || value.trim() === '')
+                      ) {
                         return "With Task Type 'Others', Task name is required"
                       }
                       return true
-                    }
+                    },
                   })}
                 />
-                {errors.taskname && <p className="text-red-600">{errors.taskname.message}</p>}
+                {errors.taskname && (
+                  <p className="text-red-600">{errors.taskname.message}</p>
+                )}
               </div>
             </div>
             <div className="mt-5">
@@ -187,12 +226,14 @@ const AddTask = () => {
                   { label: 'LOW', value: 0 },
                   { label: 'MEDIUM', value: 1 },
                   { label: 'HIGH', value: 2 },
-                  { label: 'Critical', value: 3 }
+                  { label: 'Critical', value: 3 },
                 ]}
                 className="w-full"
                 {...register('priority', { required: 'Priority is required' })}
               />
-              {errors.priority && <p className="text-red-600">{errors.priority.message}</p>}
+              {errors.priority && (
+                <p className="text-red-600">{errors.priority.message}</p>
+              )}
             </div>
             <div className="mt-5">
               <Select
@@ -205,12 +246,14 @@ const AddTask = () => {
                   { label: 'BREAK', value: 'BREAK' },
                   { label: 'IN REVIEW', value: 'IN-REVIEW' },
                   { label: 'COMPLETED', value: 'COMPLETE' },
-                  { label: 'APPROVED', value: 'APPROVED' }
+                  { label: 'APPROVED', value: 'APPROVED' },
                 ]}
                 className="w-full"
                 {...register('status', { required: 'Status is required' })}
               />
-              {errors.status && <p className="text-red-600">{errors.status.message}</p>}
+              {errors.status && (
+                <p className="text-red-600">{errors.status.message}</p>
+              )}
             </div>
             <div className="mt-5 w-36">
               <Input
@@ -220,7 +263,9 @@ const AddTask = () => {
                 className="w-full"
                 {...register('due_date', { required: 'Due Date is required' })}
               />
-              {errors.due_date && <p className="text-red-600">{errors.due_date.message}</p>}
+              {errors.due_date && (
+                <p className="text-red-600">{errors.due_date.message}</p>
+              )}
             </div>
             <div className="mt-5">
               <div className="text-lg font-bold">Duration:</div>
@@ -232,7 +277,9 @@ const AddTask = () => {
                     placeholder="HH"
                     className="w-20"
                     min={0}
-                    {...register('hour', { required: 'Hours is required in Duration' })}
+                    {...register('hour', {
+                      required: 'Hours is required in Duration',
+                    })}
                     onBlur={(e) => {
                       if (e.target.value < 0) e.target.value = 0
                     }}
@@ -246,13 +293,17 @@ const AddTask = () => {
                     className="w-20"
                     min={0}
                     max={60}
-                    {...register('min', { required: 'Minutes is required in Duration' })}
+                    {...register('min', {
+                      required: 'Minutes is required in Duration',
+                    })}
                     onBlur={(e) => {
                       if (e.target.value < 0) e.target.value = 0
                     }}
                   />
                 </div>
-                  {errors.min && <p className="text-red-600">{errors.min.message}</p>}
+                {errors.min && (
+                  <p className="text-red-600">{errors.min.message}</p>
+                )}
               </div>
             </div>
             <div className="mt-5">
@@ -261,9 +312,13 @@ const AddTask = () => {
                 name="user"
                 options={[{ label: 'Select User', value: '' }, ...assignedUser]}
                 className="w-full"
-                {...register('user', { required: 'Assigning User is required' })}
+                {...register('user', {
+                  required: 'Assigning User is required',
+                })}
               />
-              {errors.user && <p className="text-red-600">{errors.user.message}</p>}
+              {errors.user && (
+                <p className="text-red-600">{errors.user.message}</p>
+              )}
             </div>
             <div className="mt-5">
               <Input
@@ -272,9 +327,13 @@ const AddTask = () => {
                 name="description"
                 placeholder="Description"
                 className="w-full"
-                {...register('description', { required: 'Description is required' })}
+                {...register('description', {
+                  required: 'Description is required',
+                })}
               />
-              {errors.description && <p className="text-red-600">{errors.description.message}</p>}
+              {errors.description && (
+                <p className="text-red-600">{errors.description.message}</p>
+              )}
             </div>
             <div className="mt-5 w-full">
               <Button type="submit">Add Task</Button>

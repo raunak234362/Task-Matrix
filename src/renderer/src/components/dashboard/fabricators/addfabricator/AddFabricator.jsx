@@ -11,46 +11,54 @@ import Service from "../../../../api/configAPI";
 const AddFabricator = () => {
   const {
     register,
+    setValue,
+    watch,
     handleSubmit,
+    reset,
     formState: { errors },
-  } = useForm();
-
-  
-
+  } = useForm()
   const dispatch = useDispatch();
   const [contractName, setContractName] = useState(""); 
   const [contract, setContractFile] = useState(null); 
-  const [country, setCountry] = useState("");
-  const [state, setState]= useState("");
-  const [stateList, setStateList] = useState([{
-    label: "Select State",
-    value: "",
-  }])
 
-  const [cityList, setCityList] = useState([{
-    label: "Select City",
-    value: "",
-  }])
+ const country = watch('country')
+  const state = watch('state')
+  const [stateList, setStateList] = useState([
+    {
+      label: 'Select State',
+      value: '',
+    },
+  ])
+
+  const [cityList, setCityList] = useState([
+    {
+      label: 'Select City',
+      value: '',
+    },
+  ])
 
   const countryList = {
-    "United States":"US",
-    "Canada":"CA",
-    "India":"IN",
+    'United States': 'US',
+    Canada: 'CA',
+    India: 'IN',
   }
+  useEffect(() => {
+    const stateListObject = {}
+    State.getStatesOfCountry(countryList[country])?.forEach((state1) => {
+      stateListObject[state1.name] = state1.isoCode
+    })
+    setStateList(stateListObject)
+  }, [country])
 
   useEffect(() => {
-      const stateListObject = {};
-      State.getStatesOfCountry(countryList[country])?.forEach((state1) => {
-        stateListObject[state1.name] = state1.isoCode;
-      });
-      setStateList(stateListObject);
-    }, [country]);
-
-  useEffect(() => {
-    setCityList(City.getCitiesOfState(countryList[country], stateList[state])?.map((city) => ({
-      label: city?.name,
-      value: city?.name,
-    })))
+    setCityList(
+      City.getCitiesOfState(countryList[country], stateList[state])?.map(
+        (city) => ({
+          label: city?.name,
+          value: city?.name,
+        }),
+      ),
+    )
   }, [state])
 
   const handleContractChange = (e) => {
@@ -110,7 +118,7 @@ const AddFabricator = () => {
                   ]
                 }
                 {...register("country", { required: "Country is required" })}
-                onChange={(e) => setCountry(e.target.value)} // Add this line to set the value in setCountry
+                onChange={setValue}
               />
               {errors.country && <p className='text-red-600'>{errors.country.message}</p>}
 
@@ -126,7 +134,7 @@ const AddFabricator = () => {
                   }))
                 ]}
                 {...register("state", { required: "State is required" })}
-                onChange={(e) => setState(e.target.value)}
+                onChange={setValue}
               />
               {errors.state && <p className='text-red-600'>{errors.state.message}</p>}
 
@@ -139,6 +147,7 @@ const AddFabricator = () => {
                   ...cityList
                 ]}
                 {...register("city", { required: "City is required" })}
+                onChange={setValue}
               />
               {errors.city && <p className='text-red-600'>{errors.city.message}</p>}
               <Input

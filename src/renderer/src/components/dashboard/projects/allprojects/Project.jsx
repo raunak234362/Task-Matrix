@@ -26,7 +26,7 @@ const Project = ({ project, isOpen, onClose, setProject }) => {
         memb.push({
           employee: member?.employee,
           date: project?.endDate,
-          role: member?.role
+          role: member?.role,
         })
         if (member?.role !== 'MANAGER' && member?.role !== 'LEADER') {
           if (member?.role in teamMembers) {
@@ -45,7 +45,7 @@ const Project = ({ project, isOpen, onClose, setProject }) => {
         const teamData = await Service.getAllTeam(token)
         const options = teamData.map((team) => ({
           label: team?.name,
-          value: team?.id
+          value: team?.id,
         }))
         setTeamOption(options)
       } catch (error) {
@@ -62,44 +62,33 @@ const Project = ({ project, isOpen, onClose, setProject }) => {
       const data1 = await SegregateTeam(teamTask)
       setTaskDetail(data1)
     }
-
     fetchTasks()
   }, [teamTask])
 
-  const onSubmit = async (data) => {
-    // Prepare the data to include all fields
-    const updatedData = {
-      description: data.description || project.description,
-      startDate: data.startDate || project.startDate,
-      endDate: data.endDate || project.endDate,
-      tool: data.tool || project.tool,
-      team: data.team || project.team?.name,
-      status: data.status || project.status,
-      stage: data.stage || project.stage
-    }
-
-    try {
-      const response = await Service.editProject(project?.id, updatedData)
-      setProject(response)
-      setIsEditing(false)
-      alert('Successfully Updated')
-      // onClose();
-    } catch (error) {
-      alert('Something went wrong')
-      console.log(error)
-    }
-  }
-
   const handleEditClick = () => {
     setIsEditing(true)
-    // Populate the form with current task data
     setValue('description', project.description || '')
     setValue('startDate', project.startDate || '')
     setValue('endDate', project.endDate || '')
     setValue('tool', project.tool || '')
-    setValue('team', project?.team?.name || '')
+    setValue('team', project?.team?.id || '')
     setValue('status', project.status || '')
     setValue('stage', project.stage || '')
+  }
+
+  const handleCancel = () => {
+    setIsEditing(false)
+  }
+
+  const handleDelete = () => {
+    try {
+      Service.DeleteProject(project?.id)
+      alert('Successfully Deleted')
+    } catch (error) {
+      console.log(error)
+    }
+
+    onClose()
   }
 
   useEffect(() => {
@@ -114,11 +103,33 @@ const Project = ({ project, isOpen, onClose, setProject }) => {
     }
   }, [project, setValue])
 
+  const onSubmit = async (data) => {
+    const updatedData = {
+      description: data.description || project.description,
+      startDate: data.startDate || project.startDate,
+      endDate: data.endDate || project.endDate,
+      tool: data.tool || project.tool,
+      team: data.team || project.team?.id,
+      status: data.status || project.status,
+      stage: data.stage || project.stage,
+    }
+
+    try {
+      const response = await Service.editProject(project?.id, updatedData)
+      setProject(response)
+      setIsEditing(false)
+      alert('Successfully Updated')
+      // onClose();
+    } catch (error) {
+      alert('Something went wrong')
+      console.log(error)
+    }
+  }
+
   if (!isOpen) return null
 
   const startDate = new Date(project?.startDate)
   const endDate = new Date(project?.endDate)
-
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
       <div className="bg-white h-screen overflow-x-auto p-8 rounded-lg shadow-lg w-screen ">
@@ -139,72 +150,111 @@ const Project = ({ project, isOpen, onClose, setProject }) => {
           <div className="grid grid-cols-2 gap-8">
             <form onSubmit={handleSubmit(onSubmit)}>
               <div>
-                <div className="mb-2 flex">
+                <div className="my-3">
                   <strong className="text-gray-700">Project Name:</strong>
 
                   <div>{project?.name}</div>
                 </div>
-                <div className="mb-2 flex">
-                  <strong className="text-gray-700">Description:</strong>
+                <div className="my-3">
                   {isEditing ? (
-                    <Input {...register('description')} className="mt-1" />
+                    <Input
+                      label="Description"
+                      placeholder="Description"
+                      size="lg"
+                      color="green"
+                      {...register('description')}
+                      className="mt-1"
+                    />
                   ) : (
-                    <div>{project?.description}</div>
+                    <div>
+                      <strong className="text-gray-700">Description: </strong>
+                      {project?.description}
+                    </div>
                   )}
                 </div>
-                <div className="mb-2 flex">
-                  <strong className="text-gray-700">Start Date:</strong>
+                <div className="my-3">
                   {isEditing ? (
-                    <Input type="date" {...register('startDate')} className="mt-1" />
+                    <Input
+                      label="Start Date"
+                      placeholder="Start Date"
+                      color="green"
+                      size="lg"
+                      type="date"
+                      {...register('startDate')}
+                      className="mt-1"
+                    />
                   ) : (
-                    <div>{startDate?.toDateString()}</div>
+                    <div>
+                      <strong className="text-gray-700">Start Date: </strong>
+                      {startDate?.toDateString()}
+                    </div>
                   )}
                 </div>
-                <div className="mb-2">
-                  <strong className="text-gray-700">Approval Date:</strong>
+                <div className="my-3">
                   {isEditing ? (
-                    <Input type="date" {...register('endDate')} className="mt-1" />
+                    <Input
+                      label="Approval Date"
+                      placeholder="Approval Date"
+                      color="green"
+                      size="lg"
+                      type="date"
+                      {...register('endDate')}
+                      className="mt-1"
+                    />
                   ) : (
-                    <div>{endDate?.toDateString()}</div>
+                    <div>
+                      <strong className="text-gray-700">Approval Date: </strong>
+                      {endDate?.toDateString()}
+                    </div>
                   )}
                 </div>
 
-                <p className="mb-2">
-                  <strong className="text-gray-700">Tools:</strong> {project?.tool}
+                <p className="my-3">
+                  <strong className="text-gray-700">Tools:</strong>{' '}
+                  {project?.tool}
                 </p>
-                <p className="mb-2">
+                <p className="my-3">
                   <strong className="text-gray-700">Connection Design:</strong>{' '}
                   {project?.connectionDesign ? 'REQUIRED' : 'Not Required'}
                 </p>
-                <p className="mb-2">
+                <p className="my-3">
                   <strong className="text-gray-700">Misc Design:</strong>{' '}
                   {project?.miscDesign ? 'REQUIRED' : 'Not Required'}
                 </p>
-                <p className="mb-2">
+                <p className="my-3">
                   <strong className="text-gray-700">Customer:</strong>{' '}
                   {project?.customer ? 'REQUIRED' : 'Not Required'}
                 </p>
                 <div>
-                  <strong className="text-gray-700">Team:</strong>
                   {isEditing ? (
                     <Select
                       name="team"
-                      className="text-base"
-                      options={[
-                        ...teamOption
-                      ]}
-                      defaultValue={project?.team?.name}
+                      label="Team"
+                      placeholder="Team"
+                      size="lg"
+                      color="green"
+                      options={[...teamOption]}
+                      value={project?.team?.name}
+                      const
+                      console={console.log(project?.team?.name)}
                       {...register('team')}
+                      onChange={setValue}
                     />
                   ) : (
-                    <div>{project?.team?.name}</div>
+                    <div>
+                      <strong className="text-gray-700">Team: </strong>
+                      {project?.team?.name}
+                    </div>
                   )}
                 </div>
-                <div>
-                  <strong className="text-gray-700">Status:</strong>
+                <div className="my-3">
                   {isEditing ? (
                     <Select
                       name="status"
+                      label="Status"
+                      placeholder="Status"
+                      size="lg"
+                      color="green"
                       options={[
                         { label: 'ACTIVE', value: 'ACTIVE' },
                         { label: 'ON-HOLD', value: 'ON-HOLD' },
@@ -214,20 +264,27 @@ const Project = ({ project, isOpen, onClose, setProject }) => {
                         { label: 'COMPLETE', value: 'COMPLETE' },
                         { label: 'SUBMIT', value: 'SUBMIT' },
                         { label: 'SUSPEND', value: 'SUSPEND' },
-                        { label: 'CANCEL', value: 'CANCEL' }
+                        { label: 'CANCEL', value: 'CANCEL' },
                       ]}
                       defaultValue={project?.status}
                       {...register('status')}
+                      onChange={setValue}
                     />
                   ) : (
-                    <div>{project?.status}</div>
+                    <div>
+                      <strong className="text-gray-700">Status: </strong>
+                      {project?.status}
+                    </div>
                   )}
                 </div>
                 <div>
-                  <strong className="text-gray-700">Stage:</strong>
                   {isEditing ? (
                     <Select
-                      name="status"
+                      name="stage"
+                      label="Stage"
+                      placeholder="Stage"
+                      size="lg"
+                      color="green"
                       options={[
                         { label: 'RFI', value: 'RFI' },
                         { label: 'IFA', value: 'IFA' },
@@ -239,22 +296,34 @@ const Project = ({ project, isOpen, onClose, setProject }) => {
                         { label: 'BFC', value: 'BFC' },
                         { label: 'RIFC', value: 'RIFC' },
                         { label: 'REV', value: 'REV' },
-                        { label: 'CO#', value: 'CO#' }
+                        { label: 'CO#', value: 'CO#' },
                       ]}
                       defaultValue={project?.stage}
                       {...register('stage')}
+                      onChange={setValue}
                     />
                   ) : (
-                    <div>{project?.stage}</div>
+                    <div>
+                      <strong className="text-gray-700">Stage: </strong>
+                      {project?.stage}
+                    </div>
                   )}
                 </div>
               </div>
               {userType !== 'user' && (
                 <div>
                   {isEditing ? (
-                    <Button type="submit">Save</Button>
+                    <div className="flex justify-between">
+                      <Button type="submit">Save</Button>
+                      <Button onClick={handleCancel}>Cancel</Button>
+                      <Button onClick={handleDelete}>Delete</Button>
+                    </div>
                   ) : (
-                    <Button onClick={handleSubmit(handleEditClick)}>Update</Button>
+                    <div>
+                      <Button onClick={handleSubmit(handleEditClick)}>
+                        Update
+                      </Button>
+                    </div>
                   )}
                 </div>
               )}
@@ -262,12 +331,14 @@ const Project = ({ project, isOpen, onClose, setProject }) => {
             <div>
               {userType !== 'user' && (
                 <div>
-                  <p className="mb-2">
+                  <p className="my-3">
                     <strong className="text-gray-700">Fabricator Name:</strong>{' '}
                     {project?.fabricator?.name}
                   </p>
-                  <p className="mb-2">
-                    <strong className="text-gray-700">Fabricator Shop Standard:</strong>{' '}
+                  <p className="my-3">
+                    <strong className="text-gray-700">
+                      Fabricator Shop Standard:
+                    </strong>{' '}
                     <a
                       href={`${BASE_URL}${project?.fabricator?.design}`}
                       target="_blank"
@@ -281,7 +352,9 @@ const Project = ({ project, isOpen, onClose, setProject }) => {
               )}
 
               <div>
-                <div className="text-xl font-bold text-gray-800">Team Members:</div>
+                <div className="text-xl font-bold text-gray-800">
+                  Team Members:
+                </div>
                 <h3 className="text-sm font-bold text-gray-800">Manager</h3>
                 <li>{project?.manager?.name}</li>
 

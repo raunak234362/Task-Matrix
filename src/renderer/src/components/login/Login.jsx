@@ -16,7 +16,7 @@ const Login = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors }
+    formState: { errors },
   } = useForm()
   const [error, setError] = useState('')
 
@@ -48,7 +48,9 @@ const Login = () => {
         }
       } else {
         // Handle case where session or token is missing
-        setError('Invalid credentials. Please check your username and password.')
+        setError(
+          'Invalid credentials. Please check your username and password.',
+        )
       }
     } catch (error) {
       console.error('Login failed: ', error)
@@ -77,30 +79,34 @@ const Login = () => {
           </div>
 
           <form onSubmit={handleSubmit(login)} className="w-[75%]">
-            <div className='my-2'>
+            <div className="my-2">
               <Input
-                label="Username:"
+                label="Username"
                 type="text"
-                placeholder="Enter your username"
+                placeholder="Username"
                 {...register('username', { required: 'Username is required' })}
               />
             </div>
-            {errors.username && <p className="text-red-500">{errors.username.message}</p>}
+            {errors.username && (
+              <p className="text-red-500">{errors.username.message}</p>
+            )}
             <div>
               <Input
-                label="Password:"
+              label='Password'
                 type="password"
-                placeholder="Enter your password"
+                placeholder="Username"
                 {...register('password', {
                   required: 'Password is required',
                   minLength: {
                     value: 8,
-                    message: 'Password must be at least 8 characters'
-                  }
+                    message: 'Password must be at least 8 characters',
+                  },
                 })}
               />
             </div>
-            {errors.password && <p className="text-red-500">{errors.password.message}</p>}
+            {errors.password && (
+              <p className="text-red-500">{errors.password.message}</p>
+            )}
 
             <Button type="submit">Login</Button>
           </form>

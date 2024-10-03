@@ -14,7 +14,9 @@ const SelectedTask = ({ task, isOpen, onClose, setTasks }) => {
     register,
     handleSubmit,
     setValue,
-    formState: { errors }
+    watch,
+    reset,
+    formState: { errors },
   } = useForm()
 
   if (!isOpen) return null
@@ -28,10 +30,6 @@ const SelectedTask = ({ task, isOpen, onClose, setTasks }) => {
     setValue('duration', task.duration)
     setValue('status', task.status)
     setValue('priority', task.priority)
-  }
-
-  const handleSaveClick = () => {
-    setIsEditing(false)
   }
 
   const durToHour = (params) => {
@@ -53,7 +51,11 @@ const SelectedTask = ({ task, isOpen, onClose, setTasks }) => {
 
   const addComment = async (commentData) => {
     try {
-      const response = await Service.addComment(task?.id, commentData?.comment, commentData?.file)
+      const response = await Service.addComment(
+        task?.id,
+        commentData?.comment,
+        commentData?.file,
+      )
       console.log('Comment Response: ', response)
       alert('Comment Added Successfully')
     } catch (error) {
@@ -69,17 +71,30 @@ const SelectedTask = ({ task, isOpen, onClose, setTasks }) => {
         due_date: taskData.due_date,
         duration: taskData.duration,
         status: taskData.status,
-        priority: taskData.priority
+        priority: taskData.priority,
       }
+
+      console.log(updatedTask?.status)
 
       const response = await Service.editTask(task?.id, updatedTask)
       console.log(response)
-      // setTasks(response)
+      setIsEditing(false)
       alert('Task Updated Successfully')
       // onClose()
     } catch (error) {
       console.log('Error in updating task: ', error)
       throw error
+    }
+  }
+
+  const handleDelete =async()=>{
+    try {
+      const response = await Service.deleteTask(task.id)
+      console.log(response)
+      alert('Task Deleted Successfully')
+      onClose()
+    } catch (error) {
+      console.error('Error in deleting task: ', error)
     }
   }
 
@@ -151,7 +166,8 @@ const SelectedTask = ({ task, isOpen, onClose, setTasks }) => {
                 </div>
 
                 <div className="mb-2">
-                  <strong className="text-gray-700">Current User:</strong> {task?.user?.name}
+                  <strong className="text-gray-700">Current User:</strong>{' '}
+                  {task?.user?.name}
                 </div>
 
                 <div className="mb-2">
@@ -178,10 +194,13 @@ const SelectedTask = ({ task, isOpen, onClose, setTasks }) => {
 
                 <div className="flex flex-row justify-between mb-4">
                   <div>
-                    <strong className="text-gray-700">Status:</strong>
                     {isEditing ? (
                       <Select
+                        placeholder="Status"
                         name="status"
+                        label="Status"
+                        size="lg"
+                        color="green"
                         options={[
                           { label: 'ASSIGNED', value: 'ASSINGED' },
                           { label: 'IN-PROGRESS', value: 'IN-PROGRESS' },
@@ -189,61 +208,85 @@ const SelectedTask = ({ task, isOpen, onClose, setTasks }) => {
                           { label: 'BREAK', value: 'BREAK' },
                           { label: 'IN-REVIEW', value: 'IN-REVIEW' },
                           { label: 'COMPLETE', value: 'COMPLETE' },
-                          { label: 'APPROVED', value: 'APPROVED' }
+                          { label: 'APPROVED', value: 'APPROVED' },
                         ]}
                         defaultValue={task?.status}
                         {...register('status')}
+                        onChange={setValue}
                       />
                     ) : (
-                      <div>{task?.status}</div>
+                      <div>
+                        <strong className="text-gray-700">Status:</strong>
+                        <div>{task?.status}</div>
+                      </div>
                     )}
                   </div>
 
                   <div>
-                    <strong className="text-gray-700">Priority:</strong>
                     {isEditing ? (
                       <Select
                         name="priority"
+                        label="Priority"
+                        placeholder="Priority"
+                        size="lg"
+                        color="green"
                         options={[
                           { label: 'LOW', value: 0 },
                           { label: 'MEDIUM', value: 1 },
                           { label: 'HIGH', value: 2 },
-                          { label: 'CRITICAL', value: 3 }
+                          { label: 'CRITICAL', value: 3 },
                         ]}
                         defaultValue={task?.priority}
                         {...register('priority')}
+                        onChange={setValue}
                       />
                     ) : (
-                      <span
-                        className={`text-sm font-semibold px-3 py-0.5 mx-2 rounded-full border ${color(
-                          task?.priority
-                        )}`}
-                      >
-                        {setPriorityValue(task?.priority)}
-                      </span>
+                      <div>
+                        <strong className="text-gray-700">Priority:</strong>
+                        <span
+                          className={`text-sm font-semibold px-3 py-0.5 mx-2 rounded-full border ${color(
+                            task?.priority,
+                          )}`}
+                        >
+                          {setPriorityValue(task?.priority)}
+                        </span>
+                      </div>
                     )}
                   </div>
                 </div>
 
-                <div>
-                  {isEditing ? (
-                    <Button type="submit">Save</Button>
-                  ) : (
-                    <Button onClick={handleSubmit(handleEditClick)}>Update</Button>
-                  )}
-                </div>
-                  </form>
+                {userType !== 'user' && (
+                  <div className='flex justify-between'>
+                    {isEditing ? (
+                      <div>
+                        <Button type="submit">Save</Button>
+                        <Button onClick={() => setIsEditing(false)}>Cancel</Button>
+                        <Button onClick={handleDelete}>Delete</Button>
+                      </div>
+                    ) : (
+                      <Button onClick={handleSubmit(handleEditClick)}>
+                        Update
+                      </Button>
+                    )}
+                  </div>
+                )}
+              </form>
             </div>
 
             <div className="flex flex-col justify-between pl-4 gap-y-5">
               <div>
-                <div className="text-xl font-bold text-gray-900">Project Detail:</div>
+                <div className="text-xl font-bold text-gray-900">
+                  Project Detail:
+                </div>
                 <hr className="m-2" />
                 <p className="mb-2">
-                  <strong className="text-gray-700">Project Name:</strong> {task?.project?.name}
+                  <strong className="text-gray-700">Project Name:</strong>{' '}
+                  {task?.project?.name}
                 </p>
                 <p className="mb-2">
-                  <strong className="text-gray-700">Project Description:</strong>{' '}
+                  <strong className="text-gray-700">
+                    Project Description:
+                  </strong>{' '}
                   {task?.project?.description}
                 </p>
                 <p className="mb-2">
@@ -251,10 +294,12 @@ const SelectedTask = ({ task, isOpen, onClose, setTasks }) => {
                   {task?.project?.manager?.name}
                 </p>
                 <p className="mb-2">
-                  <strong className="text-gray-700">Project Stage:</strong> {task?.project?.stage}
+                  <strong className="text-gray-700">Project Stage:</strong>{' '}
+                  {task?.project?.stage}
                 </p>
                 <p className="mb-2">
-                  <strong className="text-gray-700">Project Status:</strong> {task?.project?.status}
+                  <strong className="text-gray-700">Project Status:</strong>{' '}
+                  {task?.project?.status}
                 </p>
               </div>
             </div>
@@ -271,18 +316,28 @@ const SelectedTask = ({ task, isOpen, onClose, setTasks }) => {
                     <th className="py-3 px-6 text-left">Assigned On</th>
                     <th className="py-3 px-6 text-left">Approved By</th>
                     <th className="py-3 px-6 text-left">Approved On</th>
-                    {(userType === 'admin' || username === task?.project?.manager?.username) && (
+                    {(userType === 'admin' ||
+                      username === task?.project?.manager?.username) && (
                       <th className="py-3 px-6 text-left">Action</th>
                     )}
                   </tr>
                 </thead>
                 <tbody className="text-gray-600 text-sm font-medium">
                   {task?.assigned?.map((tasks, index) => (
-                    <tr key={tasks.id} className="border-b border-gray-200 hover:bg-gray-100">
-                      <td className="py-3 px-6 text-left whitespace-nowrap">{index + 1}</td>
+                    <tr
+                      key={tasks.id}
+                      className="border-b border-gray-200 hover:bg-gray-100"
+                    >
+                      <td className="py-3 px-6 text-left whitespace-nowrap">
+                        {index + 1}
+                      </td>
 
-                      <td className="py-3 px-6 text-left">{tasks?.assigned_by?.name}</td>
-                      <td className="py-3 px-6 text-left">{tasks?.assigned_to?.name}</td>
+                      <td className="py-3 px-6 text-left">
+                        {tasks?.assigned_by?.name}
+                      </td>
+                      <td className="py-3 px-6 text-left">
+                        {tasks?.assigned_to?.name}
+                      </td>
                       <td className="py-3 px-6 text-left">
                         {new Date(tasks?.assigned_on).toDateString()}
                       </td>
@@ -298,7 +353,8 @@ const SelectedTask = ({ task, isOpen, onClose, setTasks }) => {
                           <span className="text-red-500">Yet Not Approved</span>
                         )}
                       </td>
-                      {(userType === 'admin' || username === tasks.project?.manager?.username) && (
+                      {(userType === 'admin' ||
+                        username === tasks.project?.manager?.username) && (
                         <td className="py-3 px-6 text-left">
                           <Button
                             className={`${
@@ -356,15 +412,23 @@ const SelectedTask = ({ task, isOpen, onClose, setTasks }) => {
               <div className=" shadow-xl bg-slate-200/50 rounded-lg p-5">
                 <div className="space-y-4">
                   {task?.comments?.map((comment, index) => (
-                    <div className="bg-white p-4 rounded-lg shadow-md" key={index}>
+                    <div
+                      className="bg-white p-4 rounded-lg shadow-md"
+                      key={index}
+                    >
                       <div className="flex items-center mb-2">
-                        <span className="font-bold text-gray-800">{comment?.user?.name}</span>
+                        <span className="font-bold text-gray-800">
+                          {comment?.user?.name}
+                        </span>
                         <span className="text-gray-500 text-sm ml-2">
-                          {new Date(comment?.created_on).toLocaleDateString('en-US', {
-                            year: 'numeric',
-                            month: 'short',
-                            day: 'numeric'
-                          })}
+                          {new Date(comment?.created_on).toLocaleDateString(
+                            'en-US',
+                            {
+                              year: 'numeric',
+                              month: 'short',
+                              day: 'numeric',
+                            },
+                          )}
                         </span>
                       </div>
                       <div className="text-gray-600">

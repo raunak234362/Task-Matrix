@@ -128,6 +128,7 @@ const AddProject = () => {
                   {...register('fabricator', {
                     required: 'Fabricator is required'
                   })}
+                  onChange = {setValue}
                 />
               </div>
               {errors.fabricator && <p className="text-red-600">{errors.fabricator.message}</p>}
@@ -171,6 +172,7 @@ const AddProject = () => {
                   {...register('tool', {
                     required: 'Tools is required'
                   })}
+                  onChange = {setValue}
                 />
               </div>
               {errors.tool && <p className="text-red-600">{errors.tool.message}</p>}
@@ -256,6 +258,7 @@ const AddProject = () => {
                   {...register('manager', {
                     required: 'Manager is required'
                   })}
+                  onChange = {setValue}
                 />
               </div>
               {errors.manager && <p className="text-red-600">{errors.manager.message}</p>}
