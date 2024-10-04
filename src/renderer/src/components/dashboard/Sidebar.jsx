@@ -24,7 +24,7 @@ const Sidebar = ({ isSubMenuOpen, setIsSubMenuOpen }) => {
   }
 
   return (
-    <div className="bg-gray-800 text-white left-0 top-0 fixed w-16 h-screen flex flex-col">
+    <div className="bg-green-300 text-white left-0 top-0 fixed w-16 h-screen flex flex-col">
       <nav className="w-full flex flex-wrap px-auto justify-center">
         <ul className="flex flex-col">
           {userType !== 'user' && (
@@ -32,16 +32,16 @@ const Sidebar = ({ isSubMenuOpen, setIsSubMenuOpen }) => {
               <button
                 onClick={() => handleClick('dashboard')}
                 className={`flex items-center w-full py-5 px-2 relative ${
-                  activeMenu === 'dashboard' ? 'bg-gray-700' : ''
+                  activeMenu === 'dashboard' ? 'bg-green-400' : ''
                 }`}
               >
                 <MdDashboard className="text-3xl" />
                 {activeMenu === 'dashboard' && (
-                  <div className="absolute left-0 top-0 h-full w-1 bg-white"></div>
+                  <div className="absolute left-0 top-0 h-full w-1 bg-green-200"></div>
                 )}
               </button>
               {activeMenu === 'dashboard' && (
-                <div className="absolute top-0 w-60 h-screen bg-slate-700 ml-12">
+                <div className="absolute top-0 w-60 h-screen bg-green-400 ml-12">
                   <ul className="pl-6 flex flex-col gap-5 py-5">
                     <li>
                       <Link
@@ -66,7 +66,7 @@ const Sidebar = ({ isSubMenuOpen, setIsSubMenuOpen }) => {
             <button
               onClick={() => handleClick('user')}
               className={`flex items-center w-full py-5 px-2 relative ${
-                activeMenu === 'user' ? 'bg-gray-700' : ''
+                activeMenu === 'user' ? 'bg-green-400' : ''
               }`}
             >
               <IoMdPeople className="text-4xl" />
@@ -75,7 +75,7 @@ const Sidebar = ({ isSubMenuOpen, setIsSubMenuOpen }) => {
               )}
             </button>
             {activeMenu === 'user' && (
-              <div className="absolute top-0 w-60 h-screen bg-slate-700 ml-12">
+              <div className="absolute top-0 w-60 h-screen bg-green-400 ml-12">
                 {userType === 'admin' && (
                   <ul className="pl-6 flex flex-col gap-5 py-5">
                     <li>
@@ -330,7 +330,7 @@ const Sidebar = ({ isSubMenuOpen, setIsSubMenuOpen }) => {
               <button
                 onClick={() => handleClick('fabricator')}
                 className={`flex items-center w-full py-5 px-2 relative ${
-                  activeMenu === 'fabricator' ? 'bg-gray-700' : ''
+                  activeMenu === 'fabricator' ? 'bg-green-400' : ''
                 }`}
               >
                 <FaLayerGroup className="text-3xl" />
@@ -339,7 +339,7 @@ const Sidebar = ({ isSubMenuOpen, setIsSubMenuOpen }) => {
                 )}
               </button>
               {activeMenu === 'fabricator' && (
-                <div className="absolute top-0 w-60 h-screen bg-slate-700 ml-12">
+                <div className="absolute top-0 w-60 h-screen bg-green-400 ml-12">
                   {userType === 'admin' && (
                     <ul className="pl-6 flex flex-col gap-5 py-5">
                       <li>
@@ -395,7 +395,7 @@ const Sidebar = ({ isSubMenuOpen, setIsSubMenuOpen }) => {
             <button
               onClick={() => handleClick('project')}
               className={`flex items-center w-full py-7 px-2 relative ${
-                activeMenu === 'project' ? 'bg-gray-700' : ''
+                activeMenu === 'project' ? 'bg-green-400' : ''
               }`}
             >
               <BsSuitcaseLgFill className="text-3xl" />
@@ -404,7 +404,7 @@ const Sidebar = ({ isSubMenuOpen, setIsSubMenuOpen }) => {
               )}
             </button>
             {activeMenu === 'project' && (
-              <div className="absolute top-0 w-60 h-screen bg-slate-700 ml-12">
+              <div className="absolute top-0 w-60 h-screen bg-green-400 ml-12">
                 {userType === 'admin' && (
                   <ul className="pl-6 flex flex-col gap-5 py-5">
                     <li>
@@ -528,7 +528,7 @@ const Sidebar = ({ isSubMenuOpen, setIsSubMenuOpen }) => {
             <button
               onClick={() => handleClick('task')}
               className={`flex items-center w-full py-6 px-2 relative ${
-                activeMenu === 'task' ? 'bg-gray-700' : ''
+                activeMenu === 'task' ? 'bg-green-400' : ''
               }`}
             >
               <IoMdCheckmarkCircle className="text-4xl" />
@@ -537,7 +537,7 @@ const Sidebar = ({ isSubMenuOpen, setIsSubMenuOpen }) => {
               )}
             </button>
             {activeMenu === 'task' && (
-              <div className="absolute top-0 w-60 h-screen bg-slate-700 ml-12">
+              <div className="absolute top-0 w-60 h-screen bg-green-400 ml-12">
                 {(userType === 'admin' || userType === 'manager') && (
                   <ul className="pl-6 flex flex-col gap-5 py-5">
                     <li>

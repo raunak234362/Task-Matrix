@@ -23,7 +23,7 @@ const Allprojects = () => {
         setProjects(projects)
         setFilteredProjects(projects)
         setSegreateProject(await SegregateProject(projects))
-        // console.log(projects)
+        console.log(projects)
       } catch (error) {
         console.error('Error fetching projects:', error)
       }
@@ -84,14 +84,11 @@ const Allprojects = () => {
 
       {userType !== 'user' && segregateProject && (
         <div className="flex-grow bg-white shadow-lg rounded-lg p-6">
-           <div className='bg-gray-200 p-2 mt-5 rounded-lg'>
-          <div>
-          <FabricatorCharts
-            segregateProject={segregateProject}
-          />
-
+          <div className="bg-gray-200 p-2 mt-5 rounded-lg">
+            <div>
+              <FabricatorCharts segregateProject={segregateProject} />
+            </div>
           </div>
-        </div>
           <div>
             <BarView
               segregateProject={segregateProject}
@@ -124,83 +121,81 @@ const Allprojects = () => {
                 <option value="endDate">End Date</option>
               </select>
             </div>
-            <div className="h-[40vh] overflow-y-auto">
-              <table className="w-full table-auto border-collapse text-center rounded-xl top-0">
-                <thead>
-                  <tr className="bg-gray-200">
-                    <th className="px-1 py-2">S.no</th>
-                    <th className="px-1 py-2">
-                      <button onClick={() => sortProjects('name')}>
-                        Project Name{' '}
-                        {sortConfig.key === 'name'
-                          ? sortConfig.direction === 'ascending'
-                            ? ''
-                            : ''
-                          : ''}
-                      </button>
-                    </th>
-                    <th className="px-1 py-2">
-                      <button onClick={() => sortProjects('manager.name')}>
-                        Project Manager{' '}
-                        {sortConfig.key === 'manager.name'
-                          ? sortConfig.direction === 'ascending'
-                            ? ''
-                            : ''
-                          : ''}
-                      </button>
-                    </th>
-                    <th className="px-1 py-2">
-                      <button onClick={() => sortProjects('startDate')}>
-                        Start Date{' '}
-                        {sortConfig.key === 'startDate'
-                          ? sortConfig.direction === 'ascending'
-                            ? ''
-                            : ''
-                          : ''}
-                      </button>
-                    </th>
-                    <th className="px-3 py-2">
-                      <button onClick={() => sortProjects('endDate')}>
-                        Approval Date{' '}
-                        {sortConfig.key === 'endDate'
-                          ? sortConfig.direction === 'ascending'
-                            ? ''
-                            : ''
-                          : ''}
-                      </button>
-                    </th>
-                    <th className="px-3 py-2">Detail</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredProjects.length === 0 ? (
-                    <tr className="bg-white">
-                      <td colSpan="6" className="text-center">
-                        No Projects Found
-                      </td>
-                    </tr>
-                  ) : (
-                    filteredProjects.map((project, index) => (
-                      <tr key={project.id}>
-                        <td className="border px-1 py-2">{index + 1}</td>
-                        <td className="border px-5 py-2 text-left">{project.name}</td>
-                        <td className="border px-1 py-2">{project.manager?.name}</td>
-                        <td className="border px-1 py-2">
-                          {new Date(project.startDate).toDateString()}
-                        </td>
-                        <td className="border px-3 py-2">
-                          {new Date(project.endDate).toDateString()}
-                        </td>
-                        <td className="border px-3 py-2">
-                          <div className="flex justify-center">
-                            <Button onClick={() => handleViewClick(project.id)}>View</Button>
-                          </div>
-                        </td>
+            <div className="overflow-x-auto">
+              <div className="inline-block min-w-full align-middle">
+                <div className="overflow-hidden border border-gray-200 rounded-lg">
+                  {/* Header Table */}
+                  <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gray-200 sticky top-0 z-10">
+                      <tr>
+                        <th className="px-1 py-2">S.no</th>
+                        <th className="px-1 py-2">
+                          <button onClick={() => sortProjects('name')}>
+                            Project Name{' '}
+                            {sortConfig.key === 'name' &&
+                              (sortConfig.direction === 'ascending' ? '↑' : '↓')}
+                          </button>
+                        </th>
+                        <th className="px-1 py-2">
+                          <button onClick={() => sortProjects('manager.name')}>
+                            Project Manager{' '}
+                            {sortConfig.key === 'manager.name' &&
+                              (sortConfig.direction === 'ascending' ? '↑' : '↓')}
+                          </button>
+                        </th>
+                        <th className="px-1 py-2">
+                          <button onClick={() => sortProjects('startDate')}>
+                            Start Date{' '}
+                            {sortConfig.key === 'startDate' &&
+                              (sortConfig.direction === 'ascending' ? '↑' : '↓')}
+                          </button>
+                        </th>
+                        <th className="px-3 py-2">
+                          <button onClick={() => sortProjects('endDate')}>
+                            Approval Date{' '}
+                            {sortConfig.key === 'endDate' &&
+                              (sortConfig.direction === 'ascending' ? '↑' : '↓')}
+                          </button>
+                        </th>
+                        <th className="px-3 py-2">Detail</th>
                       </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
+                    </thead>
+                  </table>
+                  {/* Scrollable Body */}
+                  <div className="h-[38vh] overflow-y-auto">
+                    <table className="w-full divide-y divide-gray-200">
+                      <tbody>
+                        {filteredProjects.length === 0 ? (
+                          <tr className="bg-white">
+                            <td colSpan="6" className="text-center">
+                              No Projects Found
+                            </td>
+                          </tr>
+                        ) : (
+                          filteredProjects.map((project, index) => (
+                            <tr key={project.id}>
+                              <td className="border px-5 py-2">{index + 1}</td>
+                              <td className="border px-6 py-2 text-left">{project.name}</td>
+                              <td className="border px-1 py-2">{project.manager?.name}</td>
+                              <td className="border px-1 py-2">
+                                {new Date(project.startDate).toDateString()}
+                              </td>
+                              <td className="border px-3 py-2">
+                                {new Date(project.endDate).toDateString()}
+                              </td>
+                              <td className="border px-3 py-2">
+                                <div className="flex justify-center">
+                                  <Button onClick={() => handleViewClick(project.id)}>View</Button>
+                                </div>
+                              </td>
+                            </tr>
+                          ))
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>

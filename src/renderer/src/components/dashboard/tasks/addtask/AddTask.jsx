@@ -18,11 +18,15 @@ const AddTask = () => {
     register,
     handleSubmit,
     watch,
+    setValue,
     formState: { errors }
   } = useForm()
 
   // FETCH task related to project
   // Fetch project details
+
+  const projectId = watch('project')
+
   useEffect(() => {
     const fetchProjects = async () => {
       try {
@@ -43,20 +47,27 @@ const AddTask = () => {
   }, [])
 
   const handleProjectChange = async (projectId) => {
+    console.log('Project ID:', projectId)
     try {
       const project = await Service.getProject(projectId)
       setProject(project)
-      const assigned = project?.team?.members?.map((member) => ({
-        label: `${member?.role} - ${member?.employee?.name}`,
-        value: member?.employee?.id
-      }))
-      console.log('Assigned users---',assigned)
+      console.log(project)
+      const assigned = project?.team?.members?.reduce((acc, member) => {
+        const exists = acc.find((item) => item.value === member?.employee?.id)
+        if (!exists) {
+          acc.push({
+            label: `${member?.role} - ${member?.employee?.name}`,
+            value: member?.employee?.id
+          })
+        }
+        return acc
+      }, [])
+      console.log('Assigned users---', assigned)
       setAssignedUser(assigned)
     } catch (error) {
       console.error('Error fetching project details:', error)
     }
   }
-
   const handleParentTasks = async (projectId) => {
     try {
       const parentTasks = await Service.getParentTasks(projectId)
@@ -70,14 +81,21 @@ const AddTask = () => {
     }
   }
 
+  useEffect(() => {
+    if (projectId) {
+      handleProjectChange(projectId)
+      handleParentTasks(projectId)
+    }
+  }, [projectId])
+
   const onSubmit = async (taskData) => {
+    console.log('Project data:', taskData)
     try {
       const token = sessionStorage.getItem('token')
       if (!token) {
         throw new Error('Token not found')
       }
       const TaskName = `${taskData.type} - ${taskData.taskname}`
-      console.log('Project data:', TaskName)
       const data = await Service.addTask({
         ...taskData,
         name: TaskName,
@@ -85,8 +103,8 @@ const AddTask = () => {
       })
       console.log('Response from task:', taskData)
 
-      dispatch(setTaskData(data))
-      console.log('Task added:', data)
+      // dispatch(setTaskData(data))
+      // console.log('Task added:', data)
       alert('Successfully added new Task', taskData?.name)
     } catch (error) {
       console.error('Error adding task:', error)
@@ -115,14 +133,12 @@ const AddTask = () => {
                   },
                   ...projectOptions
                 ]}
-                onChange={async (e) => {
-                  await handleParentTasks(e.target.value)
-                  await handleProjectChange(e.target.value)
-                  register('project', { required: 'Select a project', value: e.target.value })
-                }}
+                {...register('project', { required: 'Project is required' })}
+                onChange={setValue}
               />
               {errors.project && <p className="text-red-600">{errors.project.message}</p>}
             </div>
+
             <div className="mt-5">
               <Select
                 label="Parent Task: "
@@ -137,6 +153,7 @@ const AddTask = () => {
                   ...parentTaskOptions
                 ]}
                 {...register('parent')}
+                onChange={setValue}
               />
             </div>
             <div className="mt-5 flex flex-row gap-x-2">
@@ -158,6 +175,7 @@ const AddTask = () => {
                     { label: 'Others', value: 'OTHERS' }
                   ]}
                   {...register('type', { required: 'Task Type is required' })}
+                  onChange={setValue}
                 />
                 {errors.type && <p className="text-red-600">{errors.type.message}</p>}
               </div>
@@ -191,6 +209,7 @@ const AddTask = () => {
                 ]}
                 className="w-full"
                 {...register('priority', { required: 'Priority is required' })}
+                onChange={setValue}
               />
               {errors.priority && <p className="text-red-600">{errors.priority.message}</p>}
             </div>
@@ -209,6 +228,7 @@ const AddTask = () => {
                 ]}
                 className="w-full"
                 {...register('status', { required: 'Status is required' })}
+                onChange={setValue}
               />
               {errors.status && <p className="text-red-600">{errors.status.message}</p>}
             </div>
@@ -252,7 +272,7 @@ const AddTask = () => {
                     }}
                   />
                 </div>
-                  {errors.min && <p className="text-red-600">{errors.min.message}</p>}
+                {errors.min && <p className="text-red-600">{errors.min.message}</p>}
               </div>
             </div>
             <div className="mt-5">
@@ -262,6 +282,7 @@ const AddTask = () => {
                 options={[{ label: 'Select User', value: '' }, ...assignedUser]}
                 className="w-full"
                 {...register('user', { required: 'Assigning User is required' })}
+                onChange={setValue}
               />
               {errors.user && <p className="text-red-600">{errors.user.message}</p>}
             </div>

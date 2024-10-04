@@ -14,6 +14,8 @@ const SelectedTask = ({ task, isOpen, onClose, setTasks }) => {
     register,
     handleSubmit,
     setValue,
+    watch,
+    reset,
     formState: { errors }
   } = useForm()
 
@@ -28,10 +30,6 @@ const SelectedTask = ({ task, isOpen, onClose, setTasks }) => {
     setValue('duration', task.duration)
     setValue('status', task.status)
     setValue('priority', task.priority)
-  }
-
-  const handleSaveClick = () => {
-    setIsEditing(false)
   }
 
   const durToHour = (params) => {
@@ -72,14 +70,27 @@ const SelectedTask = ({ task, isOpen, onClose, setTasks }) => {
         priority: taskData.priority
       }
 
+      console.log(updatedTask?.status)
+
       const response = await Service.editTask(task?.id, updatedTask)
       console.log(response)
-      // setTasks(response)
+      setIsEditing(false)
       alert('Task Updated Successfully')
       // onClose()
     } catch (error) {
       console.log('Error in updating task: ', error)
       throw error
+    }
+  }
+
+  const handleDelete = async () => {
+    try {
+      const response = await Service.deleteTask(task.id)
+      console.log(response)
+      alert('Task Deleted Successfully')
+      onClose()
+    } catch (error) {
+      console.error('Error in deleting task: ', error)
     }
   }
 
@@ -157,11 +168,7 @@ const SelectedTask = ({ task, isOpen, onClose, setTasks }) => {
                 <div className="mb-2">
                   <strong className="text-gray-700">Due Date:</strong>
                   {isEditing ? (
-                    <Input
-                      type="date"
-                      {...register('due_date')}
-                      className="mt-1"
-                    />
+                    <Input type="date" {...register('due_date')} className="mt-1" />
                   ) : (
                     <div>{getTaskById?.toDateString()}</div>
                   )}
@@ -178,10 +185,13 @@ const SelectedTask = ({ task, isOpen, onClose, setTasks }) => {
 
                 <div className="flex flex-row justify-between mb-4">
                   <div>
-                    <strong className="text-gray-700">Status:</strong>
                     {isEditing ? (
                       <Select
+                        placeholder="Status"
                         name="status"
+                        label="Status"
+                        size="lg"
+                        color="green"
                         options={[
                           { label: 'ASSIGNED', value: 'ASSINGED' },
                           { label: 'IN-PROGRESS', value: 'IN-PROGRESS' },
@@ -193,17 +203,24 @@ const SelectedTask = ({ task, isOpen, onClose, setTasks }) => {
                         ]}
                         defaultValue={task?.status}
                         {...register('status')}
+                        onChange={setValue}
                       />
                     ) : (
-                      <div>{task?.status}</div>
+                      <div>
+                        <strong className="text-gray-700">Status:</strong>
+                        <div>{task?.status}</div>
+                      </div>
                     )}
                   </div>
 
                   <div>
-                    <strong className="text-gray-700">Priority:</strong>
                     {isEditing ? (
                       <Select
                         name="priority"
+                        label="Priority"
+                        placeholder="Priority"
+                        size="lg"
+                        color="green"
                         options={[
                           { label: 'LOW', value: 0 },
                           { label: 'MEDIUM', value: 1 },
@@ -212,27 +229,43 @@ const SelectedTask = ({ task, isOpen, onClose, setTasks }) => {
                         ]}
                         defaultValue={task?.priority}
                         {...register('priority')}
+                        onChange={setValue}
                       />
                     ) : (
-                      <span
-                        className={`text-sm font-semibold px-3 py-0.5 mx-2 rounded-full border ${color(
-                          task?.priority
-                        )}`}
-                      >
-                        {setPriorityValue(task?.priority)}
-                      </span>
+                      <div>
+                        <strong className="text-gray-700">Priority:</strong>
+                        <span
+                          className={`text-sm font-semibold px-3 py-0.5 mx-2 rounded-full border ${color(
+                            task?.priority
+                          )}`}
+                        >
+                          {setPriorityValue(task?.priority)}
+                        </span>
+                      </div>
                     )}
                   </div>
                 </div>
 
-                <div>
-                  {isEditing ? (
-                    <Button type="submit">Save</Button>
-                  ) : (
-                    <Button onClick={handleSubmit(handleEditClick)}>Update</Button>
-                  )}
-                </div>
-                  </form>
+                {userType !== 'user' && (
+                  <div className=" w-full flex justify-between">
+                    {isEditing ? (
+                      <div className="flex flex-row justify-between">
+                        <div className='flex'>
+                          <Button type="submit">Save</Button>
+                        </div>
+                        <div className='flex'>
+                          <Button onClick={() => setIsEditing(false)}>Cancel</Button>
+                        </div>
+                        <div className='flex'>  
+                          <Button onClick={handleDelete}>Delete</Button>
+                        </div>
+                      </div>
+                    ) : (
+                      <Button onClick={handleSubmit(handleEditClick)}>Update</Button>
+                    )}
+                  </div>
+                )}
+              </form>
             </div>
 
             <div className="flex flex-col justify-between pl-4 gap-y-5">
