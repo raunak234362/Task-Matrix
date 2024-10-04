@@ -6,10 +6,12 @@ import Service from '../../../../api/configAPI'
 import { setTaskData } from '../../../../store/taskSlice'
 import { useDispatch } from 'react-redux'
 import { useForm } from 'react-hook-form'
+import { Dialog, DialogHeader, DialogBody, DialogFooter } from '@material-tailwind/react'
 
 const AddTask = () => {
   const [projectOptions, setPtojectOptions] = useState([])
   const [project, setProject] = useState({})
+  const [isSuccessOpen, setIsSuccessOpen] = useState(false)
   const [parentTaskOptions, setParentTaskOptions] = useState([])
   const [assignedUser, setAssignedUser] = useState([])
   const token = sessionStorage.getItem('token')
@@ -102,14 +104,16 @@ const AddTask = () => {
         token: token
       })
       console.log('Response from task:', taskData)
-
-      // dispatch(setTaskData(data))
-      // console.log('Task added:', data)
-      alert('Successfully added new Task', taskData?.name)
+      setIsSuccessOpen(true)
+      dispatch(setTaskData(data))
     } catch (error) {
       console.error('Error adding task:', error)
       console.log('Project data:', taskData)
     }
+  }
+
+  const closeSuccessModal = () => {
+    setIsSuccessOpen(false)
   }
 
   return (
@@ -299,6 +303,15 @@ const AddTask = () => {
             </div>
             <div className="mt-5 w-full">
               <Button type="submit">Add Task</Button>
+              <Dialog open={isSuccessOpen} handler={setIsSuccessOpen}>
+                <DialogHeader>Task Added</DialogHeader>
+                <DialogBody>The task added successfully!</DialogBody>
+                <DialogFooter>
+                  <Button variant="gradient" color="green" onClick={closeSuccessModal}>
+                    Close
+                  </Button>
+                </DialogFooter>
+              </Dialog>
             </div>
           </div>
         </div>
