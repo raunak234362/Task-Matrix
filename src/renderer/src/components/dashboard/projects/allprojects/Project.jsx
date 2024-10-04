@@ -7,6 +7,7 @@ import Service from '../../../../api/configAPI'
 import { useForm } from 'react-hook-form'
 import { BASE_URL } from '../../../../config/constant'
 import SegregateTeam from '../../../../util/SegragateTeam'
+import { Dialog, DialogHeader, DialogBody, DialogFooter } from '@material-tailwind/react'
 
 const Project = ({ project, isOpen, onClose, setProject }) => {
   const [members, setMembers] = useState({})
@@ -17,6 +18,16 @@ const Project = ({ project, isOpen, onClose, setProject }) => {
   const [taskDetail, setTaskDetail] = useState()
   const [isEditing, setIsEditing] = useState(false)
   const { register, handleSubmit, setValue } = useForm()
+  const [isAlert, setIsAlert] = useState(false)
+  const [isSuccessOpen, setIsSuccessOpen] = useState(false)
+
+  const openModal = () => {
+    setIsAlert(true)
+  }
+
+  const closeModal = () => {
+    setIsAlert(false)
+  }
 
   useEffect(() => {
     function segregateTeam() {
@@ -26,7 +37,7 @@ const Project = ({ project, isOpen, onClose, setProject }) => {
         memb.push({
           employee: member?.employee,
           date: project?.endDate,
-          role: member?.role,
+          role: member?.role
         })
         if (member?.role !== 'MANAGER' && member?.role !== 'LEADER') {
           if (member?.role in teamMembers) {
@@ -45,7 +56,7 @@ const Project = ({ project, isOpen, onClose, setProject }) => {
         const teamData = await Service.getAllTeam(token)
         const options = teamData.map((team) => ({
           label: team?.name,
-          value: team?.id,
+          value: team?.id
         }))
         setTeamOption(options)
       } catch (error) {
@@ -111,19 +122,24 @@ const Project = ({ project, isOpen, onClose, setProject }) => {
       tool: data.tool || project.tool,
       team: data.team || project.team?.id,
       status: data.status || project.status,
-      stage: data.stage || project.stage,
+      stage: data.stage || project.stage
     }
 
     try {
       const response = await Service.editProject(project?.id, updatedData)
       setProject(response)
       setIsEditing(false)
-      alert('Successfully Updated')
+      setIsSuccessOpen(true)
+      alert('Team updated Successfully')
       // onClose();
     } catch (error) {
       alert('Something went wrong')
       console.log(error)
     }
+  }
+
+  const closeSuccessModal = () => {
+    setIsSuccessOpen(false)
   }
 
   if (!isOpen) return null
@@ -210,8 +226,7 @@ const Project = ({ project, isOpen, onClose, setProject }) => {
                 </div>
 
                 <p className="my-3">
-                  <strong className="text-gray-700">Tools:</strong>{' '}
-                  {project?.tool}
+                  <strong className="text-gray-700">Tools:</strong> {project?.tool}
                 </p>
                 <p className="my-3">
                   <strong className="text-gray-700">Connection Design:</strong>{' '}
@@ -264,7 +279,7 @@ const Project = ({ project, isOpen, onClose, setProject }) => {
                         { label: 'COMPLETE', value: 'COMPLETE' },
                         { label: 'SUBMIT', value: 'SUBMIT' },
                         { label: 'SUSPEND', value: 'SUSPEND' },
-                        { label: 'CANCEL', value: 'CANCEL' },
+                        { label: 'CANCEL', value: 'CANCEL' }
                       ]}
                       defaultValue={project?.status}
                       {...register('status')}
@@ -296,7 +311,7 @@ const Project = ({ project, isOpen, onClose, setProject }) => {
                         { label: 'BFC', value: 'BFC' },
                         { label: 'RIFC', value: 'RIFC' },
                         { label: 'REV', value: 'REV' },
-                        { label: 'CO#', value: 'CO#' },
+                        { label: 'CO#', value: 'CO#' }
                       ]}
                       defaultValue={project?.stage}
                       {...register('stage')}
@@ -314,15 +329,50 @@ const Project = ({ project, isOpen, onClose, setProject }) => {
                 <div>
                   {isEditing ? (
                     <div className="flex justify-between">
-                      <Button type="submit">Save</Button>
-                      <Button onClick={handleCancel}>Cancel</Button>
-                      <Button onClick={handleDelete}>Delete</Button>
+                      <div className="flex">
+                        <Button type="submit">Save</Button>
+                        <Dialog open={isSuccessOpen} handler={setIsSuccessOpen}>
+                          <DialogHeader>Project Updated</DialogHeader>
+                          <DialogBody>The Project was updated successfully!</DialogBody>
+                          <DialogFooter>
+                            <Button variant="gradient" color="green" onClick={closeSuccessModal}>
+                              Close
+                            </Button>
+                          </DialogFooter>
+                        </Dialog>
+                      </div>
+                      <div className='flex'>
+                        <Button onClick={handleCancel}>Cancel</Button>
+                      </div>
+                      <div className="flex">
+                        <Button onClick={openModal}>Delete</Button>
+                        {isAlert && (
+                          <Dialog open={isAlert} handler={setIsAlert}>
+                            <DialogHeader>Confirm Deletion</DialogHeader>
+                            <DialogBody divider>
+                              Are you sure you want to delete this item? This action cannot be
+                              undone.
+                            </DialogBody>
+                            <DialogFooter>
+                              <Button
+                                variant="text"
+                                color="gray"
+                                onClick={closeModal}
+                                className="mr-2"
+                              >
+                                No
+                              </Button>
+                              <Button variant="gradient" color="red" onClick={handleDelete}>
+                                Yes, Delete
+                              </Button>
+                            </DialogFooter>
+                          </Dialog>
+                        )}
+                      </div>
                     </div>
                   ) : (
                     <div>
-                      <Button onClick={handleSubmit(handleEditClick)}>
-                        Update
-                      </Button>
+                      <Button onClick={handleSubmit(handleEditClick)}>Update</Button>
                     </div>
                   )}
                 </div>
@@ -336,9 +386,7 @@ const Project = ({ project, isOpen, onClose, setProject }) => {
                     {project?.fabricator?.name}
                   </p>
                   <p className="my-3">
-                    <strong className="text-gray-700">
-                      Fabricator Shop Standard:
-                    </strong>{' '}
+                    <strong className="text-gray-700">Fabricator Shop Standard:</strong>{' '}
                     <a
                       href={`${BASE_URL}${project?.fabricator?.design}`}
                       target="_blank"
@@ -352,9 +400,7 @@ const Project = ({ project, isOpen, onClose, setProject }) => {
               )}
 
               <div>
-                <div className="text-xl font-bold text-gray-800">
-                  Team Members:
-                </div>
+                <div className="text-xl font-bold text-gray-800">Team Members:</div>
                 <h3 className="text-sm font-bold text-gray-800">Manager</h3>
                 <li>{project?.manager?.name}</li>
 

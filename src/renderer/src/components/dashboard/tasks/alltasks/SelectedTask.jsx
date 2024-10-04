@@ -5,9 +5,12 @@ import React, { useEffect, useState } from 'react'
 import { Button, Input, Select } from '../../../index'
 import Service from '../../../../api/configAPI'
 import { useForm } from 'react-hook-form'
+import { Dialog, DialogHeader, DialogBody, DialogFooter } from '@material-tailwind/react'
 
 const SelectedTask = ({ task, isOpen, onClose, setTasks }) => {
   const [isEditing, setIsEditing] = useState(false)
+  const [isAlert, setIsAlert] = useState(false)
+  const [isSuccessOpen, setIsSuccessOpen] = useState(false)
   const username = sessionStorage.getItem('username')
   const userType = sessionStorage.getItem('userType')
   const {
@@ -75,7 +78,7 @@ const SelectedTask = ({ task, isOpen, onClose, setTasks }) => {
       const response = await Service.editTask(task?.id, updatedTask)
       console.log(response)
       setIsEditing(false)
-      alert('Task Updated Successfully')
+      setIsSuccessOpen(true)
       // onClose()
     } catch (error) {
       console.log('Error in updating task: ', error)
@@ -83,15 +86,27 @@ const SelectedTask = ({ task, isOpen, onClose, setTasks }) => {
     }
   }
 
+  const closeSuccessModal = () => {
+    setIsSuccessOpen(false)
+  }
+
   const handleDelete = async () => {
     try {
       const response = await Service.deleteTask(task.id)
       console.log(response)
-      alert('Task Deleted Successfully')
+      setIsAlert(false)
       onClose()
     } catch (error) {
       console.error('Error in deleting task: ', error)
     }
+  }
+
+  const openModal = () => {
+    setIsAlert(true)
+  }
+
+  const closeModal = () => {
+    setIsAlert(false)
   }
 
   const color = (priority) => {
@@ -247,17 +262,48 @@ const SelectedTask = ({ task, isOpen, onClose, setTasks }) => {
                 </div>
 
                 {userType !== 'user' && (
-                  <div className=" w-full flex justify-between">
+                  <div className=" w-full ">
                     {isEditing ? (
                       <div className="flex flex-row justify-between">
-                        <div className='flex'>
+                        <div className="flex">
                           <Button type="submit">Save</Button>
+                          <Dialog open={isSuccessOpen} handler={setIsSuccessOpen}>
+                            <DialogHeader>Task Updated</DialogHeader>
+                            <DialogBody>The task was updated successfully!</DialogBody>
+                            <DialogFooter>
+                              <Button variant="gradient" color="green" onClick={closeSuccessModal}>
+                                Close
+                              </Button>
+                            </DialogFooter>
+                          </Dialog>
                         </div>
-                        <div className='flex'>
+                        <div className="flex">
                           <Button onClick={() => setIsEditing(false)}>Cancel</Button>
                         </div>
-                        <div className='flex'>  
-                          <Button onClick={handleDelete}>Delete</Button>
+                        <div className="flex">
+                          <Button onClick={openModal}>Delete</Button>
+                          {isAlert && (
+                            <Dialog open={isAlert} handler={setIsAlert}>
+                              <DialogHeader>Confirm Deletion</DialogHeader>
+                              <DialogBody divider>
+                                Are you sure you want to delete this item? This action cannot be
+                                undone.
+                              </DialogBody>
+                              <DialogFooter>
+                                <Button
+                                  variant="text"
+                                  color="gray"
+                                  onClick={closeModal}
+                                  className="mr-2"
+                                >
+                                  No
+                                </Button>
+                                <Button variant="gradient" color="red" onClick={handleDelete}>
+                                  Yes, Delete
+                                </Button>
+                              </DialogFooter>
+                            </Dialog>
+                          )}
                         </div>
                       </div>
                     ) : (
