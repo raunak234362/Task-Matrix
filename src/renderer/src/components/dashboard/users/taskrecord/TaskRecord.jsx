@@ -61,8 +61,23 @@ const TaskRecord = () => {
   }, [user, listTask, userType])
 
   function durToHour(params) {
-    const [hours, minutes] = params.split(':')
-    return `${hours}h ${minutes}m`
+    if (!params) return 'N/A'
+
+    const parts = params.split(' ')
+    let days = 0
+    let timePart = params
+
+    // If duration contains days part, it will have two parts
+    if (parts.length === 2) {
+      days = parseInt(parts[0], 10) // extract days
+      timePart = parts[1] // extract the time part
+    }
+
+    // Time part is in format HH:MM:SS
+    const [hours, minutes, seconds] = timePart.split(':').map(Number)
+
+    const totalHours = days * 24 + hours // Convert days to hours and add them
+    return `${totalHours}h ${minutes}m`
   }
 
   function secToHour(params) {
@@ -128,7 +143,7 @@ const TaskRecord = () => {
               </th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200 font-medium">
+          <tbody className="bg-white divide-y divide-gray-200 text-left font-medium">
             {record?.map((rec, index) => (
               <tr key={rec?.id} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-200/50'}>
                 {console.log('usertask&&&&&&&&&&&&&&', record)}
