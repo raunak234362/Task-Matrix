@@ -96,7 +96,7 @@ const AddTeam = () => {
               {errors.leader && <p className="text-red-500">{errors.leader.message}</p>}
             </div>
           <div className="mt-5 flex justify-between">
-            <Button type="submit" className="bg-slate-500 text-white">
+            <Button type="submit" className="bg-gray-500 text-white">
               Add Team
             </Button>
           </div>
