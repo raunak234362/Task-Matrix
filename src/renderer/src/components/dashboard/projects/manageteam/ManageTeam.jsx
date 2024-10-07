@@ -104,7 +104,7 @@ const ManageTeam = () => {
         </thead>
         <tbody className="bg-white divide-y divide-gray-200">
           {filteredTeams.map((team, index) => (
-            <tr key={team.id}>
+            <tr key={team.id} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-200/50'}>
               <td className="px-6 py-4 whitespace-nowrap">
                 <div className="flex items-center">
                   <div>

@@ -18,6 +18,7 @@ import {
 } from 'date-fns'
 import Service from '../../../../api/configAPI'
 import { Header, Input, Select } from '../../../index'
+import { useForm } from 'react-hook-form'
 
 const colStartClasses = [
   '', // Sunday (no extra classes)
@@ -40,11 +41,21 @@ function Calendar() {
   let [listTask, setListTask] = useState([])
   let [level, setLevel] = useState('')
   let [user, setUser] = useState('')
-  let [users, setUsers] = useState([])
+  // let [users, setUsers] = useState([])
   let [sortedUsers, setSortedUsers] = useState([])
   let firstDayCurrentMonth = parse(currentMonth, 'MMM-yyyy', new Date())
   const token = sessionStorage.getItem('token')
   const userType = sessionStorage.getItem('userType')
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { errors }
+  } = useForm()
+
+  const userData = watch('user')
+  console.log(userData)
 
   let days = eachDayOfInterval({
     start: firstDayCurrentMonth,
@@ -67,7 +78,7 @@ function Calendar() {
   }
 
   async function getTasks(dates) {
-    const data = await Service.fetchCalendar(dates, user)
+    const data = await Service.fetchCalendar(dates, userData)
     console.log(data);
     if (data) {
       setListTask(data)
@@ -79,7 +90,7 @@ function Calendar() {
     const fetchUsers = async () => {
       try {
         const usersData = await Service.getAllUser(token)
-        setUsers(usersData)
+        // setUsers(usersData)
         setSortedUsers(usersData) // initialize sortedUsers
         console.log(usersData)
       } catch (error) {
@@ -128,12 +139,12 @@ function Calendar() {
               </button>
             </div>
             <div className="grid grid-cols-7 gap-2 text-center font-bold text-gray-700">
-              <div className="text-red-500">S</div>
               <div>M</div>
               <div>T</div>
               <div>W</div>
               <div>T</div>
               <div>F</div>
+              <div className="text-red-500">S</div>
               <div className="text-red-500">S</div>
             </div>
             <div className="grid grid-cols-7 gap-2 mt-2">
@@ -170,20 +181,24 @@ function Calendar() {
 
           <section className="mt-12 bg-white shadow-lg rounded-lg p-6">
             <div className="flex flex-row gap-5 mb-6">
-              <Input
+              {/* <Input
                 type="text"
                 placeholder="Search user..."
                 value={user}
                 onChange={(e) => setUser(e.target.value)}
                 className="p-2 border border-gray-300 rounded-lg"
-              />
+              /> */}
               {userType !== 'user' && (
                 <Select
-                  options={[
-                    { value: '', label: 'Select user' },
-                    ...sortedUsers.map((u) => ({ value: u.username, label: u.name }))
-                  ]}
-                  onChange={(e) => setUser(e.target.value)}
+                label='Select User'
+                options={[
+                  { value: '', label: 'Select user' },
+                  ...sortedUsers
+                    .sort((a, b) => a.name.localeCompare(b.name))
+                    .map((u) => ({ value: u.username, label: u.name }))
+                ]}
+                  {...register('user')}
+                  onChange={setValue}
                   placeholder="Select user"
                 />
               )}
