@@ -253,6 +253,7 @@ const AddTask = () => {
                   <Input
                     type="number"
                     name="hour"
+                    label="HH"
                     placeholder="HH"
                     className="w-20"
                     min={0}
@@ -267,6 +268,7 @@ const AddTask = () => {
                     type="number"
                     name="min"
                     placeholder="MM"
+                    label="MM"
                     className="w-20"
                     min={0}
                     max={60}

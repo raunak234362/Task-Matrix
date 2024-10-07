@@ -100,12 +100,12 @@ const Allprojects = () => {
       )}
 
       <div className="table-container w-full my-5 rounded-lg">
-        <div className="h-[57vh] overflow-y-hidden shadow-xl table-container w-full rounded-lg">
-          <h3 className="text-xl flex font-bold uppercase rounded-lg bg-slate-400 text-white px-5 py-1 justify-center items-center">
-            All Projects {fabricator && <span className="text-white"> - {fabricator}</span>}
+        <div className="h-[85vh] overflow-y-hidden shadow-xl table-container w-full rounded-lg">
+          <h3 className="text-xl flex font-bold uppercase rounded-lg bg-slate-400 bg-green-500 text-black px-5 py-1 justify-center items-center">
+            All Projects {fabricator && <span className="text-black"> - {fabricator}</span>}
           </h3>
 
-          <div className="mx-5 my-5 h-[80vh] overflow-y-auto">
+          <div className="mx-5 my-5 h-fit overflow-y-auto">
             <div className="flex justify-between mb-4">
               <input
                 type="text"
@@ -123,13 +123,12 @@ const Allprojects = () => {
             </div>
             <div className="overflow-x-auto">
               <div className="inline-block min-w-full align-middle">
-                <div className="overflow-hidden border border-gray-200 rounded-lg">
-                  {/* Header Table */}
-                  <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-200 sticky top-0 z-10">
+                <div className="h-[70vh] overflow-y-auto">
+                  <table className="w-full table-auto border-collapse text-center rounded-xl">
+                    <thead className="sticky top-0 z-10 bg-gray-200">
                       <tr>
                         <th className="px-1 py-2">S.no</th>
-                        <th className="px-1 py-2">
+                        <th className="px-16 py-2">
                           <button onClick={() => sortProjects('name')}>
                             Project Name{' '}
                             {sortConfig.key === 'name' &&
@@ -160,40 +159,41 @@ const Allprojects = () => {
                         <th className="px-3 py-2">Detail</th>
                       </tr>
                     </thead>
-                  </table>
-                  {/* Scrollable Body */}
-                  <div className="h-[38vh] overflow-y-auto">
-                    <table className="w-full divide-y divide-gray-200">
-                      <tbody>
-                        {filteredProjects.length === 0 ? (
-                          <tr className="bg-white">
-                            <td colSpan="6" className="text-center">
-                              No Projects Found
+                    {/* Scrollable Body */}
+                    <tbody className="h-[80vh] overflow-y-auto">
+                      {' '}
+                      {/* Adjust height here */}
+                      {filteredProjects.length === 0 ? (
+                        <tr className="bg-white">
+                          <td colSpan="6" className="text-center">
+                            No Projects Found
+                          </td>
+                        </tr>
+                      ) : (
+                        filteredProjects.map((project, index) => (
+                          <tr
+                            key={project.id}
+                            className={index % 2 === 0 ? 'bg-white' : 'bg-gray-200/50'}
+                          >
+                            <td className="border px-5 py-2">{index + 1}</td>
+                            <td className="border px-6 py-2 text-left">{project.name}</td>
+                            <td className="border px-1 py-2">{project.manager?.name}</td>
+                            <td className="border px-1 py-2">
+                              {new Date(project.startDate).toDateString()}
+                            </td>
+                            <td className="border px-3 py-2">
+                              {new Date(project.endDate).toDateString()}
+                            </td>
+                            <td className="border px-3 py-2">
+                              <div className="flex justify-center">
+                                <Button onClick={() => handleViewClick(project.id)}>View</Button>
+                              </div>
                             </td>
                           </tr>
-                        ) : (
-                          filteredProjects.map((project, index) => (
-                            <tr key={project.id}>
-                              <td className="border px-5 py-2">{index + 1}</td>
-                              <td className="border px-6 py-2 text-left">{project.name}</td>
-                              <td className="border px-1 py-2">{project.manager?.name}</td>
-                              <td className="border px-1 py-2">
-                                {new Date(project.startDate).toDateString()}
-                              </td>
-                              <td className="border px-3 py-2">
-                                {new Date(project.endDate).toDateString()}
-                              </td>
-                              <td className="border px-3 py-2">
-                                <div className="flex justify-center">
-                                  <Button onClick={() => handleViewClick(project.id)}>View</Button>
-                                </div>
-                              </td>
-                            </tr>
-                          ))
-                        )}
-                      </tbody>
-                    </table>
-                  </div>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
                 </div>
               </div>
             </div>

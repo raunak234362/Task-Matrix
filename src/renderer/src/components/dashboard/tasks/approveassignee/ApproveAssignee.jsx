@@ -143,9 +143,9 @@ return (
 <div>
     <Header title={"Approve Assignee"} />
     <div className="shadow-xl rounded-lg w-full p-5 bg-gray-50">
-    <div className="flex items-center">
-        <table className="min-w-full  bg-white">
-        <thead className="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+    <div className="h-[75vh] overflow-y-auto">
+    <table className="w-full table-auto border-collapse text-center rounded-xl">
+    <thead className="sticky top-0 z-10 bg-gray-200">
             <tr>
             <th className="py-3 px-6 text-left">S.No</th>
             <th className="py-3 px-6 text-left">Task</th>
@@ -160,10 +160,7 @@ return (
         </thead>
         <tbody className="text-gray-600 text-sm font-medium">
             {assigneeTask.map((task, index) => (
-            <tr
-                key={task.id}
-                className="border-b border-gray-200 hover:bg-gray-100"
-            >
+            <tr key={task.id} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-200/50'}>
                 <td className="py-3 px-6 text-left whitespace-nowrap">
                 {index + 1}
                 </td>

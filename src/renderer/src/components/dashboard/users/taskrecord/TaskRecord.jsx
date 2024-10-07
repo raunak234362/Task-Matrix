@@ -104,9 +104,9 @@ const TaskRecord = () => {
           />
         </div>
       )} */}
-      <div className="shadow-xl rounded-lg w-full p-5 bg-gray-50">
-        <table className="mt-5 min-w-full overflow-y-auto text-md divide-gray-200">
-          <thead className="bg-slate-200">
+      <div className="h-[70vh] overflow-y-auto">
+        <table className="w-full mt-10 table-auto border-collapse text-center rounded-xl">
+          <thead className="sticky top-0 z-10 bg-gray-200">
             <tr>
               <th className="px-6 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">
                 S.no
@@ -130,7 +130,7 @@ const TaskRecord = () => {
           </thead>
           <tbody className="bg-white divide-y divide-gray-200 font-medium">
             {record?.map((rec, index) => (
-              <tr key={rec?.id} className=" hover:bg-slate-200">
+              <tr key={rec?.id} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-200/50'}>
                 {console.log('usertask&&&&&&&&&&&&&&', record)}
                 <td className="px-6 py-4 whitespace-nowrap">{index + 1}</td>
                 <td className="px-6 py-4 whitespace-nowrap">{rec?.task?.project?.name}</td>

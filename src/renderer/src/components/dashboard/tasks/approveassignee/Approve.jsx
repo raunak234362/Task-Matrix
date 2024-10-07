@@ -17,8 +17,8 @@ const Approve = ({ task, isOpen, onClose, onApprove, onReject }) => {
         <div className="shadow-xl rounded-lg w-full p-5 bg-gray-50">
           <div className="font-bold text-gray-800 mb-4">People Assigned:</div>
           <div className="flex items-center">
-            <table className="min-w-full bg-white">
-              <thead className="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+          <table className="w-full table-auto border-collapse text-center rounded-xl">
+          <thead className="sticky top-0 z-10 bg-gray-200">
                 <tr>
                   <th className="py-3 px-6 text-left">Assigned By</th>
                   <th className="py-3 px-6 text-left">Assigned To</th>
