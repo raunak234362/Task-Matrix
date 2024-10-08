@@ -9,23 +9,26 @@ import { useForm } from 'react-hook-form'
 import Service from '../../../../api/configAPI'
 import { useDispatch } from 'react-redux'
 import { addTeamMember } from '../../../../store/teamSlice'
+import { Dialog, DialogHeader, DialogBody, DialogFooter } from '@material-tailwind/react'
 
 const TeamView = ({ team, isOpen, onClose }) => {
+  const userType = sessionStorage.getItem('userType')
   const [isEditing, setIsEditing] = useState(false)
   const [isAddMember, setAddMember] = useState(false)
   const [memberOptions, setMemberOptions] = useState([])
   const token = sessionStorage.getItem('token')
+  const [isDelete, setIsDelete] = useState(false)
+  const [isAlert, setIsAlert] = useState(false)
+  const [isSuccessOpen, setIsSuccessOpen] = useState(false)
   const dispatch = useDispatch()
   const {
     register,
     handleSubmit,
     setValue,
-    formState: { errors },
+    formState: { errors }
   } = useForm()
 
-  
-
-  const teamId= team?.id
+  const teamId = team?.id
 
   const editTeam = async () => {
     try {
@@ -42,7 +45,7 @@ const TeamView = ({ team, isOpen, onClose }) => {
       const data = await Service.addTeamMember({
         ...memberData,
         teamId: team?.id,
-        token: token,
+        token: token
       })
       console.log('Member Added Successfully', data)
       alert(`${memberData?.role} Added Successfully`)
@@ -60,6 +63,33 @@ const TeamView = ({ team, isOpen, onClose }) => {
 
   const handleEdit = () => {
     setIsEditing((prev) => !prev)
+  }
+
+  const handleDelete = () => {
+    try {
+      const data = Service.deleteTeam(teamId, token)
+      console.log('Team Deleted Successfully', data)
+      // alert('Team Deleted Successfully')
+      setIsSuccessOpen(true)
+      setIsAlert(false)
+      // onClose()
+    } catch (error) {
+      console.log(error)
+      throw error
+    }
+  }
+
+  const openModal = () => {
+    setIsAlert(true)
+  }
+
+  const closeModal = () => {
+    setIsAlert(false)
+  }
+
+  const closeSuccessModal = () => {
+    onClose()
+    setIsSuccessOpen(false)
   }
 
   const [members, setMembers] = useState({})
@@ -82,29 +112,29 @@ const TeamView = ({ team, isOpen, onClose }) => {
 
     const fetchUsers = async () => {
       try {
-        const uniqueMembers = new Set(); // To track unique names
+        const uniqueMembers = new Set() // To track unique names
         const options = team?.members
           ?.map((user) => {
-            const name = user?.employee?.name;
+            const name = user?.employee?.name
             // Check for unique names
             if (name && !uniqueMembers.has(name)) {
-              uniqueMembers.add(name); // Add to the set if unique
+              uniqueMembers.add(name) // Add to the set if unique
               return {
                 label: name,
-                value: parseInt(user?.employee?.id),
-              };
+                value: parseInt(user?.employee?.id)
+              }
             }
-            return null; // Return null for duplicates
+            return null // Return null for duplicates
           })
           .filter(Boolean) // Remove null values from the array
-          .sort((a, b) => a.label.localeCompare(b.label)); // Sort alphabetically
-    
-        setMemberOptions(options);
+          .sort((a, b) => a.label.localeCompare(b.label)) // Sort alphabetically
+
+        setMemberOptions(options)
       } catch (error) {
-        console.error('Error fetching users:', error);
+        console.error('Error fetching users:', error)
       }
-    };
-    
+    }
+
     fetchUsers()
     segerateTeam()
   }, [])
@@ -133,16 +163,13 @@ const TeamView = ({ team, isOpen, onClose }) => {
             <form onSubmit={handleSubmit(editTeam)}>
               <div>
                 <div className="mb-2">
-                  <strong className="text-gray-700">Team Name:</strong>{' '}
-                  {team?.name}
+                  <strong className="text-gray-700">Team Name:</strong> {team?.name}
                 </div>
                 <p className="mb-2">
-                  <strong className="text-gray-700">Manager:</strong>{' '}
-                  {team?.created_by?.name}
+                  <strong className="text-gray-700">Manager:</strong> {team?.created_by?.name}
                 </p>
                 <p className="mb-2">
-                  <strong className="text-gray-700">Leader:</strong>{' '}
-                  {team?.leader?.name}
+                  <strong className="text-gray-700">Leader:</strong> {team?.leader?.name}
                 </p>
                 {/* <div className="flex justify-end mt-4">
                   <Button
@@ -155,6 +182,40 @@ const TeamView = ({ team, isOpen, onClose }) => {
                   </Button>
                 </div> */}
               </div>
+              {/* {userType !== 'user' && ( */}
+              <div>
+                <div className="flex justify-between">
+                  {/* <div className="flex">
+                    <Button onClick={openModal}>Delete</Button>
+                    {isAlert && (
+                      <Dialog open={isAlert} handler={setIsAlert}>
+                        <DialogHeader>Confirm Deletion</DialogHeader>
+                        <DialogBody divider>
+                          Are you sure you want to delete this item? This action cannot be undone.
+                        </DialogBody>
+                        <DialogFooter>
+                          <Button variant="text" color="gray" onClick={closeModal} className="mr-2">
+                            No
+                          </Button>
+                          <Button variant="gradient" color="red" onClick={handleDelete}>
+                            Yes, Delete
+                          </Button>
+                        </DialogFooter>
+                      </Dialog>
+                    )}
+                    <Dialog open={isSuccessOpen} handler={setIsSuccessOpen}>
+                      <DialogHeader>Team Deleted</DialogHeader>
+                      <DialogBody>The Team is deleted successfully!</DialogBody>
+                      <DialogFooter>
+                        <Button variant="gradient" color="green" onClick={closeSuccessModal}>
+                          Close
+                        </Button>
+                      </DialogFooter>
+                    </Dialog>
+                  </div> */}
+                </div>
+              </div>
+              {/* )} */}
             </form>
             <hr className=" my-12 border-2 rounded-xl" />
             <div className="grid grid-cols-2 gap-5 mt-16">
@@ -174,10 +235,8 @@ const TeamView = ({ team, isOpen, onClose }) => {
                 ))}
               </div>
               <div className="my-5">
-                <strong className="text-gray-700 text-lg">
-                  Add Team Member:
-                </strong>
-                <div className='h-fit'>
+                <strong className="text-gray-700 text-lg">Add Team Member:</strong>
+                <div className="h-fit">
                   <form onSubmit={handleSubmit(addMembers)}>
                     <div className="my-2">
                       <Select
@@ -186,7 +245,6 @@ const TeamView = ({ team, isOpen, onClose }) => {
                         options={memberOptions}
                         {...register('employee')}
                         onChange={setValue}
-                        
                       />
                     </div>
                     <div className="my-2">
@@ -202,7 +260,7 @@ const TeamView = ({ team, isOpen, onClose }) => {
                           { label: 'CHECKER', value: 'CHECKER' },
                           { label: 'DETAILER', value: 'DETAILER' },
                           { label: 'ERECTER', value: 'ERECTER' },
-                          { label: 'ADMIN', value: 'ADMIN' },
+                          { label: 'ADMIN', value: 'ADMIN' }
                         ]}
                         {...register('role')}
                         onChange={setValue}

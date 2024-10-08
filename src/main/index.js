@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { app, shell, BrowserWindow, ipcMain } from 'electron'
+import { app, shell, BrowserWindow, ipcMain, Notification } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
@@ -16,6 +16,7 @@ function createWindow() {
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
       sandbox: false
+      
     }
   })
 
@@ -37,6 +38,17 @@ function createWindow() {
   }
 }
 
+ // Handle notifications from renderer
+ ipcMain.on('show-notification', (event, task) => {
+  const notification = new Notification({
+    title: 'New Task Assigned',
+    body: `You have a new task: ${task.name}`,
+    icon: join(__dirname, '../../resources/icon.png'), // Specify your icon path
+  });
+  notification.show();
+});
+
+
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
@@ -52,7 +64,7 @@ app.whenReady().then(() => {
   })
 
   // IPC test
-  ipcMain.on('ping', () => console.log('pong'))
+  // ipcMain.on('ping', () => console.log('pong'))
 
   createWindow()
 
