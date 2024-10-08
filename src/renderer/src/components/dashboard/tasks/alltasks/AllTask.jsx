@@ -13,19 +13,32 @@ const AllTask = () => {
   const [searchTerm, setSearchTerm] = useState('')
   const [priorityFilter, setPriorityFilter] = useState('')
   const [statusFilter, setStatusFilter] = useState('')
+  const [prevTasks, setPrevTasks] = useState([]);
 
   useEffect(() => {
     const fetchTask = async () => {
       try {
-        const task = await Service.getAllTask()
-        setTasks(task)
-        setFilteredTasks(task)
+        const task = await Service.getAllTask();
+        setTasks(task);
+        setFilteredTasks(task);
+  
+        // Check previous tasks for new ones
+        if (task.length > prevTasks.length) {
+          const newTasks = task.filter(t => !prevTasks.some(p => p.id === t.id));
+          console.log('New tasks:', newTasks); // Log new tasks for debugging
+          newTasks.forEach(newTask => {
+            console.log('Calling showNotification'); // Log before calling
+            window.api.showNotification(newTask);
+          });
+        }
+  
+        setPrevTasks(task);
       } catch (error) {
-        console.log('Error in fetching task: ', error)
+        console.log('Error in fetching task: ', error);
       }
-    }
-    fetchTask()
-  }, [selectedTask])
+    };
+    fetchTask();
+  }, [selectedTask]);
 
   useEffect(() => {
     let results = tasks?.filter((task) =>

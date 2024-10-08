@@ -130,7 +130,7 @@ const Project = ({ project, isOpen, onClose, setProject }) => {
       setProject(response)
       setIsEditing(false)
       setIsSuccessOpen(true)
-      alert('Team updated Successfully')
+      // alert('Team updated Successfully')
       // onClose();
     } catch (error) {
       alert('Something went wrong')

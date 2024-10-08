@@ -7,10 +7,25 @@ import { useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { setProjectData } from '../../../../store/projectSlice'
 import Service from '../../../../api/configAPI'
+import { Dialog, DialogHeader, DialogBody, DialogFooter } from '@material-tailwind/react'
 
 const AddProject = () => {
   const [fabricatorOptions, setFabricatorOptions] = useState([])
   const [managerOptions, setManagerOptions] = useState([])
+  const [isSuccessOpen, setIsSuccessOpen] = useState(false)
+  const [isAlert, setIsAlert] = useState(false)
+
+  const openModal = () => {
+    setIsAlert(true)
+  }
+
+  const closeModal = () => {
+    setIsAlert(false)
+  }
+
+  const closeSuccessModal = () => {
+    setIsSuccessOpen(false)
+  }
 
   const token = sessionStorage.getItem('token')
   const dispatch = useDispatch()
@@ -95,8 +110,9 @@ const AddProject = () => {
       console.log('Response from addProject:', projectData)
 
       dispatch(setProjectData(data))
+      setIsSuccessOpen(true)
       console.log('Project added:', data)
-      alert('Successfully added new Project', projectData?.name)
+      // alert('Successfully added new Project', projectData?.name)
     } catch (error) {
       console.error('Error adding project:', error)
       console.log('Project data:', projectData)
@@ -274,17 +290,15 @@ const AddProject = () => {
 
             <div className="mt-5 w-full flex justify-between">
               <Button type="submit">Submit</Button>
-              {/* {step === 2 && (
-                <Button type="button" onClick={handlePrevious}>
-                  Previous
-                </Button>
-              )}
-              {step === 1 ? (
-                <Button type="button" onClick={handleNext}>
-                  Next
-                </Button>
-              ) : (
-              )} */}
+              <Dialog open={isSuccessOpen} handler={setIsSuccessOpen}>
+                <DialogHeader>Project Added</DialogHeader>
+                <DialogBody>The Project is added successfully!</DialogBody>
+                <DialogFooter>
+                  <Button variant="gradient" color="green" onClick={closeSuccessModal}>
+                    Close
+                  </Button>
+                </DialogFooter>
+              </Dialog>
             </div>
           </div>
         </div>

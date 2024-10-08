@@ -6,6 +6,7 @@ import { useDispatch } from "react-redux";
 import { setTeamData } from "../../../../store/teamSlice";
 import { Input, Button, Select, Header } from "../../../index";
 import Service from "../../../../api/configAPI";
+import { Dialog, DialogHeader, DialogBody, DialogFooter } from '@material-tailwind/react'
 
 const AddTeam = () => {
   const [managerOptions, setManagerOptions] = useState([]);
@@ -13,10 +14,25 @@ const AddTeam = () => {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm();
 
   const dispatch = useDispatch();
+  const [isSuccessOpen, setIsSuccessOpen] = useState(false)
+  const [isAlert, setIsAlert] = useState(false)
+
+  const openModal = () => {
+    setIsAlert(true)
+  }
+
+  const closeModal = () => {
+    setIsAlert(false)
+  }
+
+  const closeSuccessModal = () => {
+    setIsSuccessOpen(false)
+  }
   
   const token = sessionStorage.getItem("token");
 
@@ -46,7 +62,8 @@ const AddTeam = () => {
       });
       dispatch(setTeamData(data));
       console.log("Document added:", data);
-      alert("Successfully added new Team", teamData?.teamName);
+      setIsSuccessOpen(true)
+      // alert("Successfully added new Team", teamData?.teamName);
     } catch (error) {
       console.error("Error adding document:", error);
     }
@@ -92,6 +109,7 @@ const AddTeam = () => {
                 {...register("leader", {
                   required: "Team Leader is required",
                 })}
+                onChange ={setValue}
               />
               {errors.leader && <p className="text-red-500">{errors.leader.message}</p>}
             </div>
@@ -99,6 +117,15 @@ const AddTeam = () => {
             <Button type="submit" className="bg-gray-500 text-white">
               Add Team
             </Button>
+            <Dialog open={isSuccessOpen} handler={setIsSuccessOpen}>
+                <DialogHeader>Team Added</DialogHeader>
+                <DialogBody>The Team is added successfully!</DialogBody>
+                <DialogFooter>
+                  <Button variant="gradient" color="green" onClick={closeSuccessModal}>
+                    Close
+                  </Button>
+                </DialogFooter>
+              </Dialog>
           </div>
           </div>
         </div>

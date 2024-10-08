@@ -175,6 +175,22 @@ class Service {
     }
   }
 
+  static async deleteTeam(teamId){
+    console.log(teamId)
+    try {
+      console.log(teamId)
+      const response = await axios.delete(`${BASE_URL}api/team/teams/${teamId}`,{
+        headers:{
+          Authorization: `Token ${sessionStorage.getItem('token')}`,
+          'Content-Type': 'application/json'
+        }
+      })
+      console.log('Team Deleted: ', response.data)
+    } catch (error) {
+      console.log('Error deleting the team',error)
+    }
+  }
+
   static async getTeamMember(projectId) {
     console.log(projectId)
     const token = sessionStorage.getItem('token')

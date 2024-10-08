@@ -1,12 +1,13 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable no-unused-vars */
-import React, { useCallback, useState, useEffect } from "react";
-import { State, City }  from 'country-state-city';
-import { Button, Header, Input, Select } from "../../../index";
-import { useForm } from "react-hook-form";
-import { useDispatch } from "react-redux";
-import { setFabricatorData } from '../../../../store/fabricatorSlice';
-import Service from "../../../../api/configAPI";
+import React, { useCallback, useState, useEffect } from 'react'
+import { State, City } from 'country-state-city'
+import { Button, Header, Input, Select } from '../../../index'
+import { useForm } from 'react-hook-form'
+import { useDispatch } from 'react-redux'
+import { setFabricatorData } from '../../../../store/fabricatorSlice'
+import Service from '../../../../api/configAPI'
+import { Dialog, DialogHeader, DialogBody, DialogFooter } from '@material-tailwind/react'
 
 const AddFabricator = () => {
   const {
@@ -15,32 +16,46 @@ const AddFabricator = () => {
     watch,
     handleSubmit,
     reset,
-    formState: { errors },
+    formState: { errors }
   } = useForm()
-  const dispatch = useDispatch();
-  const [contractName, setContractName] = useState(""); 
-  const [contract, setContractFile] = useState(null); 
+  const dispatch = useDispatch()
+  const [contractName, setContractName] = useState('')
+  const [contract, setContractFile] = useState(null)
+  const [isSuccessOpen, setIsSuccessOpen] = useState(false)
+  const [isAlert, setIsAlert] = useState(false)
 
- const country = watch('country')
+  const openModal = () => {
+    setIsAlert(true)
+  }
+
+  const closeModal = () => {
+    setIsAlert(false)
+  }
+
+  const closeSuccessModal = () => {
+    setIsSuccessOpen(false)
+  }
+
+  const country = watch('country')
   const state = watch('state')
   const [stateList, setStateList] = useState([
     {
       label: 'Select State',
-      value: '',
-    },
+      value: ''
+    }
   ])
 
   const [cityList, setCityList] = useState([
     {
       label: 'Select City',
-      value: '',
-    },
+      value: ''
+    }
   ])
 
   const countryList = {
     'United States': 'US',
     Canada: 'CA',
-    India: 'IN',
+    India: 'IN'
   }
   useEffect(() => {
     const stateListObject = {}
@@ -52,45 +67,44 @@ const AddFabricator = () => {
 
   useEffect(() => {
     setCityList(
-      City.getCitiesOfState(countryList[country], stateList[state])?.map(
-        (city) => ({
-          label: city?.name,
-          value: city?.name,
-        }),
-      ),
+      City.getCitiesOfState(countryList[country], stateList[state])?.map((city) => ({
+        label: city?.name,
+        value: city?.name
+      }))
     )
   }, [state])
 
   const handleContractChange = (e) => {
-    const file = e.target.files[0];
+    const file = e.target.files[0]
     console.log(file)
-    setContractName(file?.name);
-    setContractFile(URL.createObjectURL(file));
-  };
+    setContractName(file?.name)
+    setContractFile(URL.createObjectURL(file))
+  }
 
   const onSubmit = async (fabricatorData) => {
     console.log(fabricatorData)
-    try { 
-      const token = sessionStorage.getItem("token");
-      if(!token){
-        throw errors("Token not found")
+    try {
+      const token = sessionStorage.getItem('token')
+      if (!token) {
+        throw errors('Token not found')
       }
       const data = await Service.addFabricator({
         ...fabricatorData,
         // design:contract,
-        token:token,
-      });
-      dispatch(setFabricatorData(data));
-      console.log("Document added:", data);
-      alert("Successfully added new Fabricator",data)
+        token: token
+      })
+      dispatch(setFabricatorData(data))
+      console.log('Document added:', data)
+      // alert('Successfully added new Fabricator', data)
+      setIsSuccessOpen(true)
     } catch (error) {
-      console.error("Error adding document:", error);
+      console.error('Error adding document:', error)
     }
-  };
+  }
 
   return (
     <div>
-      <Header title={"Add Fabricator"}/>
+      <Header title={'Add Fabricator'} />
       <form onSubmit={handleSubmit(onSubmit)} className="w-full p-5">
         <div className="p-5 flex flex-col justify-between gap-5">
           <div className="flex rounded-lg flex-col shadow-lg shadow-black/15 p-8">
@@ -99,73 +113,66 @@ const AddFabricator = () => {
                 label="Fabricator Name"
                 placeholder="Fabricator Name"
                 className="w-full"
-                {...register("name", { required: "Fabricator Name is required" })}
+                {...register('name', { required: 'Fabricator Name is required' })}
               />
-              {errors.name && <p className='text-red-600'>{errors.name.message}</p>}
+              {errors.name && <p className="text-red-600">{errors.name.message}</p>}
             </div>
             <div className="flex flex-wrap gap-5 mt-5">
               <Select
                 label="Country: "
                 placeholder="Country"
                 className="w-full"
-                options={
-                  [
-                    { label: "Select Country", value: "" },
-                    ...Object.keys(countryList).map((country) => ({
-                      label: country,
-                      value: country,
-                    }))
-                  ]
-                }
-                {...register("country", { required: "Country is required" })}
+                options={[
+                  { label: 'Select Country', value: '' },
+                  ...Object.keys(countryList).map((country) => ({
+                    label: country,
+                    value: country
+                  }))
+                ]}
+                {...register('country', { required: 'Country is required' })}
                 onChange={setValue}
               />
-              {errors.country && <p className='text-red-600'>{errors.country.message}</p>}
+              {errors.country && <p className="text-red-600">{errors.country.message}</p>}
 
               <Select
                 label="State: "
                 placeholder="State"
                 className="w-full"
                 options={[
-                  { label: "Select State", value: "" },
+                  { label: 'Select State', value: '' },
                   ...Object.keys(stateList).map((state1) => ({
                     label: state1,
-                    value: state1,
+                    value: state1
                   }))
                 ]}
-                {...register("state", { required: "State is required" })}
+                {...register('state', { required: 'State is required' })}
                 onChange={setValue}
               />
-              {errors.state && <p className='text-red-600'>{errors.state.message}</p>}
+              {errors.state && <p className="text-red-600">{errors.state.message}</p>}
 
               <Select
                 label="City: "
                 placeholder="City"
                 className="w-full"
-                options={[
-                  { label: "Select City", value: "" },
-                  ...cityList
-                ]}
-                {...register("city", { required: "City is required" })}
+                options={[{ label: 'Select City', value: '' }, ...cityList]}
+                {...register('city', { required: 'City is required' })}
                 onChange={setValue}
               />
-              {errors.city && <p className='text-red-600'>{errors.city.message}</p>}
+              {errors.city && <p className="text-red-600">{errors.city.message}</p>}
               <Input
                 label="Zipcode: "
                 placeholder="Zipcode"
                 className="w-full"
-
-                {...register("zipCode", {
-                  required: "Zipcode is required",
+                {...register('zipCode', {
+                  required: 'Zipcode is required'
                   //  pattern: {
                   //   value: /^[0-9]{6}$/,
                   //   message: "Zipcode must be a 6-digit integer",
                   // },
-                  })}
+                })}
               />
-              {errors.zipCode && <p className='text-red-600'>{errors.zipCode.message}</p>}
+              {errors.zipCode && <p className="text-red-600">{errors.zipCode.message}</p>}
 
-              
               <div className="mt-5 w-full">
                 {/* <label htmlFor="contract" >Upload Standard Design</label> */}
                 <Input
@@ -175,25 +182,34 @@ const AddFabricator = () => {
                   type="file"
                   id="contract"
                   accept=".pdf, image/* .zip .rar .iso"
-                  {...register("design")}
+                  {...register('design', {required: 'File is required'})}
                 />
                 {contractName && (
                   <div className="mt-2">
                     <p>Standard Design: {contractName}</p>
                   </div>
                 )}
-                {errors.contract && <p className='text-red-600'>{errors.contract.message}</p>}
+                {errors.contract && <p className="text-red-600">{errors.contract.message}</p>}
               </div>
             </div>
 
             <div className="mt-5 w-full">
               <Button type="submit">Add Fabricator</Button>
+              <Dialog open={isSuccessOpen} handler={setIsSuccessOpen}>
+                <DialogHeader>Fabricator Added</DialogHeader>
+                <DialogBody>The Fabricator is added successfully!</DialogBody>
+                <DialogFooter>
+                  <Button variant="gradient" color="green" onClick={closeSuccessModal}>
+                    Close
+                  </Button>
+                </DialogFooter>
+              </Dialog>
             </div>
           </div>
         </div>
       </form>
     </div>
-  );
-};
+  )
+}
 
-export default AddFabricator;
+export default AddFabricator
