@@ -112,28 +112,33 @@ const TeamView = ({ team, isOpen, onClose }) => {
 
     const fetchUsers = async () => {
       try {
-        const uniqueMembers = new Set() // To track unique names
-        const options = team?.members
+        const uniqueMembers = new Set();
+        const options = await Service.getAllUser(token);
+        
+        // Process the options to filter unique names
+        const memberOptions = options
           ?.map((user) => {
-            const name = user?.employee?.name
+            const name = user?.name;
             // Check for unique names
             if (name && !uniqueMembers.has(name)) {
-              uniqueMembers.add(name) // Add to the set if unique
+              uniqueMembers.add(name); // Add to the set if unique
               return {
                 label: name,
-                value: parseInt(user?.employee?.id)
-              }
+                value: parseInt(user?.id),
+              };
             }
-            return null // Return null for duplicates
+            return null; // Return null for duplicates
           })
           .filter(Boolean) // Remove null values from the array
-          .sort((a, b) => a.label.localeCompare(b.label)) // Sort alphabetically
-
-        setMemberOptions(options)
+          .sort((a, b) => a.label.localeCompare(b.label)); // Sort alphabetically
+    
+        // Set the processed member options
+        setMemberOptions(memberOptions);
       } catch (error) {
-        console.error('Error fetching users:', error)
+        console.error('Error fetching users:', error);
       }
-    }
+    };
+    
 
     fetchUsers()
     segerateTeam()
