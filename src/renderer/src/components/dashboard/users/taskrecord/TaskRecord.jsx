@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react'
 import Service from '../../../../api/configAPI'
 import Header from '../../Header'
-import { Input, Select } from '../../../index'
+import { Input, CustomSelect } from '../../../index'
 
 const TaskRecord = () => {
   const [record, setRecord] = useState([])

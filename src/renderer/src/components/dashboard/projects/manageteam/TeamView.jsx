@@ -4,8 +4,8 @@
 /* eslint-disable array-callback-return */
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react'
-import { Button, Input } from '../../../index'
-import Select from 'react-select'
+import { Button, CustomSelect, Input } from '../../../index'
+// import Select from 'react-select'
 import { useForm } from 'react-hook-form'
 import Service from '../../../../api/configAPI'
 import { useDispatch } from 'react-redux'
@@ -164,7 +164,7 @@ const TeamView = ({ team, isOpen, onClose }) => {
           </button>
         </div>
 
-        <div className=" overflow-y-auto p-4 rounded-lg">
+        <div className=" h-fit p-4 rounded-lg">
           <div>
             <form onSubmit={handleSubmit(editTeam)}>
               <div>
@@ -245,7 +245,7 @@ const TeamView = ({ team, isOpen, onClose }) => {
                 <div className="h-fit">
                   <form onSubmit={handleSubmit(addMembers)}>
                     <div className="my-2">
-                      <Select
+                      <CustomSelect
                         label="Select Member: "
                         name="employee"
                         options={memberOptions}
@@ -254,7 +254,7 @@ const TeamView = ({ team, isOpen, onClose }) => {
                       />
                     </div>
                     <div className="my-2">
-                      <Select
+                      <CustomSelect
                         label="Select Role: "
                         name="role"
                         options={[

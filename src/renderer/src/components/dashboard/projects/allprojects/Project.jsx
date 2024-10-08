@@ -2,7 +2,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import React, { useEffect, useState } from 'react'
-import { Button, GhantChart, Input, Select } from '../../../index' // Ensure GanttChart is imported correctly
+import { Button, GhantChart, Input, CustomSelect } from '../../../index' // Ensure GanttChart is imported correctly
 import Service from '../../../../api/configAPI'
 import { useForm } from 'react-hook-form'
 import { BASE_URL } from '../../../../config/constant'
@@ -242,7 +242,7 @@ const Project = ({ project, isOpen, onClose, setProject }) => {
                 </p>
                 <div>
                   {isEditing ? (
-                    <Select
+                    <CustomSelect
                       name="team"
                       label="Team"
                       placeholder="Team"
@@ -264,7 +264,7 @@ const Project = ({ project, isOpen, onClose, setProject }) => {
                 </div>
                 <div className="my-3">
                   {isEditing ? (
-                    <Select
+                    <CustomSelect
                       name="status"
                       label="Status"
                       placeholder="Status"
@@ -294,7 +294,7 @@ const Project = ({ project, isOpen, onClose, setProject }) => {
                 </div>
                 <div>
                   {isEditing ? (
-                    <Select
+                    <CustomSelect
                       name="stage"
                       label="Stage"
                       placeholder="Stage"

@@ -3,7 +3,7 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Input, Button, Select } from "../../../index";
+import { Input, Button, CustomSelect } from "../../../index";
 import { useDispatch, useSelector } from "react-redux";
 import { updateProjectData } from "../../../../store/projectSlice";
 import Service from "../../../../api/configAPI";
@@ -137,7 +137,7 @@ const EditProject = ({ onClose, projectId }) => {
         defaultValue={projectData.projectStage}
         {...register("projectStage")}
       />
-      <Select
+      <CustomSelect
         label="Team"
         name="teamName"
         options={teamOptions}

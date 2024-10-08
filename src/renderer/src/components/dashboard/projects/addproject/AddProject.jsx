@@ -2,7 +2,7 @@
 
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react'
-import { Button, Input, Select, MultiSelectCheckbox, AddTeam, Header, Toggle } from '../../../index'
+import { Button, Input, CustomSelect, MultiSelectCheckbox, AddTeam, Header, Toggle } from '../../../index'
 import { useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { setProjectData } from '../../../../store/projectSlice'
@@ -130,7 +130,7 @@ const AddProject = () => {
             {/* {step === 1 && ( */}
             <>
               <div className="mt-3">
-                <Select
+                <CustomSelect
                   label="Fabricator"
                   name="fabricator"
                   options={[
@@ -173,7 +173,7 @@ const AddProject = () => {
               </div>
               {errors.description && <p className="text-red-600">{errors.description.message}</p>}
               <div className="mt-5">
-                <Select
+                <CustomSelect
                   label="Tools: "
                   name="tool"
                   options={[
@@ -260,7 +260,7 @@ const AddProject = () => {
               </div>
 
               <div className="mt-5">
-                <Select
+                <CustomSelect
                   label="Manager"
                   name="manager"
                   options={[

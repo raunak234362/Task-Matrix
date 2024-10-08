@@ -1,39 +1,30 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable prettier/prettier */
 /* eslint-disable react/prop-types */
-import React, { useId } from "react";
-import { Select as SelectOpt, Option } from "@material-tailwind/react";
-function Select({ options = [], label, name, className, onChange, ...props }, ref) {
-  const id = useId();
+import React from 'react';
+import Select from 'react-select'; // Import react-select
 
-  const handleChange = (event) => {
+const CustomSelect = ({ options = [], label, name, className, onChange, ...props }) => {
+  const handleChange = (selectedOption) => {
     if (onChange && typeof onChange === 'function') {
-      onChange(name, event);
+      onChange(name, selectedOption); // Pass the selected option
     }
-  }
-
+  };
 
   return (
-    <div className="w-full">
-      <SelectOpt
+    <div className={`w-full ${className}`}>
+      {label && <label className="block mb-2 text-gray-700">{label}</label>}
+      <Select
         {...props}
-        variant="outlined"
-        id={id}
-        label={label}
-        ref={ref}
-        name={name}
-        className={` rounded-md bg-white  duration-200 w-full ${className}`}
+        options={options}
         onChange={handleChange}
-      >
-        {options.map((option) => (
-          option && (
-            <Option key={option.value} value={option.value} className="text-black">
-              {option.label}
-            </Option>
-          )
-        ))}
-      </SelectOpt>
+        className="react-select-container"
+        classNamePrefix="react-select"
+        isSearchable
+        defaultValue={props.defaultValue}
+      />
     </div>
   );
 };
 
-export default React.forwardRef(Select);
+export default CustomSelect;

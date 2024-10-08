@@ -212,26 +212,24 @@ class Service {
   static async addTeamMember({ role, employee, teamId }) {
     console.log(role, employee, teamId)
     try {
-      const formData = JSON.stringify({
+      const formData = {
         role,
         employee
-      })
+      }
       console.log('---------------')
 
       const token = sessionStorage.getItem('token')
-      const response = await fetch(`${BASE_URL}api/team/teams/${teamId}/add_member/`, {
-        method: 'POST',
+      const response = await axios.post(`${BASE_URL}api/team/teams/${teamId}/add_member/`, formData, {
         headers: {
           Authorization: `Token ${token}`,
           'Content-Type': 'application/json'
-        },
-        body: formData
+        }
       })
-      const data = await response.json()
-      console.log('Successfully Added Team Member: ', data)
-      return data
+      console.log('Successfully Added Team Member: ', response.data)
+      return response.data
     } catch (error) {
       console.log('Error Adding members: ', error)
+      throw error
     }
   }
 

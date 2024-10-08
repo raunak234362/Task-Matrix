@@ -3,7 +3,7 @@
 /* eslint-disable prettier/prettier */
 import React, { useEffect, useState } from 'react'
 import Service from '../../../api/configAPI'
-import { Button, Input, Select } from '../../index'
+import { Button, Input, CustomSelect } from '../../index'
 import { useForm } from 'react-hook-form'
 
 const Task = ({ taskId, setDisplay }) => {
@@ -426,7 +426,7 @@ const Task = ({ taskId, setDisplay }) => {
                   {/* select Assignee */}
                   <div className="flex flex-row  shadow-xl gap-5 rounded-lg w-full p-5 mt-5 bg-gray-50">
                     <div>
-                      <Select
+                      <CustomSelect
                         label="Select Assignee"
                         options={teamMember}
                         className=" w-80 h-10"
