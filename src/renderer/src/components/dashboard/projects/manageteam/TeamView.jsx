@@ -4,7 +4,8 @@
 /* eslint-disable array-callback-return */
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react'
-import { Button, Input, Select } from '../../../index'
+import { Button, Input } from '../../../index'
+import Select from 'react-select'
 import { useForm } from 'react-hook-form'
 import Service from '../../../../api/configAPI'
 import { useDispatch } from 'react-redux'
