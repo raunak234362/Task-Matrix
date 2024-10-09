@@ -21,6 +21,7 @@ const TeamView = ({ team, isOpen, onClose }) => {
   const [isDelete, setIsDelete] = useState(false)
   const [isAlert, setIsAlert] = useState(false)
   const [isSuccessOpen, setIsSuccessOpen] = useState(false)
+  const [isFailedOpen, setIsFailedOpen] = useState(false)
   const dispatch = useDispatch()
   const {
     register,
@@ -49,11 +50,13 @@ const TeamView = ({ team, isOpen, onClose }) => {
         token: token
       })
       console.log('Member Added Successfully', data)
-      alert(`${memberData?.role} Added Successfully`)
+      // alert(`${memberData?.role} Added Successfully`)
       dispatch(addTeamMember(data))
+      setIsSuccessOpen(true)
       // onClose();
       // eslint-disable-next-line prettier/prettier
     } catch (error) {
+      setIsFailedOpen(true)
       console.log(error)
       throw error
     }
@@ -89,8 +92,11 @@ const TeamView = ({ team, isOpen, onClose }) => {
   }
 
   const closeSuccessModal = () => {
-    onClose()
+    // onClose()
     setIsSuccessOpen(false)
+  }
+  const closeFailedModal = () =>{
+    setIsFailedOpen(false)
   }
 
   const [members, setMembers] = useState({})
@@ -113,37 +119,36 @@ const TeamView = ({ team, isOpen, onClose }) => {
 
     const fetchUsers = async () => {
       try {
-        const uniqueMembers = new Set();
-        const options = await Service.getAllUser(token);
-        
+        const uniqueMembers = new Set()
+        const options = await Service.getAllUser(token)
+
         // Process the options to filter unique names
         const memberOptions = options
           ?.map((user) => {
-            const name = user?.name;
+            const name = user?.name
             // Check for unique names
             if (name && !uniqueMembers.has(name)) {
-              uniqueMembers.add(name); // Add to the set if unique
+              uniqueMembers.add(name) // Add to the set if unique
               return {
                 label: name,
-                value: parseInt(user?.id),
-              };
+                value: parseInt(user?.id)
+              }
             }
-            return null; // Return null for duplicates
+            return null // Return null for duplicates
           })
           .filter(Boolean) // Remove null values from the array
-          .sort((a, b) => a.label.localeCompare(b.label)); // Sort alphabetically
-    
+          .sort((a, b) => a.label.localeCompare(b.label)) // Sort alphabetically
+
         // Set the processed member options
-        setMemberOptions(memberOptions);
+        setMemberOptions(memberOptions)
       } catch (error) {
-        console.error('Error fetching users:', error);
+        console.error('Error fetching users:', error)
       }
-    };
-    
+    }
 
     fetchUsers()
     segerateTeam()
-  }, [])
+  }, [setMembers])
 
   const handleClose = () => {
     setIsEditing((prev) => !prev)
@@ -274,14 +279,25 @@ const TeamView = ({ team, isOpen, onClose }) => {
                     </div>
 
                     <div className="flex justify-end mt-4">
-                      <Button
-                        type="submit"
-                        className={`${
-                          isAddMember ? 'bg-blue-500' : 'bg-gray-500'
-                        } text-white py-2 px-4 rounded-lg hover:bg-blue-700`}
-                      >
-                        {isAddMember ? 'Save' : 'Add'}
-                      </Button>
+                      <Button type="submit">Add</Button>
+                      <Dialog open={isSuccessOpen} handler={setIsSuccessOpen}>
+                        <DialogHeader>User Added</DialogHeader>
+                        <DialogBody>The User is added successfully!</DialogBody>
+                        <DialogFooter>
+                          <Button variant="gradient" color="green" onClick={closeSuccessModal}>
+                            Close
+                          </Button>
+                        </DialogFooter>
+                      </Dialog>
+                      <Dialog open={isFailedOpen} handler={setIsFailedOpen}>
+                        <DialogHeader>User not Added</DialogHeader>
+                        <DialogBody>The User is not added!</DialogBody>
+                        <DialogFooter>
+                          <Button variant="gradient" color="red" onClick={closeFailedModal}>
+                            Close
+                          </Button>
+                        </DialogFooter>
+                      </Dialog>
                     </div>
                   </form>
                 </div>
