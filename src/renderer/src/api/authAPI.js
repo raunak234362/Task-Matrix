@@ -1,7 +1,7 @@
+/* eslint-disable prettier/prettier */
 import { BASE_URL } from "../config/constant";
 
 class AuthService {
-  static BASE_URL = BASE_URL;
 
   static async login({ username, password,token,userType }) {
     try {
@@ -9,7 +9,7 @@ class AuthService {
       formData.append('username', username.toUpperCase());
       formData.append('password', password);
 
-      const response = await fetch(`${AuthService.BASE_URL}api/user/login/`, {
+      const response = await fetch(`${BASE_URL}api/user/login/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',

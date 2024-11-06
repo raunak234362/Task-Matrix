@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable no-unused-vars */
 import React, { useState } from 'react'
-import { AddCSV, Button, Header, Input, Select } from '../../../index'
+import { AddCSV, Button, Header, Input, CustomSelect } from '../../../index'
 import { useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
 import { setUserData } from '../../../../store/userSlice'
@@ -74,7 +74,7 @@ const AddUser = () => {
             </div>
             {errors.email && <p className="text-red-500">{errors.email.message}</p>}
             <div className="mt-3">
-              <Select
+              <CustomSelect
                 label="Permission Access"
                 name="accessPermission"
                 options={[

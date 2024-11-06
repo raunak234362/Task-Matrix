@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react'
 import Service from '../../../../api/configAPI'
 import Header from '../../Header'
-import { Input, Select } from '../../../index'
+import { Input, CustomSelect } from '../../../index'
 import UsersTask from './UsersTask'
 import { useForm } from 'react-hook-form'
 
@@ -144,7 +144,7 @@ const UsersTaskRecord = () => {
             {...register('user')}
             onChange={setValue}
           /> */}
-          <Select
+          <CustomSelect
             label="Select user"
             options={[
               { value: '', label: 'Select user' },

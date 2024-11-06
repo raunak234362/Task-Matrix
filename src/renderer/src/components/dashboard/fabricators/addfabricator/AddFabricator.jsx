@@ -2,7 +2,7 @@
 /* eslint-disable no-unused-vars */
 import React, { useCallback, useState, useEffect } from 'react'
 import { State, City } from 'country-state-city'
-import { Button, Header, Input, Select } from '../../../index'
+import { Button, Header, Input, CustomSelect } from '../../../index'
 import { useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
 import { setFabricatorData } from '../../../../store/fabricatorSlice'
@@ -118,7 +118,7 @@ const AddFabricator = () => {
               {errors.name && <p className="text-red-600">{errors.name.message}</p>}
             </div>
             <div className="flex flex-wrap gap-5 mt-5">
-              <Select
+              <CustomSelect
                 label="Country: "
                 placeholder="Country"
                 className="w-full"
@@ -134,7 +134,7 @@ const AddFabricator = () => {
               />
               {errors.country && <p className="text-red-600">{errors.country.message}</p>}
 
-              <Select
+              <CustomSelect
                 label="State: "
                 placeholder="State"
                 className="w-full"
@@ -150,7 +150,7 @@ const AddFabricator = () => {
               />
               {errors.state && <p className="text-red-600">{errors.state.message}</p>}
 
-              <Select
+              <CustomSelect
                 label="City: "
                 placeholder="City"
                 className="w-full"

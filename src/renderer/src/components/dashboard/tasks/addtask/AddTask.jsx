@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable no-unused-vars */
 import React, { useCallback, useEffect, useState } from 'react'
-import { Button, Header, Input, Select } from '../../../index'
+import { Button, Header, Input, CustomSelect } from '../../../index'
 import Service from '../../../../api/configAPI'
 import { setTaskData } from '../../../../store/taskSlice'
 import { useDispatch } from 'react-redux'
@@ -125,7 +125,7 @@ const AddTask = () => {
         <div className="p-5 flex flex-col justify-between gap-5">
           <div className="flex rounded-lg flex-col shadow-lg shadow-black/15 p-8">
             <div className="mt-5">
-              <Select
+              <CustomSelect
                 label="Project:"
                 placeholder="Project"
                 name="project"
@@ -144,7 +144,7 @@ const AddTask = () => {
             </div>
 
             <div className="mt-5">
-              <Select
+              <CustomSelect
                 label="Parent Task: "
                 name="parent"
                 placeholder="Parent Task"
@@ -162,7 +162,7 @@ const AddTask = () => {
             </div>
             <div className="mt-5 flex flex-row gap-x-2">
               <div className="w-[30%]">
-                <Select
+                <CustomSelect
                   label="Task Type: "
                   name="type"
                   placeholder="Task Type"
@@ -202,7 +202,7 @@ const AddTask = () => {
               </div>
             </div>
             <div className="mt-5">
-              <Select
+              <CustomSelect
                 label="Priority:"
                 name="priority"
                 options={[
@@ -218,7 +218,7 @@ const AddTask = () => {
               {errors.priority && <p className="text-red-600">{errors.priority.message}</p>}
             </div>
             <div className="mt-5">
-              <Select
+              <CustomSelect
                 label="Status:"
                 name="status"
                 options={[
@@ -282,7 +282,7 @@ const AddTask = () => {
               </div>
             </div>
             <div className="mt-5">
-              <Select
+              <CustomSelect
                 label="Assign User:"
                 name="user"
                 options={[{ label: 'Select User', value: '' }, ...assignedUser]}

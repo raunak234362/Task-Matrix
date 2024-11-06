@@ -3,7 +3,7 @@ import Login from './login/Login'
 
 import Button from './fields/Button'
 import Input from './fields/Input'
-import Select from './fields/Select'
+import CustomSelect from './fields/Select'
 import MultiSelectCheckbox from './fields/MultiSelectCheckbox'
 
 import Dashboard from './dashboard/Dashboard'
@@ -70,7 +70,7 @@ export {
   TaskSelected,
   ApproveAssignee,
   UsersTaskRecord,
-  Select,
+  CustomSelect,
   Input,
   TeamView,
   ProjectPie,

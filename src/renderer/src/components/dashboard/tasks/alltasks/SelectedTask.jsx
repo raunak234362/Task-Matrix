@@ -2,7 +2,7 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react'
-import { Button, Input, Select } from '../../../index'
+import { Button, Input, CustomSelect } from '../../../index'
 import Service from '../../../../api/configAPI'
 import { useForm } from 'react-hook-form'
 import { Dialog, DialogHeader, DialogBody, DialogFooter } from '@material-tailwind/react'
@@ -201,7 +201,7 @@ const SelectedTask = ({ task, isOpen, onClose, setTasks }) => {
                 <div className="flex flex-row justify-between mb-4">
                   <div>
                     {isEditing ? (
-                      <Select
+                      <CustomSelect
                         placeholder="Status"
                         name="status"
                         label="Status"
@@ -230,7 +230,7 @@ const SelectedTask = ({ task, isOpen, onClose, setTasks }) => {
 
                   <div>
                     {isEditing ? (
-                      <Select
+                      <CustomSelect
                         name="priority"
                         label="Priority"
                         placeholder="Priority"

@@ -17,7 +17,7 @@ import {
   startOfToday
 } from 'date-fns'
 import Service from '../../../../api/configAPI'
-import { Header, Input, Select } from '../../../index'
+import { Header, Input, CustomSelect } from '../../../index'
 import { useForm } from 'react-hook-form'
 
 const colStartClasses = [
@@ -189,7 +189,7 @@ function Calendar() {
                 className="p-2 border border-gray-300 rounded-lg"
               /> */}
               {userType !== 'user' && (
-                <Select
+                <CustomSelect
                 label='Select User'
                 options={[
                   { value: '', label: 'Select user' },

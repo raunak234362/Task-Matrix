@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { setTeamData } from "../../../../store/teamSlice";
-import { Input, Button, Select, Header } from "../../../index";
+import { Input, Button, CustomSelect, Header } from "../../../index";
 import Service from "../../../../api/configAPI";
 import { Dialog, DialogHeader, DialogBody, DialogFooter } from '@material-tailwind/react'
 
@@ -100,7 +100,7 @@ const AddTeam = () => {
             </div> */}
 
             <div className="mt-5">
-              <Select
+              <CustomSelect
                 label="Team Leader"
                 placeholder="Team Leader"
                 className="w-full"
