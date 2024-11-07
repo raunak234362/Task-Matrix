@@ -177,7 +177,22 @@ const SelectedTask = ({ task, isOpen, onClose, setTasks }) => {
                 </div>
 
                 <div className="mb-2">
-                  <strong className="text-gray-700">Current User:</strong> {task?.user?.name}
+                  <strong className="text-gray-700">Current User:</strong>
+                  {isEditing ? (
+                    <CustomSelect
+                      name="user"
+                      label="User"
+                      placeholder="Select User"
+                      size="lg"
+                      color="green"
+                      // options={/* Add your user options here */}
+                      defaultValue={task?.user?.id}
+                      {...register('user')}
+                      onChange={setValue}
+                    />
+                  ) : (
+                    <div>{task?.user?.name}</div>
+                  )}
                 </div>
 
                 <div className="mb-2">
