@@ -121,10 +121,13 @@ const ManageFabricator = ({ fabricator, isOpen, onClose }) => {
                     <Button variant="text" color="gray" onClick={closeModal} className="mr-2">
                       No
                     </Button>
-                    <Button variant="gradient" color="red" onClick={() => handleDeleteFabricator(fabricator?.id)}>
-                                  Yes, Delete
-                                </Button>
-                    
+                    <Button
+                      variant="gradient"
+                      color="red"
+                      onClick={() => handleDeleteFabricator(fabricator?.id)}
+                    >
+                      Yes, Delete
+                    </Button>
                   </DialogFooter>
                 </Dialog>
               )}

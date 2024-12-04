@@ -5,7 +5,7 @@ import { State, City } from 'country-state-city'
 import { Button, Header, Input, CustomSelect } from '../../../index'
 import { useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
-import { setFabricatorData } from '../../../../store/fabricatorSlice'
+import { addFabricator } from '../../../../store/fabricatorSlice'
 import Service from '../../../../api/configAPI'
 import { Dialog, DialogHeader, DialogBody, DialogFooter } from '@material-tailwind/react'
 
@@ -93,7 +93,7 @@ const AddFabricator = () => {
         // design:contract,
         token: token
       })
-      dispatch(setFabricatorData(data))
+      dispatch(addFabricator(data))
       console.log('Document added:', data)
       // alert('Successfully added new Fabricator', data)
       setIsSuccessOpen(true)

@@ -3,10 +3,10 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { Button, Header, Input, CustomSelect } from '../../../index'
 import Service from '../../../../api/configAPI'
-import { setTaskData } from '../../../../store/taskSlice'
 import { useDispatch } from 'react-redux'
 import { useForm } from 'react-hook-form'
 import { Dialog, DialogHeader, DialogBody, DialogFooter } from '@material-tailwind/react'
+import { addTask } from '../../../../store/taskSlice'
 
 const AddTask = () => {
   const [projectOptions, setPtojectOptions] = useState([])
@@ -105,7 +105,7 @@ const AddTask = () => {
       })
       console.log('Response from task:', taskData)
       setIsSuccessOpen(true)
-      dispatch(setTaskData(data))
+      dispatch(addTask(data))
     } catch (error) {
       console.error('Error adding task:', error)
       console.log('Project data:', taskData)

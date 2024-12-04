@@ -5,6 +5,10 @@ import Service from '../../../api/configAPI'
 import { BarViews, FabricatorCharts, Header } from '../../index'
 import SegregateProject from '../../../util/SegregateProject'
 import { Link, NavLink } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
+import { addProject } from '../../../store/projectSlice'
+import { addFabricator } from '../../../store/fabricatorSlice'
+import { addTask } from '../../../store/userSlice'
 
 const Home = () => {
   const userType = sessionStorage.getItem('userType')
@@ -17,59 +21,66 @@ const Home = () => {
   const [tasks, setTasks] = useState([])
   const [segregateProject, setSegregateProject] = useState({})
   const token = sessionStorage.getItem('token')
+  const dispatch = useDispatch()
 
+  const fabricatorData = useSelector((state) => state.fabricatorData.fabricatorData[0])
+  console.log(fabricatorData)
+  const projectData = useSelector((state) => state.projectData.projectData[0])
+  console.log(projectData)
+  const taskData = useSelector((state) => state.taskData)
+  console.log(taskData)
+
+  const fetchFabricators = async () => {
+    try {
+      const fabricatorsData = await Service.getAllFabricator(token)
+      setFabricators(fabricatorsData)
+      dispatch(addFabricator(fabricatorsData))
+    } catch (error) {
+      console.error('Error fetching fabricators:', error)
+    }
+  }
+  const fetchProjects = async () => {
+    try {
+      const projectsData = await Service.getAllProject(token)
+      dispatch(addProject(projectsData))
+      const segregatedProjects = await SegregateProject(projectsData)
+      setSegregateProject(segregatedProjects)
+      // console.log(segregatedProjects)
+    } catch (error) {
+      console.error('Error fetching projects:', error)
+    }
+  }
+  const fetchTeam = async () => {
+    try {
+      const teamData = await Service.getAllTeam(token)
+      setTeam(teamData)
+      // console.log(teamData)
+    } catch (error) {
+      console.error('Error fetching team:', error)
+    }
+  }
+
+  const fetchUsers = async () => {
+    try {
+      const usersData = await Service.getAllUser(token)
+      setUsers(usersData)
+      // console.log(usersData);
+    } catch (error) {
+      console.error('Error fetching users:', error)
+    }
+  }
+
+  const fetchTasks = async () => {
+    try {
+      const tasksData = await Service.getAllTask(token)
+      // setTasks(tasksData)
+      dispatch(addTask(tasksData))
+      // console.log(tasksData)
+    } catch (error) {
+      console.error('Error fetching tasks:', error)
+    }
+  }
   useEffect(() => {
-    const fetchFabricators = async () => {
-      try {
-        const fabricatorsData = await Service.getAllFabricator(token)
-        setFabricators(fabricatorsData)
-        // console.log(fabricatorsData)
-      } catch (error) {
-        console.error('Error fetching fabricators:', error)
-      }
-    }
-
-    const fetchProjects = async () => {
-      try {
-        const projectsData = await Service.getAllProject(token)
-        setProjects(projectsData)
-        const segregatedProjects = await SegregateProject(projectsData)
-        setSegregateProject(segregatedProjects)
-      } catch (error) {
-        console.error('Error fetching projects:', error)
-      }
-    }
-
-    const fetchTeam=async ()=>{
-      try{
-        const teamData=await Service.getAllTeam(token)
-        setTeam(teamData)
-        // console.log(teamData)
-      }catch (error){
-        console.error('Error fetching team:', error)
-      }
-    }
-
-    const fetchUsers = async () => {
-      try {
-        const usersData = await Service.getAllUser(token)
-        setUsers(usersData)
-        console.log(usersData);
-      } catch (error) {
-        console.error('Error fetching users:', error)
-      }
-    }
-
-    const fetchTasks = async () => {
-      try {
-        const tasksData = await Service.getAllTask(token)
-        setTasks(tasksData)
-        // console.log(tasksData)
-      } catch (error) {
-        console.error('Error fetching tasks:', error)
-      }
-    }
-
     fetchTeam()
     fetchTasks()
     fetchUsers()
@@ -84,7 +95,7 @@ const Home = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-6 px-2">
           <div className="bg-gray-200 shadow-md p-2 flex flex-col items-center rounded-lg text-center text-gray-800">
             <NavLink to="all-fabricator">
-              <span className="text-4xl font-bold text-gray-900">{fabricators.length}</span>
+              <span className="text-4xl font-bold text-gray-900">{fabricatorData?.length}</span>
               <p className="mt-2 text-xl font-semibold">Total No. of Fabricators</p>
             </NavLink>
           </div>
@@ -96,29 +107,26 @@ const Home = () => {
           </div>
           <div className="bg-gray-200 shadow-md p-2 flex flex-col items-center rounded-lg text-center text-gray-800">
             <NavLink to="all-task">
-            <span className="text-4xl font-bold text-gray-900">{tasks.length}</span>
-            <p className="mt-2 text-xl font-semibold">Total No. of Tasks</p>
+              <span className="text-4xl font-bold text-gray-900">{tasks.length}</span>
+              <p className="mt-2 text-xl font-semibold">Total No. of Tasks</p>
             </NavLink>
           </div>
           <div className="bg-green-200 shadow-md p-2 flex flex-col items-center rounded-lg text-center text-gray-800">
             <NavLink to="all-user">
-            <span className="text-4xl font-bold text-gray-900">{users.length}</span>
-            <p className="mt-2 text-xl font-semibold">Total No. of Users</p>
+              <span className="text-4xl font-bold text-gray-900">{users.length}</span>
+              <p className="mt-2 text-xl font-semibold">Total No. of Users</p>
             </NavLink>
           </div>
           <div className="bg-gray-200 shadow-md p-2 flex flex-col items-center rounded-lg text-center text-gray-800">
             <NavLink to="manage-team">
-            <span className="text-4xl font-bold text-gray-900">{team.length}</span>
-            <p className="mt-2 text-xl font-semibold">Total No. of Team</p>
+              <span className="text-4xl font-bold text-gray-900">{team.length}</span>
+              <p className="mt-2 text-xl font-semibold">Total No. of Team</p>
             </NavLink>
           </div>
         </div>
-        <div className='bg-gray-200 p-2 mt-5 rounded-lg'>
+        <div className="bg-gray-200 p-2 mt-5 rounded-lg">
           <div>
-          <FabricatorCharts 
-            segregateProject={segregateProject}
-          />
-
+            <FabricatorCharts segregateProject={segregateProject} />
           </div>
         </div>
         <div className="grid grid-cols-[69%,30%]  gap-2">
@@ -149,7 +157,7 @@ const Home = () => {
                       </td>
                     </tr>
                   ) : (
-                    projects.map((project, index) => (
+                    projects?.map((project, index) => (
                       <tr key={project.id}>
                         <td className="px-4 py-2 border">{index + 1}</td>
                         <td className="px-4 py-2 border">{project.name}</td>

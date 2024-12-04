@@ -5,7 +5,7 @@ import React, { useState, useEffect } from 'react'
 import { Button, Input, CustomSelect, MultiSelectCheckbox, AddTeam, Header, Toggle } from '../../../index'
 import { useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
-import { setProjectData } from '../../../../store/projectSlice'
+import { addProject } from '../../../../store/projectSlice'
 import Service from '../../../../api/configAPI'
 import { Dialog, DialogHeader, DialogBody, DialogFooter } from '@material-tailwind/react'
 
@@ -109,7 +109,7 @@ const AddProject = () => {
       })
       console.log('Response from addProject:', projectData)
 
-      dispatch(setProjectData(data))
+      dispatch(addProject(data))
       setIsSuccessOpen(true)
       console.log('Project added:', data)
       // alert('Successfully added new Project', projectData?.name)
