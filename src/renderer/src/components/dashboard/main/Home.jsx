@@ -30,26 +30,10 @@ const Home = () => {
   const taskData = useSelector((state) => state.taskData)
   console.log(taskData)
 
-  const fetchFabricators = async () => {
-    try {
-      const fabricatorsData = await Service.getAllFabricator(token)
-      setFabricators(fabricatorsData)
-      dispatch(addFabricator(fabricatorsData))
-    } catch (error) {
-      console.error('Error fetching fabricators:', error)
-    }
-  }
-  const fetchProjects = async () => {
-    try {
-      const projectsData = await Service.getAllProject(token)
-      dispatch(addProject(projectsData))
-      const segregatedProjects = await SegregateProject(projectsData)
-      setSegregateProject(segregatedProjects)
+      // const segregatedProjects =  SegregateProject(projectData)
+      // setSegregateProject(segregatedProjects)
       // console.log(segregatedProjects)
-    } catch (error) {
-      console.error('Error fetching projects:', error)
-    }
-  }
+
   const fetchTeam = async () => {
     try {
       const teamData = await Service.getAllTeam(token)
@@ -60,32 +44,10 @@ const Home = () => {
     }
   }
 
-  const fetchUsers = async () => {
-    try {
-      const usersData = await Service.getAllUser(token)
-      setUsers(usersData)
-      // console.log(usersData);
-    } catch (error) {
-      console.error('Error fetching users:', error)
-    }
-  }
 
-  const fetchTasks = async () => {
-    try {
-      const tasksData = await Service.getAllTask(token)
-      // setTasks(tasksData)
-      dispatch(addTask(tasksData))
-      // console.log(tasksData)
-    } catch (error) {
-      console.error('Error fetching tasks:', error)
-    }
-  }
+
   useEffect(() => {
     fetchTeam()
-    fetchTasks()
-    fetchUsers()
-    fetchProjects()
-    fetchFabricators()
   }, [token])
 
   return (
@@ -101,13 +63,13 @@ const Home = () => {
           </div>
           <div className="bg-green-200 shadow-md p-2 flex flex-col items-center rounded-lg text-center text-gray-800">
             <NavLink to="all-project">
-              <span className="text-4xl font-bold text-gray-900">{projects.length}</span>
+              <span className="text-4xl font-bold text-gray-900">{projectData?.length}</span>
               <p className="mt-2 text-xl font-semibold">Total No. of Projects</p>
             </NavLink>
           </div>
           <div className="bg-gray-200 shadow-md p-2 flex flex-col items-center rounded-lg text-center text-gray-800">
             <NavLink to="all-task">
-              <span className="text-4xl font-bold text-gray-900">{tasks.length}</span>
+              <span className="text-4xl font-bold text-gray-900">{taskData?.length}</span>
               <p className="mt-2 text-xl font-semibold">Total No. of Tasks</p>
             </NavLink>
           </div>
