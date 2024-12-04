@@ -23,12 +23,12 @@ const Home = () => {
   const token = sessionStorage.getItem('token')
   const dispatch = useDispatch()
 
-  const fabricatorData = useSelector((state) => state.fabricatorData.fabricatorData[0])
-  console.log(fabricatorData)
+  const fabricatorData = useSelector((state) => state.fabricatorData.fabricatorData)
+  console.log('Fabricator Data: ',fabricatorData)
   const projectData = useSelector((state) => state.projectData.projectData[0])
-  console.log(projectData)
+  console.log('Project Data: ',projectData)
   const taskData = useSelector((state) => state.taskData)
-  console.log(taskData)
+  console.log('Task Data: ',taskData)
 
       // const segregatedProjects =  SegregateProject(projectData)
       // setSegregateProject(segregatedProjects)

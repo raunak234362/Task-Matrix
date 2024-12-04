@@ -47,8 +47,8 @@ const Dashboard = () => {
   const token = sessionStorage.getItem('token')
   const dispatch = useDispatch()
 
-  const fabricatorData = useSelector((state) => state.fabricatorData.fabricatorData[0])
-  // console.log("Fabricator data: ",fabricatorData)
+  const fabricatorData = useSelector((state) => state.fabricatorData.fabricatorData)
+  console.log("Fabricator data: ",fabricatorData)
   const projectData = useSelector((state) => state.projectData.projectData[0])
   // console.log("Project data: ",projectData)
   const taskData = useSelector((state) => state.taskData)
@@ -57,7 +57,7 @@ const Dashboard = () => {
   const fetchFabricators = async () => {
     try {
       const fabricatorsData = await Service.getAllFabricator(token``)
-      setFabricators(fabricatorsData)
+      // setFabricator(fabricatorsData)
       dispatch(addFabricator(fabricatorsData))
     } catch (error) {
       console.error('Error fetching fabricators:', error)
