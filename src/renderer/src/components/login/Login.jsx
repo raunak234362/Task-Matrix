@@ -21,7 +21,7 @@ const Login = () => {
   const [error, setError] = useState('')
 
   const userData = useSelector((state) => state.userData.userData)
-console.log(userData)
+  console.log(userData)
   const login = async (data) => {
     try {
       const session = await AuthService.login(data)
@@ -96,7 +96,7 @@ console.log(userData)
             )}
             <div>
               <Input
-              label='Password'
+                label='Password'
                 type="password"
                 placeholder="Username"
                 {...register('password', {
