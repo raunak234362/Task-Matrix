@@ -30,7 +30,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import { addFabricator } from '../../store/fabricatorSlice'
 import { addProject } from '../../store/projectSlice'
 import SegregateProject from '../../util/SegregateProject'
-import { addTask } from '../../store/userSlice'
+import { addTask } from '../../store/taskSlice'
+import { setUserData } from '../../store/userSlice'
 
 const Dashboard = () => {
   const [isSubMenuOpen, setIsSubMenuOpen] = useState(false)
@@ -48,21 +49,24 @@ const Dashboard = () => {
   const dispatch = useDispatch()
 
   const fabricatorData = useSelector((state) => state.fabricatorData.fabricatorData)
-  console.log("Fabricator data: ",fabricatorData)
   const projectData = useSelector((state) => state.projectData.projectData[0])
   // console.log("Project data: ",projectData)
-  const taskData = useSelector((state) => state.taskData)
-  // console.log("Task data: ",taskData)
+  const taskData = useSelector((state) => state.taskData.taskData)
+  console.log("Task data: ",taskData)
+  const userData = useSelector((state) => state.userData.userData)
+  console.log("User data: ",userData)
 
   const fetchFabricators = async () => {
     try {
-      const fabricatorsData = await Service.getAllFabricator(token``)
+      const fabricatorsData = await Service.getAllFabricator(token)
       // setFabricator(fabricatorsData)
+      // console.log("Fabricator data: ",fabricatorsData)
       dispatch(addFabricator(fabricatorsData))
     } catch (error) {
       console.error('Error fetching fabricators:', error)
     }
   }
+
   const fetchProjects = async () => {
     try {
       const projectsData = await Service.getAllProject(token)
@@ -87,8 +91,9 @@ const Dashboard = () => {
   const fetchUsers = async () => {
     try {
       const usersData = await Service.getAllUser(token)
+      console.log('UserData-----------',usersData);
       setUsers(usersData)
-      // console.log(usersData);
+      dispatch(setUserData(usersData))
     } catch (error) {
       console.error('Error fetching users:', error)
     }
@@ -105,11 +110,11 @@ const Dashboard = () => {
     }
   }
   useEffect(() => {
+    fetchFabricators()
     fetchTeam()
     fetchTasks()
     fetchUsers()
     fetchProjects()
-    fetchFabricators()
   }, [token])
 
   return (

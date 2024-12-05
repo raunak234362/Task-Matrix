@@ -5,8 +5,8 @@ import { Button, Input } from '../index'
 import Logo from '../../assets/logo.png'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
-import { useDispatch } from 'react-redux'
-import { login as authLogin } from '../../store/userSlice'
+import { useDispatch, useSelector } from 'react-redux'
+import { login as authLogin, setUserData } from '../../store/userSlice'
 import AuthService from '../../api/authAPI'
 import Service from '../../api/configAPI'
 
@@ -20,6 +20,8 @@ const Login = () => {
   } = useForm()
   const [error, setError] = useState('')
 
+  const userData = useSelector((state) => state.userData.userData)
+console.log(userData)
   const login = async (data) => {
     try {
       const session = await AuthService.login(data)
@@ -40,7 +42,9 @@ const Login = () => {
         sessionStorage.setItem('userType', userType)
         sessionStorage.setItem('username', userData?.username)
         sessionStorage.setItem('token', token)
-        dispatch(authLogin({ token, userType }))
+        dispatch(authLogin(session))
+        dispatch(setUserData(userData[0]))
+        console.log('User Data: ', userData)
         if (userType != 'user') {
           navigate('/dashboard')
         } else {

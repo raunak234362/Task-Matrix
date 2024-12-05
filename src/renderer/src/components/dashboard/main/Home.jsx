@@ -8,7 +8,6 @@ import { Link, NavLink } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { addProject } from '../../../store/projectSlice'
 import { addFabricator } from '../../../store/fabricatorSlice'
-import { addTask } from '../../../store/userSlice'
 
 const Home = () => {
   const userType = sessionStorage.getItem('userType')
@@ -23,12 +22,13 @@ const Home = () => {
   const token = sessionStorage.getItem('token')
   const dispatch = useDispatch()
 
-  const fabricatorData = useSelector((state) => state.fabricatorData.fabricatorData)
-  console.log('Fabricator Data: ',fabricatorData)
+  const fabricatorData = useSelector((state) => state.fabricatorData.fabricatorData[0])
+  // console.log('Fabricator Data: ',fabricatorData)
   const projectData = useSelector((state) => state.projectData.projectData[0])
-  console.log('Project Data: ',projectData)
-  const taskData = useSelector((state) => state.taskData)
-  console.log('Task Data: ',taskData)
+  // console.log('Project Data: ',projectData)
+  const taskData = useSelector((state) => state.taskData.taskData[0])
+  // console.log('Task Data: ',taskData)
+  const userData = useSelector((state) => state.userData.userData)
 
       // const segregatedProjects =  SegregateProject(projectData)
       // setSegregateProject(segregatedProjects)
@@ -44,7 +44,13 @@ const Home = () => {
     }
   }
 
-
+useEffect(() => {
+  if(projectData){
+    const segregatedProjects =  SegregateProject(projectData)
+    setSegregateProject(segregatedProjects)
+    console.log('Segragated Project',segregatedProjects)
+  }
+},[projectData])
 
   useEffect(() => {
     fetchTeam()
@@ -75,7 +81,7 @@ const Home = () => {
           </div>
           <div className="bg-green-200 shadow-md p-2 flex flex-col items-center rounded-lg text-center text-gray-800">
             <NavLink to="all-user">
-              <span className="text-4xl font-bold text-gray-900">{users.length}</span>
+              <span className="text-4xl font-bold text-gray-900">{userData?.length}</span>
               <p className="mt-2 text-xl font-semibold">Total No. of Users</p>
             </NavLink>
           </div>

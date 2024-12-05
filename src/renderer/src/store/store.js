@@ -4,7 +4,6 @@ import fabricatorReducer from './fabricatorSlice'
 import projectReducer from './projectSlice'
 import taskData from './taskSlice'
 import teamSlice from './teamSlice'
-import tokenSlice from './tokenSlice'
 import userReducer from './userSlice'
 
 const store = configureStore({
@@ -14,7 +13,6 @@ const store = configureStore({
     projectData: projectReducer,
     taskData: taskData,
     teamData: teamSlice,
-    token: tokenSlice
   }
 })
 export default store
