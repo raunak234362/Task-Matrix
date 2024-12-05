@@ -1,18 +1,27 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App'
-import { HashRouter } from 'react-router-dom'
+import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import { Provider } from 'react-redux'
 import store from './store/store'
+import { Login } from './components'
 
-const root = ReactDOM.createRoot(document.getElementById('root'))
-root.render(
-  <HashRouter>
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <Login />
+  },
+  {
+    path: '/admin',
+    element: <App />
+  }
+])
+
+createRoot(document.getElementById('root')).render(
+  <StrictMode>
     <Provider store={store}>
-      <React.StrictMode>
-        <App />
-      </React.StrictMode>
+      <RouterProvider router={router} />
     </Provider>
-  </HashRouter>
+  </StrictMode>
 )

@@ -1,12 +1,11 @@
+/* eslint-disable react-refresh/only-export-components */
 /* eslint-disable react/prop-types */
-/* eslint-disable prettier/prettier */
-
 import React, { useId, useState } from 'react'
 import { Input as InputField, Textarea } from '@material-tailwind/react'
 import { FiEye, FiEyeOff } from "react-icons/fi";
 
 function Input(
-  { label, type = 'text', className, placeholder, variant, ...props },
+  { label, type = 'text', className,  variant, ...props },
   ref,
 ) {
   const id = useId()
@@ -20,10 +19,11 @@ function Input(
     <div className="w-full items-center">
       {type === 'textarea' ? (
         <Textarea
+          variant={variant}
           label={label}
-          className={`px-3 py-1 w-full rounded-lg bg-white text-gray-700 border-2 border-gray-300 focus:border-gray-600 focus:bg-slate-300 focus:bg-opacity-60 duration-200 ${className}`}
+          className={`px-3 py-1 w-full rounded-lg bg-white text-gray-700 focus:bg-slate-300 focus:bg-opacity-60 duration-200 ${className}`}
           ref={ref}
-          placeholder={placeholder}
+          placeholder={label}
           {...props}
           id={id}
         />

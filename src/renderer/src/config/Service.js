@@ -1,23 +1,21 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable prettier/prettier */
 import axios from 'axios'
-import { BASE_URL } from '../config/constant'
+import { BASE_URL } from './constant'
 const token = sessionStorage.getItem('token')
 class Service {
   //Users APIs
   static async getCurrentUser(token) {
     sessionStorage.getItem(token)
     try {
-      const response = await fetch(`${BASE_URL}api/user/emp/me/`, {
+      const response = await axios.get(`${BASE_URL}api/user/emp/me/`, {
         method: 'GET',
         headers: {
           Authorization: `Token ${token}`,
           'Content-Type': 'application/json'
         }
       })
-      const data = await response.json()
-
-      return data
+      return response.data
     } catch (error) {
       console.error('Error in getCurrentUser:', error)
       throw error
@@ -26,16 +24,15 @@ class Service {
   static async getAllUser(token) {
     sessionStorage.getItem(token)
     try {
-      const response = await fetch(`${BASE_URL}api/user/emp/`, {
+      const response = await axios.get(`${BASE_URL}api/user/emp/`, {
         method: 'GET',
         headers: {
           Authorization: `Token ${token}`,
           'Content-Type': 'application/json'
         }
       })
-      const data = await response.json()
 
-      return data
+      return response.data
     } catch (error) {
       console.error('Error in getAllUser:', error)
       throw error

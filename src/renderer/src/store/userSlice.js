@@ -1,71 +1,67 @@
-import { createSlice } from '@reduxjs/toolkit';
+/* eslint-disable prettier/prettier */
+import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
-  userData: {
-    name: '',
-    userName: '',
-    email: '',
-    password: '',
-    role:''
-  },
-  auth: {
-    status: false,
-  },
-};
+  token: false,
+  userData: {},
+  departmentData: [],
+  staffData: [],
+  teamData: []
+}
 
 const userSlice = createSlice({
-  name: 'user',
+  name: 'userData',
   initialState,
   reducers: {
-    setUserData: (state, action) => {
-      state.userData = { ...action.payload };
-    },
-    clearUserData: (state) => {
-      state.userData = {
-        name: '',
-        userName: '',
-        email: '',
-        password: '',
-        role:''
-      };
-    },
-    updateUserData: (state, action) => {
-      state.userData = { ...state.userData, ...action.payload };
-    },
-    addTask: (state, action) => {
-      state.userData.tasks.push(action.payload);
-    },
-    removeTask: (state, action) => {
-      state.userData.tasks = state.userData.tasks.filter(
-        (task) => task.id !== action.payload
-      );
-    },
-    login: (state,action) => {
-      state.userData.token =action.payload.token;
-      state.userData.userType =action.payload.userType;
-      state.auth.status = true;
+    login: (state, action) => {
+      state.userData = action.payload
+      sessionStorage.setItem('token', action.payload.token)
     },
     logout: (state) => {
-      state.userData = {
-        tasks: [],
-        token: null,
-        userType: null,
-      };
-      sessionStorage.removeItem('token');
-      sessionStorage.removeItem('userType');
-      state.auth.status = false;
+      state.token = false
+      state.userData = null
+      sessionStorage.removeItem('token')
     },
-  },
-});
+    updatetoken: (state, action) => {
+      state.token = action.payload.token
+      sessionStorage.setItem('token', action.payload.token)
+    },
+    setUserData: (state, action) => {
+      state.token = action.payload.token
+      state.userData = action.payload
+    },
+    addStaff: (state, action) => {
+      state.staffData.push(action.payload)
+    },
+    showStaff: (state, action) => {
+      state.staffData = action.payload
+    },
+    addDepartment: (state, action) => {
+      state.departmentData.push(action.payload)
+    },
+    showDepartment: (state, action) => {
+      state.departmentData = action.payload
+    },
+    addTeam: (state, action) => {
+      state.teamData.push(action.payload)
+    },
+    showTeam: (state, action) => {
+      state.teamData = action.payload
+    }
+  }
+})
 
 export const {
-  setUserData,
-  clearUserData,
-  updateUserData,
-  addTask,
-  removeTask,
   login,
-  logout,
-} = userSlice.actions;
+  showStaff,
+  addStaff,
+  setUserData,
+  addDepartment,
+  showDepartment,
+  showTeam,
+  addTeam,
+  updatetoken,
+  logout
+} = userSlice.actions
 
-export default userSlice.reducer;
+export default userSlice.reducer

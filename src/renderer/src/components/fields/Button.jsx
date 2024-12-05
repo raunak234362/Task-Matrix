@@ -1,15 +1,15 @@
-import React from "react";
+/* eslint-disable react/prop-types */
 
-const Button = ({ children, type = "button", className = " bg-gray-500 text-white text-xl", ...props }) => {
-  return (
+const Button = ({children, type='button',className="",...props}) => {
+    return (
     <button
-      type={type}
-      className={`${className} flex flex-row justify-start items-center rounded-xl px-5 mt-3 `}
-      {...props}
+    type={type}
+    className={`${className} bg-blue-500 md:px-5 px-3 md:py-1 py-0  text-white md:text-lg text-sm rounded-xl`}
+    {...props}
     >
-      {children}
+        {children}
     </button>
-  );
-};
+  )
+}
 
-export default Button;
+export default Button

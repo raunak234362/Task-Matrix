@@ -1,5 +1,9 @@
-/* eslint-disable prettier/prettier */
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
+/* eslint-disable react-refresh/only-export-components */
+
 import React, { useId, useState } from 'react';
+import { Checkbox } from "@material-tailwind/react";
 
 function Toggle({
   label,
@@ -12,17 +16,17 @@ function Toggle({
   const [checked, setChecked] = useState(false);
 
   return (
-    <div className="w-fit flex flex-row gap-3 items-center">
+    <div className="w-full flex flex-row items-center">
       {label && (
-        <label className="block mb-1 w-44 font-bold text-lg text-black" htmlFor={id}>
+        <label className={`block mb-1 w-fit min-w-28 font-normal text-sm text-gray-700 ${checked? "font-semibold":""}`} htmlFor={id}>
           {label}
         </label>
       )}
-      <input
+      <Checkbox
         type="checkbox"
-        className={`w-4 flex flex-row rounded-full bg-white text-gray-700 border-2 border-gray-300 focus:border-gray-600 focus:bg-slate-300 focus:bg-opacity-60 duration-200 ${className}`}
+        // className={`w-4 flex flex-row rounded-full bg-white text-gray-700 border-2 border-gray-300 focus:border-gray-600 focus:bg-slate-300 focus:bg-opacity-60 duration-200 ${className}`}
         ref={ref}
-        placeholder={placeholder}
+        // placeholder={placeholder}
         id={id}
         name={name}
         checked={checked}
@@ -36,7 +40,7 @@ function Toggle({
       />
       {
         checked && (
-          <span className="text-green-500 font-bold">S</span>
+          <span className="text-green-500 font-bold">Selected</span>
         )
       }
     </div>
