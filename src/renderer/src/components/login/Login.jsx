@@ -42,7 +42,7 @@ const Login = () => {
         sessionStorage.setItem('token', token)
         dispatch(authLogin({ token, userType }))
         if (userType != 'user') {
-          navigate('/dashboard')
+          navigate('/admin')
         } else {
           navigate('/dashboard/my-profile')
         }

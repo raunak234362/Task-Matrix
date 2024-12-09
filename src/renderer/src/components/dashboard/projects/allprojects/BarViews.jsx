@@ -162,7 +162,7 @@ return (
         },
         maintainAspectRatio: false // Disable maintaining aspect ratio to allow custom height
     }}
-    height={150} // Increased height of the chart
+    height={120} // Increased height of the chart
     className="w-full"
     />
 </div>

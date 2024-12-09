@@ -1,7 +1,6 @@
 /* eslint-disable prettier/prettier */
 import Login from './login/Login'
 
-
 //Fields  
 import Button from './fields/Button'
 import Input from './fields/Input'
@@ -10,7 +9,6 @@ import MultiSelectCheckbox from './fields/MultiSelectCheckbox'
 import Toggle from './fields/Toggle'
 
 //Dashboard
-import Dashboard from './dashboard/Dashboard'
 import Sidebar from './dashboard/Sidebar'
 import Home from './dashboard/main/Home'
 import Layout from './Layout'
@@ -102,7 +100,6 @@ export {
   Fabricator,
   Calendar,
   Layout,
-  Dashboard,
   Sidebar,
   Home,
   AllFabricators,

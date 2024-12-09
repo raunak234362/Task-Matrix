@@ -7,10 +7,14 @@ const Header = ({title}) => {
   const username = sessionStorage.getItem("username");
   const role = sessionStorage.getItem("userType");
   return (
-    <div className="sticky w-full z-50 top-0 flex font-bold justify-between items-center uppercase bg-green-500 text-white rounded-md px-3 py-2 ">
+    <div className="flex md:px-5 rounded-xl justify-between items-center w-full bg-white bg-opacity-50 text-slate-800  border-4">
         
-        <div>
-          <img src={LOGO} alt="logo" className=" h-14 object-cover bg-white/50 shadow-white shadow-sm rounded-xl py-0" />
+        <div className={`flex items-center p-1 transition-all duration-300 `}>
+          {/* <div
+          className={`fixed inset-0 z-10 transition-opacity duration-300 `}
+          onClick={toggleSidebar}
+        ></div> */}
+          <img src={LOGO} alt="" className="md:w-32 w-20" />
         </div>
         <h1 className="text-2xl mx-auto">
             {title}

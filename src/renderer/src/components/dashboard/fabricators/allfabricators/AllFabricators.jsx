@@ -62,8 +62,7 @@ const AllFabricators = () => {
   }
 
   return (
-    <div>
-      <Header title={'All Fabricator'} />
+    <div className='px-5'>
       <div className="flex justify-between mt-4">
         <input
           type="text"

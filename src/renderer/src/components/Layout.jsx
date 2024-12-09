@@ -1,13 +1,14 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable no-unused-vars */
 import React from 'react';
-import { Dashboard, Login } from '../components';
+import { Login } from '../components';
 import { Routes, Route } from 'react-router-dom';
+import App from '../App';
 
 const Layout = () => {
   return (
     <Routes>
-      <Route path="/dashboard/*" element={<Dashboard />} />
+      <Route path="/dashboard/*" element={<App />} />
       <Route path="/" element={<Login />} />
     </Routes>
   );

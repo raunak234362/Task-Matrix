@@ -2,80 +2,24 @@
 @tailwind components;
 @tailwind utilities;
 
-
-
-*{
-    font-family: 'Roboto', sans-serif;
+* {
+  font-family: "Roboto", sans-serif;
 }
 
-.roboto-thin {
-  font-family: 'Roboto', sans-serif;
-  font-weight: 100;
-  font-style: normal;
-}
-
-.roboto-light {
-  font-family: 'Roboto', sans-serif;
-  font-weight: 300;
-  font-style: normal;
-}
-
-.roboto-regular {
-  font-weight: 400;
-  font-family: 'Roboto', sans-serif;
-  font-style: normal;
-}
-
-.roboto-medium {
-  font-family: 'Roboto', sans-serif;
-  font-weight: 500;
-  font-style: normal;
-}
-
-.roboto-bold {
-  font-family: 'Roboto', sans-serif;
-  font-weight: 700;
-  font-style: normal;
-}
-
-.roboto-black {
-  font-family: 'Roboto', sans-serif;
-  font-weight: 900;
-  font-style: normal;
-}
-
-.roboto-thin-italic {
-  font-family: 'Roboto', sans-serif;
-  font-weight: 100;
-  font-style: italic;
-}
-
-.roboto-light-italic {
-  font-family: 'Roboto', sans-serif;
-  font-weight: 300;
-  font-style: italic;
-}
-
-.roboto-regular-italic {
-  font-family: 'Roboto', sans-serif;
-  font-weight: 400;
-  font-style: italic;
-}
-
-.roboto-medium-italic {
-  font-family: 'Roboto', sans-serif;
-  font-weight: 500;
-  font-style: italic;
-}
-
-.roboto-bold-italic {
-  font-family: 'Roboto', sans-serif;
-  font-weight: 700;
-  font-style: italic;
-}
-
-.roboto-black-italic {
-  font-family: 'Roboto', sans-serif;
-  font-weight: 900;
-  font-style: italic;
-}
+/* Custom scrollbar styles for desktop only */
+@media (min-width: 768px) {
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+  
+    ::-webkit-scrollbar-track {
+      border-radius: 20px;
+      background: #f1f1f1;
+    }
+  
+    ::-webkit-scrollbar-thumb {
+      background: teal;
+      border-radius: 20px;
+    }
+  }
+  

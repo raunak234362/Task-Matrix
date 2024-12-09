@@ -40,12 +40,12 @@ const Home = () => {
       }
     }
 
-    const fetchTeam=async ()=>{
-      try{
-        const teamData=await Service.getAllTeam(token)
+    const fetchTeam = async () => {
+      try {
+        const teamData = await Service.getAllTeam(token)
         setTeam(teamData)
         // console.log(teamData)
-      }catch (error){
+      } catch (error) {
         console.error('Error fetching team:', error)
       }
     }
@@ -54,7 +54,7 @@ const Home = () => {
       try {
         const usersData = await Service.getAllUser(token)
         setUsers(usersData)
-        console.log(usersData);
+        console.log(usersData)
       } catch (error) {
         console.error('Error fetching users:', error)
       }
@@ -78,10 +78,14 @@ const Home = () => {
   }, [token])
 
   return (
-    <div className="">
-      <Header title={'Dashboard'} />
-      <div className="my-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-6 px-2">
+    <div className="w-full h-[89vh] overflow-y-hidden mx-5">
+      <div className="flex w-full justify-center items-center">
+        <div className="text-3xl font-bold text-white bg-teal-500/50 shadow-xl px-5 py-1 mt-2 rounded-lg">
+          Dashboard
+        </div>
+      </div>
+      <div className="h-[85vh] mt-2 overflow-y-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 my-6 px-2">
           <div className="bg-gray-200 shadow-md p-2 flex flex-col items-center rounded-lg text-center text-gray-800">
             <NavLink to="all-fabricator">
               <span className="text-4xl font-bold text-gray-900">{fabricators.length}</span>
@@ -96,29 +100,27 @@ const Home = () => {
           </div>
           <div className="bg-gray-200 shadow-md p-2 flex flex-col items-center rounded-lg text-center text-gray-800">
             <NavLink to="all-task">
-            <span className="text-4xl font-bold text-gray-900">{tasks.length}</span>
-            <p className="mt-2 text-xl font-semibold">Total No. of Tasks</p>
+              <span className="text-4xl font-bold text-gray-900">{tasks.length}</span>
+              <p className="mt-2 text-xl font-semibold">Total No. of Tasks</p>
             </NavLink>
           </div>
           <div className="bg-green-200 shadow-md p-2 flex flex-col items-center rounded-lg text-center text-gray-800">
             <NavLink to="all-user">
-            <span className="text-4xl font-bold text-gray-900">{users.length}</span>
-            <p className="mt-2 text-xl font-semibold">Total No. of Users</p>
+              <span className="text-4xl font-bold text-gray-900">{users.length}</span>
+              <p className="mt-2 text-xl font-semibold">Total No. of Users</p>
             </NavLink>
           </div>
           <div className="bg-gray-200 shadow-md p-2 flex flex-col items-center rounded-lg text-center text-gray-800">
             <NavLink to="manage-team">
-            <span className="text-4xl font-bold text-gray-900">{team.length}</span>
-            <p className="mt-2 text-xl font-semibold">Total No. of Team</p>
+              <span className="text-4xl font-bold text-gray-900">{team.length}</span>
+              <p className="mt-2 text-xl font-semibold">Total No. of Team</p>
             </NavLink>
           </div>
         </div>
-        <div className='bg-gray-200 p-2 mt-5 rounded-lg'>
-          <div>
-          <FabricatorCharts 
-            segregateProject={segregateProject}
-          />
 
+        <div className="bg-gray-200 p-2 my-5 rounded-lg">
+          <div>
+            <FabricatorCharts segregateProject={segregateProject} />
           </div>
         </div>
         <div className="grid grid-cols-[69%,30%]  gap-2">

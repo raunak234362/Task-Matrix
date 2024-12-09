@@ -6,7 +6,7 @@ import store from './store/store'
 import { useCallback, useEffect, useState } from 'react'
 import { Header, Sidebar } from './components/index'
 import { Outlet, useNavigate } from 'react-router-dom'
-import Service from './config/Service'
+import Service from './api/configAPI'
 // import FrappeService from "./frappeConfig/FrappeService";
 import { setUserData } from './store/userSlice'
 // import { loadFabricator, showClient } from "./store/fabricatorSlice";
@@ -21,17 +21,7 @@ const App = () => {
     setSidebarOpen((prev) => !prev)
   }, [setSidebarOpen])
 
-  const [isConnected, setIsConnected] = useState(false)
-  const [result, setResult] = useState(true)
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const result = await Service.ping()
-      if (result) setIsConnected(result)
-      else setResult(result)
-    }
-    fetchData()
-  }, [])
+  
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -59,7 +49,7 @@ const App = () => {
       <div className="flex flex-col md:flex-row w-screen h-screen overflow-hidden bg-gradient-to-r from-green-300/50 to-teal-300">
         {/* Sidebar */}
 
-        {!isConnected && (
+        {/* {!isConnected && (
           <>
             <div className="absolute z-50 top-0 left-0 bg-black bg-opacity-50 w-screen h-screen">
               <div className="flex w-full h-full items-center justify-center px-20 py-10">
@@ -71,7 +61,7 @@ const App = () => {
               </div>
             </div>
           </>
-        )}
+        )} */}
 
         <div className="flex flex-col w-full">
           <div className="mx-5 my-2 shadow-2xl drop-shadow-lg">
