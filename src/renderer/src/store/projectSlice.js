@@ -2,39 +2,21 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
-  projectData: {
-    name: '',
-    fabricator: '',
-    description: '',
-    startDate: '',
-    endDate: '',
-    status: '',
-    stage: '',
-    team: '',
-    manager: ''
-  }
+  projectData: []
 }
 
 const projectSlice = createSlice({
   name: 'project',
   initialState,
   reducers: {
-    setProjectData: (state, action) => {
-      state.projectData = { ...action.payload }
+    addProject: (state, action) => {
+      state.projectData.push(action.payload)
     },
-
-    clearProjectData: (state) => {
-      state.projectData = {
-        name: '',
-        fabricator: '',
-        description: '',
-        startDate: '',
-        endDate: '',
-        status: '',
-        stage: '',
-        team: '',
-        manager: ''
-      }
+    showProjects: (state, action) => {
+      state.projectData = action.payload
+    },
+    deleteProject: (state, action) => {
+      state.projectData = state.projectData.filter((project) => project.id !== action.payload)
     },
     updateProjectData: (state, action) => {
       state.projectData = { ...state.projectData, ...action.payload }
@@ -42,6 +24,6 @@ const projectSlice = createSlice({
   }
 })
 
-export const { setProjectData, clearProjectData, updateProjectData } = projectSlice.actions
+export const { addProject, showProjects, deleteProject, updateProjectData } = projectSlice.actions
 
 export default projectSlice.reducer

@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { Button, Project, Header, BarView, FabricatorCharts } from '../../../index'
 import Service from '../../../../api/configAPI'
 import SegregateProject from '../../../../util/SegregateProject'
+import ProjectStats from '../stats/ProjectStats' // Import the ProjectStats component
 
 const Allprojects = () => {
   const [projects, setProjects] = useState([])
@@ -12,7 +13,6 @@ const Allprojects = () => {
   const [selectedProject, setSelectedProject] = useState(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const userType = sessionStorage.getItem('userType')
-  const [segregateProject, setSegreateProject] = useState()
   const [sortConfig, setSortConfig] = useState({ key: '', direction: '' })
   const [searchTerm, setSearchTerm] = useState('')
 
@@ -22,14 +22,12 @@ const Allprojects = () => {
         const projects = await Service.getAllProject()
         setProjects(projects)
         setFilteredProjects(projects)
-        setSegreateProject(await SegregateProject(projects))
-        console.log(projects)
       } catch (error) {
         console.error('Error fetching projects:', error)
       }
     }
     fetchProjects()
-  }, [selectedProject])
+  }, [])
 
   useEffect(() => {
     let results = projects.filter((project) =>
@@ -80,23 +78,8 @@ const Allprojects = () => {
 
   return (
     <div>
-      <Header title={'All Project'} />
-
-      {userType !== 'user' && segregateProject && (
-        <div className="flex-grow bg-white shadow-lg rounded-lg p-6">
-          <div className="bg-gray-200 p-2 mt-5 rounded-lg">
-            <div>
-              <FabricatorCharts segregateProject={segregateProject} />
-            </div>
-          </div>
-          <div>
-            <BarView
-              segregateProject={segregateProject}
-              setProject={setProjects}
-              setFabricator={setFabricator}
-            />
-          </div>
-        </div>
+      {userType !== 'user' && (
+        <ProjectStats projects={projects} /> // Pass the projects to ProjectStats
       )}
 
       <div className="table-container w-full my-5 rounded-lg">

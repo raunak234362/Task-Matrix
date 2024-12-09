@@ -3,118 +3,172 @@
 import React, { useEffect, useState } from 'react'
 import Service from '../../../../api/configAPI'
 import { Header, Button, ManageFabricator } from '../../../index'
+import { useSelector } from 'react-redux'
 
 const AllFabricators = () => {
-  const [fabricators, setFabricators] = useState([])
+  const fabricators = useSelector((state) => state?.fabricatorData.fabricatorData || [])
+  console.log(fabricators)
+
+  const [filteredFabricators, setFilteredFabricators] = useState([])
+  const [searchQuery, setSearchQuery] = useState('')
+  const [sortOrder, setSortOrder] = useState({ key: 'name', order: 'asc' })
+  const [filters, setFilters] = useState({
+    country: '',
+    state: '',
+    city: ''
+  })
   const [selectedFabricator, setSelectedFabricator] = useState(null)
-  const [filteredFab, setFilteredFab] = useState([])
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [searchTerm, setSearchTerm] = useState('')
-  const [sortOrder, setSortOrder] = useState('asc') // New state for sort order
-
-  const token = sessionStorage.getItem('token')
-
-  const fetchFabricators = async () => {
-    try {
-      const fabricatorsData = await Service.getAllFabricator(token)
-      setFabricators(fabricatorsData)
-    } catch (error) {
-      console.error('Error fetching fabricators:', error)
-    }
-  }
 
   useEffect(() => {
-    fetchFabricators()
-  }, [])
+    setFilteredFabricators(fabricators)
+  }, [fabricators])
 
-  useEffect(() => {
-    const results = fabricators.filter((fab) =>
-      fab.name.toLowerCase().includes(searchTerm.toLowerCase())
-    )
-    setFilteredFab(results)
-  }, [searchTerm, fabricators])
+  // Filter and sort data
+  const filterAndSortData = () => {
+    let filtered = fabricators.filter((fab) => {
+      const searchMatch =
+        fab?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        fab?.city.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        fab?.state.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        fab?.country.toLowerCase().includes(searchQuery.toLowerCase())
 
-  const handleViewClick = async (fabricatorId) => {
-    try {
-      const fabricator = await Service.getFabricator(fabricatorId)
-      setSelectedFabricator(fabricator)
-      setIsModalOpen(true)
-    } catch (error) {
-      console.error('Error fetching project details:', error)
-    }
+      const filterMatch =
+        (!filters.country || fab.country === filters.country) &&
+        (!filters.state || fab.state === filters.state) &&
+        (!filters.city || fab.city === filters.city)
+
+      return searchMatch && filterMatch
+    })
+
+    // Sorting
+    filtered.sort((a, b) => {
+      const aKey = a[sortOrder.key]?.toLowerCase()
+      const bKey = b[sortOrder.key]?.toLowerCase()
+      if (sortOrder.order === 'asc') return aKey > bKey ? 1 : -1
+      return aKey < bKey ? 1 : -1
+    })
+
+    setFilteredFabricators(filtered)
   }
+
+  // Search handler
+  const handleSearch = (e) => {
+    setSearchQuery(e.target.value)
+  }
+
+  // Filter change handler
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target
+    setFilters((prevFilters) => ({ ...prevFilters, [name]: value }))
+  }
+
+  // Sort handler
+  const handleSort = (key) => {
+    const order = sortOrder.key === key && sortOrder.order === 'asc' ? 'desc' : 'asc'
+    setSortOrder({ key, order })
+  }
+
+  // Modal view handlers
+  const handleViewClick = (fabricatorId) => {
+    setSelectedFabricator(fabricatorId)
+    setIsModalOpen(true)
+  }
+
+  const handleModalClose = () => {
+    setSelectedFabricator(null)
+    setIsModalOpen(false)
+  }
+
+  // Update filtered data when dependencies change
+  useEffect(() => {
+    filterAndSortData()
+  }, [searchQuery, filters, sortOrder, fabricators])
 
   const handleCloseModal = () => {
     setIsModalOpen(false)
     setSelectedFabricator(null)
   }
 
-  // Function to handle sorting
-  const handleSort = (field) => {
-    const sortedFabricators = [...filteredFab].sort((a, b) => {
-      if (sortOrder === 'asc') {
-        return a[field] > b[field] ? 1 : -1
-      }
-      return a[field] < b[field] ? 1 : -1
-    })
-    setFilteredFab(sortedFabricators)
-    setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc') // Toggle sort order
-  }
-
   return (
-    <div className='px-5'>
-      <div className="flex justify-between mt-4">
+    <div className="bg-white/70 rounded-lg md:w-full w-[90vw]">
+      <div className="mt-5 bg-white h-auto p-4">
+        {/* Search Bar */}
         <input
           type="text"
-          placeholder="Search by Fabricator name"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="p-2 border border-gray-300 rounded-lg"
+          placeholder="Search by name, city, state or country"
+          className="border p-2 rounded w-full mb-4"
+          value={searchQuery}
+          onChange={handleSearch}
         />
-      </div>
-      <div className="h-[70vh] overflow-y-auto">
-        <table className="w-full table-auto border-collapse text-center rounded-xl">
-          <thead className="sticky top-0 z-10 bg-gray-200">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                S.no
-              </th>
-              <th
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-                onClick={() => handleSort('name')}
-              >
-                Fabricator Name
-              </th>
-              <th
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-                onClick={() => handleSort('connections')}
-              >
-                No. of Contact Person
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Option
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {filteredFab?.map((fabricator, index) => (
-              <tr key={index} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-200/50'}>
-                <td className="px-6 py-4 whitespace-nowrap">{index + 1}</td>
-                <td className="px-6 py-4 whitespace-nowrap">{fabricator?.name}</td>
-                <td className="px-20 py-4 whitespace-nowrap">{fabricator?.connections}</td>
-                <td className="py-4 mx-auto whitespace-nowrap">
-                  <Button
-                    onClick={() => {
-                      handleViewClick(fabricator?.id)
-                    }}
+
+        {/* Filter Section */}
+        <div className="mb-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+          {['country', 'state', 'city']?.map((filterKey) => (
+            <select
+              key={filterKey}
+              name={filterKey}
+              value={filters[filterKey]}
+              onChange={handleFilterChange}
+              className="border p-2 rounded"
+            >
+              <option value="">
+                Filter by {filterKey.charAt(0).toUpperCase() + filterKey.slice(1)}
+              </option>
+              {Array?.from(new Set(fabricators.map((fab) => fab[filterKey]))).map(
+                (value) => (
+                  <option key={value} value={value}>
+                    {value}
+                  </option>
+                )
+              )}
+            </select>
+          ))}
+        </div>
+        {/* Responsive Table */}
+        <div className="overflow-x-auto">
+          <table className="min-w-full border-collapse text-center text-sm md:text-lg rounded-xl">
+            <thead>
+              <tr className="bg-teal-200/70">
+                {['name', 'city', 'state', 'country']?.map((key) => (
+                  <th
+                    key={key}
+                    className="px-2 py-1 cursor-pointer"
+                    onClick={() => handleSort(key)}
                   >
-                    Edit
-                  </Button>
-                </td>
+                    {key.charAt(0).toUpperCase() + key.slice(1)}
+                    {sortOrder.key === key && (sortOrder.order === 'asc' ? ' ↑' : ' ↓')}
+                  </th>
+                ))}
+                <th className="px-2 py-1">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {filteredFabricators?.length === 0 ? (
+                <tr className="bg-white">
+                  <td colSpan="5" className="text-center">
+                    No Fabricator Found
+                  </td>
+                </tr>
+              ) : (
+                filteredFabricators?.map((fab) => (
+                  <tr
+                    key={fab.id}
+                    className="hover:bg-blue-gray-100 border"
+                  >
+                    <td className="border px-2 py-1 text-left">{fab.name}</td>
+                    <td className="border px-2 py-1">{fab?.city}</td>
+                    <td className="border px-2 py-1">{fab?.state}</td>
+                    <td className="border px-2 py-1">{fab?.country}</td>
+                    <td className="border px-2 py-1">
+                      <Button onClick={() => handleViewClick(fab.id)}>View</Button>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
       {selectedFabricator && (
         <ManageFabricator

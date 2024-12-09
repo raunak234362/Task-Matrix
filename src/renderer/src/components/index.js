@@ -46,6 +46,8 @@ import TeamView from './dashboard/projects/manageteam/TeamView'
 import BarView from './dashboard/projects/allprojects/BarView'
 import BarViews from './dashboard/projects/allprojects/BarViews'
 import FabricatorCharts from './dashboard/projects/allprojects/FabricatorChart'
+import ProjectStats from './dashboard/projects/stats/ProjectStats.jsx'
+import ProjectTab from './dashboard/projects/project/ProjectTab.jsx'
 
 //Fabricators
 import Fabricator from './dashboard/fabricators/fabricator/Fabricator'
@@ -63,6 +65,8 @@ import GaantChartt from './dashboard/charts/GaantChartt'
 export {
   AllUser,
   Project,
+  ProjectStats,
+  ProjectTab,
   BarViews,
   Toggle,
   AddCSV,

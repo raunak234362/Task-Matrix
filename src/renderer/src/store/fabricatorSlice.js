@@ -2,15 +2,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
-  fabricatorData: {
-    name: '',
-    contactPerson: '',
-    contactPhone: '',
-    contactCountry: '',
-    contactState: '',
-    contactCity: '',
-    contract: ''
-  }
+  fabricatorData: []
 }
 
 const fabricatorSlice = createSlice({
