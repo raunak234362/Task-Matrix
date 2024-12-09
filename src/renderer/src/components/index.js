@@ -50,6 +50,7 @@ import BarViews from './dashboard/projects/allprojects/BarViews'
 import FabricatorCharts from './dashboard/projects/allprojects/FabricatorChart'
 
 //Fabricators
+import Fabricator from './dashboard/fabricators/fabricator/Fabricator'
 import AddFabricator from './dashboard/fabricators/addfabricator/AddFabricator'
 import AllFabricators from './dashboard/fabricators/allfabricators/AllFabricators';
 import ManageFabricator from './dashboard/fabricators/allfabricators/ManageFabricator'
@@ -59,21 +60,6 @@ import ManageFabricator from './dashboard/fabricators/allfabricators/ManageFabri
 import ProjectPie from './dashboard/charts/ProjectPie'
 import GhantChart from './dashboard/charts/GhantChart'
 import GaantChartt from './dashboard/charts/GaantChartt'
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 export {
@@ -113,6 +99,7 @@ export {
   AddTask,
   AddUser,
   AddFabricator,
+  Fabricator,
   Calendar,
   Layout,
   Dashboard,

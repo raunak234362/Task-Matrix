@@ -1,18 +1,26 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import './index.css'
-import App from './App'
-import { HashRouter } from 'react-router-dom'
+/* eslint-disable prettier/prettier */
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
+import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import { Provider } from 'react-redux'
-import store from './store/store'
+import store from './store/store.js'
+import { Dashboard, Login } from './components/index.js'
 
-const root = ReactDOM.createRoot(document.getElementById('root'))
-root.render(
-  <HashRouter>
+const router = createBrowserRouter([
+  {
+    path:'/',
+    element: <Login />,
+  },
+  {
+    path:'/dashboard',
+    element: <Dashboard />,
+  }
+])
+
+createRoot(document.getElementById('root')).render(
+  <StrictMode>
     <Provider store={store}>
-      <React.StrictMode>
-        <App />
-      </React.StrictMode>
+      <RouterProvider router={router} />
     </Provider>
-  </HashRouter>
+  </StrictMode>,
 )
