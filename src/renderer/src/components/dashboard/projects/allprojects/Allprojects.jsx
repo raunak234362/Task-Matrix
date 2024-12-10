@@ -1,70 +1,35 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable no-unused-vars */
-import React, { useEffect, useState } from 'react'
-import { Button, Project, Header, BarView, FabricatorCharts } from '../../../index'
-import Service from '../../../../api/configAPI'
-import SegregateProject from '../../../../util/SegregateProject'
-import ProjectStats from '../stats/ProjectStats' // Import the ProjectStats component
+import React, { useState } from 'react'
+import { useSelector } from 'react-redux'
+import { Button, Project } from '../../../index.js'
 
-const Allprojects = () => {
-  const [projects, setProjects] = useState([])
-  const [filteredProjects, setFilteredProjects] = useState([])
-  const [fabricator, setFabricator] = useState(null)
+const AllProjects = () => {
+  const projects = useSelector((state) => state?.projectData?.projectData)
+  console.log(projects)
   const [selectedProject, setSelectedProject] = useState(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const userType = sessionStorage.getItem('userType')
-  const [sortConfig, setSortConfig] = useState({ key: '', direction: '' })
   const [searchTerm, setSearchTerm] = useState('')
+  const [statusFilter, setStatusFilter] = useState('')
+  const [fabricatorFilter, setFabricatorFilter] = useState('')
+  const [sortConfig, setSortConfig] = useState({
+    key: '',
+    direction: 'ascending'
+  })
 
-  useEffect(() => {
-    const fetchProjects = async () => {
-      try {
-        const projects = await Service.getAllProject()
-        setProjects(projects)
-        setFilteredProjects(projects)
-      } catch (error) {
-        console.error('Error fetching projects:', error)
-      }
-    }
-    fetchProjects()
-  }, [])
-
-  useEffect(() => {
-    let results = projects.filter((project) =>
-      project.name.toLowerCase().includes(searchTerm.toLowerCase())
-    )
-
-    if (sortConfig.key) {
-      results = results.sort((a, b) => {
-        if (a[sortConfig.key] < b[sortConfig.key]) {
-          return sortConfig.direction === 'ascending' ? -1 : 1
-        }
-        if (a[sortConfig.key] > b[sortConfig.key]) {
-          return sortConfig.direction === 'ascending' ? 1 : -1
-        }
-        return 0
-      })
-    }
-
-    setFilteredProjects(results)
-  }, [searchTerm, projects, sortConfig])
-
-  const handleViewClick = async (projectId) => {
-    try {
-      const project = await Service.getProject(projectId)
-      setSelectedProject(project)
-      setIsModalOpen(true)
-    } catch (error) {
-      console.error('Error fetching project details:', error)
-    }
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value)
   }
 
-  const handleCloseModal = () => {
-    setIsModalOpen(false)
-    setSelectedProject(null)
+  const handleStatusFilter = (e) => {
+    setStatusFilter(e.target.value)
   }
 
-  const sortProjects = (key) => {
+  const handleFabricatorFilter = (e) => {
+    setFabricatorFilter(e.target.value)
+  }
+
+  const handleSort = (key) => {
     let direction = 'ascending'
     if (sortConfig.key === key && sortConfig.direction === 'ascending') {
       direction = 'descending'
@@ -72,128 +37,141 @@ const Allprojects = () => {
     setSortConfig({ key, direction })
   }
 
-  const handleSortChange = (event) => {
-    sortProjects(event.target.value)
+  const sortedProjects = [...projects].sort((a, b) => {
+    if (sortConfig.key) {
+      if (a[sortConfig.key] < b[sortConfig.key]) {
+        return sortConfig.direction === 'ascending' ? -1 : 1
+      }
+      if (a[sortConfig.key] > b[sortConfig.key]) {
+        return sortConfig.direction === 'ascending' ? 1 : -1
+      }
+    }
+    return 0
+  })
+  // console.log(sortedProjects)
+
+  const filteredProjects = sortedProjects.filter((project) => {
+    return (
+      project?.name?.toLowerCase().includes(searchTerm?.toLowerCase()) &&
+      (statusFilter === '' || project.status === statusFilter) &&
+      (fabricatorFilter === '' || project.fabricator.name === fabricatorFilter)
+    )
+  })
+
+  // console.log(filteredProjects)
+  // Get unique fabricator names for the filter dropdown.
+  const uniqueFabricators = [...new Set(projects?.map((project) => project?.fabricator?.name))]
+
+  const handleViewClick = async (fabricatorId) => {
+    setSelectedProject(fabricatorId)
+    setIsModalOpen(true)
+  }
+
+  console.log(selectedProject)
+
+  const handleModalClose = async () => {
+    setSelectedProject(null)
+    setIsModalOpen(false)
   }
 
   return (
-    <div>
-      {userType !== 'user' && (
-        <ProjectStats projects={projects} /> // Pass the projects to ProjectStats
-      )}
-
-      <div className="table-container w-full my-5 rounded-lg">
-        <div className="h-[85vh] overflow-y-hidden shadow-xl table-container w-full rounded-lg">
-          <h3 className="text-xl flex font-bold uppercase rounded-lg bg-slate-400 bg-green-500 text-black px-5 py-1 justify-center items-center">
-            All Projects {fabricator && <span className="text-black"> - {fabricator}</span>}
-          </h3>
-
-          <div className="mx-5 my-5 h-fit overflow-y-auto">
-            <div className="flex justify-between mb-4">
-              <input
-                type="text"
-                placeholder="Search by project name"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="p-2 border border-gray-300 rounded-lg"
-              />
-              <select onChange={handleSortChange} className="p-2 border border-gray-300 rounded-lg">
-                <option value="">Sort by</option>
-                <option value="name">Name</option>
-                <option value="startDate">Start Date</option>
-                <option value="endDate">End Date</option>
-              </select>
-            </div>
-            <div className="overflow-x-auto">
-              <div className="inline-block min-w-full align-middle">
-                <div className="h-[70vh] overflow-y-auto">
-                  <table className="w-full table-auto border-collapse text-center rounded-xl">
-                    <thead className="sticky top-0 z-10 bg-gray-200">
-                      <tr>
-                        <th className="px-1 py-2">S.no</th>
-                        <th className="px-16 py-2">
-                          <button onClick={() => sortProjects('name')}>
-                            Project Name{' '}
-                            {sortConfig.key === 'name' &&
-                              (sortConfig.direction === 'ascending' ? '↑' : '↓')}
-                          </button>
-                        </th>
-                        <th className="px-1 py-2">
-                          <button onClick={() => sortProjects('manager.name')}>
-                            Project Manager{' '}
-                            {sortConfig.key === 'manager.name' &&
-                              (sortConfig.direction === 'ascending' ? '↑' : '↓')}
-                          </button>
-                        </th>
-                        <th className="px-1 py-2">
-                          <button onClick={() => sortProjects('startDate')}>
-                            Start Date{' '}
-                            {sortConfig.key === 'startDate' &&
-                              (sortConfig.direction === 'ascending' ? '↑' : '↓')}
-                          </button>
-                        </th>
-                        <th className="px-3 py-2">
-                          <button onClick={() => sortProjects('endDate')}>
-                            Approval Date{' '}
-                            {sortConfig.key === 'endDate' &&
-                              (sortConfig.direction === 'ascending' ? '↑' : '↓')}
-                          </button>
-                        </th>
-                        <th className="px-3 py-2">Detail</th>
-                      </tr>
-                    </thead>
-                    {/* Scrollable Body */}
-                    <tbody className="h-[80vh] overflow-y-auto">
-                      {' '}
-                      {/* Adjust height here */}
-                      {filteredProjects.length === 0 ? (
-                        <tr className="bg-white">
-                          <td colSpan="6" className="text-center">
-                            No Projects Found
-                          </td>
-                        </tr>
-                      ) : (
-                        filteredProjects.map((project, index) => (
-                          <tr
-                            key={project.id}
-                            className={index % 2 === 0 ? 'bg-white' : 'bg-gray-200/50'}
-                          >
-                            <td className="border px-5 py-2">{index + 1}</td>
-                            <td className="border px-6 py-2 text-left">{project.name}</td>
-                            <td className="border px-1 py-2">{project.manager?.name}</td>
-                            <td className="border px-1 py-2">
-                              {new Date(project.startDate).toDateString()}
-                            </td>
-                            <td className="border px-3 py-2">
-                              {new Date(project.endDate).toDateString()}
-                            </td>
-                            <td className="border px-3 py-2">
-                              <div className="flex justify-center">
-                                <Button onClick={() => handleViewClick(project.id)}>View</Button>
-                              </div>
-                            </td>
-                          </tr>
-                        ))
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+    <div className="bg-white/70 rounded-lg md:w-full w-[90vw] p-4">
+      {/* Search and Filter Section */}
+      <div className="flex flex-col md:flex-row gap-4 mb-4">
+        <input
+          type="text"
+          placeholder="Search by project name..."
+          value={searchTerm}
+          onChange={handleSearch}
+          className="px-4 py-2 border rounded-md w-full md:w-1/4"
+        />
+        <select
+          value={statusFilter}
+          onChange={handleStatusFilter}
+          className="px-4 py-2 border rounded-md w-full md:w-1/4"
+        >
+          <option value="">All Status</option>
+          <option value="ASSIGNED">ASSIGNED</option>
+          <option value="ACTIVE">ACTIVE</option>
+          <option value="ON-HOLD">ON-HOLD</option>
+          <option value="INACTIVE">INACTIVE</option>
+          <option value="DELAY">DELAY</option>
+          <option value="COMPLETE">COMPLETED</option>
+        </select>
+        <select
+          value={fabricatorFilter}
+          onChange={handleFabricatorFilter}
+          className="px-4 py-2 border rounded-md w-full md:w-1/4"
+        >
+          <option value="">All Fabricators</option>
+          {uniqueFabricators?.map((fabricator) => (
+            <option key={fabricator} value={fabricator}>
+              {fabricator}
+            </option>
+          ))}
+        </select>
       </div>
 
+      {/* Project Table */}
+      <div className="mt-5 bg-white h-[60vh] overflow-auto rounded-lg">
+        <table className="h-fit md:w-full w-[90vw] border-collapse text-center md:text-lg text-xs rounded-xl">
+          <thead>
+            <tr className="bg-teal-200/70">
+              <th className="px-2 py-1 text-left cursor-pointer" onClick={() => handleSort('name')}>
+                Project Name{' '}
+                {sortConfig.key === 'name' && (sortConfig.direction === 'ascending' ? '▲' : '▼')}
+              </th>
+              <th className="px-2 py-1 cursor-pointer" onClick={() => handleSort('fabricator')}>
+                Fabricator Name{' '}
+                {sortConfig.key === 'fabricator' &&
+                  (sortConfig.direction === 'ascending' ? '▲' : '▼')}
+              </th>
+              <th className="px-2 py-1 cursor-pointer" onClick={() => handleSort('status')}>
+                Project Status{' '}
+                {sortConfig.key === 'status' && (sortConfig.direction === 'ascending' ? '▲' : '▼')}
+              </th>
+              <th className="px-2 py-1 cursor-pointer" onClick={() => handleSort('start_date')}>
+                Project Start Date{' '}
+                {sortConfig.key === 'start_date' &&
+                  (sortConfig.direction === 'ascending' ? '▲' : '▼')}
+              </th>
+              <th className="px-2 py-1 cursor-pointer" onClick={() => handleSort('approval_date')}>
+                Project End Date{' '}
+                {sortConfig.key === 'approval_date' &&
+                  (sortConfig.direction === 'ascending' ? '▲' : '▼')}
+              </th>
+              <th className="px-2 py-1">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredProjects?.length === 0 ? (
+              <tr className="bg-white">
+                <td colSpan="6" className="text-center">
+                  No Projects Found
+                </td>
+              </tr>
+            ) : (
+              filteredProjects?.map((project, index) => (
+                <tr key={project.id} className="hover:bg-blue-gray-100 border">
+                  <td className="border px-2 py-1 text-left">{project.name}</td>
+                  <td className="border px-2 py-1">{project.fabricator.name}</td>
+                  <td className="border px-2 py-1">{project.status}</td>
+                  <td className="border px-2 py-1">{project.start_date}</td>
+                  <td className="border px-2 py-1">{project.approval_date}</td>
+                  <td className="border px-2 py-1">
+                    <Button onClick={() => handleViewClick(project.id)}>View</Button>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
       {selectedProject && (
-        <Project
-          project={selectedProject}
-          isOpen={isModalOpen}
-          onClose={handleCloseModal}
-          setProject={setSelectedProject}
-        />
+        <Project projectId={selectedProject} isOpen={isModalOpen} onClose={handleModalClose} />
       )}
     </div>
   )
 }
 
-export default Allprojects
+export default AllProjects

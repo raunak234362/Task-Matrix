@@ -151,7 +151,7 @@ class Service {
         }
       })
       const data = await response.json()
-      console.log('Team fetched: ', data)
+      // console.log('Team fetched: ', data)
       return data
     } catch (error) {
       console.log('Error in getting team list: ', error)

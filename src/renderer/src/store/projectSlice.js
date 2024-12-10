@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 // projectSlice.js
 import { createSlice } from '@reduxjs/toolkit'
 
@@ -5,6 +6,7 @@ const initialState = {
   projectData: []
 }
 
+// eslint-disable-next-line prettier/prettier
 const projectSlice = createSlice({
   name: 'project',
   initialState,

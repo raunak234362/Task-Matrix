@@ -34,6 +34,8 @@ import AllTask from './dashboard/tasks/alltasks/AllTask'
 import ApproveAssignee from './dashboard/tasks/approveassignee/ApproveAssignee'
 import TaskSelected from './dashboard/tasks/approveassignee/TaskSelected'
 import Approve from './dashboard/tasks/approveassignee/Approve'
+import TaskTab from './dashboard/tasks/task/TaskTab.jsx'
+
 
 //Projects
 import AddProject from './dashboard/projects/addproject/AddProject'
@@ -83,6 +85,7 @@ export {
   Task,
   Approve,
   AllTask,
+  TaskTab,
   SelectedTask,
   TaskSelected,
   ApproveAssignee,

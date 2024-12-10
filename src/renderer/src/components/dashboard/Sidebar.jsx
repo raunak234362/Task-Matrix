@@ -95,18 +95,18 @@ const Sidebar = () => {
             </NavLink>
           </li>
          
-          {/* <li>
+          <li>
             <NavLink
-              to="update-program"
+              to="task"
               className={({ isActive }) =>
                 isActive
                   ? "flex justify-center items-center text-white bg-teal-400 rounded-md w-full  delay-150"
                   : "text-black hover:text-white hover:flex hover:justify-center hover:items-center hover:bg-teal-200  rounded-md"
               }
             >
-              <div>Update Progress</div>
+              <div>Task</div>
             </NavLink>
-          </li> */}
+          </li>
           <li>
             <NavLink
               to="team"

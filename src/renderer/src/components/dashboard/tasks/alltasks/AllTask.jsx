@@ -147,9 +147,8 @@ const AllTask = () => {
 
   return (
     <div>
-      <Header title={'All Task'} />
       <div className="table-container w-full rounded-lg">
-        <div className="py-5 shadow-xl table-container w-full rounded-lg">
+        <div className=" shadow-xl table-container w-full rounded-lg">
           <div className="mx-5 my-3">
             <div className="flex justify-between mb-4">
               <input

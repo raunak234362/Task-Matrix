@@ -14,21 +14,15 @@ const ProjectTab = () => {
   const dispatch = useDispatch()
   // Function to toggle menu visibility
 
-  const projects = useSelector((state) => state?.projectData?.projectData[0])
+  const projects = useSelector((state) => state?.projectData?.projectData)
   console.log(projects)
   const token = sessionStorage.getItem('token')
 
-  const fetchAll = async () => {
-    const projectData = await Service.getAllProject(token)
-    console.log(projectData)
-    dispatch(addProject(projectData));
-    // const clientData = await Service.allClient(token);
-    // dispatch(showClient(clientData));
-  }
+   // Count the number of active projects
+   const activeProjectsCount = projects.filter((project) => project.status === 'ACTIVE').length
 
-  useEffect(() => {
-    fetchAll()
-  }, [])
+   // Count the number of completed projects
+   const completedProjectsCount = projects.filter((project) => project.status === 'COMPLETE').length
 
   // const toggleMenu = () => {
   //   setIsMenuOpen(!isMenuOpen);
@@ -48,6 +42,15 @@ const ProjectTab = () => {
             <div className="font-bold text-xl text-gray-800">Total Projects</div>
             <div className="text-3xl font-bold">{projects?.length}</div>
           </div>
+          <div className="flex flex-col justify-center items-center bg-white/50 rounded-lg p-3 shadow-lg">
+            <div className="font-bold text-xl text-gray-800">No. of Active Projects</div>
+            <div className="text-3xl font-bold">{activeProjectsCount}</div>
+          </div>
+          <div className="flex flex-col justify-center items-center bg-white/50 rounded-lg p-3 shadow-lg">
+            <div className="font-bold text-xl text-gray-800">No. of Completed Projects</div>
+            <div className="text-3xl font-bold">{completedProjectsCount}</div>
+          </div>
+          
 
         </div>
 

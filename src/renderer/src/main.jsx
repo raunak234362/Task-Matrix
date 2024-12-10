@@ -4,7 +4,20 @@ import { createRoot } from 'react-dom/client'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import { Provider } from 'react-redux'
 import store from './store/store.js'
-import { AddFabricator, AddProject, AllFabricators, Allprojects, Fabricator, Home, Login, ProjectStats, ProjectTab } from './components/index.js'
+import {
+  AddFabricator,
+  AddProject,
+  AddTask,
+  AllFabricators,
+  Allprojects,
+  AllTask,
+  Fabricator,
+  Home,
+  Login,
+  ProjectStats,
+  ProjectTab,
+  TaskTab
+} from './components/index.js'
 
 import './index.css'
 import App from './App.jsx'
@@ -45,12 +58,26 @@ const router = createBrowserRouter([
             element: <AddProject />
           },
           {
-            path:'all-project',
-            element: <Allprojects/>
+            path: 'all-project',
+            element: <Allprojects />
           },
           {
-            path:'project-stats',
-            element: <ProjectStats/>
+            path: 'project-stats',
+            element: <ProjectStats />
+          }
+        ]
+      },
+      {
+        path: 'task',
+        element: <TaskTab />,
+        children: [
+          {
+            path: 'add-task',
+            element: <AddTask />
+          },
+          {
+            path:'all-task',
+            element: <AllTask />
           }
         ]
       }
