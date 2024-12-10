@@ -3,7 +3,7 @@
 import { useSelector } from 'react-redux'
 import { NavLink, Outlet } from 'react-router-dom'
 
-const Projects = () => {
+const TaskTab = () => {
   const tasks = useSelector((state) => state?.taskData.taskData)
 console.log(tasks)
   // Count the number of active projects
@@ -44,16 +44,16 @@ console.log(tasks)
           <div className="overflow-auto bg-teal-100 rounded-lg md:w-full w-[90vw]">
             <nav className="px-5 drop-shadow-md text-center">
               <ul className="flex items-center justify-evenly gap-10 py-1 text-center">
-                <li className="px-2">
+              <li className="px-2">
                   <NavLink
-                    to="add-task"
+                    to="my-task"
                     className={({ isActive }) =>
                       isActive
                         ? 'bg-teal-300 drop-shadow-lg flex px-5 py-2 rounded-lg font-semibold'
                         : 'hover:bg-teal-200 rounded-lg flex px-5 py-2 hover:text-white'
                     }
                   >
-                    Add Task
+                    My Task
                   </NavLink>
                 </li>
                 <li className="px-2">
@@ -70,19 +70,33 @@ console.log(tasks)
                 </li>
                 <li className="px-2">
                   <NavLink
-                    to="all-projects"
+                    to="myTask-record"
                     className={({ isActive }) =>
                       isActive
                         ? 'bg-teal-300 drop-shadow-lg flex px-5 py-2 rounded-lg font-semibold'
                         : 'hover:bg-teal-200 rounded-lg flex px-5 py-2 hover:text-white'
                     }
                   >
-                    My Task
+                    My Task Record
                   </NavLink>
                 </li>
                 <li className="px-2">
                   <NavLink
-                    to="all-projects"
+                    to="add-task"
+                    className={({ isActive }) =>
+                      isActive
+                        ? 'bg-teal-300 drop-shadow-lg flex px-5 py-2 rounded-lg font-semibold'
+                        : 'hover:bg-teal-200 rounded-lg flex px-5 py-2 hover:text-white'
+                    }
+                  >
+                    Add Task
+                  </NavLink>
+                </li>
+               
+               
+                <li className="px-2">
+                  <NavLink
+                    to="approve-assignee"
                     className={({ isActive }) =>
                       isActive
                         ? 'bg-teal-300 drop-shadow-lg flex px-5 py-2 rounded-lg font-semibold'
@@ -102,4 +116,4 @@ console.log(tasks)
   )
 }
 
-export default Projects
+export default TaskTab

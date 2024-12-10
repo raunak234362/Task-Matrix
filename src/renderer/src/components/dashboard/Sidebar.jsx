@@ -109,14 +109,14 @@ const Sidebar = () => {
           </li>
           <li>
             <NavLink
-              to="team"
+              to="user"
               className={({ isActive }) =>
                 isActive
                   ? "flex justify-center items-center text-white bg-teal-400 rounded-md w-full delay-150"
                   : "text-black hover:text-white hover:flex hover:justify-center hover:items-center hover:bg-teal-200  rounded-md"
               }
             >
-              <div>Manage Team</div>
+              <div>Users</div>
             </NavLink>
           </li>
           <li className="w-full">

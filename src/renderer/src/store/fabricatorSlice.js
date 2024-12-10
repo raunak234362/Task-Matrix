@@ -1,29 +1,36 @@
 /* eslint-disable prettier/prettier */
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  fabricatorData: []
-}
+  fabricatorData: [],
+};
 
 const fabricatorSlice = createSlice({
-  name: 'fabricator',
+  name: "fabricator",
   initialState,
   reducers: {
-    loadFabricator: (state, action) => {
-      state.fabricatorData = action.payload
+    showFabricator: (state, action) => {
+      state.fabricatorData = action.payload;
     },
     addFabricator: (state, action) => {
-      state.fabricatorData.push(action.payload)
+      state.fabricatorData.push(action.payload);
     },
-    updateFabricator(state, action) {
-      const updatedFabricator = action.payload
-      state.fabricatorData = state.fabricatorData.map((fabricator) =>
-        fabricator.id === updatedFabricator.id ? updatedFabricator : fabricator
-      )
-    }
-  }
-})
+    deleteFabricator: (state, action) => {
+      state.fabricatorData = state.fabricatorData.filter(
+        (fabricator) => fabricator.id !== action.payload,
+      );
+    },
+    updateFabricatorData: (state, action) => {
+      state.fabricatorData = { ...state.fabricatorData, ...action.payload };
+    },
+  },
+});
 
-export const { loadFabricator, addFabricator, updateFabricator } = fabricatorSlice.actions
+export const {
+  showFabricator,
+  addFabricator,
+  updateFabricatorData,
+  deleteFabricator,
+} = fabricatorSlice.actions;
 
-export default fabricatorSlice.reducer
+export default fabricatorSlice.reducer;

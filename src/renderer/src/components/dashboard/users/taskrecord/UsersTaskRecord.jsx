@@ -134,7 +134,6 @@ const UsersTaskRecord = () => {
 
   return (
     <div>
-      <Header title={'Task Record'} />
       {userType !== 'user' && (
         <div className="flex w-1/2 flex-row gap-5 mt-5">
           {/* <Input

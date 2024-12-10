@@ -68,7 +68,6 @@ const GaantChart = () => {
 
   return (
     <div className="w-full">
-      <Header title={'User Tasks in Gantt Chart'} />
       <h1 className="text-2xl font-semibold mb-6"></h1>
 
       {/* Filters and Sorting */}

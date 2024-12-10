@@ -8,13 +8,13 @@ import { Link, NavLink } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { showProjects } from '../../../store/projectSlice'
 import { showTask } from '../../../store/taskSlice'
+import { showStaff } from '../../../store/userSlice'
+import { showFabricator } from '../../../store/fabricatorSlice'
 
 const Home = () => {
   const userType = sessionStorage.getItem('userType')
-  const [fabricators, setFabricators] = useState([])
   const [fabricator, setFabricator] = useState(null)
   const [project, setProject] = useState(null)
-  const [users, setUsers] = useState([])
   const [team, setTeam] = useState([])
   const [segregateProject, setSegregateProject] = useState({})
   const token = sessionStorage.getItem('token')
@@ -23,34 +23,46 @@ const Home = () => {
 
   const projects = useSelector((state) => state?.projectData?.projectData)
   const tasks = useSelector((state) => state?.taskData?.taskData)
-  const fetchProjects = async () => {
-    try {
-      const projectsData = await Service.getAllProject(token)
-      dispatch(showProjects(projectsData))
-      const segregatedProjects = await SegregateProject(projectsData)
-      setSegregateProject(segregatedProjects)
-    } catch (error) {
-      console.error('Error fetching projects:', error)
-    }
-  }
-
-  const fetchTasks = async () => {
-    try {
-      const tasksData = await Service.getAllTask(token)
-      dispatch(showTask(tasksData))
-      // setTasks(tasksData)
-      // console.log(tasksData)
-    } catch (error) {
-      console.error('Error fetching tasks:', error)
-    }
-  }
+  const users= useSelector((state) => state?.userData?.staffData)
+  const fabricators = useSelector((state) => state?.fabricatorData?.fabricatorData)
+  console.log(fabricators)
+  
 
   useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const projectsData = await Service.getAllProject(token)
+        dispatch(showProjects(projectsData))
+        const segregatedProjects = await SegregateProject(projectsData)
+        setSegregateProject(segregatedProjects)
+      } catch (error) {
+        console.error('Error fetching projects:', error)
+      }
+    }
+  
+    const fetchTasks = async () => {
+      try {
+        const tasksData = await Service.getAllTask(token)
+        dispatch(showTask(tasksData))
+      } catch (error) {
+        console.error('Error fetching tasks:', error)
+      }
+    }
+  
+    const fetchUsers = async () => {
+      try {
+        const usersData = await Service.getAllUser(token)
+        dispatch(showStaff(usersData))
+        // setUsers(usersData)
+      } catch (error) {
+        console.error('Error fetching users:', error)
+      }
+    }
+
     const fetchFabricators = async () => {
       try {
         const fabricatorsData = await Service.getAllFabricator(token)
-        setFabricators(fabricatorsData)
-        // console.log(fabricatorsData)
+        dispatch(showFabricator(fabricatorsData))
       } catch (error) {
         console.error('Error fetching fabricators:', error)
       }
@@ -66,14 +78,7 @@ const Home = () => {
       }
     }
 
-    const fetchUsers = async () => {
-      try {
-        const usersData = await Service.getAllUser(token)
-        setUsers(usersData)
-      } catch (error) {
-        console.error('Error fetching users:', error)
-      }
-    }
+  
 
     fetchTeam()
     fetchTasks()

@@ -9,7 +9,7 @@ import taskSlice from './taskSlice'
 
 const store = configureStore({
   reducer: {
-    userSlice: userSlice,
+    userData: userSlice,
     fabricatorData: fabricatorSlice,
     projectData: projectSlice,
     teamData: teamSlice,

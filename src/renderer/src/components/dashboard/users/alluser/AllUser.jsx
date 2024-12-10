@@ -60,7 +60,6 @@ const AllUser = () => {
 
   return (
     <div>
-      <Header title={'All User'} />
       <div className="my-4">
         <input
           type="text"

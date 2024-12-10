@@ -23,7 +23,7 @@ import Calendar from './dashboard/users/calendar/Calendar'
 import TaskRecord from './dashboard/users/taskrecord/TaskRecord'
 import AddCSV from './dashboard/users/adduser/AddCSV'
 import GaantChart from './dashboard/users/ghant/GaantChart'
-
+import UserTab from './dashboard/users/user/UserTab.jsx'
 
 //Tasks
 import MyTask from './dashboard/tasks/mytask/MyTask';
@@ -70,6 +70,7 @@ export {
   ProjectStats,
   ProjectTab,
   BarViews,
+  UserTab,
   Toggle,
   AddCSV,
   BarView,

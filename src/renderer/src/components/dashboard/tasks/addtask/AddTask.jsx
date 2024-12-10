@@ -6,7 +6,8 @@ import Service from '../../../../api/configAPI'
 import { useDispatch } from 'react-redux'
 import { useForm } from 'react-hook-form'
 import { Dialog, DialogHeader, DialogBody, DialogFooter } from '@material-tailwind/react'
-import { addTask } from '../../../../store/userSlice'
+import { addTask } from '../../../../store/taskSlice'
+
 
 const AddTask = () => {
   const [projectOptions, setPtojectOptions] = useState([])

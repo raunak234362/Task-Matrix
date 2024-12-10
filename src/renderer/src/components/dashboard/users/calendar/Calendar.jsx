@@ -115,7 +115,6 @@ function Calendar() {
 
   return (
     <div className="min-h-screen">
-      <Header title={'Calendar'} />
       <div className="py-12">
         <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
           <div className="bg-white shadow-lg rounded-lg p-6">

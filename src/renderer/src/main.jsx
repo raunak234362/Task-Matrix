@@ -9,16 +9,26 @@ import {
   AddProject,
   AddTask,
   AddTeam,
+  AddUser,
   AllFabricators,
   Allprojects,
   AllTask,
+  AllUser,
+  ApproveAssignee,
+  Calendar,
   Fabricator,
+  GaantChart,
   Home,
   Login,
   ManageTeam,
+  MyProfile,
+  MyTask,
   ProjectStats,
   ProjectTab,
-  TaskTab
+  TaskRecord,
+  TaskTab,
+  UsersTaskRecord,
+  UserTab
 } from './components/index.js'
 
 import './index.css'
@@ -88,8 +98,50 @@ const router = createBrowserRouter([
           {
             path:'all-task',
             element: <AllTask />
+          },
+          {
+            path:'my-task',
+            element:<MyTask/>
+          },
+          {
+            path:'approve-assignee',
+            element:<ApproveAssignee/>
+          },
+          {
+            path:'myTask-record',
+            element:<TaskRecord/>
           }
         ]
+      },
+      {
+        path:'user',
+        element:<UserTab />,
+        children:[
+          {
+            path:'all-user',
+            element:<AllUser/>
+          },
+          {
+            path:'add-user',
+            element:<AddUser/>
+          },
+          {
+            path:'user-task-record',
+            element:<UsersTaskRecord/>
+          },
+          {
+            path:'calendar',
+            element:<Calendar/>
+          },
+          {
+            path:'gaant-chart',
+            element:<GaantChart/>
+          }
+        ]
+      },
+      {
+        path: 'profile',
+        element: <MyProfile />
       }
     ]
   }

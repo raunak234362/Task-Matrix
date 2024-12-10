@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { NavLink, Outlet } from 'react-router-dom'
 // import { loadFabricator, showClient } from '../../../../../store/fabricatorSlice.js'
 import Service from '../../../../api/configAPI'
-import { loadFabricator } from '../../../../store/fabricatorSlice'
+import { showFabricator } from '../../../../store/fabricatorSlice'
 
 const Fabricator = () => {
   // const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -21,7 +21,7 @@ const Fabricator = () => {
 
   const fetchAll = async () => {
     const fabricatorData = await Service.getAllFabricator(token)
-    dispatch(loadFabricator(fabricatorData));
+    dispatch(showFabricator(fabricatorData));
     // const clientData = await Service.allClient(token);
     // dispatch(showClient(clientData));
   }

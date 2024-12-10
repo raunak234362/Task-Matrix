@@ -140,8 +140,7 @@ switch (value) {
 }
 
 return (
-<div>
-    <Header title={"Approve Assignee"} />
+<div className="h-[70vh]">
     <div className="shadow-xl rounded-lg w-full p-5 bg-gray-50">
     <div className="h-[75vh] overflow-y-auto">
     <table className="w-full table-auto border-collapse text-center rounded-xl">
