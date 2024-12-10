@@ -67,7 +67,6 @@ const ManageTeam = () => {
 
   return (
     <div>
-      <Header title={"Manage Team"} />
       <div className="flex justify-between items-center mb-4">
         <input
           type="text"
@@ -77,7 +76,7 @@ const ManageTeam = () => {
           className="border rounded px-2 py-1"
         />
       </div>
-      <div className="h-[70vh] overflow-y-auto">
+      <div className="h-[60vh] overflow-y-auto">
               <table className="w-full table-auto border-collapse text-center rounded-xl">
                 <thead className="sticky top-0 z-10 bg-gray-200">
           <tr>

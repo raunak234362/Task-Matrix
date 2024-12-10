@@ -119,26 +119,26 @@ const AllProjects = () => {
             <tr className="bg-teal-200/70">
               <th className="px-2 py-1 text-left cursor-pointer" onClick={() => handleSort('name')}>
                 Project Name{' '}
-                {sortConfig.key === 'name' && (sortConfig.direction === 'ascending' ? '▲' : '▼')}
+                {sortConfig.key === 'name' && (sortConfig.direction === 'ascending' ? '' : '')}
               </th>
               <th className="px-2 py-1 cursor-pointer" onClick={() => handleSort('fabricator')}>
                 Fabricator Name{' '}
                 {sortConfig.key === 'fabricator' &&
-                  (sortConfig.direction === 'ascending' ? '▲' : '▼')}
+                  (sortConfig.direction === 'ascending' ? '' : '')}
               </th>
               <th className="px-2 py-1 cursor-pointer" onClick={() => handleSort('status')}>
                 Project Status{' '}
-                {sortConfig.key === 'status' && (sortConfig.direction === 'ascending' ? '▲' : '▼')}
+                {sortConfig.key === 'status' && (sortConfig.direction === 'ascending' ? '' : '')}
               </th>
-              <th className="px-2 py-1 cursor-pointer" onClick={() => handleSort('start_date')}>
+              <th className="px-2 py-1 cursor-pointer" onClick={() => handleSort('startDate')}>
                 Project Start Date{' '}
-                {sortConfig.key === 'start_date' &&
-                  (sortConfig.direction === 'ascending' ? '▲' : '▼')}
+                {sortConfig.key === 'startDate' &&
+                  (sortConfig.direction === 'ascending' ? '▲' : '')}
               </th>
-              <th className="px-2 py-1 cursor-pointer" onClick={() => handleSort('approval_date')}>
+              <th className="px-2 py-1 cursor-pointer" onClick={() => handleSort('endDate')}>
                 Project End Date{' '}
-                {sortConfig.key === 'approval_date' &&
-                  (sortConfig.direction === 'ascending' ? '▲' : '▼')}
+                {sortConfig.key === 'endDate' &&
+                  (sortConfig.direction === 'ascending' ? '' : '')}
               </th>
               <th className="px-2 py-1">Actions</th>
             </tr>
@@ -156,8 +156,8 @@ const AllProjects = () => {
                   <td className="border px-2 py-1 text-left">{project.name}</td>
                   <td className="border px-2 py-1">{project.fabricator.name}</td>
                   <td className="border px-2 py-1">{project.status}</td>
-                  <td className="border px-2 py-1">{project.start_date}</td>
-                  <td className="border px-2 py-1">{project.approval_date}</td>
+                  <td className="border px-2 py-1">{project.startDate}</td>
+                  <td className="border px-2 py-1">{project.endDate}</td>
                   <td className="border px-2 py-1">
                     <Button onClick={() => handleViewClick(project.id)}>View</Button>
                   </td>

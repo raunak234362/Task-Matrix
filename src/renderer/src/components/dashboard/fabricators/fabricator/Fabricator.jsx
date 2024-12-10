@@ -83,7 +83,7 @@ const Fabricator = () => {
                     All Fabricator
                   </NavLink>
                 </li>
-                <li className="px-2">
+                {/* <li className="px-2">
                   <NavLink
                     to="add-client"
                     className={({ isActive }) =>
@@ -107,7 +107,7 @@ const Fabricator = () => {
                   >
                     All Clients
                   </NavLink>
-                </li>
+                </li> */}
               </ul>
             </nav>
           </div>

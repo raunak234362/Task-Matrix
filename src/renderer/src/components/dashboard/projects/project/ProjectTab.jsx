@@ -95,6 +95,30 @@ const ProjectTab = () => {
                     Project Stats
                   </NavLink>
                 </li>
+                <li className="px-2">
+                  <NavLink
+                    to="manage-team"
+                    className={({ isActive }) =>
+                      isActive
+                        ? 'bg-teal-500/50 drop-shadow-lg flex px-5 py-2 rounded-lg font-semibold'
+                        : 'hover:bg-teal-200 rounded-lg flex px-5 py-2 hover:text-white'
+                    }
+                  >
+                    Manage Team
+                  </NavLink>
+                </li>
+                <li className="px-2">
+                  <NavLink
+                    to="add-team"
+                    className={({ isActive }) =>
+                      isActive
+                        ? 'bg-teal-500/50 drop-shadow-lg flex px-5 py-2 rounded-lg font-semibold'
+                        : 'hover:bg-teal-200 rounded-lg flex px-5 py-2 hover:text-white'
+                    }
+                  >
+                    Add Team
+                  </NavLink>
+                </li>
                 
               </ul>
             </nav>

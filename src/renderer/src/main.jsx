@@ -8,12 +8,14 @@ import {
   AddFabricator,
   AddProject,
   AddTask,
+  AddTeam,
   AllFabricators,
   Allprojects,
   AllTask,
   Fabricator,
   Home,
   Login,
+  ManageTeam,
   ProjectStats,
   ProjectTab,
   TaskTab
@@ -64,6 +66,14 @@ const router = createBrowserRouter([
           {
             path: 'project-stats',
             element: <ProjectStats />
+          },
+          {
+            path: 'manage-team',
+            element: <ManageTeam />
+          },
+          {
+            path: 'add-team',
+            element: <AddTeam />
           }
         ]
       },

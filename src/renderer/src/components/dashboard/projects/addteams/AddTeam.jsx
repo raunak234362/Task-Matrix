@@ -70,8 +70,7 @@ const AddTeam = () => {
   };
 
   return (
-    <div>
-      <Header title={"Add Team"}/>
+    <div className="h-[70vh]">
       <form onSubmit={handleSubmit(onSubmit)} className="w-full p-5">
         <div className="p-5 flex flex-col justify-between gap-5">
           <div className="flex rounded-lg flex-col shadow-lg shadow-black/15 p-8">
