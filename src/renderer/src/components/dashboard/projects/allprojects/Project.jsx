@@ -126,7 +126,6 @@ const Project = ({ projectId, isOpen, onClose, setProject }) => {
       status: data.status || project.status,
       stage: data.stage || project.stage
     }
-
     try {
       const response = await Service.editProject(project, updatedData)
       setProject(response)

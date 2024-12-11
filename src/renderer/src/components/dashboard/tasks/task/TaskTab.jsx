@@ -7,11 +7,12 @@ const TaskTab = () => {
   const tasks = useSelector((state) => state?.taskData.taskData)
 console.log(tasks)
   // Count the number of active projects
-  const activeTaskCount = tasks.filter((task) => task.status === 'ACTIVE').length
+  const activeTaskCount = tasks.filter((task) => task.status === 'IN-PROGRESS').length
 
   // Count the number of completed projects
-  const completedTaskCount = tasks.filter((task) => task.status === 'COMPLETE').length
-
+  const completedTaskCount = tasks.filter((task) => task.status === 'COMPLETED').length
+  
+  const inReviewTaskCount = tasks.filter((task) => task.status === 'IN-REVIEW').length
   return (
     <div className="w-full h-[89vh] overflow-y-hidden mx-5">
       <div className="flex w-full justify-center items-center">
@@ -35,7 +36,7 @@ console.log(tasks)
           </div>
           <div className="flex flex-col justify-center items-center bg-white/50 rounded-lg p-3 shadow-lg">
             <div className="font-bold text-xl text-gray-800">No. of In-Review Tasks</div>
-            <div className="text-3xl font-bold">{completedTaskCount}</div>
+            <div className="text-3xl font-bold">{inReviewTaskCount}</div>
           </div>
         </div>
 
