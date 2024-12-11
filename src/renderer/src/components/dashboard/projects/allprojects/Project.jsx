@@ -62,9 +62,9 @@ const Project = ({ projectId, isOpen, onClose, setProject }) => {
         }))
         setTeamOption(options)
       } catch (error) {
-        console.error('Error fetching teams:', error)
+        console.error('Error fetching teams:', error) 
       }
-    }
+    }   
 
     fetchTeams()
     segregateTeam()
