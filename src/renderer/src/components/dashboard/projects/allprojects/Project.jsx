@@ -8,8 +8,10 @@ import { useForm } from 'react-hook-form'
 import { BASE_URL } from '../../../../config/constant'
 import SegregateTeam from '../../../../util/SegragateTeam'
 import { Dialog, DialogHeader, DialogBody, DialogFooter } from '@material-tailwind/react'
+import { useSelector } from 'react-redux'
 
-const Project = ({ project, isOpen, onClose, setProject }) => {
+const Project = ({ projectId, isOpen, onClose, setProject }) => {
+  const project= useSelector((state) => state?.projectData?.projectData?.find((project) => project.id === projectId))
   const [members, setMembers] = useState({})
   const [teamTask, setTeamTask] = useState([])
   const userType = sessionStorage.getItem('userType')
@@ -126,7 +128,7 @@ const Project = ({ project, isOpen, onClose, setProject }) => {
     }
 
     try {
-      const response = await Service.editProject(project?.id, updatedData)
+      const response = await Service.editProject(project, updatedData)
       setProject(response)
       setIsEditing(false)
       setIsSuccessOpen(true)

@@ -71,13 +71,9 @@ const AllFabricators = () => {
 
   // Modal view handlers
   const handleViewClick = (fabricatorId) => {
+    console.log(fabricatorId)
     setSelectedFabricator(fabricatorId)
     setIsModalOpen(true)
-  }
-
-  const handleModalClose = () => {
-    setSelectedFabricator(null)
-    setIsModalOpen(false)
   }
 
   // Update filtered data when dependencies change
