@@ -83,7 +83,7 @@ const EditProject = ({ onClose, project }) => {
         </div>
         <div className="">
           <form onSubmit={handleSubmit(onSubmit)}>
-            <div>
+            <div className="my-2">
               <Input
                 label="Project Name"
                 type="text"
@@ -91,7 +91,7 @@ const EditProject = ({ onClose, project }) => {
                 {...register("projectName")}
               />
             </div>
-            <div>
+            <div className="my-2">
               <Input
                 label="Project Description"
                 type="text"
@@ -107,7 +107,7 @@ const EditProject = ({ onClose, project }) => {
                 {...register("projectEndDate")}
               />
             </div>
-            <div>
+            <div className="my-2">
               <Input
                 label="Status"
                 type="text"
@@ -115,7 +115,7 @@ const EditProject = ({ onClose, project }) => {
                 {...register("projectStatus")}
               />
             </div>
-            <div>
+            <div className="my-2">
               <Input
                 label="Stage"
                 type="text"
@@ -123,7 +123,7 @@ const EditProject = ({ onClose, project }) => {
                 {...register("projectStage")}
               />
             </div>
-            <div>
+            <div className="my-2">
               <CustomSelect
                 label="Team"
                 name="teamName"

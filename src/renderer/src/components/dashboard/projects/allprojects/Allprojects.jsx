@@ -170,7 +170,7 @@ const AllProjects = () => {
               </tr>
             ) : (
               filteredProjects?.map((project, index) => (
-                <tr key={project.id} className="hover:bg-blue-gray-100 border">
+                <tr key={project.id} className={index % 2 === 0 ? "hover:bg-blue-100 border":"bg-gray-100"}>
                   <td className="border px-2 py-1 text-left">
                     {project.fabricator.name}
                   </td>
