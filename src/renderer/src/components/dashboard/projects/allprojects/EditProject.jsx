@@ -14,9 +14,9 @@ import {
   DialogFooter,
 } from "@material-tailwind/react";
 
-const EditProject = ({ onClose, projectId }) => {
+const EditProject = ({ onClose, project }) => {
+  console.log(project);
   const dispatch = useDispatch();
-  const [loading, setLoading] = useState(true);
   const [projectData, setProjectData] = useState(null);
   const [teamData, setTeamData] = useState(null);
   const [teamOptions, setTeamOptions] = useState([]);
@@ -39,60 +39,23 @@ const EditProject = ({ onClose, projectId }) => {
     reset,
   } = useForm({
     defaultValues: {
-      projectName: projectData?.projectName || "",
-      fabricatorName: projectData?.fabricatorName || "",
-      projectDescription: projectData?.projectDescription || "",
-      projectStartDate: projectData?.projectStartDate || "",
-      projectEndDate: projectData?.projectEndDate || "",
-      projectStatus: projectData?.projectStatus || "",
-      projectStage: projectData?.projectStage || "",
-      teamName: projectData?.teamName || "",
-      teamManager: projectData?.teamManager || "",
+      projectName: project?.name || "",
+      fabricatorName: project?.fabricator?.name || "",
+      projectDescription: project?.description || "",
+      projectStartDate: project?.startDate || "",
+      projectEndDate: project?.endDate || "",
+      projectStatus: project?.statur || "",
+      projectStage: project?.stage || "",
+      teamName: project?.team || "",
+      teamManager: project?.manager || "",
     },
   });
 
-  useEffect(() => {
-    const fetchProjectData = async () => {
-      try {
-        const project = await Service.getProjectById(projectId);
-        setProjectData(project);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching project data:", error);
-        setLoading(false);
-      }
-    };
-
-    const fetchTeams = async () => {
-      try {
-        const teams = await Service.getAllTeam();
-        const options = teams.map((team) => team.teamName);
-        setTeamOptions(["Select the team", ...options]);
-        setTeamData(teams);
-      } catch (error) {
-        console.error("Error fetching teams:", error);
-      }
-    };
-    fetchTeams();
-
-    if (projectId) {
-      fetchProjectData();
-    } else {
-      console.error("Missing projectId");
-      setLoading(false);
-    }
-  }, [projectId]);
-
-  useEffect(() => {
-    if (projectData) {
-      reset(projectData);
-    }
-  }, [projectData, reset]);
-
   const onSubmit = async (data) => {
+    console.log(data);
     try {
-      const updatedProject = await Service.updateProject(projectId, data);
-      dispatch(updateProjectData(updatedProject));
+      const updatedProject = await Service.editProject(project.id, data);
+      // dispatch(updateProjectData(updatedProject));
       console.log("Project updated:", updatedProject);
       onClose();
     } catch (error) {
@@ -100,114 +63,81 @@ const EditProject = ({ onClose, projectId }) => {
     }
   };
 
-  const startDate = new Date(projectData?.projectStartDate);
-  const endDate = new Date(projectData?.projectEndDate);
+  const startDate = new Date(project?.startDate);
+  const endDate = new Date(project?.endDate);
 
-  if (loading) return <p>Loading...</p>;
-  if (!projectData) return <p>Project data not found.</p>;
+  // if (loading) return <p>Loading...</p>;
+  // if (!projectData) return <p>Project data not found.</p>;
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <Input
-        label="Fabricator Name"
-        type="text"
-        defaultValue={projectData.fabricatorName}
-        {...register("fabricatorName")}
-      />
-      <Input
-        label="Project Name"
-        type="text"
-        defaultValue={projectData.projectName}
-        {...register("projectName")}
-      />
-      <Input
-        label="Project Description"
-        type="text"
-        defaultValue={projectData.projectDescription}
-        {...register("projectDescription")}
-      />
-      <p className="py-1">
-        <strong>Start Date:</strong> {startDate.toDateString()}{" "}
-        {startDate.toLocaleTimeString()}
-      </p>
-      <p className="py-1">
-        <strong>End Date:</strong> {endDate.toDateString()}{" "}
-        {endDate.toLocaleTimeString()}
-      </p>
-      <Input
-        label="End Date"
-        type="datetime-local"
-        defaultValue={projectData.projectEndDate}
-        {...register("projectEndDate")}
-      />
-      <Input
-        label="Status"
-        type="text"
-        defaultValue={projectData.projectStatus}
-        {...register("projectStatus")}
-      />
-      <Input
-        label="Stage"
-        type="text"
-        defaultValue={projectData.projectStage}
-        {...register("projectStage")}
-      />
-      <CustomSelect
-        label="Team"
-        name="teamName"
-        options={teamOptions}
-        className="w-full"
-        {...register("teamName")}
-      />
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+      <div className="bg-white h-[50vh] overflow-x-auto p-5 rounded-lg shadow-lg w-[40vw] ">
+        <div className="flex justify-between my-5 bg-teal-200/50 p-2 rounded-lg">
+          <h2 className="text-2xl font-bold">Edit Project</h2>
+          <button
+            className="text-xl font-bold bg-teal-500/50 hover:bg-teal-700 text-white px-5 rounded-lg"
+            onClick={onClose}
+          >
+            Close
+          </button>
+        </div>
+        <div className="">
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <div>
+              <Input
+                label="Project Name"
+                type="text"
+                defaultValue={projectData?.projectName}
+                {...register("projectName")}
+              />
+            </div>
+            <div>
+              <Input
+                label="Project Description"
+                type="text"
+                defaultValue={projectData?.projectDescription}
+                {...register("projectDescription")}
+              />
+            </div>
+            <div>
+              <Input
+                label="End Date"
+                type="datetime-local"
+                defaultValue={projectData?.projectEndDate}
+                {...register("projectEndDate")}
+              />
+            </div>
+            <div>
+              <Input
+                label="Status"
+                type="text"
+                defaultValue={projectData?.projectStatus}
+                {...register("projectStatus")}
+              />
+            </div>
+            <div>
+              <Input
+                label="Stage"
+                type="text"
+                defaultValue={projectData?.projectStage}
+                {...register("projectStage")}
+              />
+            </div>
+            <div>
+              <CustomSelect
+                label="Team"
+                name="teamName"
+                options={teamOptions}
+                className="w-full"
+                {...register("teamName")}
+              />
+            </div>
 
-      {/* <div className="flex justify-between">
-        <div className="flex">
-          <Button type="submit">Save</Button>
-          <Dialog open={isSuccessOpen} handler={setIsSuccessOpen}>
-            <DialogHeader>Project Updated</DialogHeader>
-            <DialogBody>The Project was updated successfully!</DialogBody>
-            <DialogFooter>
-              <Button
-                variant="gradient"
-                color="green"
-                onClick={closeSuccessModal}
-              >
-                Close
-              </Button>
-            </DialogFooter>
-          </Dialog>
+            <Button type="submit">Update Project</Button>
+          </form>
         </div>
-        <div className="flex">
-          <Button onClick={handleCancel}>Cancel</Button>
-        </div>
-        <div className="flex">
-          <Button onClick={openModal}>Delete</Button>
-          {isAlert && (
-            <Dialog open={isAlert} handler={setIsAlert}>
-              <DialogHeader>Confirm Deletion</DialogHeader>
-              <DialogBody divider>
-                Are you sure you want to delete this item? This action cannot be
-                undone.
-              </DialogBody>
-              <DialogFooter>
-                <Button
-                  variant="text"
-                  color="gray"
-                  onClick={closeModal}
-                  className="mr-2"
-                >
-                  No
-                </Button>
-                <Button variant="gradient" color="red" onClick={handleDelete}>
-                  Yes, Delete
-                </Button>
-              </DialogFooter>
-            </Dialog>
-          )}
-        </div>
-      </div> */}
-      <Button type="submit">Update Project</Button>
-    </form>
+      </div>
+    </div>
   );
 };
 

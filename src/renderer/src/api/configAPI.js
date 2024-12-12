@@ -167,7 +167,6 @@ class Service {
           'Content-Type': 'application/json'
         }
       })
-      console.log('Team fetched: ', response.data)
       return response.data
     } catch (error) {
       console.log('Error in getting team: ', error)
@@ -423,6 +422,7 @@ class Service {
     }
   }
   static async editProject(id, projectData) {
+    console.log(projectData)
     const token = sessionStorage.getItem('token')
     try {
       const response = await axios.patch(`${BASE_URL}api/project/projects/${id}/`, projectData, {
@@ -431,6 +431,7 @@ class Service {
           'Content-Type': 'application/json'
         }
       })
+      console.log('Project Updated: ', response.data)
       return response.data
     } catch (error) {
       console.log('Error in getting Project:', error)

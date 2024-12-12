@@ -1,18 +1,10 @@
-/* eslint-disable prettier/prettier */
-/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import React, { useEffect, useState } from "react";
-import { Button, GhantChart, Input, CustomSelect } from "../../../index"; // Ensure GanttChart is imported correctly
+/* eslint-disable no-unused-vars */
+/* eslint-disable prettier/prettier */
+import { useEffect, useState } from "react";
+import { Button, GhantChart, EditProject } from "../../../index"; // Ensure GanttChart is imported correctly
 import Service from "../../../../api/configAPI";
-import { useForm } from "react-hook-form";
-import { BASE_URL } from "../../../../config/constant";
 import SegregateTeam from "../../../../util/SegragateTeam";
-import {
-  Dialog,
-  DialogHeader,
-  DialogBody,
-  DialogFooter,
-} from "@material-tailwind/react";
 import { useSelector } from "react-redux";
 
 const Project = ({ projectId, isOpen, onClose, setProject }) => {
@@ -21,101 +13,82 @@ const Project = ({ projectId, isOpen, onClose, setProject }) => {
       (project) => project.id === projectId,
     ),
   );
+
   const [members, setMembers] = useState({});
   const [teamTask, setTeamTask] = useState([]);
-  const userType = sessionStorage.getItem("userType");
-  const token = sessionStorage.getItem("token");
-  const [teamOption, setTeamOption] = useState([]);
+  const [teamData, setTeamData] = useState();
   const [taskDetail, setTaskDetail] = useState();
-  const [isAlert, setIsAlert] = useState(false);
-  const [isSuccessOpen, setIsSuccessOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const userType = sessionStorage.getItem("userType");
   const [selectedProject, setSelectedProject] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const openModal = () => {
-    setIsAlert(true);
-  };
 
-  const closeModal = () => {
-    setIsAlert(false);
-  };
-
+  // Fetch team data once when the project is loaded
   useEffect(() => {
-    function segregateTeam() {
-      let teamMembers = {};
-      let memb = [];
-      project?.team?.members?.forEach((member) => {
-        memb.push({
-          employee: member?.employee,
-          date: project?.endDate,
-          role: member?.role,
-        });
-        if (member?.role !== "MANAGER" && member?.role !== "LEADER") {
-          if (member?.role in teamMembers) {
-            teamMembers[member?.role].push(member);
-          } else {
-            teamMembers[member?.role] = [member];
-          }
-        }
-      });
-      setMembers(teamMembers);
-      setTeamTask(memb);
-    }
-
-    const fetchTeams = async () => {
+    const fetchTask = async () => {
       try {
-        const teamData = await Service.getAllTeam(token);
-        const options = teamData.map((team) => ({
-          label: team?.name,
-          value: team?.id,
-        }));
-        setTeamOption(options);
+        const data = await Service.getTeam(project.team);
+        setTeamData(data);
+        setLoading(false);
       } catch (error) {
-        console.error("Error fetching teams:", error);
+        console.error("Error fetching team data:", error);
+        setLoading(false);
       }
     };
 
-    fetchTeams();
-    segregateTeam();
-  }, [project]);
+    if (project?.team) {
+      setLoading(true);
+      fetchTask();
+    }
+  }, [project?.team]);
+
+  useEffect(() => {
+    if (teamData) {
+      const segregateTeam = () => {
+        let teamMembers = {};
+        let memb = [];
+        teamData?.members?.forEach((member) => {
+          memb.push({
+            employee: member?.employee,
+            date: project?.endDate,
+            role: member?.role,
+          });
+          if (member?.role !== "MANAGER" && member?.role !== "LEADER") {
+            if (member?.role in teamMembers) {
+              teamMembers[member?.role].push(member);
+            } else {
+              teamMembers[member?.role] = [member];
+            }
+          }
+        });
+        setMembers(teamMembers);
+        setTeamTask(memb);
+      };
+
+      segregateTeam();
+    }
+  }, [teamData, project?.endDate]);
 
   useEffect(() => {
     async function fetchTasks() {
-      const data1 = await SegregateTeam(teamTask);
-      setTaskDetail(data1);
+      if (teamTask.length) {
+        const data1 = await SegregateTeam(teamTask);
+        setTaskDetail(data1);
+      }
     }
     fetchTasks();
-  }, [teamTask]);
+  }, [teamTask]); // Only re-run when teamTask changes
 
   const handleEditClick = () => {
     setIsModalOpen(true);
+    setSelectedProject(project);
+  };
+  const handleModalClose = () => {
+    setSelectedProject(null);
+    setIsModalOpen(false);
   };
 
-  const onSubmit = async (data) => {
-    const updatedData = {
-      description: data.description || project.description,
-      startDate: data.startDate || project.startDate,
-      endDate: data.endDate || project.endDate,
-      tool: data.tool || project.tool,
-      team: data.team || project.team?.id,
-      status: data.status || project.status,
-      stage: data.stage || project.stage,
-    };
-    try {
-      const response = await Service.editProject(project, updatedData);
-      setProject(response);
-      setIsSuccessOpen(true);
-      alert("Team updated Successfully");
-      // onClose();
-    } catch (error) {
-      alert("Something went wrong");
-      console.log(error);
-    }
-  };
-
-  const closeSuccessModal = () => {
-    setIsSuccessOpen(false);
-  };
-
+ 
   if (!isOpen) return null;
 
   const startDate = new Date(project?.startDate);
@@ -123,7 +96,7 @@ const Project = ({ projectId, isOpen, onClose, setProject }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-white h-screen overflow-x-auto p-8 rounded-lg shadow-lg w-screen ">
+      <div className="bg-white h-[92%] fixed top-[8%] overflow-x-auto p-5 rounded-lg shadow-lg w-screen ">
         <div className="text-3xl font-bold flex justify-between text-white bg-teal-200/50 shadow-xl px-5 py-1 mt-2 rounded-lg">
           <h2 className="text-3xl font-bold text-gray-800">Project Details</h2>
           <button
@@ -133,8 +106,14 @@ const Project = ({ projectId, isOpen, onClose, setProject }) => {
             Close
           </button>
         </div>
+
         <div className="bg-blue-gray-200/50 rounded-lg my-5">
-          <GhantChart taskData={taskDetail} />
+          {/* Conditionally render Gantt Chart */}
+          {loading ? (
+            <div className="text-center">Loading Gantt Chart...</div>
+          ) : (
+            <GhantChart taskData={taskDetail} />
+          )}
         </div>
 
         <div className="h-fit overflow-y-auto p-4 rounded-lg">
@@ -145,24 +124,17 @@ const Project = ({ projectId, isOpen, onClose, setProject }) => {
                 <div>{project?.name}</div>
               </div>
               <div className="my-3">
-                <div>
-                  <strong className="text-gray-700">Description: </strong>
-                  {project?.description}
-                </div>
+                <strong className="text-gray-700">Description: </strong>
+                {project?.description}
               </div>
               <div className="my-3">
-                <div>
-                  <strong className="text-gray-700">Start Date: </strong>
-                  {startDate?.toDateString()}
-                </div>
+                <strong className="text-gray-700">Start Date: </strong>
+                {startDate?.toDateString()}
               </div>
               <div className="my-3">
-                <div>
-                  <strong className="text-gray-700">Approval Date: </strong>
-                  {endDate?.toDateString()}
-                </div>
+                <strong className="text-gray-700">Approval Date: </strong>
+                {endDate?.toDateString()}
               </div>
-
               <p className="my-3">
                 <strong className="text-gray-700">Tools:</strong>{" "}
                 {project?.tool}
@@ -180,22 +152,16 @@ const Project = ({ projectId, isOpen, onClose, setProject }) => {
                 {project?.customer ? "REQUIRED" : "Not Required"}
               </p>
               <div>
-                <div>
-                  <strong className="text-gray-700">Team: </strong>
-                  {project?.team?.name}
-                </div>
+                <strong className="text-gray-700">Team: </strong>
+                {teamData?.name}
               </div>
               <div className="my-3">
-                <div>
-                  <strong className="text-gray-700">Status: </strong>
-                  {project?.status}
-                </div>
+                <strong className="text-gray-700">Status: </strong>
+                {project?.status}
               </div>
               <div>
-                <div>
-                  <strong className="text-gray-700">Stage: </strong>
-                  {project?.stage}
-                </div>
+                <strong className="text-gray-700">Stage: </strong>
+                {project?.stage}
               </div>
               {userType !== "user" && (
                 <div>
@@ -208,125 +174,41 @@ const Project = ({ projectId, isOpen, onClose, setProject }) => {
                 </div>
               )}
             </div>
-            <div>
-              {userType !== "user" && (
-                <div className="bg-teal-100/50 p-5 rounded-lg">
-                  <p className="my-3">
-                    <strong className="text-gray-700">Fabricator Name:</strong>{" "}
-                    {project?.fabricator?.name}
-                  </p>
-                  <p className="my-3">
-                    <strong className="text-gray-700">
-                      Fabricator Shop Standard:
-                    </strong>{" "}
-                    <a
-                      href={`${BASE_URL}${project?.fabricator?.design}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-blue-500 cursor-pointer hover:text-blue-700"
-                    >
-                      View standard
-                    </a>
-                  </p>
-                </div>
-              )}
 
-              <div className="bg-teal-100/60 p-5 rounded-lg my-3">
-                <div className="text-xl font-bold text-gray-800">
-                  Team Members:
-                </div>
-                <h3 className="text-sm font-bold text-gray-800">Manager</h3>
-                <li>{project?.manager?.name}</li>
-
-                <h3 className="text-sm font-bold text-gray-800">Leader</h3>
-                <li>{project?.leader?.name}</li>
-
-                {Object.keys(members).map((role) => (
-                  <div key={role}>
-                    <h3 className="text-sm font-bold text-gray-800">{role}</h3>
-                    <ol className="list-decimal list-inside ml-4">
-                      {members[role]?.map((member) => (
-                        <li key={member?.id} className="mt-1">
-                          {member?.employee?.name}
-                        </li>
-                      ))}
-                    </ol>
-                  </div>
-                ))}
-                {/* {userType === 'admin' || userType === 'manager' ? (
-                  <div className="flex mt-4">
-                    <div>
-                      <div className="text-xl font-bold text-gray-800">Update Project Report:</div>
-                      <hr className="my-2" />
-                      <form onSubmit={handleSubmit(onSubmit)}>
-                        <Select
-                          label="Team"
-                          name="team"
-                          className="text-base"
-                          options={[
-                            {
-                              label: 'Select Team',
-                              value: ''
-                            },
-                            ...teamOption
-                          ]}
-                          defaultValue={project?.team}
-                          {...register('team')}
-                        />
-                        <Select
-                          label="Status"
-                          name="status"
-                          className="text-base"
-                          options={[
-                            { label: 'ACTIVE', value: 'ACTIVE' },
-                            { label: 'ON-HOLD', value: 'ON-HOLD' },
-                            { label: 'INACTIVE', value: 'INACTIVE' },
-                            { label: 'DELAY', value: 'DELAY' },
-                            { label: 'REOPEN', value: 'REOPEN' },
-                            { label: 'COMPLETE', value: 'COMPLETE' },
-                            { label: 'SUBMIT', value: 'SUBMIT' },
-                            { label: 'SUSPEND', value: 'SUSPEND' },
-                            { label: 'CANCEL', value: 'CANCEL' }
-                          ]}
-                          defaultValue={project?.status}
-                          {...register('status')}
-                        />
-                        <Select
-                          label="Stage"
-                          name="stage"
-                          className="text-base"
-                          options={[
-                            { label: 'RFI', value: 'RFI' },
-                            { label: 'IFA', value: 'IFA' },
-                            { label: 'BFA', value: 'BFA' },
-                            { label: 'BFA-Markup', value: 'BFA-M' },
-                            { label: 'RIFA', value: 'RIFA' },
-                            { label: 'RBFA', value: 'RBFA' },
-                            { label: 'IFC', value: 'IFC' },
-                            { label: 'BFC', value: 'BFC' },
-                            { label: 'RIFC', value: 'RIFC' },
-                            { label: 'REV', value: 'REV' },
-                            { label: 'CO#', value: 'CO#' }
-                          ]}
-                          defaultValue={project?.stage}
-                          {...register('stage')}
-                        />
-
-                        <Button
-                          type="submit"
-                          className="bg-gray-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
-                        >
-                          Save
-                        </Button>
-                      </form>
-                    </div>
-                  </div>
-                ) : null} */}
+            <div className="bg-teal-100/60 p-5 h-[40vh] overflow-y-auto rounded-lg my-3">
+              <div className="text-xl font-bold text-gray-800">
+                Team Members:
               </div>
+              <h3 className="text-sm font-bold text-gray-800">Manager</h3>
+              <li>{project?.manager?.name}</li>
+
+              <h3 className="text-sm font-bold text-gray-800">Leader</h3>
+              <li>{project?.leader?.name}</li>
+
+              {Object.keys(members).map((role) => (
+                <div key={role}>
+                  <h3 className="text-sm font-bold text-gray-800">{role}</h3>
+                  <ol className="list-decimal list-inside ml-4">
+                    {members[role]?.map((member) => (
+                      <li key={member?.id} className="mt-1">
+                        {member?.employee?.name}
+                      </li>
+                    ))}
+                  </ol>
+                </div>
+              ))}
             </div>
           </div>
         </div>
       </div>
+
+      {selectedProject && (
+        <EditProject
+          isOpen={isModalOpen}
+          onClose={handleModalClose}
+          project={selectedProject}
+        />
+      )}
     </div>
   );
 };

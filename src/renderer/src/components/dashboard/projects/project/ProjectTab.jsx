@@ -15,14 +15,14 @@ const ProjectTab = () => {
   // Function to toggle menu visibility
 
   const projects = useSelector((state) => state?.projectData?.projectData)
-  console.log(projects)
+  // console.log(projects)
   const token = sessionStorage.getItem('token')
 
    // Count the number of active projects
-   const activeProjectsCount = projects.filter((project) => project.status === 'ACTIVE').length
+   const activeProjectsCount = projects?.filter((project) => project.status === 'ACTIVE').length
 
    // Count the number of completed projects
-   const completedProjectsCount = projects.filter((project) => project.status === 'COMPLETE').length
+   const completedProjectsCount = projects?.filter((project) => project.status === 'COMPLETE').length
 
   // const toggleMenu = () => {
   //   setIsMenuOpen(!isMenuOpen);
@@ -50,8 +50,6 @@ const ProjectTab = () => {
             <div className="font-bold text-xl text-gray-800">No. of Completed Projects</div>
             <div className="text-3xl font-bold">{completedProjectsCount}</div>
           </div>
-          
-
         </div>
 
         {/* Conditional rendering of menu */}

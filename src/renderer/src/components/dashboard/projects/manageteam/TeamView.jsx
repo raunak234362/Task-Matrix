@@ -9,7 +9,6 @@ import { Button, CustomSelect, Input } from '../../../index'
 import { useForm } from 'react-hook-form'
 import Service from '../../../../api/configAPI'
 import { useDispatch } from 'react-redux'
-import { addTeamMember } from '../../../../store/teamSlice'
 import { Dialog, DialogHeader, DialogBody, DialogFooter } from '@material-tailwind/react'
 
 const TeamView = ({ team, isOpen, onClose }) => {
@@ -51,7 +50,7 @@ const TeamView = ({ team, isOpen, onClose }) => {
       })
       console.log('Member Added Successfully', data)
       // alert(`${memberData?.role} Added Successfully`)
-      dispatch(addTeamMember(data))
+      // dispatch(addTeamMember(data))
       setIsSuccessOpen(true)
       // onClose();
       // eslint-disable-next-line prettier/prettier

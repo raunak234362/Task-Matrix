@@ -6,7 +6,7 @@ import { Button, Project } from "../../../index.js";
 
 const AllProjects = () => {
   const projects = useSelector((state) => state?.projectData?.projectData);
-  console.log(projects);
+  // console.log(projects);
   const [selectedProject, setSelectedProject] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
