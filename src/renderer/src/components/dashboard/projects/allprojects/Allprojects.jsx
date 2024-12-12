@@ -68,8 +68,6 @@ const AllProjects = () => {
     setSelectedProject(projectID);
     setIsModalOpen(true);
   };
-  
-
 
   const handleModalClose = async () => {
     setSelectedProject(null);

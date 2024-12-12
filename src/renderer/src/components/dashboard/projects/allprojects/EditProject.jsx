@@ -7,13 +7,31 @@ import { Input, Button, CustomSelect } from "../../../index";
 import { useDispatch, useSelector } from "react-redux";
 import { updateProjectData } from "../../../../store/projectSlice";
 import Service from "../../../../api/configAPI";
+import {
+  Dialog,
+  DialogHeader,
+  DialogBody,
+  DialogFooter,
+} from "@material-tailwind/react";
 
 const EditProject = ({ onClose, projectId }) => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
   const [projectData, setProjectData] = useState(null);
-  const [teamData,setTeamData]=useState(null)
+  const [teamData, setTeamData] = useState(null);
   const [teamOptions, setTeamOptions] = useState([]);
+
+  // const handleDelete = () => {
+  //   try {
+  //     Service.DeleteProject(project?.id);
+  //     alert("Successfully Deleted");
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+
+  //   onClose();
+  // };
+
   const {
     register,
     handleSubmit,
@@ -29,7 +47,7 @@ const EditProject = ({ onClose, projectId }) => {
       projectStatus: projectData?.projectStatus || "",
       projectStage: projectData?.projectStage || "",
       teamName: projectData?.teamName || "",
-      teamManager:projectData?.teamManager || "",
+      teamManager: projectData?.teamManager || "",
     },
   });
 
@@ -73,10 +91,7 @@ const EditProject = ({ onClose, projectId }) => {
 
   const onSubmit = async (data) => {
     try {
-      const updatedProject = await Service.updateProject(
-        projectId,
-        data
-      );
+      const updatedProject = await Service.updateProject(projectId, data);
       dispatch(updateProjectData(updatedProject));
       console.log("Project updated:", updatedProject);
       onClose();
@@ -144,6 +159,53 @@ const EditProject = ({ onClose, projectId }) => {
         className="w-full"
         {...register("teamName")}
       />
+
+      {/* <div className="flex justify-between">
+        <div className="flex">
+          <Button type="submit">Save</Button>
+          <Dialog open={isSuccessOpen} handler={setIsSuccessOpen}>
+            <DialogHeader>Project Updated</DialogHeader>
+            <DialogBody>The Project was updated successfully!</DialogBody>
+            <DialogFooter>
+              <Button
+                variant="gradient"
+                color="green"
+                onClick={closeSuccessModal}
+              >
+                Close
+              </Button>
+            </DialogFooter>
+          </Dialog>
+        </div>
+        <div className="flex">
+          <Button onClick={handleCancel}>Cancel</Button>
+        </div>
+        <div className="flex">
+          <Button onClick={openModal}>Delete</Button>
+          {isAlert && (
+            <Dialog open={isAlert} handler={setIsAlert}>
+              <DialogHeader>Confirm Deletion</DialogHeader>
+              <DialogBody divider>
+                Are you sure you want to delete this item? This action cannot be
+                undone.
+              </DialogBody>
+              <DialogFooter>
+                <Button
+                  variant="text"
+                  color="gray"
+                  onClick={closeModal}
+                  className="mr-2"
+                >
+                  No
+                </Button>
+                <Button variant="gradient" color="red" onClick={handleDelete}>
+                  Yes, Delete
+                </Button>
+              </DialogFooter>
+            </Dialog>
+          )}
+        </div>
+      </div> */}
       <Button type="submit">Update Project</Button>
     </form>
   );
