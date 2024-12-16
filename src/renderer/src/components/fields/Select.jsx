@@ -21,7 +21,7 @@ function Select({ options = [], label, name, className, onChange, ...props }, re
         label={label}
         ref={ref}
         name={name}
-        className={` rounded-md bg-white  duration-200 w-full ${className}`}
+        className={` rounded-md bg-white duration-200 w-full ${className}`}
         onChange={handleChange}
       >
         {options.map((option) => (

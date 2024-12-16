@@ -1,18 +1,24 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable no-unused-vars */
-import { useSelector } from 'react-redux'
-import { NavLink, Outlet } from 'react-router-dom'
+import { useSelector } from "react-redux";
+import { NavLink, Outlet } from "react-router-dom";
 
 const TaskTab = () => {
-  const tasks = useSelector((state) => state?.taskData.taskData)
-console.log(tasks)
+  const tasks = useSelector((state) => state?.taskData.taskData);
+  
   // Count the number of active projects
-  const activeTaskCount = tasks.filter((task) => task.status === 'IN-PROGRESS').length
+  const activeTaskCount = tasks.filter(
+    (task) => task.status === "IN-PROGRESS",
+  ).length;
 
   // Count the number of completed projects
-  const completedTaskCount = tasks.filter((task) => task.status === 'COMPLETED').length
-  
-  const inReviewTaskCount = tasks.filter((task) => task.status === 'IN-REVIEW').length
+  const completedTaskCount = tasks.filter(
+    (task) => task.status === "COMPLETED",
+  ).length;
+
+  const inReviewTaskCount = tasks.filter(
+    (task) => task.status === "IN-REVIEW",
+  ).length;
   return (
     <div className="w-full h-[89vh] overflow-y-hidden mx-5">
       <div className="flex w-full justify-center items-center">
@@ -27,15 +33,21 @@ console.log(tasks)
             <div className="text-3xl font-bold">{tasks.length}</div>
           </div>
           <div className="flex flex-col justify-center items-center bg-white/50 rounded-lg p-3 shadow-lg">
-            <div className="font-bold text-xl text-gray-800">No. of In-Progress Tasks</div>
+            <div className="font-bold text-xl text-gray-800">
+              No. of In-Progress Tasks
+            </div>
             <div className="text-3xl font-bold">{activeTaskCount}</div>
           </div>
           <div className="flex flex-col justify-center items-center bg-white/50 rounded-lg p-3 shadow-lg">
-            <div className="font-bold text-xl text-gray-800">No. of Completed Tasks</div>
+            <div className="font-bold text-xl text-gray-800">
+              No. of Completed Tasks
+            </div>
             <div className="text-3xl font-bold">{completedTaskCount}</div>
           </div>
           <div className="flex flex-col justify-center items-center bg-white/50 rounded-lg p-3 shadow-lg">
-            <div className="font-bold text-xl text-gray-800">No. of In-Review Tasks</div>
+            <div className="font-bold text-xl text-gray-800">
+              No. of In-Review Tasks
+            </div>
             <div className="text-3xl font-bold">{inReviewTaskCount}</div>
           </div>
         </div>
@@ -45,13 +57,13 @@ console.log(tasks)
           <div className="overflow-auto bg-teal-100 rounded-lg md:w-full w-[90vw]">
             <nav className="px-5 drop-shadow-md text-center">
               <ul className="flex items-center justify-evenly gap-10 py-1 text-center">
-              <li className="px-2">
+                <li className="px-2">
                   <NavLink
                     to="my-task"
                     className={({ isActive }) =>
                       isActive
-                        ? 'bg-teal-300 drop-shadow-lg flex px-5 py-2 rounded-lg font-semibold'
-                        : 'hover:bg-teal-200 rounded-lg flex px-5 py-2 hover:text-white'
+                        ? "bg-teal-300 drop-shadow-lg flex px-5 py-2 rounded-lg font-semibold"
+                        : "hover:bg-teal-200 rounded-lg flex px-5 py-2 hover:text-white"
                     }
                   >
                     My Task
@@ -62,8 +74,8 @@ console.log(tasks)
                     to="all-task"
                     className={({ isActive }) =>
                       isActive
-                        ? 'bg-teal-300 drop-shadow-lg flex px-5 py-2 rounded-lg font-semibold'
-                        : 'hover:bg-teal-200 rounded-lg flex px-5 py-2 hover:text-white'
+                        ? "bg-teal-300 drop-shadow-lg flex px-5 py-2 rounded-lg font-semibold"
+                        : "hover:bg-teal-200 rounded-lg flex px-5 py-2 hover:text-white"
                     }
                   >
                     All Task
@@ -74,8 +86,8 @@ console.log(tasks)
                     to="myTask-record"
                     className={({ isActive }) =>
                       isActive
-                        ? 'bg-teal-300 drop-shadow-lg flex px-5 py-2 rounded-lg font-semibold'
-                        : 'hover:bg-teal-200 rounded-lg flex px-5 py-2 hover:text-white'
+                        ? "bg-teal-300 drop-shadow-lg flex px-5 py-2 rounded-lg font-semibold"
+                        : "hover:bg-teal-200 rounded-lg flex px-5 py-2 hover:text-white"
                     }
                   >
                     My Task Record
@@ -86,22 +98,21 @@ console.log(tasks)
                     to="add-task"
                     className={({ isActive }) =>
                       isActive
-                        ? 'bg-teal-300 drop-shadow-lg flex px-5 py-2 rounded-lg font-semibold'
-                        : 'hover:bg-teal-200 rounded-lg flex px-5 py-2 hover:text-white'
+                        ? "bg-teal-300 drop-shadow-lg flex px-5 py-2 rounded-lg font-semibold"
+                        : "hover:bg-teal-200 rounded-lg flex px-5 py-2 hover:text-white"
                     }
                   >
                     Add Task
                   </NavLink>
                 </li>
-               
-               
+
                 <li className="px-2">
                   <NavLink
                     to="approve-assignee"
                     className={({ isActive }) =>
                       isActive
-                        ? 'bg-teal-300 drop-shadow-lg flex px-5 py-2 rounded-lg font-semibold'
-                        : 'hover:bg-teal-200 rounded-lg flex px-5 py-2 hover:text-white'
+                        ? "bg-teal-300 drop-shadow-lg flex px-5 py-2 rounded-lg font-semibold"
+                        : "hover:bg-teal-200 rounded-lg flex px-5 py-2 hover:text-white"
                     }
                   >
                     Assignee List
@@ -114,7 +125,7 @@ console.log(tasks)
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default TaskTab
+export default TaskTab;
