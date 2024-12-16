@@ -117,7 +117,11 @@ const Project = ({ projectId, isOpen, onClose, setProject }) => {
           )}
         </div>
 
-        <div className="h-fit overflow-y-auto p-4 rounded-lg">
+        <div className="bg-gray-200/50 rounded-lg p-5 my-5">
+          Project Completion Percentage
+        </div>
+
+        <div className="h-fit overflow-y-auto rounded-lg">
           <div className="grid grid-cols-2 gap-5">
             <div className="bg-teal-100/70 rounded-lg p-5">
               <div className="my-3">
@@ -188,14 +192,16 @@ const Project = ({ projectId, isOpen, onClose, setProject }) => {
                   </div>
                   <div className="my-3">
                     <strong className="text-gray-700">Standard Design:</strong>
-                    <div><a
-                      href={`${BASE_URL}${project?.fabricator?.design}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-blue-500 cursor-pointer hover:text-blue-700"
-                    >
-                      View standard
-                    </a></div>
+                    <div>
+                      <a
+                        href={`${BASE_URL}${project?.fabricator?.design}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-500 cursor-pointer hover:text-blue-700"
+                      >
+                        View standard
+                      </a>
+                    </div>
                   </div>
                 </div>
               </div>
