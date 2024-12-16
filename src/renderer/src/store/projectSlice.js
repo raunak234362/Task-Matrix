@@ -22,19 +22,21 @@ const projectSlice = createSlice({
       state.projectData = state.projectData.filter((project) => project.id !== action.payload)
     },
     updateProjectData: (state, action) => {
-      state.projectData = { ...state.projectData, ...action.payload }
+      state.projectData = state.projectData.map((project) =>
+        project.id === action.payload.id ? { ...project, ...action.payload } : project
+      )
     },
     addTeam: (state, action) => {
-      state.projectData.push(action.payload)
+      state.teamData.push(action.payload)
     },
     showTeam: (state, action) => {
-      state.projectData = action.payload
+      state.teamData = action.payload
     },
     deleteTeam: (state, action) => {
-      state.projectData = state.projectData.filter((project) => project.id !== action.payload)
+      state.teamData = state.teamData.filter((team) => team.id !== action.payload)
     },
     updateTeamData: (state, action) => {
-      state.projectData = { ...state.projectData, ...action.payload }
+      state.teamData = { ...state.teamData, ...action.payload }
     }
   }
 })

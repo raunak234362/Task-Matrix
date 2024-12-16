@@ -16,11 +16,19 @@ import {
 
 const EditProject = ({ onClose, project }) => {
   console.log(project);
+  const teams = useSelector((state) => state?.projectData?.teamData);
   const dispatch = useDispatch();
   const [projectData, setProjectData] = useState(null);
   const [teamData, setTeamData] = useState(null);
   const [teamOptions, setTeamOptions] = useState([]);
 
+  useEffect(() => {
+    const options = teams?.map((team) => ({
+      label: team?.name,
+      value: team?.id,
+    }));
+    setTeamOptions(options);
+  }, []);
   // const handleDelete = () => {
   //   try {
   //     Service.DeleteProject(project?.id);
@@ -37,17 +45,18 @@ const EditProject = ({ onClose, project }) => {
     handleSubmit,
     formState: { errors },
     reset,
+    setValue,
   } = useForm({
     defaultValues: {
-      projectName: project?.name || "",
-      fabricatorName: project?.fabricator?.name || "",
-      projectDescription: project?.description || "",
-      projectStartDate: project?.startDate || "",
-      projectEndDate: project?.endDate || "",
-      projectStatus: project?.statur || "",
-      projectStage: project?.stage || "",
-      teamName: project?.team || "",
-      teamManager: project?.manager || "",
+      name: project?.name || "",
+      fabricator: project?.fabricator?.id || "",
+      description: project?.description || "",
+      startDate: project?.startDate || "",
+      endDate: project?.endDate || "",
+      status: project?.status || "",
+      stage: project?.stage || "",
+      // team: project?.team?.id || "",
+      manager: project?.manager?.id || "",
     },
   });
 
@@ -55,7 +64,7 @@ const EditProject = ({ onClose, project }) => {
     console.log(data);
     try {
       const updatedProject = await Service.editProject(project.id, data);
-      // dispatch(updateProjectData(updatedProject));
+      dispatch(updateProjectData(updatedProject));
       console.log("Project updated:", updatedProject);
       onClose();
     } catch (error) {
@@ -88,7 +97,7 @@ const EditProject = ({ onClose, project }) => {
                 label="Project Name"
                 type="text"
                 defaultValue={projectData?.projectName}
-                {...register("projectName")}
+                {...register("name")}
               />
             </div>
             <div className="my-2">
@@ -96,40 +105,68 @@ const EditProject = ({ onClose, project }) => {
                 label="Project Description"
                 type="text"
                 defaultValue={projectData?.projectDescription}
-                {...register("projectDescription")}
+                {...register("description")}
               />
             </div>
             <div>
               <Input
                 label="End Date"
-                type="datetime-local"
+                type="date"
                 defaultValue={projectData?.projectEndDate}
-                {...register("projectEndDate")}
+                {...register("endDate")}
               />
             </div>
             <div className="my-2">
-              <Input
-                label="Status"
-                type="text"
-                defaultValue={projectData?.projectStatus}
-                {...register("projectStatus")}
-              />
-            </div>
-            <div className="my-2">
-              <Input
+              <CustomSelect
                 label="Stage"
-                type="text"
-                defaultValue={projectData?.projectStage}
-                {...register("projectStage")}
+                name= "stage"
+                options={[
+                  { label: 'RFI', value: 'RFI' },
+                  { label: 'IFA', value: 'IFA' },
+                  { label: 'BFA', value: 'BFA' },
+                  { label: 'BFA-Markup', value: 'BFA-M' },
+                  { label: 'RIFA', value: 'RIFA' },
+                  { label: 'RBFA', value: 'RBFA' },
+                  { label: 'IFC', value: 'IFC' },
+                  { label: 'BFC', value: 'BFC' },
+                  { label: 'RIFC', value: 'RIFC' },
+                  { label: 'REV', value: 'REV' },
+                  { label: 'CO#', value: 'CO#' }
+                ]}
+                defaultValue={projectData?.projectStatus}
+                {...register("stage")}
+                onChange={setValue}
+              />
+            </div>
+            <div className="my-2">
+              <CustomSelect
+                label="Status"
+                name="status"
+                options={[
+                  { label: "ACTIVE", value: "ACTIVE" },
+                  { label: "ON-HOLD", value: "ON-HOLD" },
+                  { label: "INACTIVE", value: "INACTIVE" },
+                  { label: "DELAY", value: "DELAY" },
+                  { label: "REOPEN", value: "REOPEN" },
+                  { label: "COMPLETE", value: "COMPLETE" },
+                  { label: "SUBMIT", value: "SUBMIT" },
+                  { label: "SUSPEND", value: "SUSPEND" },
+                  { label: "CANCEL", value: "CANCEL" },
+
+                ]}
+                defaultValue={projectData?.projectStatus}
+                {...register("status")}
+                onChange={setValue}
               />
             </div>
             <div className="my-2">
               <CustomSelect
                 label="Team"
-                name="teamName"
+                name="team"
                 options={teamOptions}
                 className="w-full"
-                {...register("teamName")}
+                {...register("team")}
+                onChange={setValue}
               />
             </div>
 

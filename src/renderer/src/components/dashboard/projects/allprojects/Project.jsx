@@ -6,13 +6,15 @@ import { Button, GhantChart, EditProject } from "../../../index"; // Ensure Gant
 import Service from "../../../../api/configAPI";
 import SegregateTeam from "../../../../util/SegragateTeam";
 import { useSelector } from "react-redux";
-
+import { BASE_URL } from "../../../../config/constant";
 const Project = ({ projectId, isOpen, onClose, setProject }) => {
   const project = useSelector((state) =>
     state?.projectData?.projectData?.find(
       (project) => project.id === projectId,
     ),
   );
+
+  const teams = useSelector((state) => state?.projectData?.teamData);
 
   const [members, setMembers] = useState({});
   const [teamTask, setTeamTask] = useState([]);
@@ -88,7 +90,6 @@ const Project = ({ projectId, isOpen, onClose, setProject }) => {
     setIsModalOpen(false);
   };
 
- 
   if (!isOpen) return null;
 
   const startDate = new Date(project?.startDate);
@@ -175,28 +176,52 @@ const Project = ({ projectId, isOpen, onClose, setProject }) => {
               )}
             </div>
 
-            <div className="bg-teal-100/60 p-5 h-[40vh] overflow-y-auto rounded-lg my-3">
-              <div className="text-xl font-bold text-gray-800">
-                Team Members:
-              </div>
-              <h3 className="text-sm font-bold text-gray-800">Manager</h3>
-              <li>{project?.manager?.name}</li>
-
-              <h3 className="text-sm font-bold text-gray-800">Leader</h3>
-              <li>{project?.leader?.name}</li>
-
-              {Object.keys(members).map((role) => (
-                <div key={role}>
-                  <h3 className="text-sm font-bold text-gray-800">{role}</h3>
-                  <ol className="list-decimal list-inside ml-4">
-                    {members[role]?.map((member) => (
-                      <li key={member?.id} className="mt-1">
-                        {member?.employee?.name}
-                      </li>
-                    ))}
-                  </ol>
+            <div className="">
+              <div className="bg-teal-100/50 p-5 h-fit rounded-lg my-3">
+                <div className="text-xl font-bold text-gray-800">
+                  Fabricator Detail:
                 </div>
-              ))}
+                <div>
+                  <div className="my-3">
+                    <strong className="text-gray-700">Fabricator Name:</strong>
+                    <div>{project?.fabricator?.name}</div>
+                  </div>
+                  <div className="my-3">
+                    <strong className="text-gray-700">Standard Design:</strong>
+                    <div><a
+                      href={`${BASE_URL}${project?.fabricator?.design}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-500 cursor-pointer hover:text-blue-700"
+                    >
+                      View standard
+                    </a></div>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-teal-100/60 p-5 h-[40vh] overflow-y-auto rounded-lg my-1">
+                <div className="text-xl font-bold text-gray-800">
+                  Team Members:
+                </div>
+                <h3 className="text-sm font-bold text-gray-800">Manager</h3>
+                <li>{project?.manager?.name}</li>
+
+                <h3 className="text-sm font-bold text-gray-800">Leader</h3>
+                <li>{project?.leader?.name}</li>
+
+                {Object.keys(members).map((role) => (
+                  <div key={role}>
+                    <h3 className="text-sm font-bold text-gray-800">{role}</h3>
+                    <ol className="list-decimal list-inside ml-4">
+                      {members[role]?.map((member) => (
+                        <li key={member?.id} className="mt-1">
+                          {member?.employee?.name}
+                        </li>
+                      ))}
+                    </ol>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>

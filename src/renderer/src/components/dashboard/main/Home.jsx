@@ -1,91 +1,92 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable no-unused-vars */
-import React, { useEffect, useState } from 'react'
-import Service from '../../../api/configAPI'
-import { BarViews, FabricatorCharts, Header } from '../../index'
-import SegregateProject from '../../../util/SegregateProject'
-import { Link, NavLink } from 'react-router-dom'
-import { useDispatch, useSelector } from 'react-redux'
-import { showProjects } from '../../../store/projectSlice'
-import { showTask } from '../../../store/taskSlice'
-import { showStaff } from '../../../store/userSlice'
-import { showFabricator } from '../../../store/fabricatorSlice'
+import React, { useEffect, useState } from "react";
+import Service from "../../../api/configAPI";
+import { BarViews, FabricatorCharts, Header } from "../../index";
+import SegregateProject from "../../../util/SegregateProject";
+import { Link, NavLink } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { showProjects, showTeam } from "../../../store/projectSlice";
+import { showTask } from "../../../store/taskSlice";
+import { showStaff } from "../../../store/userSlice";
+import { showFabricator } from "../../../store/fabricatorSlice";
 
 const Home = () => {
-  const userType = sessionStorage.getItem('userType')
-  const [fabricator, setFabricator] = useState(null)
-  const [project, setProject] = useState(null)
-  const [team, setTeam] = useState([])
-  const [segregateProject, setSegregateProject] = useState({})
-  const token = sessionStorage.getItem('token')
+  const userType = sessionStorage.getItem("userType");
+  const [fabricator, setFabricator] = useState(null);
+  const [project, setProject] = useState(null);
+  const [team, setTeam] = useState([]);
+  const [segregateProject, setSegregateProject] = useState({});
+  const token = sessionStorage.getItem("token");
 
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
-  const projects = useSelector((state) => state?.projectData?.projectData)
-  const tasks = useSelector((state) => state?.taskData?.taskData)
-  const users= useSelector((state) => state?.userData?.staffData)
-  const fabricators = useSelector((state) => state?.fabricatorData?.fabricatorData)
-  console.log(fabricators)
-  
+  const projects = useSelector((state) => state?.projectData?.projectData);
+  const tasks = useSelector((state) => state?.taskData?.taskData);
+  const users = useSelector((state) => state?.userData?.staffData);
+  const fabricators = useSelector(
+    (state) => state?.fabricatorData?.fabricatorData,
+  );
+  const teams = useSelector((state) => state?.projectData?.teamData);
+  // console.log(teams)
 
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const projectsData = await Service.getAllProject(token)
-        dispatch(showProjects(projectsData))
-        const segregatedProjects = await SegregateProject(projectsData)
-        setSegregateProject(segregatedProjects)
+        const projectsData = await Service.getAllProject(token);
+        dispatch(showProjects(projectsData));
+        const segregatedProjects = await SegregateProject(projectsData);
+        setSegregateProject(segregatedProjects);
       } catch (error) {
-        console.error('Error fetching projects:', error)
+        console.error("Error fetching projects:", error);
       }
-    }
-  
+    };
+
     const fetchTasks = async () => {
       try {
-        const tasksData = await Service.getAllTask(token)
-        dispatch(showTask(tasksData))
+        const tasksData = await Service.getAllTask(token);
+        dispatch(showTask(tasksData));
       } catch (error) {
-        console.error('Error fetching tasks:', error)
+        console.error("Error fetching tasks:", error);
       }
-    }
-  
+    };
+
     const fetchUsers = async () => {
       try {
-        const usersData = await Service.getAllUser(token)
-        dispatch(showStaff(usersData))
+        const usersData = await Service.getAllUser(token);
+        dispatch(showStaff(usersData));
         // setUsers(usersData)
       } catch (error) {
-        console.error('Error fetching users:', error)
+        console.error("Error fetching users:", error);
       }
-    }
+    };
 
     const fetchFabricators = async () => {
       try {
-        const fabricatorsData = await Service.getAllFabricator(token)
-        dispatch(showFabricator(fabricatorsData))
+        const fabricatorsData = await Service.getAllFabricator(token);
+        dispatch(showFabricator(fabricatorsData));
       } catch (error) {
-        console.error('Error fetching fabricators:', error)
+        console.error("Error fetching fabricators:", error);
       }
-    }
+    };
 
     const fetchTeam = async () => {
       try {
-        const teamData = await Service.getAllTeam(token)
-        setTeam(teamData)
+        const teamData = await Service.getAllTeam(token);
         // console.log(teamData)
+        dispatch(showTeam(teamData));
+        // setTeam(teamData)
       } catch (error) {
-        console.error('Error fetching team:', error)
+        console.error("Error fetching team:", error);
       }
-    }
+    };
 
-  
-
-    fetchTeam()
-    fetchTasks()
-    fetchUsers()
-    fetchProjects()
-    fetchFabricators()
-  }, [token])
+    fetchTeam();
+    fetchTasks();
+    fetchUsers();
+    fetchProjects();
+    fetchFabricators();
+  }, [token]);
 
   return (
     <div className="w-full h-[89vh] overflow-y-hidden mx-5">
@@ -98,31 +99,45 @@ const Home = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 my-6 px-2">
           <div className="bg-gray-200 shadow-md p-2 flex flex-col items-center rounded-lg text-center text-gray-800">
             <NavLink to="all-fabricator">
-              <span className="text-4xl font-bold text-gray-900">{fabricators?.length}</span>
-              <p className="mt-2 text-xl font-semibold">Total No. of Fabricators</p>
+              <span className="text-4xl font-bold text-gray-900">
+                {fabricators?.length}
+              </span>
+              <p className="mt-2 text-xl font-semibold">
+                Total No. of Fabricators
+              </p>
             </NavLink>
           </div>
           <div className="bg-green-200 shadow-md p-2 flex flex-col items-center rounded-lg text-center text-gray-800">
             <NavLink to="all-project">
-              <span className="text-4xl font-bold text-gray-900">{projects?.length}</span>
-              <p className="mt-2 text-xl font-semibold">Total No. of Projects</p>
+              <span className="text-4xl font-bold text-gray-900">
+                {projects?.length}
+              </span>
+              <p className="mt-2 text-xl font-semibold">
+                Total No. of Projects
+              </p>
             </NavLink>
           </div>
           <div className="bg-gray-200 shadow-md p-2 flex flex-col items-center rounded-lg text-center text-gray-800">
             <NavLink to="all-task">
-              <span className="text-4xl font-bold text-gray-900">{tasks?.length}</span>
+              <span className="text-4xl font-bold text-gray-900">
+                {tasks?.length}
+              </span>
               <p className="mt-2 text-xl font-semibold">Total No. of Tasks</p>
             </NavLink>
           </div>
           <div className="bg-green-200 shadow-md p-2 flex flex-col items-center rounded-lg text-center text-gray-800">
             <NavLink to="all-user">
-              <span className="text-4xl font-bold text-gray-900">{users?.length}</span>
+              <span className="text-4xl font-bold text-gray-900">
+                {users?.length}
+              </span>
               <p className="mt-2 text-xl font-semibold">Total No. of Users</p>
             </NavLink>
           </div>
           <div className="bg-gray-200 shadow-md p-2 flex flex-col items-center rounded-lg text-center text-gray-800">
             <NavLink to="manage-team">
-              <span className="text-4xl font-bold text-gray-900">{team.length}</span>
+              <span className="text-4xl font-bold text-gray-900">
+                {teams?.length}
+              </span>
               <p className="mt-2 text-xl font-semibold">Total No. of Team</p>
             </NavLink>
           </div>
@@ -165,7 +180,9 @@ const Home = () => {
                       <tr key={project.id}>
                         <td className="px-4 py-2 border">{index + 1}</td>
                         <td className="px-4 py-2 border">{project.name}</td>
-                        <td className="px-4 py-2 border">{project.manager?.name}</td>
+                        <td className="px-4 py-2 border">
+                          {project.manager?.name}
+                        </td>
                       </tr>
                     ))
                   )}
@@ -176,7 +193,7 @@ const Home = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;

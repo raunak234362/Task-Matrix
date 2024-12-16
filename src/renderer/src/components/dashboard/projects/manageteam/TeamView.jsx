@@ -158,10 +158,10 @@ const TeamView = ({ team, isOpen, onClose }) => {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
       <div className="bg-white h-screen overflow-y-auto p-8 rounded-lg shadow-lg w-screen">
-        <div className="flex justify-between items-center">
-          <h2 className="text-3xl font-bold text-gray-800">Team Details</h2>
+      <div className="flex justify-between my-5 bg-teal-200/50 p-2 rounded-lg">
+          <h2 className="text-2xl font-bold">Edit Team</h2>
           <button
-            className="text-xl font-bold bg-gray-600 text-white px-5 rounded-lg"
+            className="text-xl font-bold bg-teal-500/50 hover:bg-teal-700 text-white px-5 rounded-lg"
             onClick={onClose}
           >
             Close
