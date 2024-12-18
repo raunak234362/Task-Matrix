@@ -84,76 +84,61 @@ const MyTask = () => {
   }
 
   return (
-    <div className="main-container h-[70vh]">
+    <div className="main-container mx-5 my-3">
       <div className="mt-5 bg-white h-[60vh] overflow-auto rounded-lg">
         <table className="h-fit md:w-full w-[90vw] border-collapse text-center md:text-lg text-xs rounded-xl">
           <thead>
-          <tr className="bg-teal-200/70">
-              <th className="px-2 py-1 uppercase">
-                S.no
-              </th>
-              <th className="px-2 py-1 uppercase">
-                Project Name
-              </th>
-              <th className="px-2 py-1 uppercase">
-                Task Name
-              </th>
-              <th className="px-2 py-1 uppercase">
-                Assigned Date
-              </th>
-              <th className="px-2 py-1 uppercase">
-                Due Date
-              </th>
-              <th className="px-2 py-1 uppercase">
-                Duration
-              </th>
-              <th className="px-2 py-1 uppercase">
-                Status
-              </th>
-              <th className="px-2 py-1 uppercase">
-                Priority
-              </th>
-              <th className="px-2 py-1 uppercase">
-                View
-              </th>
+            <tr className="bg-teal-200/70">
+              <th className="px-2 py-1 uppercase">S.no</th>
+              <th className="px-2 py-1 uppercase">Project Name</th>
+              <th className="px-2 py-1 uppercase">Task Name</th>
+              <th className="px-2 py-1 uppercase">Start Date</th>
+              <th className="px-2 py-1 uppercase">Due Date</th>
+              <th className="px-2 py-1 uppercase">Duration</th>
+              <th className="px-2 py-1 uppercase">Status</th>
+              <th className="px-2 py-1 uppercase">Priority</th>
+              <th className="px-2 py-1 uppercase">View</th>
             </tr>
           </thead>
           <tbody className="bg-white ">
             {tasks.map((task, index) => (
-              <tr key={task.id}>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+              <tr
+                key={task.id}
+                className={index % 2 === 0 ? "bg-white" : "bg-gray-200/50"}
+              >
+                <td className="border px-1 py-2">
                   {index + 1}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td className="border px-1 py-2">
                   {task.project?.name}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td className="border px-1 py-2">
                   {task.name}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {new Date(task.created_on).toDateString()}
+                <td className="border px-1 py-2">
+                  {new Date(task.start_date).toDateString()}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td className="border px-1 py-2">
                   {new Date(task.due_date).toDateString()}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td className="border px-1 py-2">
                   {durToHour(task.duration)}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm">
+                <td className="border px-1 py-2">
                   <span
                     className={`px-3 py-0.5 rounded-full border ${statusColor(task.status)}`}
                   >
                     {task.status}
                   </span>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm">
+                <td className="border px-1 py-2">
                   <span
                     className={`px-3 py-0.5 rounded-full border ${color(task.priority)}`}
                   >
                     {setPriorityValue(task.priority)}
                   </span>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm">
+                <td className="border px-1 py-2">
                   <Button onClick={() => handleTaskView(task.id)}>View</Button>
                 </td>
               </tr>

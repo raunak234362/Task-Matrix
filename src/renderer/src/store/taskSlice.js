@@ -3,7 +3,9 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
-  taskData: []
+  taskData: [],
+  commentData: [],
+  taskById: {},
 }
 
 const taskSlice = createSlice({
@@ -24,9 +26,25 @@ const taskSlice = createSlice({
         task.id === action.payload.id ? { ...task, ...action.payload } : task
       )
     },
+    addCommentToTask: (state, action) => {
+      const { taskId, comment } = action.payload;
+      const task = state.taskData.find((task) => task.id === taskId);
+      if (task) {
+        if (!task.comments) {
+          task.comments = []; // Dynamically add 'comments' field if it doesn't exist
+        }
+        task.comments.push(comment); // Add the comment to the task's comments array
+      }
+    },
+    showTaskByID: (state, action) => {
+      state.taskById = action.payload
+    },
+    deleteTaskByID: (state, action) => {
+      state.taskById = state.taskById.filter((task) => task.id !== action.payload)
+    }
   }
 })
 
-export const { addTask, showTask, deleteTask, updateTask } = taskSlice.actions
+export const { addTask, showTask, deleteTask, updateTask, addCommentToTask, showTaskByID,deleteTaskByID } = taskSlice.actions
 
 export default taskSlice.reducer

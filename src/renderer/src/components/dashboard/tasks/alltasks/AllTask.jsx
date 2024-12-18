@@ -3,11 +3,14 @@
 import React, { useEffect, useState } from "react";
 import Service from "../../../../api/configAPI";
 import { Button, Header, SelectedTask } from "../../../index";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { showTask, showTaskByID } from "../../../../store/taskSlice";
 
 const AllTask = () => {
+  const dispatch = useDispatch();
   const tasks = useSelector((state) => state?.taskData?.taskData);
   const [selectedTask, setSelectedTask] = useState(null);
+  const [taskID, setTaskID] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
@@ -16,7 +19,7 @@ const AllTask = () => {
     key: "",
     direction: "ascending",
   });
-
+  console.log(tasks);
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
   };
@@ -64,7 +67,10 @@ const AllTask = () => {
   const handleViewClick = async (taskId) => {
     try {
       const task = await Service.getTaskById(taskId);
+      console.log("Task Details:", task);
+      // dispatch(showTaskByID(task));
       setSelectedTask(task);
+      setTaskID(task.id);
       setIsModalOpen(true);
     } catch (error) {
       console.error("Error fetching project details:", error);
@@ -73,7 +79,7 @@ const AllTask = () => {
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
-    setSelectedTask(null);
+    setTaskID(null);
   };
 
   const color = (priority) => {
@@ -108,7 +114,7 @@ const AllTask = () => {
 
   return (
     <div>
-      <div className="table-container w-full rounded-lg">
+      <div className="table-container h-[80vh] w-full rounded-lg">
         <div className=" shadow-xl table-container w-full rounded-lg">
           <div className="mx-5 my-3">
             <div className="flex flex-col md:flex-row gap-4 mb-4">
@@ -145,8 +151,8 @@ const AllTask = () => {
                 ))}
               </select>
             </div>
-            <div className="mt-5 bg-white h-[60vh] overflow-auto rounded-lg">
-              <table className="h-fit md:w-full w-[90vw] border-collapse text-center md:text-lg text-xs rounded-xl">
+            <div className=" py-5 bg-white h-[58vh] overflow-auto rounded-lg">
+              <table className="md:w-full w-[90vw] border-collapse text-center md:text-lg text-xs rounded-xl">
                 <thead>
                   <tr className="bg-teal-200/70">
                     <th
@@ -194,7 +200,7 @@ const AllTask = () => {
                       className="px-2 py-1 cursor-pointer"
                       onClick={() => handleSort("due_date")}
                     >
-                      Project End Date{" "}
+                      Task Due Date{" "}
                       {sortConfig.key === "due_date" &&
                         (sortConfig.direction === "ascending" ? "" : "")}
                     </th>
@@ -235,7 +241,7 @@ const AllTask = () => {
                         <td className="border px-1 py-2">
                           {new Date(task?.due_date).toDateString()}
                         </td>
-                        <td className="border px-3 flex justify-center py-2">
+                        <td className="border px-1 flex justify-center py-2">
                           <Button onClick={() => handleViewClick(task?.id)}>
                             View
                           </Button>
@@ -251,7 +257,8 @@ const AllTask = () => {
       </div>
       {selectedTask && (
         <SelectedTask
-          task={selectedTask}
+          taskDetail={selectedTask}
+          taskID={taskID}
           isOpen={isModalOpen}
           onClose={handleCloseModal}
           setTasks={tasks}

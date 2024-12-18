@@ -122,7 +122,7 @@ const TaskRecord = () => {
         </div>
       )} */}
       <div className="mt-5 bg-white h-[60vh] overflow-auto rounded-lg">
-        <table className="h-fit md:w-full w-[90vw] border-collapse text-center md:text-lg text-xs rounded-xl">
+      <table className="md:w-full w-[90vw] border-collapse text-left md:text-lg text-xs rounded-xl">
           <thead>
             <tr className="bg-teal-200/70">
               <th className="px-2 py-1 uppercase">S.no</th>
@@ -147,18 +147,18 @@ const TaskRecord = () => {
                   className={index % 2 === 0 ? "bg-white" : "bg-gray-200/50"}
                 >
                   {console.log("usertask&&&&&&&&&&&&&&", record)}
-                  <td className="px-2 py-1 whitespace-nowrap">{index + 1}</td>
-                  <td className="px-2 py-1 whitespace-nowrap">
+                  <td className="border px-1 py-2">{index + 1}</td>
+                  <td className="border px-1 py-2">
                     {rec?.task?.project?.name}
                   </td>
-                  <td className="px-2 py-1 whitespace-nowrap">
+                  <td className="border px-1 py-2">
                     {rec?.task?.name}
                   </td>
-                  <td className="px-2 py-1 whitespace-nowrap">
+                  <td className="border px-1 py-2">
                     {durToHour(rec?.task?.duration)}
                   </td>
                   <td
-                    className={`px-6 py-4 whitespace-nowrap ${
+                    className={`border px-1 py-2 ${
                       compare(rec?.task?.duration, rec?.time_taken)
                         ? "text-green-600"
                         : "text-red-600"
@@ -166,7 +166,7 @@ const TaskRecord = () => {
                   >
                     {secToHour(rec?.time_taken)}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="border px-1 py-2">
                     {rec?.task?.status}
                   </td>
                 </tr>

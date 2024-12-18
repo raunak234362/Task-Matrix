@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { NavLink, Outlet } from "react-router-dom";
 
 const UserTab = () => {
-  const users = useSelector((state) => state?.userData?.userData);
+  const users = useSelector((state) => state?.userData?.staffData);
   console.log(users);
   // Count the number of active projects
 

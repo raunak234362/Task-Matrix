@@ -22,13 +22,13 @@ const TaskTab = () => {
 
   const userType = sessionStorage.getItem("userType");
   return (
-    <div className="w-full h-[89vh] overflow-y-hidden mx-5">
+    <div className="w-full h-full overflow-y-hidden mx-5">
       <div className="flex w-full justify-center items-center">
         <div className="text-3xl font-bold text-white bg-green-500/70 shadow-xl px-5 py-1 mt-2 rounded-lg">
           Task
         </div>
       </div>
-      <div className="h-[85vh] mt-2 overflow-y-auto">
+      <div className="h-[85vh] overflow-y-hidden">
         <div className="my-5 grid md:grid-cols-4 grid-cols-2 gap-5">
           <div className="flex flex-col justify-center items-center bg-white/50 rounded-lg p-3 shadow-lg">
             <div className="font-bold text-xl text-gray-800">Total Tasks</div>
@@ -95,7 +95,7 @@ const TaskTab = () => {
                     My Task Record
                   </NavLink>
                 </li>
-                {(userType === "manager" || userType=== "admin") ? (
+                {userType === "manager" || userType === "admin" ? (
                   <li className="px-2">
                     <NavLink
                       to="add-task"
@@ -109,7 +109,7 @@ const TaskTab = () => {
                     </NavLink>
                   </li>
                 ) : null}
-                {(userType === "manager" || userType=== "admin") ? (
+                {userType === "manager" || userType === "admin" ? (
                   <li className="px-2">
                     <NavLink
                       to="approve-assignee"

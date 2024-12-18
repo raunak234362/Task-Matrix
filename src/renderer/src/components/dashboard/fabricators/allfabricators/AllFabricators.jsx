@@ -133,7 +133,7 @@ const AllFabricators = () => {
                     onClick={() => handleSort(key)}
                   >
                     {key.charAt(0).toUpperCase() + key.slice(1)}
-                    {sortOrder.key === key && (sortOrder.order === 'asc' ? ' ↑' : ' ↓')}
+                    {sortOrder.key === key && (sortOrder.order === 'asc' ? ' ' : ' ')}
                   </th>
                 ))}
                 <th className="px-2 py-1">Actions</th>

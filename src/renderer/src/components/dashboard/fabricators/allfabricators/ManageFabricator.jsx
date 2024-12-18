@@ -87,7 +87,7 @@ const ManageFabricator = ({ fabricator, isOpen, onClose }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-white p-8 rounded-lg shadow-lg w-11/12 max-w-4xl">
+      <div className="bg-white p-8 rounded-lg shadow-lg w-2/3">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-bold text-gray-800">
             Edit Fabricator Details

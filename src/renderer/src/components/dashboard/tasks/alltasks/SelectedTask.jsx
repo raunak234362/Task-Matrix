@@ -5,22 +5,19 @@ import React, { useEffect, useState } from "react";
 import { Button, Input, CustomSelect, EditTask } from "../../../index";
 import Service from "../../../../api/configAPI";
 import { useForm } from "react-hook-form";
-import {
-  Dialog,
-  DialogHeader,
-  DialogBody,
-  DialogFooter,
-} from "@material-tailwind/react";
+import { useDispatch, useSelector } from "react-redux";
+import { updateTask } from "../../../../store/taskSlice";
 
-const SelectedTask = ({ task, isOpen, onClose, setTasks }) => {
-  const [isEditing, setIsEditing] = useState(false);
-  const [isAlert, setIsAlert] = useState(false);
-  const [isSuccessOpen, setIsSuccessOpen] = useState(false);
+const SelectedTask = ({ taskDetail,taskID, isOpen, onClose, setTasks }) => {
+  const taskData =useSelector((state) => state?.taskData?.taskData.find((task) => task.id === taskID));
+  
   const [selectedTask, setSelectedTask] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const username = sessionStorage.getItem("username");
   const userType = sessionStorage.getItem("userType");
+
+  
   const {
     register,
     handleSubmit,
@@ -34,9 +31,10 @@ const SelectedTask = ({ task, isOpen, onClose, setTasks }) => {
 
   const handleEditClick = () => {
     setIsModalOpen(true);
-    setSelectedTask(task);
+    setSelectedTask(taskDetail);
   };
   const handleModalClose = () => {
+    
     setIsModalOpen(false);
     setSelectedTask(null);
   };
@@ -61,7 +59,7 @@ const SelectedTask = ({ task, isOpen, onClose, setTasks }) => {
   const addComment = async (commentData) => {
     try {
       const response = await Service.addComment(
-        task?.id,
+        taskDetail?.id,
         commentData?.comment,
         commentData?.file,
       );
@@ -70,29 +68,6 @@ const SelectedTask = ({ task, isOpen, onClose, setTasks }) => {
     } catch (error) {
       console.error("Error in adding comment: ", error);
     }
-  };
-
-  const closeSuccessModal = () => {
-    setIsSuccessOpen(false);
-  };
-
-  const handleDelete = async () => {
-    try {
-      const response = await Service.deleteTask(task.id);
-      console.log(response);
-      setIsAlert(false);
-      onClose();
-    } catch (error) {
-      console.error("Error in deleting task: ", error);
-    }
-  };
-
-  const openModal = () => {
-    setIsAlert(true);
-  };
-
-  const closeModal = () => {
-    setIsAlert(false);
   };
 
   const color = (priority) => {
@@ -125,7 +100,8 @@ const SelectedTask = ({ task, isOpen, onClose, setTasks }) => {
     }
   };
 
-  const getTaskById = new Date(task?.due_date);
+  const start_date = new Date(taskDetail?.start_date);
+  const due_date = new Date(taskDetail?.due_date);
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
@@ -145,32 +121,36 @@ const SelectedTask = ({ task, isOpen, onClose, setTasks }) => {
             <div className="bg-teal-100/70 rounded-lg p-5">
               <div className="my-2">
                 <strong className="text-gray-700">Task Name:</strong>
-                <div>{task?.name}</div>
+                <div>{taskData?.name}</div>
               </div>
 
               <div className="my-2">
                 <strong className="text-gray-700">Description:</strong>
-                {task?.description}
+                {taskData?.description}
               </div>
 
               <div className="my-2">
                 <strong className="text-gray-700">Current User:</strong>{" "}
-                {task?.user?.name}
+                {taskData?.user?.name}
               </div>
 
               <div className="my-2">
+                <strong className="text-gray-700">Start Date:</strong>
+                {start_date?.toDateString()}
+              </div>
+              <div className="my-2">
                 <strong className="text-gray-700">Due Date:</strong>
-                {getTaskById?.toDateString()}
+                {due_date?.toDateString()}
               </div>
 
               <div className="my-2">
                 <strong className="text-gray-700">Duration:</strong>
-                {durToHour(task?.duration)}
+                {durToHour(taskData?.duration)}
               </div>
 
               <div className="my-2">
                 <strong className="text-gray-700">Status:</strong>
-                {task?.status}
+                {taskData?.status}
               </div>
 
               <div>
@@ -178,10 +158,10 @@ const SelectedTask = ({ task, isOpen, onClose, setTasks }) => {
                   <strong className="text-gray-700">Priority:</strong>
                   <span
                     className={`text-sm font-semibold px-3 py-0.5 mx-2 rounded-full border ${color(
-                      task?.priority,
+                      taskData?.priority,
                     )}`}
                   >
-                    {setPriorityValue(task?.priority)}
+                    {setPriorityValue(taskData?.priority)}
                   </span>
                 </div>
               </div>
@@ -196,25 +176,25 @@ const SelectedTask = ({ task, isOpen, onClose, setTasks }) => {
                 <hr className="m-2" />
                 <p className="mb-2">
                   <strong className="text-gray-700">Project Name:</strong>{" "}
-                  {task?.project?.name}
+                  {taskData?.project?.name}
                 </p>
                 <p className="mb-2">
                   <strong className="text-gray-700">
                     Project Description:
                   </strong>{" "}
-                  {task?.project?.description}
+                  {taskData?.project?.description}
                 </p>
                 <p className="mb-2">
                   <strong className="text-gray-700">Project Manager:</strong>{" "}
-                  {task?.project?.manager?.name}
+                  {taskData?.project?.manager?.name}
                 </p>
                 <p className="mb-2">
                   <strong className="text-gray-700">Project Stage:</strong>{" "}
-                  {task?.project?.stage}
+                  {taskData?.project?.stage}
                 </p>
                 <p className="mb-2">
                   <strong className="text-gray-700">Project Status:</strong>{" "}
-                  {task?.project?.status}
+                  {taskData?.project?.status}
                 </p>
               </div>
             </div>
@@ -232,13 +212,13 @@ const SelectedTask = ({ task, isOpen, onClose, setTasks }) => {
                     <th className="py-3 px-6 text-left">Approved By</th>
                     <th className="py-3 px-6 text-left">Approved On</th>
                     {(userType === "admin" ||
-                      username === task?.project?.manager?.username) && (
+                      username === taskDetail?.project?.manager?.username) && (
                       <th className="py-3 px-6 text-left">Action</th>
                     )}
                   </tr>
                 </thead>
                 <tbody className="text-gray-600 text-sm font-medium">
-                  {task?.assigned?.map((tasks, index) => (
+                  {taskDetail?.assigned?.map((tasks, index) => (
                     <tr
                       key={tasks.id}
                       className="border-b border-gray-200 hover:bg-gray-100"
@@ -324,10 +304,10 @@ const SelectedTask = ({ task, isOpen, onClose, setTasks }) => {
               </div>
             </div>
 
-            {task?.comments?.length > 0 && (
+            {taskDetail?.comments?.length > 0 && (
               <div className=" shadow-xl bg-slate-200/50 rounded-lg p-5">
                 <div className="space-y-4">
-                  {task?.comments?.map((comment, index) => (
+                  {taskDetail?.comments?.map((comment, index) => (
                     <div
                       className="bg-white p-4 rounded-lg shadow-md"
                       key={index}

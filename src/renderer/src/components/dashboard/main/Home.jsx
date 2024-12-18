@@ -18,7 +18,7 @@ const Home = () => {
   const [team, setTeam] = useState([]);
   const [segregateProject, setSegregateProject] = useState({});
   const token = sessionStorage.getItem("token");
-  console.log(userType);
+  
   const dispatch = useDispatch();
 
   const projects = useSelector((state) => state?.projectData?.projectData);
