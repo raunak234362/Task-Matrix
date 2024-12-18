@@ -1,121 +1,125 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable no-unused-vars */
-import React, { useCallback, useEffect, useState } from 'react'
-import { Button, Header, Input, CustomSelect } from '../../../index'
-import Service from '../../../../api/configAPI'
-import { useDispatch } from 'react-redux'
-import { useForm } from 'react-hook-form'
-import { Dialog, DialogHeader, DialogBody, DialogFooter } from '@material-tailwind/react'
-import { addTask } from '../../../../store/taskSlice'
-
+import React, { useCallback, useEffect, useState } from "react";
+import { Button, Header, Input, CustomSelect } from "../../../index";
+import Service from "../../../../api/configAPI";
+import { useDispatch } from "react-redux";
+import { useForm } from "react-hook-form";
+import {
+  Dialog,
+  DialogHeader,
+  DialogBody,
+  DialogFooter,
+} from "@material-tailwind/react";
+import { addTask } from "../../../../store/taskSlice";
 
 const AddTask = () => {
-  const [projectOptions, setPtojectOptions] = useState([])
-  const [project, setProject] = useState({})
-  const [isSuccessOpen, setIsSuccessOpen] = useState(false)
-  const [parentTaskOptions, setParentTaskOptions] = useState([])
-  const [assignedUser, setAssignedUser] = useState([])
-  const token = sessionStorage.getItem('token')
-  const dispatch = useDispatch()
+  const [projectOptions, setPtojectOptions] = useState([]);
+  const [project, setProject] = useState({});
+  const [isSuccessOpen, setIsSuccessOpen] = useState(false);
+  const [parentTaskOptions, setParentTaskOptions] = useState([]);
+  const [assignedUser, setAssignedUser] = useState([]);
+  const token = sessionStorage.getItem("token");
+  const dispatch = useDispatch();
   const {
     register,
     handleSubmit,
     watch,
     setValue,
-    formState: { errors }
-  } = useForm()
+    formState: { errors },
+  } = useForm();
 
   // FETCH task related to project
   // Fetch project details
 
-  const projectId = watch('project')
+  const projectId = watch("project");
 
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const projects = await Service.getAllProject()
+        const projects = await Service.getAllProject();
         const options = projects
           .filter((project) => project.team != null)
           .map((project) => ({
             label: `${project.name} - ${project.fabricator.name}`,
-            value: project.id
-          }))
-        setPtojectOptions(options)
-        console.log(projects)
+            value: project.id,
+          }));
+        setPtojectOptions(options);
+        console.log(projects);
       } catch (error) {
-        console.error('Error fetching projects:', error)
+        console.error("Error fetching projects:", error);
       }
-    }
-    fetchProjects()
-  }, [])
+    };
+    fetchProjects();
+  }, []);
 
   const handleProjectChange = async (projectId) => {
-    console.log('Project ID:', projectId)
+    console.log("Project ID:", projectId);
     try {
-      const project = await Service.getProject(projectId)
-      setProject(project)
-      console.log(project)
+      const project = await Service.getProject(projectId);
+      setProject(project);
+      console.log(project);
       const assigned = project?.team?.members?.reduce((acc, member) => {
-        const exists = acc.find((item) => item.value === member?.employee?.id)
+        const exists = acc.find((item) => item.value === member?.employee?.id);
         if (!exists) {
           acc.push({
             label: `${member?.role} - ${member?.employee?.name}`,
-            value: member?.employee?.id
-          })
+            value: member?.employee?.id,
+          });
         }
-        return acc
-      }, [])
-      console.log('Assigned users---', assigned)
-      setAssignedUser(assigned)
+        return acc;
+      }, []);
+      console.log("Assigned users---", assigned);
+      setAssignedUser(assigned);
     } catch (error) {
-      console.error('Error fetching project details:', error)
+      console.error("Error fetching project details:", error);
     }
-  }
+  };
   const handleParentTasks = async (projectId) => {
     try {
-      const parentTasks = await Service.getParentTasks(projectId)
+      const parentTasks = await Service.getParentTasks(projectId);
       const options = parentTasks?.map((task) => ({
         label: task?.name,
-        value: task?.id
-      }))
-      setParentTaskOptions(options)
+        value: task?.id,
+      }));
+      setParentTaskOptions(options);
     } catch (error) {
-      console.error('Error fetching parent tasks:', error)
+      console.error("Error fetching parent tasks:", error);
     }
-  }
+  };
 
   useEffect(() => {
     if (projectId) {
-      handleProjectChange(projectId)
-      handleParentTasks(projectId)
+      handleProjectChange(projectId);
+      handleParentTasks(projectId);
     }
-  }, [projectId])
+  }, [projectId]);
 
   const onSubmit = async (taskData) => {
-    console.log('Project data:', taskData)
+    console.log("Project data:", taskData);
     try {
-      const token = sessionStorage.getItem('token')
+      const token = sessionStorage.getItem("token");
       if (!token) {
-        throw new Error('Token not found')
+        throw new Error("Token not found");
       }
-      const TaskName = `${taskData.type} - ${taskData.taskname}`
+      const TaskName = `${taskData.type} - ${taskData.taskname}`;
       const data = await Service.addTask({
         ...taskData,
         name: TaskName,
-        token: token
-      })
-      console.log('Response from task:', taskData)
-      setIsSuccessOpen(true)
-      dispatch(addTask(data))
+        token: token,
+      });
+      console.log("Response from task:", taskData);
+      setIsSuccessOpen(true);
+      dispatch(addTask(data));
     } catch (error) {
-      console.error('Error adding task:', error)
-      console.log('Project data:', taskData)
+      console.error("Error adding task:", error);
+      console.log("Project data:", taskData);
     }
-  }
+  };
 
   const closeSuccessModal = () => {
-    setIsSuccessOpen(false)
-  }
+    setIsSuccessOpen(false);
+  };
 
   return (
     <div>
@@ -130,18 +134,20 @@ const AddTask = () => {
                 className="w-full"
                 options={[
                   {
-                    label: 'Select Project',
-                    value: ''
+                    label: "Select Project",
+                    value: "",
                   },
-                  ...projectOptions
+                  ...projectOptions,
                 ]}
-                {...register('project', { required: 'Project is required' })}
+                {...register("project", { required: "Project is required" })}
                 onChange={setValue}
               />
-              {errors.project && <p className="text-red-600">{errors.project.message}</p>}
+              {errors.project && (
+                <p className="text-red-600">{errors.project.message}</p>
+              )}
             </div>
 
-            <div className="mt-5">
+            {/* <div className="mt-5">
               <CustomSelect
                 label="Parent Task: "
                 name="parent"
@@ -157,7 +163,7 @@ const AddTask = () => {
                 {...register('parent')}
                 onChange={setValue}
               />
-            </div>
+            </div> */}
             <div className="mt-5 flex flex-row gap-x-2">
               <div className="w-[30%]">
                 <CustomSelect
@@ -167,19 +173,21 @@ const AddTask = () => {
                   className="w-full"
                   options={[
                     {
-                      label: 'Select Task',
-                      value: ''
+                      label: "Select Task",
+                      value: "",
                     },
-                    { label: 'Modeling', value: 'MODELING' },
-                    { label: 'Checking', value: 'CHECKING' },
-                    { label: 'Erection', value: 'ERECTION' },
-                    { label: 'Detailing', value: 'DETAILING' },
-                    { label: 'Others', value: 'OTHERS' }
+                    { label: "Modeling", value: "MODELING" },
+                    { label: "Checking", value: "CHECKING" },
+                    { label: "Erection", value: "ERECTION" },
+                    { label: "Detailing", value: "DETAILING" },
+                    { label: "Others", value: "OTHERS" },
                   ]}
-                  {...register('type', { required: 'Task Type is required' })}
+                  {...register("type", { required: "Task Type is required" })}
                   onChange={setValue}
                 />
-                {errors.type && <p className="text-red-600">{errors.type.message}</p>}
+                {errors.type && (
+                  <p className="text-red-600">{errors.type.message}</p>
+                )}
               </div>
               <div className="w-full">
                 <Input
@@ -187,16 +195,21 @@ const AddTask = () => {
                   label="Task Name: "
                   placeholder="Task Name"
                   className="w-full"
-                  {...register('taskname', {
+                  {...register("taskname", {
                     validate: (value) => {
-                      if (watch('type') === 'OTHERS' && (!value || value.trim() === '')) {
-                        return "With Task Type 'Others', Task name is required"
+                      if (
+                        watch("type") === "OTHERS" &&
+                        (!value || value.trim() === "")
+                      ) {
+                        return "With Task Type 'Others', Task name is required";
                       }
-                      return true
-                    }
+                      return true;
+                    },
                   })}
                 />
-                {errors.taskname && <p className="text-red-600">{errors.taskname.message}</p>}
+                {errors.taskname && (
+                  <p className="text-red-600">{errors.taskname.message}</p>
+                )}
               </div>
             </div>
             <div className="mt-5">
@@ -204,47 +217,71 @@ const AddTask = () => {
                 label="Priority:"
                 name="priority"
                 options={[
-                  { label: 'LOW', value: 0 },
-                  { label: 'MEDIUM', value: 1 },
-                  { label: 'HIGH', value: 2 },
-                  { label: 'Critical', value: 3 }
+                  { label: "LOW", value: 0 },
+                  { label: "MEDIUM", value: 1 },
+                  { label: "HIGH", value: 2 },
+                  { label: "Critical", value: 3 },
                 ]}
                 className="w-full"
-                {...register('priority', { required: 'Priority is required' })}
+                {...register("priority", { required: "Priority is required" })}
                 onChange={setValue}
               />
-              {errors.priority && <p className="text-red-600">{errors.priority.message}</p>}
+              {errors.priority && (
+                <p className="text-red-600">{errors.priority.message}</p>
+              )}
             </div>
             <div className="mt-5">
               <CustomSelect
                 label="Status:"
                 name="status"
                 options={[
-                  { label: 'ASSIGNED', value: 'ASSINGED' },
-                  { label: 'IN PROGRESS', value: 'IN-PROGRESS' },
-                  { label: 'ON HOLD', value: 'ON-HOLD' },
-                  { label: 'BREAK', value: 'BREAK' },
-                  { label: 'IN REVIEW', value: 'IN-REVIEW' },
-                  { label: 'COMPLETED', value: 'COMPLETE' },
-                  { label: 'APPROVED', value: 'APPROVED' }
+                  { label: "ASSIGNED", value: "ASSINGED" },
+                  { label: "IN PROGRESS", value: "IN-PROGRESS" },
+                  { label: "ON HOLD", value: "ON-HOLD" },
+                  { label: "BREAK", value: "BREAK" },
+                  { label: "IN REVIEW", value: "IN-REVIEW" },
+                  { label: "COMPLETED", value: "COMPLETE" },
+                  { label: "APPROVED", value: "APPROVED" },
                 ]}
                 className="w-full"
-                {...register('status', { required: 'Status is required' })}
+                {...register("status", { required: "Status is required" })}
                 onChange={setValue}
               />
-              {errors.status && <p className="text-red-600">{errors.status.message}</p>}
+              {errors.status && (
+                <p className="text-red-600">{errors.status.message}</p>
+              )}
             </div>
-            <div className="mt-5 w-36">
-              <Input
-                label="Due Date:"
-                name="due_date"
-                type="date"
-                className="w-full"
-                {...register('due_date', { required: 'Due Date is required' })}
-              />
-              {errors.due_date && <p className="text-red-600">{errors.due_date.message}</p>}
+            <div className="flex flex-row gap-5 w-1/5 my-5">
+              <div className=" w-full">
+                <Input
+                  label="Start Date:"
+                  name="start_date"
+                  type="date"
+                  className="w-full"
+                  {...register("start_date", {
+                    required: "Start Date is required",
+                  })}
+                />
+                {errors.due_date && (
+                  <p className="text-red-600">{errors.due_date.message}</p>
+                )}
+              </div>
+              <div className=" w-full">
+                <Input
+                  label="Due Date:"
+                  name="due_date"
+                  type="date"
+                  className="w-full"
+                  {...register("due_date", {
+                    required: "Due Date is required",
+                  })}
+                />
+                {errors.due_date && (
+                  <p className="text-red-600">{errors.due_date.message}</p>
+                )}
+              </div>
             </div>
-            <div className="mt-5">
+            <div className="mt-1">
               <div className="text-lg font-bold">Duration:</div>
               <div className="flex flex-row gap-5 w-1/5">
                 <div className="w-full">
@@ -255,9 +292,11 @@ const AddTask = () => {
                     placeholder="HH"
                     className="w-20"
                     min={0}
-                    {...register('hour', { required: 'Hours is required in Duration' })}
+                    {...register("hour", {
+                      required: "Hours is required in Duration",
+                    })}
                     onBlur={(e) => {
-                      if (e.target.value < 0) e.target.value = 0
+                      if (e.target.value < 0) e.target.value = 0;
                     }}
                   />
                 </div>
@@ -270,25 +309,33 @@ const AddTask = () => {
                     className="w-20"
                     min={0}
                     max={60}
-                    {...register('min', { required: 'Minutes is required in Duration' })}
+                    {...register("min", {
+                      required: "Minutes is required in Duration",
+                    })}
                     onBlur={(e) => {
-                      if (e.target.value < 0) e.target.value = 0
+                      if (e.target.value < 0) e.target.value = 0;
                     }}
                   />
                 </div>
-                {errors.min && <p className="text-red-600">{errors.min.message}</p>}
+                {errors.min && (
+                  <p className="text-red-600">{errors.min.message}</p>
+                )}
               </div>
             </div>
             <div className="mt-5">
               <CustomSelect
                 label="Assign User:"
                 name="user"
-                options={[{ label: 'Select User', value: '' }, ...assignedUser]}
+                options={[{ label: "Select User", value: "" }, ...assignedUser]}
                 className="w-full"
-                {...register('user', { required: 'Assigning User is required' })}
+                {...register("user", {
+                  required: "Assigning User is required",
+                })}
                 onChange={setValue}
               />
-              {errors.user && <p className="text-red-600">{errors.user.message}</p>}
+              {errors.user && (
+                <p className="text-red-600">{errors.user.message}</p>
+              )}
             </div>
             <div className="mt-5">
               <Input
@@ -297,9 +344,13 @@ const AddTask = () => {
                 name="description"
                 placeholder="Description"
                 className="w-full"
-                {...register('description', { required: 'Description is required' })}
+                {...register("description", {
+                  required: "Description is required",
+                })}
               />
-              {errors.description && <p className="text-red-600">{errors.description.message}</p>}
+              {errors.description && (
+                <p className="text-red-600">{errors.description.message}</p>
+              )}
             </div>
             <div className="mt-5 w-full">
               <Button type="submit">Add Task</Button>
@@ -307,7 +358,11 @@ const AddTask = () => {
                 <DialogHeader>Task Added</DialogHeader>
                 <DialogBody>The task added successfully!</DialogBody>
                 <DialogFooter>
-                  <Button variant="gradient" color="green" onClick={closeSuccessModal}>
+                  <Button
+                    variant="gradient"
+                    color="green"
+                    onClick={closeSuccessModal}
+                  >
                     Close
                   </Button>
                 </DialogFooter>
@@ -317,7 +372,7 @@ const AddTask = () => {
         </div>
       </form>
     </div>
-  )
-}
+  );
+};
 
-export default AddTask
+export default AddTask;

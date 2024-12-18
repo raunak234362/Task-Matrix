@@ -7,7 +7,6 @@ import { useSelector } from "react-redux";
 
 const AllTask = () => {
   const tasks = useSelector((state) => state?.taskData?.taskData);
-  console.log(tasks);
   const [selectedTask, setSelectedTask] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");

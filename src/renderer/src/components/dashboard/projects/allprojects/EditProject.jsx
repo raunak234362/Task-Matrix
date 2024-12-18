@@ -55,7 +55,6 @@ const EditProject = ({ onClose, project }) => {
       endDate: project?.endDate || "",
       status: project?.status || "",
       stage: project?.stage || "",
-      // team: project?.team?.id || "",
       manager: project?.manager?.id || "",
     },
   });

@@ -44,7 +44,7 @@ const Login = () => {
         if (userType != 'user') {
           navigate('/admin/home')
         } else {
-          navigate('/dashboard/my-profile')
+          navigate('/admin/home')
         }
       } else {
         // Handle case where session or token is missing

@@ -5,7 +5,7 @@ import { NavLink, Outlet } from "react-router-dom";
 
 const TaskTab = () => {
   const tasks = useSelector((state) => state?.taskData.taskData);
-  
+
   // Count the number of active projects
   const activeTaskCount = tasks.filter(
     (task) => task.status === "IN-PROGRESS",
@@ -19,6 +19,8 @@ const TaskTab = () => {
   const inReviewTaskCount = tasks.filter(
     (task) => task.status === "IN-REVIEW",
   ).length;
+
+  const userType = sessionStorage.getItem("userType");
   return (
     <div className="w-full h-[89vh] overflow-y-hidden mx-5">
       <div className="flex w-full justify-center items-center">
@@ -93,31 +95,34 @@ const TaskTab = () => {
                     My Task Record
                   </NavLink>
                 </li>
-                <li className="px-2">
-                  <NavLink
-                    to="add-task"
-                    className={({ isActive }) =>
-                      isActive
-                        ? "bg-teal-300 drop-shadow-lg flex px-5 py-2 rounded-lg font-semibold"
-                        : "hover:bg-teal-200 rounded-lg flex px-5 py-2 hover:text-white"
-                    }
-                  >
-                    Add Task
-                  </NavLink>
-                </li>
-
-                <li className="px-2">
-                  <NavLink
-                    to="approve-assignee"
-                    className={({ isActive }) =>
-                      isActive
-                        ? "bg-teal-300 drop-shadow-lg flex px-5 py-2 rounded-lg font-semibold"
-                        : "hover:bg-teal-200 rounded-lg flex px-5 py-2 hover:text-white"
-                    }
-                  >
-                    Assignee List
-                  </NavLink>
-                </li>
+                {(userType === "manager" || userType=== "admin") ? (
+                  <li className="px-2">
+                    <NavLink
+                      to="add-task"
+                      className={({ isActive }) =>
+                        isActive
+                          ? "bg-teal-300 drop-shadow-lg flex px-5 py-2 rounded-lg font-semibold"
+                          : "hover:bg-teal-200 rounded-lg flex px-5 py-2 hover:text-white"
+                      }
+                    >
+                      Add Task
+                    </NavLink>
+                  </li>
+                ) : null}
+                {(userType === "manager" || userType=== "admin") ? (
+                  <li className="px-2">
+                    <NavLink
+                      to="approve-assignee"
+                      className={({ isActive }) =>
+                        isActive
+                          ? "bg-teal-300 drop-shadow-lg flex px-5 py-2 rounded-lg font-semibold"
+                          : "hover:bg-teal-200 rounded-lg flex px-5 py-2 hover:text-white"
+                      }
+                    >
+                      Assignee List
+                    </NavLink>
+                  </li>
+                ) : null}
               </ul>
             </nav>
           </div>

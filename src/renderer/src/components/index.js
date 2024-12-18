@@ -35,7 +35,7 @@ import ApproveAssignee from './dashboard/tasks/approveassignee/ApproveAssignee'
 import TaskSelected from './dashboard/tasks/approveassignee/TaskSelected'
 import Approve from './dashboard/tasks/approveassignee/Approve'
 import TaskTab from './dashboard/tasks/task/TaskTab.jsx'
-
+import EditTask from './dashboard/tasks/editTask/EditTask.jsx'
 
 //Projects
 import AddProject from './dashboard/projects/addproject/AddProject'
@@ -98,6 +98,7 @@ export {
   MultiSelectCheckbox,
   AddTeam,
   MyTask,
+  EditTask,
   ManageTeam,
   TaskRecord,
   Button,

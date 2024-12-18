@@ -18,7 +18,7 @@ const Home = () => {
   const [team, setTeam] = useState([]);
   const [segregateProject, setSegregateProject] = useState({});
   const token = sessionStorage.getItem("token");
-
+  console.log(userType);
   const dispatch = useDispatch();
 
   const projects = useSelector((state) => state?.projectData?.projectData);
@@ -97,16 +97,18 @@ const Home = () => {
       </div>
       <div className="h-[85vh] mt-2 overflow-y-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 my-6 px-2">
-          <div className="bg-gray-200 shadow-md p-2 flex flex-col items-center rounded-lg text-center text-gray-800">
-            <NavLink to="all-fabricator">
-              <span className="text-4xl font-bold text-gray-900">
-                {fabricators?.length}
-              </span>
-              <p className="mt-2 text-xl font-semibold">
-                Total No. of Fabricators
-              </p>
-            </NavLink>
-          </div>
+        {(userType === "manager" || userType=== "admin") ? (
+            <div className="bg-gray-200 shadow-md p-2 flex flex-col items-center rounded-lg text-center text-gray-800">
+              <NavLink to="all-fabricator">
+                <span className="text-4xl font-bold text-gray-900">
+                  {fabricators?.length}
+                </span>
+                <p className="mt-2 text-xl font-semibold">
+                  Total No. of Fabricators
+                </p>
+              </NavLink>
+            </div>
+          ) : null}
           <div className="bg-green-200 shadow-md p-2 flex flex-col items-center rounded-lg text-center text-gray-800">
             <NavLink to="all-project">
               <span className="text-4xl font-bold text-gray-900">
@@ -125,22 +127,26 @@ const Home = () => {
               <p className="mt-2 text-xl font-semibold">Total No. of Tasks</p>
             </NavLink>
           </div>
-          <div className="bg-green-200 shadow-md p-2 flex flex-col items-center rounded-lg text-center text-gray-800">
-            <NavLink to="all-user">
-              <span className="text-4xl font-bold text-gray-900">
-                {users?.length}
-              </span>
-              <p className="mt-2 text-xl font-semibold">Total No. of Users</p>
-            </NavLink>
-          </div>
-          <div className="bg-gray-200 shadow-md p-2 flex flex-col items-center rounded-lg text-center text-gray-800">
-            <NavLink to="manage-team">
-              <span className="text-4xl font-bold text-gray-900">
-                {teams?.length}
-              </span>
-              <p className="mt-2 text-xl font-semibold">Total No. of Team</p>
-            </NavLink>
-          </div>
+          {(userType === "manager" || userType=== "admin") ? (
+            <div className="bg-green-200 shadow-md p-2 flex flex-col items-center rounded-lg text-center text-gray-800">
+              <NavLink to="all-user">
+                <span className="text-4xl font-bold text-gray-900">
+                  {users?.length}
+                </span>
+                <p className="mt-2 text-xl font-semibold">Total No. of Users</p>
+              </NavLink>
+            </div>
+          ) : null}
+          {(userType === "manager" || userType=== "admin") ? (
+            <div className="bg-gray-200 shadow-md p-2 flex flex-col items-center rounded-lg text-center text-gray-800">
+              <NavLink to="manage-team">
+                <span className="text-4xl font-bold text-gray-900">
+                  {teams?.length}
+                </span>
+                <p className="mt-2 text-xl font-semibold">Total No. of Team</p>
+              </NavLink>
+            </div>
+          ) : null}
         </div>
 
         <div className="bg-gray-200 p-2 my-5 rounded-lg">

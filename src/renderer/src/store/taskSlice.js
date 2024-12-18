@@ -20,8 +20,10 @@ const taskSlice = createSlice({
       state.taskData = state.taskData.filter((project) => project.id !== action.payload)
     },
     updateTask: (state, action) => {
-      state.taskData = { ...state.taskData, ...action.payload }
-    }
+      state.taskData = state.taskData.map((task) =>
+        task.id === action.payload.id ? { ...task, ...action.payload } : task
+      )
+    },
   }
 })
 

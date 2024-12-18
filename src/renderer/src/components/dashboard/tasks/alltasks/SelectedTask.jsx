@@ -2,7 +2,7 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
-import { Button, Input, CustomSelect } from "../../../index";
+import { Button, Input, CustomSelect, EditTask } from "../../../index";
 import Service from "../../../../api/configAPI";
 import { useForm } from "react-hook-form";
 import {
@@ -16,6 +16,9 @@ const SelectedTask = ({ task, isOpen, onClose, setTasks }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [isAlert, setIsAlert] = useState(false);
   const [isSuccessOpen, setIsSuccessOpen] = useState(false);
+  const [selectedTask, setSelectedTask] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const username = sessionStorage.getItem("username");
   const userType = sessionStorage.getItem("userType");
   const {
@@ -30,14 +33,12 @@ const SelectedTask = ({ task, isOpen, onClose, setTasks }) => {
   if (!isOpen) return null;
 
   const handleEditClick = () => {
-    setIsEditing(true);
-    // Populate the form with current task data
-    setValue("name", task.name);
-    setValue("description", task.description);
-    setValue("due_date", task.due_date);
-    setValue("duration", task.duration);
-    setValue("status", task.status);
-    setValue("priority", task.priority);
+    setIsModalOpen(true);
+    setSelectedTask(task);
+  };
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+    setSelectedTask(null);
   };
 
   const durToHour = (params) => {
@@ -68,30 +69,6 @@ const SelectedTask = ({ task, isOpen, onClose, setTasks }) => {
       alert("Comment Added Successfully");
     } catch (error) {
       console.error("Error in adding comment: ", error);
-    }
-  };
-
-  const onSubmit = async (taskData) => {
-    try {
-      const updatedTask = {
-        name: taskData.name,
-        description: taskData.description,
-        due_date: taskData.due_date,
-        duration: taskData.duration,
-        status: taskData.status,
-        priority: taskData.priority,
-      };
-
-      console.log(updatedTask?.status);
-
-      const response = await Service.editTask(task?.id, updatedTask);
-      console.log(response);
-      setIsEditing(false);
-      setIsSuccessOpen(true);
-      // onClose()
-    } catch (error) {
-      console.log("Error in updating task: ", error);
-      throw error;
     }
   };
 
@@ -154,7 +131,7 @@ const SelectedTask = ({ task, isOpen, onClose, setTasks }) => {
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
       <div className="bg-white h-[92%] fixed top-[8%] overflow-x-auto p-5 rounded-lg shadow-lg w-screen ">
         <div className="text-3xl font-bold flex justify-between text-white bg-teal-200/50 shadow-xl px-5 py-1 mt-2 rounded-lg">
-          <h2 className="text-3xl font-bold text-gray-800">Project Details</h2>
+          <h2 className="text-3xl font-bold text-gray-800">Task Details</h2>
           <button
             className="text-xl font-bold bg-teal-500/50 hover:bg-teal-700 text-white px-5 rounded-lg"
             onClick={onClose}
@@ -166,119 +143,52 @@ const SelectedTask = ({ task, isOpen, onClose, setTasks }) => {
         <div className="h-fit overflow-y-auto p-4 rounded-lg">
           <div className="grid grid-cols-2 gap-5">
             <div className="bg-teal-100/70 rounded-lg p-5">
-                <div className="my-2">
-                  <strong className="text-gray-700">Task Name:</strong>
-                  <div>{task?.name}</div>
-                </div>
+              <div className="my-2">
+                <strong className="text-gray-700">Task Name:</strong>
+                <div>{task?.name}</div>
+              </div>
 
-                <div className="my-2">
-                  <strong className="text-gray-700">Description:</strong>
-                  {task?.description}
-                </div>
+              <div className="my-2">
+                <strong className="text-gray-700">Description:</strong>
+                {task?.description}
+              </div>
 
-                <div className="my-2">
-                  <strong className="text-gray-700">Current User:</strong>{" "}
-                  {task?.user?.name}
-                </div>
+              <div className="my-2">
+                <strong className="text-gray-700">Current User:</strong>{" "}
+                {task?.user?.name}
+              </div>
 
-                <div className="my-2">
-                  <strong className="text-gray-700">Due Date:</strong>
-                  {getTaskById?.toDateString()}
-                </div>
+              <div className="my-2">
+                <strong className="text-gray-700">Due Date:</strong>
+                {getTaskById?.toDateString()}
+              </div>
 
-                <div className="my-2">
-                  <strong className="text-gray-700">Duration:</strong>
-                  {durToHour(task?.duration)}
-                </div>
+              <div className="my-2">
+                <strong className="text-gray-700">Duration:</strong>
+                {durToHour(task?.duration)}
+              </div>
 
-                <div className="my-2">
-                  <strong className="text-gray-700">Status:</strong>
-                  {task?.status}
-                </div>
+              <div className="my-2">
+                <strong className="text-gray-700">Status:</strong>
+                {task?.status}
+              </div>
 
+              <div>
                 <div>
-                  <div>
-                    <strong className="text-gray-700">Priority:</strong>
-                    <span
-                      className={`text-sm font-semibold px-3 py-0.5 mx-2 rounded-full border ${color(
-                        task?.priority,
-                      )}`}
-                    >
-                      {setPriorityValue(task?.priority)}
-                    </span>
-                  </div>
+                  <strong className="text-gray-700">Priority:</strong>
+                  <span
+                    className={`text-sm font-semibold px-3 py-0.5 mx-2 rounded-full border ${color(
+                      task?.priority,
+                    )}`}
+                  >
+                    {setPriorityValue(task?.priority)}
+                  </span>
                 </div>
-
-                {userType !== "user" && (
-                  <div className=" w-full ">
-                    {isEditing ? (
-                      <div className="flex flex-row justify-between">
-                        <div className="flex">
-                          <Button type="submit">Save</Button>
-                          <Dialog
-                            open={isSuccessOpen}
-                            handler={setIsSuccessOpen}
-                          >
-                            <DialogHeader>Task Updated</DialogHeader>
-                            <DialogBody>
-                              The task was updated successfully!
-                            </DialogBody>
-                            <DialogFooter>
-                              <Button
-                                variant="gradient"
-                                color="green"
-                                onClick={closeSuccessModal}
-                              >
-                                Close
-                              </Button>
-                            </DialogFooter>
-                          </Dialog>
-                        </div>
-                        <div className="flex">
-                          <Button onClick={() => setIsEditing(false)}>
-                            Cancel
-                          </Button>
-                        </div>
-                        <div className="flex">
-                          <Button onClick={openModal}>Delete</Button>
-                          {isAlert && (
-                            <Dialog open={isAlert} handler={setIsAlert}>
-                              <DialogHeader>Confirm Deletion</DialogHeader>
-                              <DialogBody divider>
-                                Are you sure you want to delete this item? This
-                                action cannot be undone.
-                              </DialogBody>
-                              <DialogFooter>
-                                <Button
-                                  variant="text"
-                                  color="gray"
-                                  onClick={closeModal}
-                                  className="mr-2"
-                                >
-                                  No
-                                </Button>
-                                <Button
-                                  variant="gradient"
-                                  color="red"
-                                  onClick={handleDelete}
-                                >
-                                  Yes, Delete
-                                </Button>
-                              </DialogFooter>
-                            </Dialog>
-                          )}
-                        </div>
-                      </div>
-                    ) : (
-                      <Button onClick={handleSubmit(handleEditClick)}>
-                        Update
-                      </Button>
-                    )}
-                  </div>
-                )}
+              </div>
+              <Button onClick={handleEditClick}>Update</Button>
             </div>
 
-            <div className="flex flex-col justify-between pl-4 gap-y-5">
+            <div className="flex flex-col justify-between bg-gray-200 pl-4 gap-y-5">
               <div>
                 <div className="text-xl font-bold text-gray-900">
                   Project Detail:
@@ -309,7 +219,7 @@ const SelectedTask = ({ task, isOpen, onClose, setTasks }) => {
               </div>
             </div>
           </div>
-          <div className="shadow-xl rounded-lg w-full p-5 bg-gray-50">
+          <div className="shadow-xl rounded-lg w-full my-5 p-5 bg-teal-200/60">
             <div className="font-bold text-gray-800 mb-4">People Assigned:</div>
             <div className="flex items-center">
               <table className="min-w-full bg-white">
@@ -379,7 +289,7 @@ const SelectedTask = ({ task, isOpen, onClose, setTasks }) => {
               </table>
             </div>
           </div>
-          <div className="flex flex-col justify-center mx-auto  shadow-xl gap-5 rounded-lg  w-[90%] p-5 mt-5 bg-gray-50">
+          <div className="flex flex-col justify-center mx-auto  shadow-xl gap-5 rounded-lg  w-full p-5 bg-gray-200">
             <div className="font-bold text-gray-800 text-2xl">Comments:</div>
             <div className="flex flex-row w-full">
               <div className="w-full">
@@ -388,14 +298,15 @@ const SelectedTask = ({ task, isOpen, onClose, setTasks }) => {
                     <div className="w-full">
                       <Input
                         type="textarea"
+                        label="Add Comment"
                         className="w-3/4 h-20"
                         placeholder="Add Comment"
                         {...register("comment")}
                       />
                       <Input
                         label="Upload file/document"
+                        placeholder="Upload file"
                         name="file"
-                        className="appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-green-500 peer"
                         type="file"
                         id="file"
                         accept=".pdf, .zip, .doc, image/*"
@@ -459,6 +370,13 @@ const SelectedTask = ({ task, isOpen, onClose, setTasks }) => {
           </div>
         </div>
       </div>
+      {selectedTask && (
+        <EditTask
+          task={selectedTask}
+          isOpen={isModalOpen}
+          onClose={handleModalClose}
+        />
+      )}
     </div>
   );
 };

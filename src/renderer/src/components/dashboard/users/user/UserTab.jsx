@@ -7,8 +7,8 @@ const UserTab = () => {
   const users = useSelector((state) => state?.userData?.userData);
   console.log(users);
   // Count the number of active projects
- 
 
+  const userType = sessionStorage.getItem("userType");
   return (
     <div className="w-full h-[89vh] overflow-y-hidden mx-5">
       <div className="flex w-full justify-center items-center">
@@ -17,12 +17,14 @@ const UserTab = () => {
         </div>
       </div>
       <div className="h-[85vh] mt-2 overflow-y-auto">
-        <div className="my-5 grid md:grid-cols-4 grid-cols-2 gap-5">
-          <div className="flex flex-col justify-center items-center bg-white/50 rounded-lg p-3 shadow-lg">
-            <div className="font-bold text-xl text-gray-800">All User</div>
-            <div className="text-3xl font-bold">{users?.length}</div>
+        {userType === "admin" && "manager" ? (
+          <div className="my-5 grid md:grid-cols-4 grid-cols-2 gap-5">
+            <div className="flex flex-col justify-center items-center bg-white/50 rounded-lg p-3 shadow-lg">
+              <div className="font-bold text-xl text-gray-800">All User</div>
+              <div className="text-3xl font-bold">{users?.length}</div>
+            </div>
           </div>
-        </div>
+        ) : null}
 
         {/* Conditional rendering of menu */}
         <div className={`rounded-lg bg-white md:text-lg text-sm`}>
@@ -41,30 +43,34 @@ const UserTab = () => {
                     All User
                   </NavLink>
                 </li>
-                <li className="px-2">
-                  <NavLink
-                    to="user-task-record"
-                    className={({ isActive }) =>
-                      isActive
-                        ? "bg-teal-300 drop-shadow-lg flex px-5 py-2 rounded-lg font-semibold"
-                        : "hover:bg-teal-200 rounded-lg flex px-5 py-2 hover:text-white"
-                    }
-                  >
-                    User&apos;s Task Record
-                  </NavLink>
-                </li>
-                <li className="px-2">
-                  <NavLink
-                    to="add-user"
-                    className={({ isActive }) =>
-                      isActive
-                        ? "bg-teal-300 drop-shadow-lg flex px-5 py-2 rounded-lg font-semibold"
-                        : "hover:bg-teal-200 rounded-lg flex px-5 py-2 hover:text-white"
-                    }
-                  >
-                    Add User
-                  </NavLink>
-                </li>
+                {(userType === "manager" || userType=== "admin") ? (
+                  <li className="px-2">
+                    <NavLink
+                      to="user-task-record"
+                      className={({ isActive }) =>
+                        isActive
+                          ? "bg-teal-300 drop-shadow-lg flex px-5 py-2 rounded-lg font-semibold"
+                          : "hover:bg-teal-200 rounded-lg flex px-5 py-2 hover:text-white"
+                      }
+                    >
+                      User&apos;s Task Record
+                    </NavLink>
+                  </li>
+                ) : null}
+                {userType === "admin" ? (
+                  <li className="px-2">
+                    <NavLink
+                      to="add-user"
+                      className={({ isActive }) =>
+                        isActive
+                          ? "bg-teal-300 drop-shadow-lg flex px-5 py-2 rounded-lg font-semibold"
+                          : "hover:bg-teal-200 rounded-lg flex px-5 py-2 hover:text-white"
+                      }
+                    >
+                      Add User
+                    </NavLink>
+                  </li>
+                ) : null}
 
                 <li className="px-2">
                   <NavLink
@@ -78,19 +84,20 @@ const UserTab = () => {
                     Calendar
                   </NavLink>
                 </li>
-
-                <li className="px-2">
-                  <NavLink
-                    to="gaant-chart"
-                    className={({ isActive }) =>
-                      isActive
-                        ? "bg-teal-300 drop-shadow-lg flex px-5 py-2 rounded-lg font-semibold"
-                        : "hover:bg-teal-200 rounded-lg flex px-5 py-2 hover:text-white"
-                    }
-                  >
-                    Gaant Chart
-                  </NavLink>
-                </li>
+                {(userType === "manager" || userType=== "admin") ? (
+                  <li className="px-2">
+                    <NavLink
+                      to="gaant-chart"
+                      className={({ isActive }) =>
+                        isActive
+                          ? "bg-teal-300 drop-shadow-lg flex px-5 py-2 rounded-lg font-semibold"
+                          : "hover:bg-teal-200 rounded-lg flex px-5 py-2 hover:text-white"
+                      }
+                    >
+                      Gaant Chart
+                    </NavLink>
+                  </li>
+                ) : null}
               </ul>
             </nav>
           </div>
