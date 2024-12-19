@@ -820,19 +820,16 @@ class Service {
   static async addAssigne(id, assigne) {
     const token = sessionStorage.getItem('token')
     try {
-      const response = await fetch(`${BASE_URL}api/task/tasks/${id}/add_assignes/`, {
-        method: 'POST',
+      const response = await axios.post(`${BASE_URL}api/task/tasks/${id}/add_assignes/`, {
+        assigned_to: assigne
+      }, {
         headers: {
           Authorization: `Token ${token}`,
           'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          assigned_to: assigne
-        })
+        }
       })
-      const data = await response.json()
-      console.log('Assignee Added: ', data)
-      return data
+      console.log('Assignee Added: ', response.data)
+      return response.data
     } catch (error) {
       console.log('Error in Adding Assignee: ', error)
       throw error

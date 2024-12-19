@@ -183,8 +183,8 @@ const UsersTaskRecord = () => {
             {record?.map((rec, index) => (
               <tr
                 key={rec?.id}
-                className={
-                  index % 2 === 0 ? "hover:bg-blue-100 border" : "bg-gray-100"
+                className={`hover:bg-teal-100  cursor-pointer
+                  ${index % 2 === 0 ? " border" : "bg-gray-100"}`
                 }
                 onClick={() => handleRowClick(rec)}
               >

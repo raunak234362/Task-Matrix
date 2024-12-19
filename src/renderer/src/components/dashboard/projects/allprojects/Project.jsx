@@ -107,126 +107,133 @@ const Project = ({ projectId, isOpen, onClose, setProject }) => {
             Close
           </button>
         </div>
+        <div className=" h-[80vh] overflow-y-auto">
+          <div className="bg-blue-gray-200/50 rounded-lg my-5">
+            {/* Conditionally render Gantt Chart */}
+            {loading ? (
+              <div className="text-center">Loading Gantt Chart...</div>
+            ) : (
+              <GhantChart taskData={taskDetail} />
+            )}
+          </div>
 
-        <div className="bg-blue-gray-200/50 rounded-lg my-5">
-          {/* Conditionally render Gantt Chart */}
-          {loading ? (
-            <div className="text-center">Loading Gantt Chart...</div>
-          ) : (
-            <GhantChart taskData={taskDetail} />
-          )}
-        </div>
+          <div className="bg-gray-200/50 rounded-lg p-5 my-5">
+            Project Completion Percentage
+          </div>
 
-        <div className="bg-gray-200/50 rounded-lg p-5 my-5">
-          Project Completion Percentage
-        </div>
-
-        <div className="h-fit overflow-y-auto rounded-lg">
-          <div className="grid grid-cols-2 gap-5">
-            <div className="bg-teal-100/70 rounded-lg p-5">
-              <div className="my-3">
-                <strong className="text-gray-700">Project Name:</strong>
-                <div>{project?.name}</div>
-              </div>
-              <div className="my-3">
-                <strong className="text-gray-700">Description: </strong>
-                {project?.description}
-              </div>
-              <div className="my-3">
-                <strong className="text-gray-700">Start Date: </strong>
-                {startDate?.toDateString()}
-              </div>
-              <div className="my-3">
-                <strong className="text-gray-700">Approval Date: </strong>
-                {endDate?.toDateString()}
-              </div>
-              <p className="my-3">
-                <strong className="text-gray-700">Tools:</strong>{" "}
-                {project?.tool}
-              </p>
-              <p className="my-3">
-                <strong className="text-gray-700">Connection Design:</strong>{" "}
-                {project?.connectionDesign ? "REQUIRED" : "Not Required"}
-              </p>
-              <p className="my-3">
-                <strong className="text-gray-700">Misc Design:</strong>{" "}
-                {project?.miscDesign ? "REQUIRED" : "Not Required"}
-              </p>
-              <p className="my-3">
-                <strong className="text-gray-700">Customer:</strong>{" "}
-                {project?.customer ? "REQUIRED" : "Not Required"}
-              </p>
-              <div>
-                <strong className="text-gray-700">Team: </strong>
-                {teamData?.name}
-              </div>
-              <div className="my-3">
-                <strong className="text-gray-700">Status: </strong>
-                {project?.status}
-              </div>
-              <div>
-                <strong className="text-gray-700">Stage: </strong>
-                {project?.stage}
-              </div>
-              {userType !== "user" && (
-                <div>
-                  <Button
-                    className="bg-teal-500/50 font-bold"
-                    onClick={handleEditClick}
-                  >
-                    Update
-                  </Button>
+          <div className="h-fit overflow-y-auto rounded-lg">
+            <div className="grid grid-cols-2 gap-5">
+              <div className="bg-teal-100/70 rounded-lg p-5">
+                <div className="my-3">
+                  <strong className="text-gray-700">Project Name:</strong>
+                  <div>{project?.name}</div>
                 </div>
-              )}
-            </div>
-
-            <div className="">
-              <div className="bg-teal-100/50 p-5 h-fit rounded-lg my-3">
-                <div className="text-xl font-bold text-gray-800">
-                  Fabricator Detail:
+                <div className="my-3">
+                  <strong className="text-gray-700">Description: </strong>
+                  {project?.description}
+                </div>
+                <div className="my-3">
+                  <strong className="text-gray-700">Start Date: </strong>
+                  {startDate?.toDateString()}
+                </div>
+                <div className="my-3">
+                  <strong className="text-gray-700">Approval Date: </strong>
+                  {endDate?.toDateString()}
+                </div>
+                <p className="my-3">
+                  <strong className="text-gray-700">Tools:</strong>{" "}
+                  {project?.tool}
+                </p>
+                <p className="my-3">
+                  <strong className="text-gray-700">Connection Design:</strong>{" "}
+                  {project?.connectionDesign ? "REQUIRED" : "Not Required"}
+                </p>
+                <p className="my-3">
+                  <strong className="text-gray-700">Misc Design:</strong>{" "}
+                  {project?.miscDesign ? "REQUIRED" : "Not Required"}
+                </p>
+                <p className="my-3">
+                  <strong className="text-gray-700">Customer:</strong>{" "}
+                  {project?.customer ? "REQUIRED" : "Not Required"}
+                </p>
+                <div>
+                  <strong className="text-gray-700">Team: </strong>
+                  {teamData?.name}
+                </div>
+                <div className="my-3">
+                  <strong className="text-gray-700">Status: </strong>
+                  {project?.status}
                 </div>
                 <div>
-                  <div className="my-3">
-                    <strong className="text-gray-700">Fabricator Name:</strong>
-                    <div>{project?.fabricator?.name}</div>
+                  <strong className="text-gray-700">Stage: </strong>
+                  {project?.stage}
+                </div>
+                {userType !== "user" && (
+                  <div>
+                    <Button
+                      className="bg-teal-500/50 font-bold"
+                      onClick={handleEditClick}
+                    >
+                      Update
+                    </Button>
                   </div>
-                  <div className="my-3">
-                    <strong className="text-gray-700">Standard Design:</strong>
-                    <div>
-                      <a
-                        href={`${BASE_URL}${project?.fabricator?.design}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-500 cursor-pointer hover:text-blue-700"
-                      >
-                        View standard
-                      </a>
+                )}
+              </div>
+
+              <div className="">
+                <div className="bg-teal-100/50 p-5 h-fit rounded-lg my-3">
+                  <div className="text-xl font-bold text-gray-800">
+                    Fabricator Detail:
+                  </div>
+                  <div>
+                    <div className="my-3">
+                      <strong className="text-gray-700">
+                        Fabricator Name:
+                      </strong>
+                      <div>{project?.fabricator?.name}</div>
+                    </div>
+                    <div className="my-3">
+                      <strong className="text-gray-700">
+                        Standard Design:
+                      </strong>
+                      <div>
+                        <a
+                          href={`${BASE_URL}${project?.fabricator?.design}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-500 cursor-pointer hover:text-blue-700"
+                        >
+                          View standard
+                        </a>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-              <div className="bg-teal-100/60 p-5 h-[40vh] overflow-y-auto rounded-lg my-1">
-                <div className="text-xl font-bold text-gray-800">
-                  Team Members:
-                </div>
-                <h3 className="text-sm font-bold text-gray-800">Manager</h3>
-                <li>{project?.manager?.name}</li>
-
-                <h3 className="text-sm font-bold text-gray-800">Leader</h3>
-                <li>{project?.leader?.name}</li>
-
-                {Object.keys(members).map((role) => (
-                  <div key={role}>
-                    <h3 className="text-sm font-bold text-gray-800">{role}</h3>
-                    <ol className="list-decimal list-inside ml-4">
-                      {members[role]?.map((member) => (
-                        <li key={member?.id} className="mt-1">
-                          {member?.employee?.name}
-                        </li>
-                      ))}
-                    </ol>
+                <div className="bg-teal-100/60 p-5 h-[40vh] overflow-y-auto rounded-lg my-1">
+                  <div className="text-xl font-bold text-gray-800">
+                    Team Members:
                   </div>
-                ))}
+                  <h3 className="text-sm font-bold text-gray-800">Manager</h3>
+                  <li>{project?.manager?.name}</li>
+
+                  <h3 className="text-sm font-bold text-gray-800">Leader</h3>
+                  <li>{project?.leader?.name}</li>
+
+                  {Object.keys(members).map((role) => (
+                    <div key={role}>
+                      <h3 className="text-sm font-bold text-gray-800">
+                        {role}
+                      </h3>
+                      <ol className="list-decimal list-inside ml-4">
+                        {members[role]?.map((member) => (
+                          <li key={member?.id} className="mt-1">
+                            {member?.employee?.name}
+                          </li>
+                        ))}
+                      </ol>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </div>

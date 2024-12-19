@@ -8,16 +8,17 @@ import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { updateTask } from "../../../../store/taskSlice";
 
-const SelectedTask = ({ taskDetail,taskID, isOpen, onClose, setTasks }) => {
-  const taskData =useSelector((state) => state?.taskData?.taskData.find((task) => task.id === taskID));
-  
+const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
+  const taskData = useSelector((state) =>
+    state?.taskData?.taskData.find((task) => task.id === taskID),
+  );
+
   const [selectedTask, setSelectedTask] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const username = sessionStorage.getItem("username");
   const userType = sessionStorage.getItem("userType");
 
-  
   const {
     register,
     handleSubmit,
@@ -34,7 +35,6 @@ const SelectedTask = ({ taskDetail,taskID, isOpen, onClose, setTasks }) => {
     setSelectedTask(taskDetail);
   };
   const handleModalClose = () => {
-    
     setIsModalOpen(false);
     setSelectedTask(null);
   };
@@ -116,7 +116,7 @@ const SelectedTask = ({ taskDetail,taskID, isOpen, onClose, setTasks }) => {
           </button>
         </div>
 
-        <div className="h-fit overflow-y-auto p-4 rounded-lg">
+        <div className="h-[80vh] overflow-y-auto p-4 rounded-lg">
           <div className="grid grid-cols-2 gap-5">
             <div className="bg-teal-100/70 rounded-lg p-5">
               <div className="my-2">
@@ -170,7 +170,7 @@ const SelectedTask = ({ taskDetail,taskID, isOpen, onClose, setTasks }) => {
 
             <div className="flex flex-col justify-between bg-gray-200 pl-4 gap-y-5">
               <div>
-                <div className="text-xl font-bold text-gray-900">
+                <div className="text-xl font-bold my-5 text-gray-900">
                   Project Detail:
                 </div>
                 <hr className="m-2" />
@@ -269,12 +269,12 @@ const SelectedTask = ({ taskDetail,taskID, isOpen, onClose, setTasks }) => {
               </table>
             </div>
           </div>
-          <div className="flex flex-col justify-center mx-auto  shadow-xl gap-5 rounded-lg  w-full p-5 bg-gray-200">
+          <div className="flex flex-col  shadow-xl gap-5 rounded-lg w-full p-5 mt-5 bg-teal-100">
             <div className="font-bold text-gray-800 text-2xl">Comments:</div>
             <div className="flex flex-row w-full">
               <div className="w-full">
                 <form onSubmit={handleSubmit(addComment)}>
-                  <div className="flex flex-row w-full">
+                  <div className="flex flex-row w-full bg-gray-200/60 rounded-lg p-4">
                     <div className="w-full">
                       <Input
                         type="textarea"
@@ -305,7 +305,7 @@ const SelectedTask = ({ taskDetail,taskID, isOpen, onClose, setTasks }) => {
             </div>
 
             {taskDetail?.comments?.length > 0 && (
-              <div className=" shadow-xl bg-slate-200/50 rounded-lg p-5">
+              <div className=" shadow-xl bg-gray-100/70 rounded-lg p-5">
                 <div className="space-y-4">
                   {taskDetail?.comments?.map((comment, index) => (
                     <div
