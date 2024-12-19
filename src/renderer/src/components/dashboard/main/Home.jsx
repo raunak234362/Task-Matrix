@@ -99,7 +99,7 @@ const Home = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 my-6 px-2">
         {(userType === "manager" || userType=== "admin") ? (
             <div className="bg-gray-200 shadow-md p-2 flex flex-col items-center rounded-lg text-center text-gray-800">
-              <NavLink to="all-fabricator">
+              <NavLink to="/admin/fabricator">
                 <span className="text-4xl font-bold text-gray-900">
                   {fabricators?.length}
                 </span>
@@ -110,7 +110,7 @@ const Home = () => {
             </div>
           ) : null}
           <div className="bg-green-200 shadow-md p-2 flex flex-col items-center rounded-lg text-center text-gray-800">
-            <NavLink to="all-project">
+            <NavLink to="/admin/project">
               <span className="text-4xl font-bold text-gray-900">
                 {projects?.length}
               </span>
@@ -120,7 +120,7 @@ const Home = () => {
             </NavLink>
           </div>
           <div className="bg-gray-200 shadow-md p-2 flex flex-col items-center rounded-lg text-center text-gray-800">
-            <NavLink to="all-task">
+            <NavLink to="/admin/task">
               <span className="text-4xl font-bold text-gray-900">
                 {tasks?.length}
               </span>
@@ -129,7 +129,7 @@ const Home = () => {
           </div>
           {(userType === "manager" || userType=== "admin") ? (
             <div className="bg-green-200 shadow-md p-2 flex flex-col items-center rounded-lg text-center text-gray-800">
-              <NavLink to="all-user">
+              <NavLink to="/admin/user">
                 <span className="text-4xl font-bold text-gray-900">
                   {users?.length}
                 </span>
@@ -139,7 +139,7 @@ const Home = () => {
           ) : null}
           {(userType === "manager" || userType=== "admin") ? (
             <div className="bg-gray-200 shadow-md p-2 flex flex-col items-center rounded-lg text-center text-gray-800">
-              <NavLink to="manage-team">
+              <NavLink to="/admin/project/manage-team">
                 <span className="text-4xl font-bold text-gray-900">
                   {teams?.length}
                 </span>
