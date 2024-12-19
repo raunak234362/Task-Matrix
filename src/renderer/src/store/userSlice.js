@@ -1,13 +1,9 @@
+/* eslint-disable prettier/prettier */
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  userData: {
-    name: '',
-    userName: '',
-    email: '',
-    password: '',
-    role:''
-  },
+  userData: {},
+  staffData:[],
   auth: {
     status: false,
   },
@@ -32,14 +28,7 @@ const userSlice = createSlice({
     updateUserData: (state, action) => {
       state.userData = { ...state.userData, ...action.payload };
     },
-    addTask: (state, action) => {
-      state.userData.tasks.push(action.payload);
-    },
-    removeTask: (state, action) => {
-      state.userData.tasks = state.userData.tasks.filter(
-        (task) => task.id !== action.payload
-      );
-    },
+ 
     login: (state,action) => {
       state.userData.token =action.payload.token;
       state.userData.userType =action.payload.userType;
@@ -55,6 +44,18 @@ const userSlice = createSlice({
       sessionStorage.removeItem('userType');
       state.auth.status = false;
     },
+    addStaff:(state,action)=>{
+      state.staffData.push(action.payload)
+    },
+    showStaff:(state,action)=>{
+      state.staffData = action.payload
+    },
+    deleteStaff: (state, action) => {
+      state.projectData = state.projectData.filter((project) => project.id !== action.payload)
+    },
+    updateStaffData: (state, action) => {
+      state.projectData = { ...state.projectData, ...action.payload }
+    }
   },
 });
 
@@ -62,8 +63,10 @@ export const {
   setUserData,
   clearUserData,
   updateUserData,
-  addTask,
-  removeTask,
+  addStaff,
+  showStaff,
+  deleteStaff,
+  updateStaffData,
   login,
   logout,
 } = userSlice.actions;

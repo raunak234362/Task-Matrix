@@ -1,53 +1,50 @@
+/* eslint-disable prettier/prettier */
 // projectSlice.js
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
-    taskData: {
-        name: "",
-        description: "",
-        startDate: "",
-        endDate: "",
-        status: "",
-        stage: "",
-        manager: "",
-        team:"",
-        fabricator:"",
-        project:""
-    },
-};
+  taskData: [],
+  commentData: [],
+  taskById: {},
+}
 
 const taskSlice = createSlice({
-    name: "task",
-    initialState,
-    reducers: {
-        setTaskData: (state, action) => {
-            state.taskData = { ...action.payload };
-        },
-        
-        clearTaskData: (state) => {
-            state.taskData = {
-                name: "",
-                description: "",
-                startDate: "",
-                endDate: "",
-                status: "",
-                stage: "",
-                manager: "",
-                team:"",
-                fabricator:"",
-                project:""
-            };
-        },
-        updateTaskData: (state, action) => {
-            state.taskData = { ...state.taskData, ...action.payload };
-        },
+  name: 'task',
+  initialState,
+  reducers: {
+    addTask: (state, action) => {
+      state.taskData.push(action.payload)
     },
-});
+    showTask: (state, action) => {
+      state.taskData = action.payload
+    },
+    deleteTask: (state, action) => {
+      state.taskData = state.taskData.filter((project) => project.id !== action.payload)
+    },
+    updateTask: (state, action) => {
+      state.taskData = state.taskData.map((task) =>
+        task.id === action.payload.id ? { ...task, ...action.payload } : task
+      )
+    },
+    addCommentToTask: (state, action) => {
+      const { taskId, comment } = action.payload;
+      const task = state.taskData.find((task) => task.id === taskId);
+      if (task) {
+        if (!task.comments) {
+          task.comments = []; // Dynamically add 'comments' field if it doesn't exist
+        }
+        task.comments.push(comment); // Add the comment to the task's comments array
+      }
+    },
+    showTaskByID: (state, action) => {
+      state.taskById = action.payload
+    },
+    deleteTaskByID: (state, action) => {
+      state.taskById = state.taskById.filter((task) => task.id !== action.payload)
+    }
+  }
+})
 
-export const {
-    setTaskData,
-    clearTaskData,
-    updateTaskData
-} = taskSlice.actions;
+export const { addTask, showTask, deleteTask, updateTask, addCommentToTask, showTaskByID,deleteTaskByID } = taskSlice.actions
 
-export default taskSlice.reducer;
+export default taskSlice.reducer

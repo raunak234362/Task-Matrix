@@ -3,10 +3,10 @@
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
-import { setTeamData } from "../../../../store/teamSlice";
 import { Input, Button, CustomSelect, Header } from "../../../index";
 import Service from "../../../../api/configAPI";
 import { Dialog, DialogHeader, DialogBody, DialogFooter } from '@material-tailwind/react'
+import { addTeam } from "../../../../store/projectSlice";
 
 const AddTeam = () => {
   const [managerOptions, setManagerOptions] = useState([]);
@@ -60,7 +60,7 @@ const AddTeam = () => {
       const data = await Service.addTeam({
         ...teamData,
       });
-      dispatch(setTeamData(data));
+      dispatch(addTeam(data));
       console.log("Document added:", data);
       setIsSuccessOpen(true)
       // alert("Successfully added new Team", teamData?.teamName);
@@ -70,8 +70,7 @@ const AddTeam = () => {
   };
 
   return (
-    <div>
-      <Header title={"Add Team"}/>
+    <div className="h-[70vh]">
       <form onSubmit={handleSubmit(onSubmit)} className="w-full p-5">
         <div className="p-5 flex flex-col justify-between gap-5">
           <div className="flex rounded-lg flex-col shadow-lg shadow-black/15 p-8">

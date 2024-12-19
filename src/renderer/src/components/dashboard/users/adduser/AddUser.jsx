@@ -27,9 +27,6 @@ const AddUser = () => {
 
   return (
     <div>
-      <div>
-        <Header title={'Add User'} />
-      </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="w-full p-5">
         <div className="flex flex-col justify-between gap-5 w-full">

@@ -1,6 +1,6 @@
 import React from "react";
 
-const Button = ({ children, type = "button", className = " bg-gray-500 text-white text-xl", ...props }) => {
+const Button = ({ children, type = "button", className = " bg-teal-500/50 text-white text-xl", ...props }) => {
   return (
     <button
       type={type}

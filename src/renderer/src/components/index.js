@@ -1,56 +1,76 @@
 /* eslint-disable prettier/prettier */
 import Login from './login/Login'
 
+//Fields  
 import Button from './fields/Button'
 import Input from './fields/Input'
 import CustomSelect from './fields/Select'
 import MultiSelectCheckbox from './fields/MultiSelectCheckbox'
+import Toggle from './fields/Toggle'
 
-import Dashboard from './dashboard/Dashboard'
+//Dashboard
 import Sidebar from './dashboard/Sidebar'
 import Home from './dashboard/main/Home'
 import Layout from './Layout'
+import Header from './dashboard/Header'
 
+//Users
 import AddUser from './dashboard//users/adduser/AddUser'
 import AllUser from './dashboard/users/alluser/AllUser';
 import MyProfile from './dashboard/users/myprofile/MyProfile';
 import UsersTaskRecord from './dashboard/users/taskrecord/UsersTaskRecord'
-
-import MyTask from './dashboard/tasks/mytask/MyTask';
-import AddFabricator from './dashboard/fabricators/addfabricator/AddFabricator'
-import AddProject from './dashboard/projects/addproject/AddProject'
-import AddTask from './dashboard/tasks/addtask/AddTask'
 import Calendar from './dashboard/users/calendar/Calendar'
-import ManageTeam from './dashboard/projects/manageteam/ManageTeam'
-import AddTeam from './dashboard/projects/addteams/AddTeam'
 import TaskRecord from './dashboard/users/taskrecord/TaskRecord'
-import AllFabricators from './dashboard/fabricators/allfabricators/AllFabricators';
-import Allprojects from './dashboard/projects/allprojects/Allprojects';
-import Project from './dashboard/projects/allprojects/Project'
-import EditProject from './dashboard/projects/allprojects/EditProject'
-import ProjectPie from './dashboard/charts/ProjectPie'
-import TeamView from './dashboard/projects/manageteam/TeamView'
+import AddCSV from './dashboard/users/adduser/AddCSV'
+import GaantChart from './dashboard/users/ghant/GaantChart'
+import UserTab from './dashboard/users/user/UserTab.jsx'
+
+//Tasks
+import MyTask from './dashboard/tasks/mytask/MyTask';
+import AddTask from './dashboard/tasks/addtask/AddTask'
 import Task from './dashboard/tasks/Task'
 import SelectedTask from './dashboard/tasks/alltasks/SelectedTask'
 import AllTask from './dashboard/tasks/alltasks/AllTask'
 import ApproveAssignee from './dashboard/tasks/approveassignee/ApproveAssignee'
 import TaskSelected from './dashboard/tasks/approveassignee/TaskSelected'
 import Approve from './dashboard/tasks/approveassignee/Approve'
-import Header from './dashboard/Header'
-import ManageFabricator from './dashboard/fabricators/allfabricators/ManageFabricator'
-import Toggle from './fields/Toggle'
+import TaskTab from './dashboard/tasks/task/TaskTab.jsx'
+import EditTask from './dashboard/tasks/editTask/EditTask.jsx'
+
+//Projects
+import AddProject from './dashboard/projects/addproject/AddProject'
+import ManageTeam from './dashboard/projects/manageteam/ManageTeam'
+import AddTeam from './dashboard/projects/addteams/AddTeam'
+import Allprojects from './dashboard/projects/allprojects/Allprojects';
+import Project from './dashboard/projects/allprojects/Project'
+import EditProject from './dashboard/projects/allprojects/EditProject'
+import TeamView from './dashboard/projects/manageteam/TeamView'
 import BarView from './dashboard/projects/allprojects/BarView'
 import BarViews from './dashboard/projects/allprojects/BarViews'
 import FabricatorCharts from './dashboard/projects/allprojects/FabricatorChart'
-import AddCSV from './dashboard/users/adduser/AddCSV'
+import ProjectStats from './dashboard/projects/stats/ProjectStats.jsx'
+import ProjectTab from './dashboard/projects/project/ProjectTab.jsx'
+
+//Fabricators
+import Fabricator from './dashboard/fabricators/fabricator/Fabricator'
+import AddFabricator from './dashboard/fabricators/addfabricator/AddFabricator'
+import AllFabricators from './dashboard/fabricators/allfabricators/AllFabricators';
+import ManageFabricator from './dashboard/fabricators/allfabricators/ManageFabricator'
+
+
+//Charts
+import ProjectPie from './dashboard/charts/ProjectPie'
 import GhantChart from './dashboard/charts/GhantChart'
-import GaantChart from './dashboard/users/ghant/GaantChart'
 import GaantChartt from './dashboard/charts/GaantChartt'
+
 
 export {
   AllUser,
   Project,
+  ProjectStats,
+  ProjectTab,
   BarViews,
+  UserTab,
   Toggle,
   AddCSV,
   BarView,
@@ -66,6 +86,7 @@ export {
   Task,
   Approve,
   AllTask,
+  TaskTab,
   SelectedTask,
   TaskSelected,
   ApproveAssignee,
@@ -77,6 +98,7 @@ export {
   MultiSelectCheckbox,
   AddTeam,
   MyTask,
+  EditTask,
   ManageTeam,
   TaskRecord,
   Button,
@@ -84,9 +106,9 @@ export {
   AddTask,
   AddUser,
   AddFabricator,
+  Fabricator,
   Calendar,
   Layout,
-  Dashboard,
   Sidebar,
   Home,
   AllFabricators,

@@ -59,7 +59,7 @@ const FabricatorCharts = ({ segregateProject }) => {
     };
 
     // Sort fabricators by name
-    const fabricators = Object.keys(segregateProject).sort((a, b) => a.localeCompare(b));
+    const fabricators = Object?.keys(segregateProject)?.sort((a, b) => a.localeCompare(b));
 
     return (
         <div className="w-full mx-auto">

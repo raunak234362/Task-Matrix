@@ -140,12 +140,11 @@ switch (value) {
 }
 
 return (
-<div>
-    <Header title={"Approve Assignee"} />
+<div className="h-[70vh]">
     <div className="shadow-xl rounded-lg w-full p-5 bg-gray-50">
     <div className="h-[75vh] overflow-y-auto">
     <table className="w-full table-auto border-collapse text-center rounded-xl">
-    <thead className="sticky top-0 z-10 bg-gray-200">
+    <thead className="sticky top-0 bg-gray-200">
             <tr>
             <th className="py-3 px-6 text-left">S.No</th>
             <th className="py-3 px-6 text-left">Task</th>

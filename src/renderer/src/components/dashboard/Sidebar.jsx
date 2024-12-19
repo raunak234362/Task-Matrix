@@ -1,636 +1,149 @@
-/* eslint-disable react/prop-types */
-/* eslint-disable no-unused-vars */
 /* eslint-disable prettier/prettier */
-import { Link } from 'react-router-dom'
-import { useState } from 'react'
-import { IoMdPeople, IoMdCheckmarkCircle } from 'react-icons/io'
-import { MdDashboard } from 'react-icons/md'
-import { BsSuitcaseLgFill } from 'react-icons/bs'
-import { FaLayerGroup } from 'react-icons/fa'
+/* eslint-disable no-unused-vars */
+import { NavLink, useNavigate } from "react-router-dom";
+import LOGO from "../../assets/logo.png";
+import { useDispatch, useSelector } from "react-redux";
+import Service from "../../api/configAPI";
+import { useEffect, useState } from "react";
+import { Button } from "../index";
+// import { logout as logoutAction } from "../../../store/userSlice";
+// import AuthService from "../../../frappeConfig/AuthService";
+const Sidebar = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-const Sidebar = ({ isSubMenuOpen, setIsSubMenuOpen }) => {
-  const [activeMenu, setActiveMenu] = useState('')
-  const [activeSubMenu, setActiveSubMenu] = useState('')
-  const userType = sessionStorage.getItem('userType')
+  const token = sessionStorage.getItem("token");
+  const [currentUser, setCurrentUser] = useState();
 
-  const handleClick = (menu) => {
-    const newActiveMenu = activeMenu === menu ? '' : menu
-    setActiveMenu(newActiveMenu)
-    setIsSubMenuOpen(newActiveMenu !== '')
-  }
+  const fetchUserData = async () => {
+    const userData = await Service.getCurrentUser(token);
+    setCurrentUser(userData[0]);
+  };
 
-  const handleSubMenuClick = (subMenu) => {
-    setActiveSubMenu(subMenu)
-  }
+  const fetchLogout = async () => {
+    try {
+      // const response = await AuthService.logout(token);
+      sessionStorage.removeItem("userType");
+      sessionStorage.removeItem("token");
+      // dispatch(logoutAction());
+      navigate("/");
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
+  // Sidebar.js
+  // const fetchLogout = async () => {
+  //   try {
 
+  //     const response = await AuthService.logout(token);
+  //     dispatch(logoutAction());
+  //     navigate("/");
+  //   } catch (error) {
+  //     console.error("Logout failed:", error);
+  //   }
+  // };
+
+  useEffect(() => {
+    fetchUserData();
+  }, []);
+
+  const userType = sessionStorage.getItem("userType");
   return (
-    <div className="bg-green-300 text-white left-0 top-0 fixed w-16 h-screen flex flex-col">
-      <nav className="w-full flex flex-wrap px-auto justify-center">
-        <ul className="flex flex-col">
-          {userType !== 'user' && (
-            <li>
-              <button
-                onClick={() => handleClick('dashboard')}
-                className={`flex items-center w-full py-5 px-2 relative ${
-                  activeMenu === 'dashboard' ? 'bg-green-400' : ''
-                }`}
-              >
-                <MdDashboard className="text-3xl" />
-                {activeMenu === 'dashboard' && (
-                  <div className="absolute left-0 top-0 h-full w-1 bg-green-200"></div>
-                )}
-              </button>
-              {activeMenu === 'dashboard' && (
-                <div className="absolute top-0 w-60 h-screen bg-green-400 ml-12">
-                  <ul className="pl-6 flex flex-col gap-5 py-5">
-                    <li>
-                      <Link
-                        to="/dashboard"
-                        onClick={() => handleSubMenuClick('dashboard')}
-                        className={`block py-2 ${
-                          activeSubMenu === 'dashboard'
-                            ? 'bg-white text-gray-900 pl-5 font-bold'
-                            : ''
-                        }`}
-                      >
-                        Dashboard
-                      </Link>
-                    </li>
-                  </ul>
-                </div>
-              )}
-            </li>
-          )}
+    <div className="flex flex-col justify-between md:h-[88vh] h-[88vh] w-64 bg-white/70 md:border-4 text-black md:rounded-xl rounded-lg">
+      <nav className="p-5">
+        <ul className="flex flex-col gap-5">
 
           <li>
-            <button
-              onClick={() => handleClick('user')}
-              className={`flex items-center w-full py-5 px-2 relative ${
-                activeMenu === 'user' ? 'bg-green-400' : ''
-              }`}
+            <NavLink
+              to="home"
+              className={({ isActive }) =>
+                isActive
+                  ? "flex justify-center items-center text-white bg-teal-400 rounded-md w-full  delay-150"
+                  : "text-black hover:text-white hover:flex hover:justify-center hover:items-center hover:bg-teal-200  rounded-md"
+              }
             >
-              <IoMdPeople className="text-4xl" />
-              {activeMenu === 'user' && (
-                <div className="absolute left-0 top-0 h-full w-1 bg-white"></div>
-              )}
-            </button>
-            {activeMenu === 'user' && (
-              <div className="absolute top-0 w-60 h-screen bg-green-400 ml-12">
-                {userType === 'admin' && (
-                  <ul className="pl-6 flex flex-col gap-5 py-5">
-                    <li>
-                      <Link
-                        to="/dashboard/my-profile"
-                        onClick={() => handleSubMenuClick('my-profile')}
-                        className={`block py-2 ${
-                          activeSubMenu === 'my-profile'
-                            ? 'bg-white text-gray-900 pl-5 font-bold'
-                            : ''
-                        }`}
-                      >
-                        My Profile
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        to="/dashboard/add-user"
-                        onClick={() => handleSubMenuClick('add-user')}
-                        className={`block py-2 ${
-                          activeSubMenu === 'add-user'
-                            ? 'bg-white text-gray-900 pl-5 font-bold'
-                            : ''
-                        }`}
-                      >
-                        Add User
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        to="/dashboard/all-user"
-                        onClick={() => handleSubMenuClick('all-user')}
-                        className={`block py-2 ${
-                          activeSubMenu === 'all-user'
-                            ? 'bg-white text-gray-900 pl-5 font-bold'
-                            : ''
-                        }`}
-                      >
-                        All User
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        to="/dashboard/calendar"
-                        onClick={() => handleSubMenuClick('calendar')}
-                        className={`block py-2 ${
-                          activeSubMenu === 'calendar'
-                            ? 'bg-white text-gray-900 pl-5 font-bold'
-                            : ''
-                        }`}
-                      >
-                        Calendar
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        to="/dashboard/gaant"
-                        onClick={() => handleSubMenuClick('gaant')}
-                        className={`block py-2 ${
-                          activeSubMenu === 'gaant'
-                            ? 'bg-white text-gray-900 pl-5 font-bold'
-                            : ''
-                        }`}
-                      >
-                        Gaant Chart
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        to="/dashboard/task-record"
-                        onClick={() => handleSubMenuClick('task-record')}
-                        className={`block py-2 ${
-                          activeSubMenu === 'task-record'
-                            ? 'bg-white text-gray-900 pl-5 font-bold'
-                            : ''
-                        }`}
-                      >
-                        My Task Records
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        to="/dashboard/users-task-record"
-                        onClick={() => handleSubMenuClick('users-task-record')}
-                        className={`block py-2 ${
-                          activeSubMenu === 'users-task-record'
-                            ? 'bg-white text-gray-900 pl-5 font-bold'
-                            : ''
-                        }`}
-                      >
-                        Task Records
-                      </Link>
-                    </li>
-                    {/* <li>
-                      <Link
-                        to="/dashboard/notification"
-                        onClick={() => handleSubMenuClick("notification")}
-                        className={`block py-2 ${
-                          activeSubMenu === "notification"
-                            ? "bg-white text-gray-900 pl-5 font-bold"
-                            : ""
-                        }`}
-                      >
-                        Notification
-                      </Link>
-                    </li> */}
-                  </ul>
-                )}
-                {userType === 'manager' && (
-                  <ul className="pl-6 flex flex-col gap-5 py-5">
-                    <li>
-                      <Link
-                        to="/dashboard/my-profile"
-                        onClick={() => handleSubMenuClick('my-profile')}
-                        className={`block py-2 ${
-                          activeSubMenu === 'my-profile'
-                            ? 'bg-white text-gray-900 pl-5 font-bold'
-                            : ''
-                        }`}
-                      >
-                        My Profile
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        to="/dashboard/all-user"
-                        onClick={() => handleSubMenuClick('all-user')}
-                        className={`block py-2 ${
-                          activeSubMenu === 'all-user'
-                            ? 'bg-white text-gray-900 pl-5 font-bold'
-                            : ''
-                        }`}
-                      >
-                        All User
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        to="/dashboard/calendar"
-                        onClick={() => handleSubMenuClick('calendar')}
-                        className={`block py-2 ${
-                          activeSubMenu === 'calendar'
-                            ? 'bg-white text-gray-900 pl-5 font-bold'
-                            : ''
-                        }`}
-                      >
-                        Calendar
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        to="/dashboard/task-record"
-                        onClick={() => handleSubMenuClick('task-record')}
-                        className={`block py-2 ${
-                          activeSubMenu === 'task-record'
-                            ? 'bg-white text-gray-900 pl-5 font-bold'
-                            : ''
-                        }`}
-                      >
-                        My Task Records
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        to="/dashboard/users-task-record"
-                        onClick={() => handleSubMenuClick('users-task-record')}
-                        className={`block py-2 ${
-                          activeSubMenu === 'users-task-record'
-                            ? 'bg-white text-gray-900 pl-5 font-bold'
-                            : ''
-                        }`}
-                      >
-                        Task Records
-                      </Link>
-                    </li>
-                    {/* <li>
-                      <Link
-                        to="/dashboard/notification"
-                        onClick={() => handleSubMenuClick("notification")}
-                        className={`block py-2 ${
-                          activeSubMenu === "notification"
-                            ? "bg-white text-gray-900 pl-5 font-bold"
-                            : ""
-                        }`}
-                      >
-                        Notification
-                      </Link>
-                    </li> */}
-                  </ul>
-                )}
-                {userType === 'user' && (
-                  <ul className="pl-6 flex flex-col gap-5 py-5">
-                    <li>
-                      <Link
-                        to="/dashboard/my-profile"
-                        onClick={() => handleSubMenuClick('my-profile')}
-                        className={`block py-2 ${
-                          activeSubMenu === 'my-profile'
-                            ? 'bg-white text-gray-900 pl-5 font-bold'
-                            : ''
-                        }`}
-                      >
-                        My Profile
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        to="/dashboard/calendar"
-                        onClick={() => handleSubMenuClick('calendar')}
-                        className={`block py-2 ${
-                          activeSubMenu === 'calendar'
-                            ? 'bg-white text-gray-900 pl-5 font-bold'
-                            : ''
-                        }`}
-                      >
-                        Calendar
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        to="/dashboard/task-record"
-                        onClick={() => handleSubMenuClick('task-record')}
-                        className={`block py-2 ${
-                          activeSubMenu === 'task-record'
-                            ? 'bg-white text-gray-900 pl-5 font-bold'
-                            : ''
-                        }`}
-                      >
-                        Task Records
-                      </Link>
-                    </li>
-                    {/* <li>
-                      <Link
-                        to="/dashboard/notification"
-                        onClick={() => handleSubMenuClick("notification")}
-                        className={`block py-2 ${
-                          activeSubMenu === "notification"
-                            ? "bg-white text-gray-900 pl-5 font-bold"
-                            : ""
-                        }`}
-                      >
-                        Notification
-                      </Link>
-                    </li> */}
-                  </ul>
-                )}
-              </div>
-            )}
+              <div>Dashboard</div>
+            </NavLink>
           </li>
-          {(userType === 'admin' || userType === 'manager') && (
-            <li>
-              <button
-                onClick={() => handleClick('fabricator')}
-                className={`flex items-center w-full py-5 px-2 relative ${
-                  activeMenu === 'fabricator' ? 'bg-green-400' : ''
-                }`}
-              >
-                <FaLayerGroup className="text-3xl" />
-                {activeMenu === 'fabricator' && (
-                  <div className="absolute left-0 top-0 h-full w-1 bg-white"></div>
-                )}
-              </button>
-              {activeMenu === 'fabricator' && (
-                <div className="absolute top-0 w-60 h-screen bg-green-400 ml-12">
-                  {userType === 'admin' && (
-                    <ul className="pl-6 flex flex-col gap-5 py-5">
-                      <li>
-                        <Link
-                          to="/dashboard/add-fabricator"
-                          onClick={() => handleSubMenuClick('add-fabricator')}
-                          className={`block py-2 ${
-                            activeSubMenu === 'add-fabricator'
-                              ? 'bg-white text-gray-900 pl-5 font-bold'
-                              : ''
-                          }`}
-                        >
-                          Add Fabricator
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
-                          to="/dashboard/all-fabricator"
-                          onClick={() => handleSubMenuClick('all-fabricator')}
-                          className={`block py-2 ${
-                            activeSubMenu === 'all-fabricator'
-                              ? 'bg-white text-gray-900 pl-5 font-bold'
-                              : ''
-                          }`}
-                        >
-                          All Fabricators
-                        </Link>
-                      </li>
-                    </ul>
-                  )}
-                  {userType === 'manager' && (
-                    <ul className="pl-6 flex flex-col gap-5 py-5">
-                      <li>
-                        <Link
-                          to="/dashboard/all-fabricator"
-                          onClick={() => handleSubMenuClick('all-fabricator')}
-                          className={`block py-2 ${
-                            activeSubMenu === 'all-fabricator'
-                              ? 'bg-white text-gray-900 pl-5 font-bold'
-                              : ''
-                          }`}
-                        >
-                          All Fabricators
-                        </Link>
-                      </li>
-                    </ul>
-                  )}
-                </div>
-              )}
-            </li>
-          )}
+          {userType === "admin" ? (
+              <li>
+                <NavLink
+                  to="fabricator"
+                  className={({ isActive }) =>
+                    isActive
+                      ? "flex justify-center items-center text-white bg-teal-400 rounded-md w-full  delay-150"
+                      : "text-black hover:text-white hover:flex hover:justify-center hover:items-center hover:bg-teal-200  rounded-md"
+                  }
+                >
+                  <div>Fabricator</div>
+                </NavLink>
+              </li>
+             
+          ) : null}
+         
+          
           <li>
-            <button
-              onClick={() => handleClick('project')}
-              className={`flex items-center w-full py-7 px-2 relative ${
-                activeMenu === 'project' ? 'bg-green-400' : ''
-              }`}
+            <NavLink
+              to="project"
+              className={({ isActive }) =>
+                isActive
+                  ? "flex justify-center items-center text-white bg-teal-400 rounded-md w-full  delay-150"
+                  : "text-black hover:text-white hover:flex hover:justify-center hover:items-center hover:bg-teal-200  rounded-md"
+              }
             >
-              <BsSuitcaseLgFill className="text-3xl" />
-              {activeMenu === 'project' && (
-                <div className="absolute left-0 top-0 h-full w-1 bg-white"></div>
-              )}
-            </button>
-            {activeMenu === 'project' && (
-              <div className="absolute top-0 w-60 h-screen bg-green-400 ml-12">
-                {userType === 'admin' && (
-                  <ul className="pl-6 flex flex-col gap-5 py-5">
-                    <li>
-                      <Link
-                        to="/dashboard/add-project"
-                        onClick={() => handleSubMenuClick('add-project')}
-                        className={`block py-2 ${
-                          activeSubMenu === 'add-project'
-                            ? 'bg-white text-gray-900 pl-5 font-bold'
-                            : ''
-                        }`}
-                      >
-                        Add Project
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        to="/dashboard/all-project"
-                        onClick={() => handleSubMenuClick('all-project')}
-                        className={`block py-2 ${
-                          activeSubMenu === 'all-project'
-                            ? 'bg-white text-gray-900 pl-5 font-bold'
-                            : ''
-                        }`}
-                      >
-                        All Project
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        to="/dashboard/add-team"
-                        onClick={() => handleSubMenuClick('add-team')}
-                        className={`block py-2 ${
-                          activeSubMenu === 'add-team'
-                            ? 'bg-white text-gray-900 pl-5 font-bold'
-                            : ''
-                        }`}
-                      >
-                        Add Team
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        to="/dashboard/manage-team"
-                        onClick={() => handleSubMenuClick('manage-team')}
-                        className={`block py-2 ${
-                          activeSubMenu === 'manage-team'
-                            ? 'bg-white text-gray-900 pl-5 font-bold'
-                            : ''
-                        }`}
-                      >
-                        Manage Team
-                      </Link>
-                    </li>
-                  </ul>
-                )}
-                {userType === 'manager' && (
-                  <ul className="pl-6 flex flex-col gap-5 py-5">
-                    <li>
-                      <Link
-                        to="/dashboard/add-team"
-                        onClick={() => handleSubMenuClick('add-team')}
-                        className={`block py-2 ${
-                          activeSubMenu === 'add-team'
-                            ? 'bg-white text-gray-900 pl-5 font-bold'
-                            : ''
-                        }`}
-                      >
-                        Add Team
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        to="/dashboard/manage-team"
-                        onClick={() => handleSubMenuClick('manage-team')}
-                        className={`block py-2 ${
-                          activeSubMenu === 'manage-team'
-                            ? 'bg-white text-gray-900 pl-5 font-bold'
-                            : ''
-                        }`}
-                      >
-                        Manage Team
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        to="/dashboard/all-project"
-                        onClick={() => handleSubMenuClick('all-project')}
-                        className={`block py-2 ${
-                          activeSubMenu === 'all-project'
-                            ? 'bg-white text-gray-900 pl-5 font-bold'
-                            : ''
-                        }`}
-                      >
-                        All Project
-                      </Link>
-                    </li>
-                  </ul>
-                )}
-                {userType === 'user' && (
-                  <ul className="pl-6 flex flex-col gap-5 py-5">
-                    <li>
-                      <Link
-                        to="/dashboard/all-project"
-                        onClick={() => handleSubMenuClick('all-project')}
-                        className={`block py-2 ${
-                          activeSubMenu === 'all-project'
-                            ? 'bg-white text-gray-900 pl-5 font-bold'
-                            : ''
-                        }`}
-                      >
-                        All Project
-                      </Link>
-                    </li>
-                  </ul>
-                )}
-              </div>
-            )}
+              <div>Project</div>
+            </NavLink>
+          </li>
+         
+          <li>
+            <NavLink
+              to="task"
+              className={({ isActive }) =>
+                isActive
+                  ? "flex justify-center items-center text-white bg-teal-400 rounded-md w-full  delay-150"
+                  : "text-black hover:text-white hover:flex hover:justify-center hover:items-center hover:bg-teal-200  rounded-md"
+              }
+            >
+              <div>Task</div>
+            </NavLink>
           </li>
           <li>
-            <button
-              onClick={() => handleClick('task')}
-              className={`flex items-center w-full py-6 px-2 relative ${
-                activeMenu === 'task' ? 'bg-green-400' : ''
-              }`}
+            <NavLink
+              to="user"
+              className={({ isActive }) =>
+                isActive
+                  ? "flex justify-center items-center text-white bg-teal-400 rounded-md w-full delay-150"
+                  : "text-black hover:text-white hover:flex hover:justify-center hover:items-center hover:bg-teal-200  rounded-md"
+              }
             >
-              <IoMdCheckmarkCircle className="text-4xl" />
-              {activeMenu === 'task' && (
-                <div className="absolute left-0 top-0 h-full w-1 bg-white"></div>
-              )}
-            </button>
-            {activeMenu === 'task' && (
-              <div className="absolute top-0 w-60 h-screen bg-green-400 ml-12">
-                {(userType === 'admin' || userType === 'manager') && (
-                  <ul className="pl-6 flex flex-col gap-5 py-5">
-                    <li>
-                      <Link
-                        to="/dashboard/my-task"
-                        onClick={() => handleSubMenuClick('my-task')}
-                        className={`block py-2 ${
-                          activeSubMenu === 'my-task'
-                            ? 'bg-white text-gray-900 pl-5 font-bold'
-                            : ''
-                        }`}
-                      >
-                        My Tasks
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        to="/dashboard/add-task"
-                        onClick={() => handleSubMenuClick('add-task')}
-                        className={`block py-2 ${
-                          activeSubMenu === 'add-task'
-                            ? 'bg-white text-gray-900 pl-5 font-bold'
-                            : ''
-                        }`}
-                      >
-                        Add Task
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        to="/dashboard/approve-assignee"
-                        onClick={() => handleSubMenuClick('approve-assignee')}
-                        className={`block py-2 ${
-                          activeSubMenu === 'approve-assignee'
-                            ? 'bg-white text-gray-900 pl-5 font-bold'
-                            : ''
-                        }`}
-                      >
-                        Approve Assignee
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        to="/dashboard/all-task"
-                        onClick={() => handleSubMenuClick('all-task')}
-                        className={`block py-2 ${
-                          activeSubMenu === 'all-task'
-                            ? 'bg-white text-gray-900 pl-5 font-bold'
-                            : ''
-                        }`}
-                      >
-                        All Task
-                      </Link>
-                    </li>
-                  </ul>
-                )}
-                {userType === 'user' && (
-                  <ul className="pl-6 flex flex-col gap-5 py-5">
-                    <li>
-                      <Link
-                        to="/dashboard/my-task"
-                        onClick={() => handleSubMenuClick('my-task')}
-                        className={`block py-2 ${
-                          activeSubMenu === 'my-task'
-                            ? 'bg-white text-gray-900 pl-5 font-bold'
-                            : ''
-                        }`}
-                      >
-                        My Tasks
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        to="/dashboard/all-task"
-                        onClick={() => handleSubMenuClick('all-task')}
-                        className={`block py-2 ${
-                          activeSubMenu === 'all-task'
-                            ? 'bg-white text-gray-900 pl-5 font-bold'
-                            : ''
-                        }`}
-                      >
-                        All Task
-                      </Link>
-                    </li>
-                  </ul>
-                )}
-              </div>
-            )}
+              <div>Users</div>
+            </NavLink>
           </li>
+          <li className="w-full">
+            <NavLink
+              to="profile"
+              className={({ isActive }) =>
+                isActive
+                  ? "flex justify-center items-center text-white bg-teal-400 rounded-md w-full  delay-150 transition-all ease-in-out"
+                  : "text-black hover:text-white hover:flex hover:justify-center hover:items-center hover:bg-teal-200  rounded-md"
+              }
+            >
+              <div>Profile</div>
+            </NavLink>
+          </li>
+          <li></li>
         </ul>
       </nav>
+      <div className="md:flex md:justify-right mb-5">
+        {/* <Button className="bg-teal-400 mx-4 w-full" onClick={fetchLogout}>
+          Logout
+        </Button> */}
+        <div className="text-lg text-black md:hidden block">
+          {currentUser?.username}
+        </div>
+      </div>
     </div>
-  )
-}
+  );
+};
 
-export default Sidebar
+export default Sidebar;

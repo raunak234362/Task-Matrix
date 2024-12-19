@@ -151,7 +151,7 @@ class Service {
         }
       })
       const data = await response.json()
-      console.log('Team fetched: ', data)
+      // console.log('Team fetched: ', data)
       return data
     } catch (error) {
       console.log('Error in getting team list: ', error)
@@ -167,7 +167,6 @@ class Service {
           'Content-Type': 'application/json'
         }
       })
-      console.log('Team fetched: ', response.data)
       return response.data
     } catch (error) {
       console.log('Error in getting team: ', error)
@@ -423,6 +422,7 @@ class Service {
     }
   }
   static async editProject(id, projectData) {
+    console.log(projectData)
     const token = sessionStorage.getItem('token')
     try {
       const response = await axios.patch(`${BASE_URL}api/project/projects/${id}/`, projectData, {
@@ -431,6 +431,7 @@ class Service {
           'Content-Type': 'application/json'
         }
       })
+      console.log('Project Updated: ', response.data)
       return response.data
     } catch (error) {
       console.log('Error in getting Project:', error)
@@ -504,7 +505,7 @@ class Service {
         }
       })
       const data = await response.json()
-      console.log('Task: ', data)
+      // console.log('Task: ', data)
       return data
     } catch (error) {
       console.log('Error in getting Task: ', error)
@@ -522,7 +523,6 @@ class Service {
         }
       })
       const data = await response.json()
-      // console.log('All Task: ', data)
       return data
     } catch (error) {
       console.log('Error in getting Task: ', error)
@@ -550,6 +550,7 @@ class Service {
     name,
     description,
     due_date,
+    start_date,
     status,
     priority,
     hour,
@@ -563,6 +564,7 @@ class Service {
         name,
         description,
         due_date,
+        start_date,
         status,
         priority,
         duration: `${hour}:${min}:00`,
@@ -818,19 +820,16 @@ class Service {
   static async addAssigne(id, assigne) {
     const token = sessionStorage.getItem('token')
     try {
-      const response = await fetch(`${BASE_URL}api/task/tasks/${id}/add_assignes/`, {
-        method: 'POST',
+      const response = await axios.post(`${BASE_URL}api/task/tasks/${id}/add_assignes/`, {
+        assigned_to: assigne
+      }, {
         headers: {
           Authorization: `Token ${token}`,
           'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          assigned_to: assigne
-        })
+        }
       })
-      const data = await response.json()
-      console.log('Assignee Added: ', data)
-      return data
+      console.log('Assignee Added: ', response.data)
+      return response.data
     } catch (error) {
       console.log('Error in Adding Assignee: ', error)
       throw error

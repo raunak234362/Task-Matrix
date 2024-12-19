@@ -27,7 +27,7 @@ const ManageTeam = () => {
 
   useEffect(() => {
     const filtered = teams.filter((team) =>
-      team.name.toLowerCase().includes(searchTerm.toLowerCase())
+      team.name.toLowerCase().includes(searchTerm.toLowerCase()),
     );
     setFilteredTeams(filtered);
   }, [searchTerm, teams]);
@@ -66,95 +66,100 @@ const ManageTeam = () => {
   };
 
   return (
-    <div>
-      <Header title={"Manage Team"} />
-      <div className="flex justify-between items-center mb-4">
+    <div className="bg-white/70 rounded-lg md:w-full w-[90vw] p-4">
+      <div className="flex flex-col md:flex-row gap-4 mb-4">
         <input
           type="text"
           placeholder="Search by team name"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="border rounded px-2 py-1"
+          className="px-4 py-2 border rounded-md w-full md:w-1/4"
         />
       </div>
-      <div className="h-[70vh] overflow-y-auto">
-              <table className="w-full table-auto border-collapse text-center rounded-xl">
-                <thead className="sticky top-0 z-10 bg-gray-200">
-          <tr>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              S.no
-            </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer" onClick={() => handleSort("name")}>
-              Team Name
-              {sortConfig.key === "name" && (
-                <span>
-                  {sortConfig.direction === "asc" ? " " : " "}
-                </span>
-              )}
-            </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Team Leader
-            </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Team Manager
-            </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Team Members
-            </th>
-          </tr>
-        </thead>
-        <tbody className="bg-white divide-y divide-gray-200">
-          {filteredTeams.map((team, index) => (
-            <tr key={team.id} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-200/50'}>
-              <td className="px-6 py-4 whitespace-nowrap">
-                <div className="flex items-center">
-                  <div>
-                    <div className="text-sm font-medium text-gray-900">
-                      {index + 1}
-                    </div>
-                  </div>
-                </div>
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap">
-                <div className="flex items-center">
-                  <div>
-                    <div className="text-sm font-medium text-gray-900 cursor-pointer" onClick={() => handleSort("name")}>
-                      {team?.name}
-                    </div>
-                  </div>
-                </div>
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap">
-                <div className="flex items-center">
-                  <div>
-                    <div className="text-sm font-medium text-gray-900">
-                      {team?.leader?.name}
-                    </div>
-                  </div>
-                </div>
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap">
-                <div className="flex items-center">
-                  <div>
-                    <div className="text-sm font-medium text-gray-900">
-                      {team?.created_by?.name}
-                    </div>
-                  </div>
-                </div>
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap">
-                {team?.members?.length > 0 ? (
-                  team.members.length
-                ) : (
-                  <Button onClick={() => handleViewClick(team.id)}>
-                    View/Add
-                  </Button>
+      <div className="mt-5 bg-white h-[60vh] overflow-auto rounded-lg">
+        <table className="h-fit md:w-full w-[90vw] border-collapse text-center md:text-lg text-xs rounded-xl">
+          <thead>
+            <tr className="bg-teal-200/70">
+              <th >
+                S.no
+              </th>
+              <th
+                
+                onClick={() => handleSort("name")}
+              >
+                Team Name
+                {sortConfig.key === "name" && (
+                  <span>{sortConfig.direction === "asc" ? " " : " "}</span>
                 )}
-              </td>
+              </th>
+              <th >
+                Team Leader
+              </th>
+              <th >
+                Team Manager
+              </th>
+              <th >
+                Team Members
+              </th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-200">
+            {filteredTeams.map((team, index) => (
+              <tr
+                key={team.id}
+                className={index % 2 === 0 ? "bg-white" : "bg-gray-200/50"}
+              >
+                <td className="border px-2 py-1">
+                  <div className="flex items-center">
+                    <div>
+                      <div >
+                        {index + 1}
+                      </div>
+                    </div>
+                  </div>
+                </td>
+                <td className="border px-2 py-1">
+                  <div className="flex items-center">
+                    <div>
+                      <div
+                        
+                      >
+                        {team?.name}
+                      </div>
+                    </div>
+                  </div>
+                </td>
+                <td className="border px-2 py-1">
+                  <div className="flex items-center">
+                    <div>
+                      <div>
+                        {team?.leader?.name}
+                      </div>
+                    </div>
+                  </div>
+                </td>
+                <td  className="border px-2 py-1">
+                  <div className="flex items-center">
+                    <div>
+                      <div>
+                        {team?.created_by?.name}
+                      </div>
+                    </div>
+                  </div>
+                </td>
+                <td  className="border justify-center items-center flex px-2 py-1">
+                  {team?.members?.length > 0 ? (
+                    team.members.length
+                  ) : (
+                    <Button onClick={() => handleViewClick(team.id)}>
+                      View/Add
+                    </Button>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
       {selectedTeam && (
         <TeamView

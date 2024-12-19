@@ -1,208 +1,210 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable no-unused-vars */
-import React, { useEffect, useState } from 'react'
-import Service from '../../../../api/configAPI'
-import { Button, Header, SelectedTask } from '../../../index'
+import React, { useEffect, useState } from "react";
+import Service from "../../../../api/configAPI";
+import { Button, Header, SelectedTask } from "../../../index";
+import { useDispatch, useSelector } from "react-redux";
+import { showTask, showTaskByID } from "../../../../store/taskSlice";
 
 const AllTask = () => {
-  const [tasks, setTasks] = useState([])
-  const [filteredTasks, setFilteredTasks] = useState([])
-  const [selectedTask, setSelectedTask] = useState(null)
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [sortConfig, setSortConfig] = useState({ key: '', direction: '' })
-  const [searchTerm, setSearchTerm] = useState('')
-  const [priorityFilter, setPriorityFilter] = useState('')
-  const [statusFilter, setStatusFilter] = useState('')
-  const [prevTasks, setPrevTasks] = useState([]);
+  const dispatch = useDispatch();
+  const tasks = useSelector((state) => state?.taskData?.taskData);
+  const [selectedTask, setSelectedTask] = useState(null);
+  const [taskID, setTaskID] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
+  const [projectFilter, setProjectFilter] = useState("");
+  const [sortConfig, setSortConfig] = useState({
+    key: "",
+    direction: "ascending",
+  });
+  console.log(tasks);
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
+  };
 
-  useEffect(() => {
-    const fetchTask = async () => {
-      try {
-        const task = await Service.getAllTask();
-        setTasks(task);
-        setFilteredTasks(task);
-  
-        // Check previous tasks for new ones
-        if (task.length > prevTasks.length) {
-          const newTasks = task.filter(t => !prevTasks.some(p => p.id === t.id));
-          console.log('New tasks:', newTasks); // Log new tasks for debugging
-          newTasks.forEach(newTask => {
-            console.log('Calling showNotification'); // Log before calling
-            window.api.showNotification(newTask);
-          });
-        }
-  
-        setPrevTasks(task);
-      } catch (error) {
-        console.log('Error in fetching task: ', error);
-      }
-    };
-    fetchTask();
-  }, [selectedTask]);
+  const handleStatusFilter = (e) => {
+    setStatusFilter(e.target.value);
+  };
 
-  useEffect(() => {
-    let results = tasks?.filter((task) =>
-      task.name.toLowerCase().includes(searchTerm.toLowerCase())
-    )
+  const handleFabricatorFilter = (e) => {
+    setProjectFilter(e.target.value);
+  };
 
-    if (priorityFilter) {
-      results = results.filter((task) => setPriorityValue(task.priority) === priorityFilter)
+  const handleSort = (key) => {
+    let direction = "ascending";
+    if (sortConfig.key === key && sortConfig.direction === "ascending") {
+      direction = "descending";
     }
+    setSortConfig({ key, direction });
+  };
 
-    if (statusFilter) {
-      results = results.filter((task) => task.status === statusFilter)
-    }
-
-    // Sort results if sortConfig is set
+  const sortedTasks = [...tasks].sort((a, b) => {
     if (sortConfig.key) {
-      results.sort((a, b) => {
-        const isAsc = sortConfig.direction === 'ascending'
-        if (a[sortConfig.key] < b[sortConfig.key]) {
-          return isAsc ? -1 : 1
-        }
-        if (a[sortConfig.key] > b[sortConfig.key]) {
-          return isAsc ? 1 : -1
-        }
-        return 0
-      })
+      if (a[sortConfig.key] < b[sortConfig.key]) {
+        return sortConfig.direction === "ascending" ? -1 : 1;
+      }
+      if (a[sortConfig.key] > b[sortConfig.key]) {
+        return sortConfig.direction === "ascending" ? 1 : -1;
+      }
     }
+    return 0;
+  });
 
-    setFilteredTasks(results)
-  }, [searchTerm, tasks, priorityFilter, statusFilter, sortConfig])
+  const filteredTasks = sortedTasks.filter((project) => {
+    return (
+      project?.name?.toLowerCase().includes(searchTerm?.toLowerCase()) &&
+      (statusFilter === "" || project.status === statusFilter) &&
+      (projectFilter === "" || project.project.name === projectFilter)
+    );
+  });
+
+  const uniqueProject = [
+    ...new Set(tasks?.map((project) => project?.project?.name)),
+  ];
 
   const handleViewClick = async (taskId) => {
     try {
-      const task = await Service.getTaskById(taskId)
-      setSelectedTask(task)
-      setIsModalOpen(true)
+      const task = await Service.getTaskById(taskId);
+      console.log("Task Details:", task);
+      // dispatch(showTaskByID(task));
+      setSelectedTask(task);
+      setTaskID(task.id);
+      setIsModalOpen(true);
     } catch (error) {
-      console.error('Error fetching project details:', error)
+      console.error("Error fetching project details:", error);
     }
-  }
+  };
 
   const handleCloseModal = () => {
-    setIsModalOpen(false)
-    setSelectedTask(null)
-  }
-
-  const sortTasks = (key) => {
-    let direction = 'ascending'
-    if (sortConfig.key === key && sortConfig.direction === 'ascending') {
-      direction = 'descending'
-    }
-    setSortConfig({ key, direction })
-  }
-
-  const handleSortChange = (event) => {
-    const value = event.target.value
-    if (['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'].includes(value)) {
-      setPriorityFilter(value)
-      setStatusFilter('')
-    } else if (['ASSIGNED', 'APPROVED', 'IN-PROGRESS'].includes(value)) {
-      setStatusFilter(value)
-      setPriorityFilter('')
-    } else {
-      sortTasks(value)
-      setPriorityFilter('')
-      setStatusFilter('')
-    }
-  }
+    setIsModalOpen(false);
+    setTaskID(null);
+  };
 
   const color = (priority) => {
     switch (priority) {
       case 0:
-        return 'bg-green-200 border-green-800 text-green-800'
+        return "bg-green-200 border-green-800 text-green-800";
       case 1:
-        return 'bg-yellow-200 border-yellow-800 text-yellow-800'
+        return "bg-yellow-200 border-yellow-800 text-yellow-800";
       case 2:
-        return 'bg-purple-200 border-purple-800 text-purple-800'
+        return "bg-purple-200 border-purple-800 text-purple-800";
       case 3:
-        return 'bg-red-200 border-red-700 text-red-700'
+        return "bg-red-200 border-red-700 text-red-700";
       default:
-        break
+        break;
     }
-  }
+  };
 
   const setPriorityValue = (value) => {
     switch (value) {
       case 0:
-        return 'LOW'
+        return "LOW";
       case 1:
-        return 'MEDIUM'
+        return "MEDIUM";
       case 2:
-        return 'HIGH'
+        return "HIGH";
       case 3:
-        return 'CRITICAL'
+        return "CRITICAL";
       default:
-        break
+        break;
     }
-  }
-
-  const getSortIndicator = (key) => {
-    if (sortConfig.key === key) {
-      return sortConfig.direction === 'ascending' ? ' ↑' : ' ↓'
-    }
-    return null
-  }
+  };
 
   return (
     <div>
-      <Header title={'All Task'} />
-      <div className="table-container w-full rounded-lg">
-        <div className="py-5 shadow-xl table-container w-full rounded-lg">
+      <div className="table-container h-[80vh] w-full rounded-lg">
+        <div className=" shadow-xl table-container w-full rounded-lg">
           <div className="mx-5 my-3">
-            <div className="flex justify-between mb-4">
+            <div className="flex flex-col md:flex-row gap-4 mb-4">
               <input
                 type="text"
-                placeholder="Search by task name"
+                placeholder="Search by task name..."
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="p-2 border border-gray-300 rounded-lg"
+                onChange={handleSearch}
+                className="px-4 py-2 border rounded-md w-full md:w-1/4"
               />
-              <select onChange={handleSortChange} className="p-2 border border-gray-300 rounded-lg">
-                <option value="">Sort/Filter by</option>
-                <option value="status">Status</option>
-                <option value="priority">Priority</option>
-                <option value="due_date">Due Date</option>
-                <option value="project.name">Project Name</option>
-                <option value="LOW">Low Priority</option>
-                <option value="MEDIUM">Medium Priority</option>
-                <option value="HIGH">High Priority</option>
-                <option value="CRITICAL">Critical Priority</option>
-                <option value="ASSIGNED">Assigned Status</option>
-                <option value="APPROVED">Approved Status</option>
-                <option value="IN-PROGRESS">In-Progress Status</option>
+              <select
+                value={statusFilter}
+                onChange={handleStatusFilter}
+                className="px-4 py-2 border rounded-md w-full md:w-1/4"
+              >
+                <option value="">All Status</option>
+                <option value="ASSINGED">ASSIGNED</option>
+                <option value="ACTIVE">ACTIVE</option>
+                <option value="ON-HOLD">ON-HOLD</option>
+                <option value="INACTIVE">INACTIVE</option>
+                <option value="DELAY">DELAY</option>
+                <option value="COMPLETE">COMPLETED</option>
+              </select>
+              <select
+                value={projectFilter}
+                onChange={handleFabricatorFilter}
+                className="px-4 py-2 border rounded-md w-full md:w-1/4"
+              >
+                <option value="">All Projects</option>
+                {uniqueProject?.map((fabricator) => (
+                  <option key={fabricator} value={fabricator}>
+                    {fabricator}
+                  </option>
+                ))}
               </select>
             </div>
-            <div className="h-[70vh] overflow-y-auto">
-              <table className="w-full table-auto border-collapse text-center rounded-xl">
-                <thead className="sticky top-0 z-10 bg-gray-200">
-                  <tr>
-                    <th className="px-1 py-2 cursor-pointer" onClick={() => sortTasks('id')}>
-                      S.no {getSortIndicator('id')}
+            <div className=" py-5 bg-white h-[58vh] overflow-auto rounded-lg">
+              <table className="md:w-full w-[90vw] border-collapse text-center md:text-lg text-xs rounded-xl">
+                <thead>
+                  <tr className="bg-teal-200/70">
+                    <th
+                      className="px-2 py-1 text-left cursor-pointer"
+                      onClick={() => handleSort("id")}
+                    >
+                      S.no{" "}
+                      {sortConfig.key === "id" &&
+                        (sortConfig.direction === "ascending" ? "" : "")}
                     </th>
                     <th
-                      className="px-1 py-2 cursor-pointer"
-                      onClick={() => sortTasks('project.name')}
+                      className="px-2 py-1 text-left cursor-pointer"
+                      onClick={() => handleSort("name")}
                     >
-                      Project Name {getSortIndicator('project.name')}
+                      Project Name{" "}
+                      {sortConfig.key === "name" &&
+                        (sortConfig.direction === "ascending" ? "" : "")}
                     </th>
-                    <th className="px-1 py-2 cursor-pointer" onClick={() => sortTasks('name')}>
-                      Task Name {getSortIndicator('name')}
+                    <th
+                      className="px-2 py-1 cursor-pointer"
+                      onClick={() => handleSort("name")}
+                    >
+                      Task Name{" "}
+                      {sortConfig.key === "name " &&
+                        (sortConfig.direction === "ascending" ? "" : "")}
                     </th>
-                    <th className="px-1 py-2 cursor-pointer" onClick={() => sortTasks('user.name')}>
-                      Current User {getSortIndicator('user.name')}
+                    <th className="px-2 py-1 cursor-default">Assigned User </th>
+                    <th
+                      className="px-2 py-1 cursor-pointer"
+                      onClick={() => handleSort("status")}
+                    >
+                      Status{" "}
+                      {sortConfig.key === "status" &&
+                        (sortConfig.direction === "ascending" ? "" : "")}
                     </th>
-                    <th className="px-1 py-2 cursor-pointer" onClick={() => sortTasks('status')}>
-                      Status {getSortIndicator('status')}
+                    <th
+                      className="px-2 py-1 cursor-pointer"
+                      onClick={() => handleSort("priority")}
+                    >
+                      Priority{" "}
+                      {sortConfig.key === "priority" &&
+                        (sortConfig.direction === "ascending" ? "" : "")}
                     </th>
-                    <th className="px-1 py-2 cursor-pointer" onClick={() => sortTasks('priority')}>
-                      Priority {getSortIndicator('priority')}
+                    <th
+                      className="px-2 py-1 cursor-pointer"
+                      onClick={() => handleSort("due_date")}
+                    >
+                      Task Due Date{" "}
+                      {sortConfig.key === "due_date" &&
+                        (sortConfig.direction === "ascending" ? "" : "")}
                     </th>
-                    <th className="px-1 py-2 cursor-pointer" onClick={() => sortTasks('due_date')}>
-                      Due Date {getSortIndicator('due_date')}
-                    </th>
-                    <th className="px-1 py-2">Option</th>
+                    <th className="px-2 py-1">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -214,16 +216,23 @@ const AllTask = () => {
                     </tr>
                   ) : (
                     filteredTasks.map((task, index) => (
-                      <tr key={task.id} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-200/50'}>
+                      <tr
+                        key={task.id}
+                        className={
+                          index % 2 === 0 ? "bg-white" : "bg-gray-200/50"
+                        }
+                      >
                         <td className="border px-1 py-2">{index + 1}</td>
-                        <td className="border px-1 py-2">{task?.project?.name}</td>
+                        <td className="border px-1 py-2">
+                          {task?.project?.name}
+                        </td>
                         <td className="border px-1 py-2">{task?.name}</td>
                         <td className="border px-1 py-2">{task?.user?.name}</td>
                         <td className="border px-1 py-2">{task?.status}</td>
                         <td className={`border px-1 py-2`}>
                           <span
                             className={`text-sm text-center font-semibold px-3 py-0.5 mx-2 rounded-full border ${color(
-                              task?.priority
+                              task?.priority,
                             )}`}
                           >
                             {setPriorityValue(task?.priority)}
@@ -232,8 +241,10 @@ const AllTask = () => {
                         <td className="border px-1 py-2">
                           {new Date(task?.due_date).toDateString()}
                         </td>
-                        <td className="border px-3 flex justify-center py-2">
-                          <Button onClick={() => handleViewClick(task?.id)}>View</Button>
+                        <td className="border px-1 flex justify-center py-2">
+                          <Button onClick={() => handleViewClick(task?.id)}>
+                            View
+                          </Button>
                         </td>
                       </tr>
                     ))
@@ -246,14 +257,15 @@ const AllTask = () => {
       </div>
       {selectedTask && (
         <SelectedTask
-          task={selectedTask}
+          taskDetail={selectedTask}
+          taskID={taskID}
           isOpen={isModalOpen}
           onClose={handleCloseModal}
-          setTasks={setTasks}
+          setTasks={tasks}
         />
       )}
     </div>
-  )
-}
+  );
+};
 
-export default AllTask
+export default AllTask;

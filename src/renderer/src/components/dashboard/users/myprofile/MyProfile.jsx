@@ -23,9 +23,13 @@ useEffect(() => {
   fetchUsers();
 }, []);
   return (
-    <div>
-      <Header title={"My Profile"}/>
-      <div className="bg-white shadow-md rounded-lg p-4">
+    <div className="w-full h-[89vh] overflow-y-hidden mx-5">
+      <div className="flex w-full justify-center items-center">
+        <div className="text-3xl font-bold text-white bg-teal-500/50 shadow-xl px-5 py-1 mt-2 rounded-lg">
+          My Profile
+        </div>
+      </div>
+      <div className="bg-white mt-2 shadow-md rounded-lg p-4">
         <p><strong>Name:</strong> {userData?.name}</p>
         <p><strong>Employee ID:</strong> {userData?.username}</p>
         <p><strong>Email:</strong> {userData?.email}</p>
