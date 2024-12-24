@@ -179,6 +179,14 @@ const AllTask = () => {
                       {sortConfig.key === "name " &&
                         (sortConfig.direction === "ascending" ? "" : "")}
                     </th>
+                    <th
+                      className="px-2 py-1 cursor-pointer"
+                      onClick={() => handleSort("manager")}
+                    >
+                      Manager Name{" "}
+                      {sortConfig.key === "name " &&
+                        (sortConfig.direction === "ascending" ? "" : "")}
+                    </th>
                     <th className="px-2 py-1 cursor-default">Assigned User </th>
                     <th
                       className="px-2 py-1 cursor-pointer"
@@ -227,6 +235,7 @@ const AllTask = () => {
                           {task?.project?.name}
                         </td>
                         <td className="border px-1 py-2">{task?.name}</td>
+                        <td className="border px-1 py-2">{task?.project?.manager?.name}</td>
                         <td className="border px-1 py-2">{task?.user?.name}</td>
                         <td className="border px-1 py-2">{task?.status}</td>
                         <td className={`border px-1 py-2`}>
