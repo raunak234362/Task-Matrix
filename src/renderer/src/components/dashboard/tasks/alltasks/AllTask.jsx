@@ -16,6 +16,7 @@ const AllTask = () => {
   const [statusFilter, setStatusFilter] = useState("");
   const [projectCompletion, setProjectCompletion] = useState({});
   const [completionPercentage, setCompletionPercentage] = useState(0);
+  const [inReviewPercentage, setInReviewPercentage] = useState(0);
 
   const [projectFilter, setProjectFilter] = useState("");
   const [sortConfig, setSortConfig] = useState({
@@ -63,6 +64,14 @@ const AllTask = () => {
       ).length;
       const totalTasks = projectTasks.length;
 
+      const inReviewTasks = projectTasks.filter(
+        (task) => task.status === "IN-REVIEW",
+      ).length;
+
+      const inReviewPercentage =
+        totalTasks > 0 ? (inReviewTasks / totalTasks) * 100 : 0;
+      console.log("In Review Percentage:", inReviewPercentage);
+      setInReviewPercentage(inReviewPercentage);
       const percentage =
         totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
       setCompletionPercentage(percentage);
@@ -79,7 +88,16 @@ const AllTask = () => {
         return "bg-green-500"; // Default or no status
     }
   };
-  
+  const getInReviewBarColor = (status) => {
+    switch (status) {
+      case "COMPLETE":
+        return "bg-green-500"; // Green for completed
+      case "IN-REVIEW":
+        return "bg-yellow-500"; // Yellow for in-review
+      default:
+        return "bg-yellow-500"; // Default or no status
+    }
+  };
 
   // console.log(tasks);
   const handleSearch = (e) => {
@@ -122,7 +140,6 @@ const AllTask = () => {
       (projectFilter === "" || task.project.name === projectFilter)
     );
   });
-  
 
   const uniqueProject = [
     ...new Set(tasks?.map((project) => project?.project?.name)),
@@ -225,6 +242,15 @@ const AllTask = () => {
                   <div
                     className={`h-4 rounded-full ${getCompletionBarColor(tasks?.project?.status)}`} // Use the getCompletionBarColor function
                     style={{ width: `${completionPercentage}%` }}
+                  />
+                </div>
+                <div className="mb-2">
+                  InReview Completion: {inReviewPercentage.toFixed(2)}%
+                </div>
+                <div className="h-4 w-full bg-gray-200 rounded-full">
+                  <div
+                    className={`h-4 rounded-full ${getInReviewBarColor(tasks?.project?.status)}`} // Use the getCompletionBarColor function
+                    style={{ width: `${inReviewPercentage}%` }}
                   />
                 </div>
               </div>
