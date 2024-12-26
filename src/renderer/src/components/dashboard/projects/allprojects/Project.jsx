@@ -13,7 +13,7 @@ const Project = ({ projectId, isOpen, onClose, setProject }) => {
       (project) => project.id === projectId,
     ),
   );
-
+console.log(project);
   const teams = useSelector((state) => state?.projectData?.teamData);
 
   const [members, setMembers] = useState({});
@@ -117,9 +117,6 @@ const Project = ({ projectId, isOpen, onClose, setProject }) => {
             )}
           </div>
 
-          <div className="bg-gray-200/50 rounded-lg p-5 my-5">
-            Project Completion Percentage
-          </div>
 
           <div className="h-fit overflow-y-auto rounded-lg">
             <div className="grid grid-cols-2 gap-5">

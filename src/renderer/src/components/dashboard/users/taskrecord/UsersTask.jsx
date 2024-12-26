@@ -1,9 +1,11 @@
+/* eslint-disable react/no-unescaped-entities */
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 /* eslint-disable prettier/prettier */
 import React from 'react'
 
 const UsersTask = ({ task, onClose }) => {
+  console.log(task)
   if (!task) return <p>Select a task to view details.</p>
 
   function durToHour(params) {
@@ -28,13 +30,16 @@ const UsersTask = ({ task, onClose }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-white h-[60%] overflow-x-auto p-8 rounded-lg shadow-lg w-[80%] relative">
-        <button
-          className="absolute top-4 right-4 text-white bg-gray-600 rounded-xl px-4 py-2 hover:bg-gray-700"
-          onClick={onClose}
-        >
-          Close
-        </button>
+      <div className="bg-white h-[65vh] overflow-x-auto p-5 rounded-lg shadow-lg w-[40vw] ">
+      <div className="flex justify-between my-5 bg-teal-200/50 p-2 rounded-lg">
+          <h2 className="text-2xl font-bold">User's Task</h2>
+          <button
+            className="text-xl font-bold bg-teal-500/50 hover:bg-teal-700 text-white px-5 rounded-lg"
+            onClick={onClose}
+          >
+            Close
+          </button>
+        </div>
         <div className="flex flex-row gap-28">
           <div>
             <div className="mb-4">
