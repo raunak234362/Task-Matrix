@@ -58,11 +58,9 @@ const EditTask = ({ onClose, task }) => {
         ? `${data?.type} - ${data?.taskname}`
         : data?.name;
 
-      const Duration = `${data?.hour}:${data?.min}`;
       const updatedTask = await Service.editTask(task?.id, {
         ...data,
         name: TaskName,
-        duration: Duration,
       });
       dispatch(updateTask(updatedTask));
       console.log("Successfully Updated Task: ", updatedTask);
@@ -185,40 +183,8 @@ const EditTask = ({ onClose, task }) => {
                 onChange={setValue}
               />
             </div>
-            <div className="flex flex-row gap-5 w-1/5">
-              <div className="w-full">
-                <Input
-                  type="number"
-                  name="hour"
-                  label="HH"
-                  placeholder="HH"
-                  className="w-20"
-                  min={0}
-                  {...register("hour")}
-                  onBlur={(e) => {
-                    if (e.target.value < 0) e.target.value = 0;
-                  }}
-                />
-              </div>
-              <div className="w-full">
-                <Input
-                  type="number"
-                  name="min"
-                  placeholder="MM"
-                  label="MM"
-                  className="w-20"
-                  min={0}
-                  max={60}
-                  {...register("min")}
-                  onBlur={(e) => {
-                    if (e.target.value < 0) e.target.value = 0;
-                  }}
-                />
-              </div>
-              {errors.min && (
-                <p className="text-red-600">{errors.min.message}</p>
-              )}
-            </div>
+            
+             
             <div className=" w-full my-2">
               <Input
                 label="Start Date:"
