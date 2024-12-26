@@ -31,7 +31,6 @@ const TaskRecord = () => {
 
   useEffect(() => {
     const fetchTask = async () => {
-      console.log(user);
       try {
         const UserTask = await Service.taskRecord(user);
         console.log("user Task:--------", UserTask);
@@ -122,12 +121,15 @@ const TaskRecord = () => {
         </div>
       )} */}
       <div className="mt-5 bg-white h-[60vh] overflow-auto rounded-lg">
-      <table className="md:w-full w-[90vw] border-collapse text-left md:text-lg text-xs rounded-xl">
+        <table className="md:w-full w-[90vw] border-collapse text-left md:text-lg text-xs rounded-xl">
           <thead>
             <tr className="bg-teal-200/70">
               <th className="px-2 py-1 uppercase">S.no</th>
               <th className="px-2 py-1 uppercase">Project</th>
               <th className="px-2 py-1 uppercase">Task Title</th>
+              <th className="px-2 py-1 uppercase">Start Date</th>
+              <th className="px-2 py-1 uppercase">Due Date</th>
+
               <th className="px-2 py-1 uppercase">Time Alloted</th>
               <th className="px-2 py-1 uppercase">Time Taken</th>
               <th className="px-2 py-1 uppercase">Task Status</th>
@@ -151,8 +153,12 @@ const TaskRecord = () => {
                   <td className="border px-1 py-2">
                     {rec?.task?.project?.name}
                   </td>
+                  <td className="border px-1 py-2">{rec?.task?.name}</td>
                   <td className="border px-1 py-2">
-                    {rec?.task?.name}
+                    {new Date(rec?.task?.due_date).toDateString()}
+                  </td>
+                  <td className="border px-1 py-2">
+                    {new Date(rec?.task?.due_date).toDateString()}
                   </td>
                   <td className="border px-1 py-2">
                     {durToHour(rec?.task?.duration)}
@@ -166,9 +172,7 @@ const TaskRecord = () => {
                   >
                     {secToHour(rec?.time_taken)}
                   </td>
-                  <td className="border px-1 py-2">
-                    {rec?.task?.status}
-                  </td>
+                  <td className="border px-1 py-2">{rec?.task?.status}</td>
                 </tr>
               ))
             )}

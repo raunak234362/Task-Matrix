@@ -56,7 +56,7 @@ const TaskTab = () => {
         </div>
 
         {/* Conditional rendering of menu */}
-        <div className={`overflow-y-auto h-[80vh] rounded-lg bg-white md:text-lg text-sm`}>
+        <div className={`overflow-y-auto h-[75vh] rounded-lg bg-white md:text-lg text-sm`}>
           <div className=" bg-teal-100 rounded-lg md:w-full w-[90vw]">
             <nav className="px-5 drop-shadow-md text-center">
               <ul className="flex items-center justify-evenly gap-10 py-1 text-center">
