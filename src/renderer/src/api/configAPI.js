@@ -593,6 +593,7 @@ class Service {
     }
   }
   static async editTask(id, taskData) {
+    console.log(taskData)
     const token = sessionStorage.getItem('token')
     try {
       const response = await fetch(`${BASE_URL}api/task/tasks/${id}/`, {

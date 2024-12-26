@@ -11,7 +11,7 @@ import { CustomSelect, Button } from "../../../index";
 
 /* eslint-disable react/prop-types */
 const EditTask = ({ onClose, task }) => {
-  console.log(task);
+  // console.log(task);
   const dispatch = useDispatch();
   const [assignedUser, setAssignedUser] = useState([]);
 
@@ -26,6 +26,8 @@ const EditTask = ({ onClose, task }) => {
     defaultValues: {
       name: task?.name || "",
       description: task?.description || "",
+      hour: task?.duration ? task.duration.split(":")[0] : "",
+      min: task?.duration ? task.duration.split(":")[1] : "",
       start_date: task?.start_date || "",
       due_date: task?.due_date || "",
       status: task?.status || "",
@@ -45,18 +47,22 @@ const EditTask = ({ onClose, task }) => {
       }
       return acc;
     }, []);
-    console.log("Assigned users---", assigned);
+    // console.log("Assigned users---", assigned);
     setAssignedUser(assigned || []);
   }, [task]);
 
   const onSubmit = async (data) => {
+    console.log(data)
     try {
       const TaskName = data?.type
         ? `${data?.type} - ${data?.taskname}`
         : data?.name;
+
+      const Duration = `${data?.hour}:${data?.min}`;
       const updatedTask = await Service.editTask(task?.id, {
         ...data,
         name: TaskName,
+        duration: Duration,
       });
       dispatch(updateTask(updatedTask));
       console.log("Successfully Updated Task: ", updatedTask);
@@ -178,6 +184,40 @@ const EditTask = ({ onClose, task }) => {
                 {...register("priority")}
                 onChange={setValue}
               />
+            </div>
+            <div className="flex flex-row gap-5 w-1/5">
+              <div className="w-full">
+                <Input
+                  type="number"
+                  name="hour"
+                  label="HH"
+                  placeholder="HH"
+                  className="w-20"
+                  min={0}
+                  {...register("hour")}
+                  onBlur={(e) => {
+                    if (e.target.value < 0) e.target.value = 0;
+                  }}
+                />
+              </div>
+              <div className="w-full">
+                <Input
+                  type="number"
+                  name="min"
+                  placeholder="MM"
+                  label="MM"
+                  className="w-20"
+                  min={0}
+                  max={60}
+                  {...register("min")}
+                  onBlur={(e) => {
+                    if (e.target.value < 0) e.target.value = 0;
+                  }}
+                />
+              </div>
+              {errors.min && (
+                <p className="text-red-600">{errors.min.message}</p>
+              )}
             </div>
             <div className=" w-full my-2">
               <Input

@@ -13,9 +13,10 @@ const TaskTab = () => {
 
   // Count the number of completed projects
   const completedTaskCount = tasks.filter(
-    (task) => task.status === "COMPLETED",
+    (task) => task.status === "COMPLETE",
   ).length;
 
+  console.log(completedTaskCount);
   const inReviewTaskCount = tasks.filter(
     (task) => task.status === "IN-REVIEW",
   ).length;
@@ -28,7 +29,7 @@ const TaskTab = () => {
           Task
         </div>
       </div>
-      <div className="h-[85vh] overflow-y-hidden">
+      <div className="overflow-y-hidden">
         <div className="my-5 grid md:grid-cols-4 grid-cols-2 gap-5">
           <div className="flex flex-col justify-center items-center bg-white/50 rounded-lg p-3 shadow-lg">
             <div className="font-bold text-xl text-gray-800">Total Tasks</div>
@@ -55,8 +56,8 @@ const TaskTab = () => {
         </div>
 
         {/* Conditional rendering of menu */}
-        <div className={`rounded-lg bg-white md:text-lg text-sm`}>
-          <div className="overflow-auto bg-teal-100 rounded-lg md:w-full w-[90vw]">
+        <div className={`overflow-y-auto h-[80vh] rounded-lg bg-white md:text-lg text-sm`}>
+          <div className=" bg-teal-100 rounded-lg md:w-full w-[90vw]">
             <nav className="px-5 drop-shadow-md text-center">
               <ul className="flex items-center justify-evenly gap-10 py-1 text-center">
                 <li className="px-2">

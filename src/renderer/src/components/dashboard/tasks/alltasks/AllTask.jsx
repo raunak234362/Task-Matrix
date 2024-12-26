@@ -14,12 +14,74 @@ const AllTask = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
+  const [projectCompletion, setProjectCompletion] = useState({});
+  const [completionPercentage, setCompletionPercentage] = useState(0);
+
   const [projectFilter, setProjectFilter] = useState("");
   const [sortConfig, setSortConfig] = useState({
     key: "",
     direction: "ascending",
   });
-  console.log(tasks);
+
+  const calculateCompletionPercentage = () => {
+    const completionMap = {};
+
+    tasks.forEach((task) => {
+      if (!completionMap[task.project.name]) {
+        completionMap[task.project.name] = {
+          completed: 0,
+          inReview: 0,
+          total: 0,
+        };
+      }
+      completionMap[task.project.name].total += 1;
+
+      if (task.status === "COMPLETE") {
+        completionMap[task.project.name].completed += 1;
+      } else if (task.status === "IN-REVIEW") {
+        completionMap[task.project.name].inReview += 1;
+      }
+    });
+
+    // Calculate percentages
+    Object.keys(completionMap).forEach((projectName) => {
+      const { completed, inReview, total } = completionMap[projectName];
+      completionMap[projectName].completionPercentage =
+        ((completed + inReview) / total) * 100;
+    });
+
+    setProjectCompletion(completionMap);
+  };
+
+  useEffect(() => {
+    if (projectFilter) {
+      const projectTasks = tasks.filter(
+        (task) => task.project.name === projectFilter,
+      );
+      const completedTasks = projectTasks.filter(
+        (task) => task.status === "COMPLETE",
+      ).length;
+      const totalTasks = projectTasks.length;
+
+      const percentage =
+        totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
+      setCompletionPercentage(percentage);
+    }
+  }, [projectFilter, tasks]);
+
+  const getCompletionBarColor = (status) => {
+    switch (status) {
+      case "COMPLETE":
+        return "bg-green-500"; // Green for completed
+      case "IN-REVIEW":
+        return "bg-yellow-500"; // Yellow for in-review
+      default:
+        return "bg-green-500"; // Default or no status
+    }
+  };
+  
+
+  // console.log(tasks);
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
   };
@@ -28,7 +90,7 @@ const AllTask = () => {
     setStatusFilter(e.target.value);
   };
 
-  const handleFabricatorFilter = (e) => {
+  const handleProjectFilter = (e) => {
     setProjectFilter(e.target.value);
   };
 
@@ -52,13 +114,15 @@ const AllTask = () => {
     return 0;
   });
 
-  const filteredTasks = sortedTasks.filter((project) => {
+  const filteredTasks = sortedTasks.filter((task) => {
     return (
-      project?.name?.toLowerCase().includes(searchTerm?.toLowerCase()) &&
-      (statusFilter === "" || project.status === statusFilter) &&
-      (projectFilter === "" || project.project.name === projectFilter)
+      (task.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        task.user.name.toLowerCase().includes(searchTerm.toLowerCase())) &&
+      (statusFilter === "" || task.status === statusFilter) &&
+      (projectFilter === "" || task.project.name === projectFilter)
     );
   });
+  
 
   const uniqueProject = [
     ...new Set(tasks?.map((project) => project?.project?.name)),
@@ -67,7 +131,7 @@ const AllTask = () => {
   const handleViewClick = async (taskId) => {
     try {
       const task = await Service.getTaskById(taskId);
-      console.log("Task Details:", task);
+      // console.log("Task Details:", task);
       // dispatch(showTaskByID(task));
       setSelectedTask(task);
       setTaskID(task.id);
@@ -120,7 +184,7 @@ const AllTask = () => {
             <div className="flex flex-col md:flex-row gap-4 mb-4">
               <input
                 type="text"
-                placeholder="Search by task name..."
+                placeholder="Search by Task name & User name..."
                 value={searchTerm}
                 onChange={handleSearch}
                 className="px-4 py-2 border rounded-md w-full md:w-1/4"
@@ -140,17 +204,31 @@ const AllTask = () => {
               </select>
               <select
                 value={projectFilter}
-                onChange={handleFabricatorFilter}
+                onChange={handleProjectFilter}
                 className="px-4 py-2 border rounded-md w-full md:w-1/4"
               >
                 <option value="">All Projects</option>
-                {uniqueProject?.map((fabricator) => (
-                  <option key={fabricator} value={fabricator}>
-                    {fabricator}
+                {uniqueProject?.map((project) => (
+                  <option key={project} value={project}>
+                    {project}
                   </option>
                 ))}
               </select>
             </div>
+
+            {projectFilter && (
+              <div className="mt-4">
+                <div className="mb-2">
+                  Project Completion: {completionPercentage.toFixed(2)}%
+                </div>
+                <div className="h-4 w-full bg-gray-200 rounded-full">
+                  <div
+                    className={`h-4 rounded-full ${getCompletionBarColor(tasks?.project?.status)}`} // Use the getCompletionBarColor function
+                    style={{ width: `${completionPercentage}%` }}
+                  />
+                </div>
+              </div>
+            )}
             <div className=" py-5 bg-white h-[58vh] overflow-auto rounded-lg">
               <table className="md:w-full w-[90vw] border-collapse text-center md:text-lg text-xs rounded-xl">
                 <thead>
@@ -176,6 +254,14 @@ const AllTask = () => {
                       onClick={() => handleSort("name")}
                     >
                       Task Name{" "}
+                      {sortConfig.key === "name " &&
+                        (sortConfig.direction === "ascending" ? "" : "")}
+                    </th>
+                    <th
+                      className="px-2 py-1 cursor-pointer"
+                      onClick={() => handleSort("manager")}
+                    >
+                      Manager Name{" "}
                       {sortConfig.key === "name " &&
                         (sortConfig.direction === "ascending" ? "" : "")}
                     </th>
@@ -227,6 +313,9 @@ const AllTask = () => {
                           {task?.project?.name}
                         </td>
                         <td className="border px-1 py-2">{task?.name}</td>
+                        <td className="border px-1 py-2">
+                          {task?.project?.manager?.name}
+                        </td>
                         <td className="border px-1 py-2">{task?.user?.name}</td>
                         <td className="border px-1 py-2">{task?.status}</td>
                         <td className={`border px-1 py-2`}>
@@ -241,6 +330,7 @@ const AllTask = () => {
                         <td className="border px-1 py-2">
                           {new Date(task?.due_date).toDateString()}
                         </td>
+
                         <td className="border px-1 flex justify-center py-2">
                           <Button onClick={() => handleViewClick(task?.id)}>
                             View
