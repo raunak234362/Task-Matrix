@@ -28,32 +28,32 @@ const Login = () => {
       console.log(user);
       if ("token" in user) {
         const token = user.token;
-        // sessionStorage.setItem('token', )
+        sessionStorage.setItem('token', token)
         const userData = await Service.getCurrentUser(token);
-        console.log("UserData :", userData.data.role);
+        console.log("UserData :", userData);
         let userType = "user";
-        if (userData.data.role === "STAFF") {
-          if (userData.data.is_superuser) {
+        if (userData.role === "STAFF") {
+          if (userData.is_superuser) {
             userType = "admin";
-          } else if (userData.data.is_sales) {
+          } else if (userData.is_sales) {
             userType = "sales";
-          } else if (userData.data.is_staff && userData.data.is_manager) {
+          } else if (userData.is_staff && userData.is_manager) {
             userType = "department-manager";
-          } else if (userData.data.is_manager) {
+          } else if (userData.is_manager) {
             userType = "project-manager";
           }
-        } else if (userData.data.role === "CLIENT") {
+        } else if (userData.role === "CLIENT") {
           userType = "client";
-        } else if (userData.data.role === "VENDOR") {
+        } else if (userData.role === "VENDOR") {
           userType = "vendor";
         }
 
         sessionStorage.setItem("userType", userType);
         dispatch(authLogin(user));
         // dispatch(setUserData(userData.data))
-        console.log(userData.data.is_firstLogin);
-        if (userData.data?.is_firstLogin) navigate("/change-password/");
-        else if (userType === "user" || userType === "project-manager") navigate("/admin/home");
+        console.log(userData.is_firstLogin);
+        if (userData?.is_firstLogin) navigate("/change-password/");
+        else if (userType === "user" || userType === "project-manager" || userType ==="admin") navigate("/admin/home");
         // else if (userType === "client") navigate("/client");
         // else if (userType === "sales") navigate("/sales");
         // else if (userType === "staff") navigate("/staff");
