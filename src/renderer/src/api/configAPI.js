@@ -288,23 +288,6 @@ class Service {
     }
   }
 
-  static async DeleteProject(id) {
-    const token = sessionStorage.getItem("token");
-    try {
-      const response = await fetch(`${BASE_URL}api/project/projects/${id}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Token ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
-      if (response) return true;
-      return false;
-    } catch (error) {
-      console.log("Error in getting Project:", error);
-      throw error;
-    }
-  }
 
   //Task APIs
   static async getTask() {

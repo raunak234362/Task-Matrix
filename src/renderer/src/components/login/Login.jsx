@@ -52,7 +52,7 @@ const Login = () => {
         dispatch(authLogin(user));
         // dispatch(setUserData(userData.data))
         console.log(userData.is_firstLogin);
-        if (userData?.is_firstLogin) navigate("/change-password/");
+        if (userData?.is_firstLogin) navigate("/admin/home");
         else if (userType === "user" || userType === "project-manager" || userType ==="admin") navigate("/admin/home");
         // else if (userType === "client") navigate("/client");
         // else if (userType === "sales") navigate("/sales");
