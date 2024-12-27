@@ -236,7 +236,7 @@ const AllTask = () => {
             {projectFilter && (
               <div className="mt-4">
                 <div className="mb-2">
-                  Project Completion: {completionPercentage.toFixed(2)}%
+                  Project Completion %: {completionPercentage.toFixed(2)}%
                 </div>
                 <div className="h-4 w-full bg-gray-200 rounded-full">
                   <div
@@ -245,7 +245,7 @@ const AllTask = () => {
                   />
                 </div>
                 <div className="mb-2">
-                  InReview Completion: {inReviewPercentage.toFixed(2)}%
+                  Project InReview %: {inReviewPercentage.toFixed(2)}%
                 </div>
                 <div className="h-4 w-full bg-gray-200 rounded-full">
                   <div
