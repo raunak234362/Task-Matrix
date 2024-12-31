@@ -611,7 +611,6 @@ class Service {
       throw error
     }
   }
-
   static async deleteTask(id) {
     const token = sessionStorage.getItem('token')
     try {
@@ -629,7 +628,6 @@ class Service {
       throw error
     }
   }
-
   static async taskRecord(user) {
     console.log(user)
     const token = sessionStorage.getItem('token')

@@ -179,7 +179,8 @@ const AddProject = () => {
                       value: ''
                     },
                     { label: 'TEKLA', value: 'TEKLA' },
-                    { label: 'SDS-2', value: 'SDS-2' }
+                    { label: 'SDS-2', value: 'SDS-2' },
+                    { label: 'ERECTION', value: 'ERECTION' }
                   ]}
                   className="w-full"
                   {...register('tool', {
