@@ -29,6 +29,8 @@ const TaskRecord = () => {
     fetchUser();
   }, [token]);
 
+ 
+
   useEffect(() => {
     const fetchTask = async () => {
       try {
@@ -40,7 +42,6 @@ const TaskRecord = () => {
         console.log("Error fetching user task", error);
       }
     };
-
     fetchTask();
   }, [user]);
 

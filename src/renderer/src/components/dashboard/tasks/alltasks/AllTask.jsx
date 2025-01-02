@@ -283,10 +283,10 @@ const AllTask = () => {
                     style={{ width: `${inReviewPercentage}%` }}
                   />
                 </div>
-                <div className="mt-2 text-lg font-semibold">
+                {/* <div className="mt-2 text-lg font-semibold">
                   Total Project Duration: {totalDuration.hours} hours{" "}
                   {totalDuration.minutes} minutes
-                </div>
+                </div> */}
               </div>
             )}
             <div className=" py-5 bg-white h-[58vh] overflow-auto rounded-lg">

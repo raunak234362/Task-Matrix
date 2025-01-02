@@ -43,6 +43,17 @@ const UsersTaskRecord = () => {
     fetchUser();
   }, [token]);
 
+
+  // const fetchTaskRecords = async () => {
+  //   try {
+  //     const taskRecord = await Service.allTaskRecord();
+  //     // setRecord(taskRecord);
+  //     console.log("All task records----------",taskRecord);
+  //   } catch (error) {
+  //     console.log("Error fetching Task Record of the User:", error);
+  //   }
+  // };
+
   useEffect(() => {
     const fetchTask = async () => {
       console.log(user);
