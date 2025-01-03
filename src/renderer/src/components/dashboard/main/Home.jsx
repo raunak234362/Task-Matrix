@@ -23,6 +23,7 @@ const Home = () => {
 
   const projects = useSelector((state) => state?.projectData?.projectData);
   const tasks = useSelector((state) => state?.taskData?.taskData);
+  console.log("Task data",tasks);
   const users = useSelector((state) => state?.userData?.staffData);
   const fabricators = useSelector(
     (state) => state?.fabricatorData?.fabricatorData,
@@ -51,41 +52,41 @@ const Home = () => {
       }
     };
 
-    const fetchUsers = async () => {
-      try {
-        const usersData = await Service.getAllUser(token);
-        dispatch(showStaff(usersData));
-        // setUsers(usersData)
-      } catch (error) {
-        console.error("Error fetching users:", error);
-      }
-    };
+    // const fetchUsers = async () => {
+    //   try {
+    //     const usersData = await Service.getAllUser(token);
+    //     dispatch(showStaff(usersData));
+    //     // setUsers(usersData)
+    //   } catch (error) {
+    //     console.error("Error fetching users:", error);
+    //   }
+    // };
 
-    const fetchFabricators = async () => {
-      try {
-        const fabricatorsData = await Service.getAllFabricator(token);
-        dispatch(showFabricator(fabricatorsData));
-      } catch (error) {
-        console.error("Error fetching fabricators:", error);
-      }
-    };
+    // const fetchFabricators = async () => {
+    //   try {
+    //     const fabricatorsData = await Service.getAllFabricator(token);
+    //     dispatch(showFabricator(fabricatorsData));
+    //   } catch (error) {
+    //     console.error("Error fetching fabricators:", error);
+    //   }
+    // };
 
-    const fetchTeam = async () => {
-      try {
-        const teamData = await Service.getAllTeam(token);
-        // console.log(teamData)
-        dispatch(showTeam(teamData));
-        // setTeam(teamData)
-      } catch (error) {
-        console.error("Error fetching team:", error);
-      }
-    };
+    // const fetchTeam = async () => {
+    //   try {
+    //     const teamData = await Service.getAllTeam(token);
+    //     // console.log(teamData)
+    //     dispatch(showTeam(teamData));
+    //     // setTeam(teamData)
+    //   } catch (error) {
+    //     console.error("Error fetching team:", error);
+    //   }
+    // };
 
-    fetchTeam();
+    // fetchTeam();
     fetchTasks();
-    fetchUsers();
+    // fetchUsers();
     fetchProjects();
-    fetchFabricators();
+    // fetchFabricators();
   }, [token]);
 
   return (
