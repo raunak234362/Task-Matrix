@@ -165,7 +165,9 @@ const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
                   </span>
                 </div>
               </div>
-              <Button onClick={handleEditClick}>Update</Button>
+              {userType == !"user" ? null : (
+                <Button onClick={handleEditClick}>Update</Button>
+              )}
             </div>
 
             <div className="flex flex-col justify-between bg-gray-200 pl-4 gap-y-5">

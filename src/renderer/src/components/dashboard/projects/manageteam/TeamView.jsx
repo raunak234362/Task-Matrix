@@ -175,7 +175,6 @@ const TeamView = ({ team, isOpen, onClose }) => {
 
         <div className=" h-fit p-4 rounded-lg">
           <div>
-            <form onSubmit={handleSubmit(editTeam)}>
               <div className=" bg-blue-gray-200/50 flex flex-row justify-between rounded-lg my-5 p-5">
                 <div>
                   <div className="my-2">
@@ -236,7 +235,6 @@ const TeamView = ({ team, isOpen, onClose }) => {
                   </Button>
                 </div> */}
               </div>
-            </form>
             <div className="grid grid-cols-2  h-[45vh] gap-5 mt-16">
               <div className="mb-2 bg-teal-100/60 p-5 overflow-y-auto rounded-lg my-1">
                 <strong className="text-gray-700 text-lg">Team Members:</strong>

@@ -64,8 +64,8 @@ const EditProject = ({ onClose, project }) => {
     console.log(data);
     try {
       const updatedProject = await Service.editProject(project.id, data);
-      dispatch(updateProjectData(updatedProject));
       console.log("Project updated:", updatedProject);
+      dispatch(updateProjectData(updatedProject));
       onClose();
     } catch (error) {
       console.error("Error updating project:", error);
@@ -80,7 +80,7 @@ const EditProject = ({ onClose, project }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-00">
-      <div className="bg-white h-[60vh] p-5 rounded-lg shadow-lg w-[40vw]">
+      <div className="bg-white h-[50vh] p-5 rounded-lg shadow-lg w-[40vw]">
         <div className="flex justify-between my-5 bg-teal-200/50 p-2 rounded-lg">
           <h2 className="text-2xl font-bold">Edit Project</h2>
           <button

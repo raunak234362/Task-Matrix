@@ -17,6 +17,7 @@ const AllTask = () => {
   const [projectCompletion, setProjectCompletion] = useState({});
   const [completionPercentage, setCompletionPercentage] = useState(0);
   const [inReviewPercentage, setInReviewPercentage] = useState(0);
+  const [totalDuration, setTotalDuration] = useState(0);
 
   const [projectFilter, setProjectFilter] = useState("");
   const [sortConfig, setSortConfig] = useState({
@@ -54,6 +55,23 @@ const AllTask = () => {
     setProjectCompletion(completionMap);
   };
 
+  const calculateTotalDuration = () => {
+    if (!tasks || tasks.length === 0) {
+      setTotalDuration({ hours: 0, minutes: 0 });
+      return;
+    }
+
+    const totalMinutes = tasks.reduce((sum, task) => {
+      const taskDuration = task?.project?.duration || 0;
+      return sum + taskDuration;
+    }, 0);
+
+    const hours = Math.floor(totalMinutes / 60); // Calculate total hours
+    const minutes = totalMinutes % 60; // Calculate remaining minutes
+
+    setTotalDuration({ hours, minutes }); // Store as an object
+  };
+
   useEffect(() => {
     if (projectFilter) {
       const projectTasks = tasks.filter(
@@ -75,7 +93,19 @@ const AllTask = () => {
       const percentage =
         totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
       setCompletionPercentage(percentage);
+
+      const totalMinutes = projectTasks.reduce((sum, task) => {
+        const taskDuration = task?.project?.duration || 0;
+        return sum + taskDuration;
+      }, 0);
+
+      const hours = Math.floor(totalMinutes / 60);
+      const minutes = totalMinutes % 60;
+
+      setTotalDuration({ hours, minutes });
     }
+
+    calculateTotalDuration();
   }, [projectFilter, tasks]);
 
   const getCompletionBarColor = (status) => {
@@ -253,6 +283,10 @@ const AllTask = () => {
                     style={{ width: `${inReviewPercentage}%` }}
                   />
                 </div>
+                {/* <div className="mt-2 text-lg font-semibold">
+                  Total Project Duration: {totalDuration.hours} hours{" "}
+                  {totalDuration.minutes} minutes
+                </div> */}
               </div>
             )}
             <div className=" py-5 bg-white h-[58vh] overflow-auto rounded-lg">
