@@ -38,30 +38,30 @@ class Service {
   }
 
   //Team APIs
-  static async addTeam({ name, created_by, leader }) {
-    try {
-      const formData = JSON.stringify({
-        name,
-        created_by,
-        leader,
-      });
-      const token = sessionStorage.getItem("token");
-      const response = await fetch(`${BASE_URL}api/team/teams/`, {
-        method: "POST",
-        headers: {
-          Authorization: `Token ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: formData,
-      });
-      const data = await response.json();
-      console.log("Successfully Added Team: ", data);
-      return data;
-    } catch (error) {
-      console.log("Error in Adding Team: ", error);
-      throw error;
-    }
-  }
+  // static async addTeam({ name, created_by, leader }) {
+  //   try {
+  //     const formData = JSON.stringify({
+  //       name,
+  //       created_by,
+  //       leader,
+  //     });
+  //     const token = sessionStorage.getItem("token");
+  //     const response = await fetch(`${BASE_URL}api/team/teams/`, {
+  //       method: "POST",
+  //       headers: {
+  //         Authorization: `Token ${token}`,
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: formData,
+  //     });
+  //     const data = await response.json();
+  //     console.log("Successfully Added Team: ", data);
+  //     return data;
+  //   } catch (error) {
+  //     console.log("Error in Adding Team: ", error);
+  //     throw error;
+  //   }
+  // }
 
   static async getAllTeam() {
     const token = sessionStorage.getItem("token");
@@ -80,6 +80,7 @@ class Service {
       throw error;
     }
   }
+
   static async getTeam(projectId) {
     const token = sessionStorage.getItem("token");
     try {
@@ -99,24 +100,24 @@ class Service {
     }
   }
 
-  static async deleteTeam(teamId) {
-    console.log(teamId);
-    try {
-      console.log(teamId);
-      const response = await axios.delete(
-        `${BASE_URL}api/team/teams/${teamId}`,
-        {
-          headers: {
-            Authorization: `Token ${sessionStorage.getItem("token")}`,
-            "Content-Type": "application/json",
-          },
-        },
-      );
-      console.log("Team Deleted: ", response.data);
-    } catch (error) {
-      console.log("Error deleting the team", error);
-    }
-  }
+  // static async deleteTeam(teamId) {
+  //   console.log(teamId);
+  //   try {
+  //     console.log(teamId);
+  //     const response = await axios.delete(
+  //       `${BASE_URL}api/team/teams/${teamId}`,
+  //       {
+  //         headers: {
+  //           Authorization: `Token ${sessionStorage.getItem("token")}`,
+  //           "Content-Type": "application/json",
+  //         },
+  //       },
+  //     );
+  //     console.log("Team Deleted: ", response.data);
+  //   } catch (error) {
+  //     console.log("Error deleting the team", error);
+  //   }
+  // }
 
   static async getTeamMember(projectId) {
     console.log(projectId);
