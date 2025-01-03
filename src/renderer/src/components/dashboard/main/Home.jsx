@@ -31,6 +31,13 @@ const Home = () => {
   const teams = useSelector((state) => state?.projectData?.teamData);
   // console.log(teams)
 
+  useEffect(() => {
+    if(projects){
+      const segregatedProjects = SegregateProject(projects);
+      setSegregateProject(segregatedProjects);
+    }
+  }, [projects, tasks, users, fabricators, teams]);
+
   // useEffect(() => {
   //   const fetchProjects = async () => {
   //     try {

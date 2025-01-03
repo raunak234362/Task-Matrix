@@ -41,8 +41,6 @@ const App = () => {
          const projectsData = await Service.getAllProject(token);
          console.log(projectsData)
          dispatch(showProjects(projectsData));
-         const segregatedProjects = await SegregateProject(projectsData);
-         setSegregateProject(segregatedProjects);
        } catch (error) {
          console.error("Error fetching projects:", error);
        }
