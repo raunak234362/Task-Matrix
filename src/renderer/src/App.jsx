@@ -8,10 +8,11 @@ import { Header, Sidebar } from './components/index'
 import { Outlet, useNavigate } from 'react-router-dom'
 import Service from './api/configAPI'
 // import FrappeService from "./frappeConfig/FrappeService";
-import { setUserData } from './store/userSlice'
+import { setUserData, showStaff } from './store/userSlice'
 // import { loadFabricator, showClient } from "./store/fabricatorSlice";
-import { showProjects } from './store/projectSlice'
+import { showProjects, showTeam } from './store/projectSlice'
 import { showTask } from './store/taskSlice'
+import { showFabricator } from './store/fabricatorSlice'
 const App = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const dispatch = useDispatch()
@@ -57,7 +58,8 @@ const App = () => {
 
      const fetchUsers = async () => {
        try {
-         const usersData = await Service.getAllUser(token);
+         const usersData = await Service.allEmployee(token);
+         console.log(usersData)
          dispatch(showStaff(usersData));
          // setUsers(usersData)
        } catch (error) {

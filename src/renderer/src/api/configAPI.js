@@ -21,20 +21,18 @@ class Service {
     }
   }
 
-  static async getAllUser(token) {
-    sessionStorage.getItem(token);
+  static async allEmployee(token) {
     try {
-      const response = await fetch(`${BASE_URL}api/user/emp/`, {
-        method: "GET",
+      const response = await axios.get(`${BASE_URL}/employee/employee`, {
         headers: {
-          Authorization: `Token ${token}`,
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
       });
-      const data = await response.json();
-      return data;
+      console.log(response?.data);
+      return response.data?.data;
     } catch (error) {
-      console.error("Error in getAllUser:", error);
+      console.log("Error fetching employees:", error);
       throw error;
     }
   }
@@ -75,7 +73,7 @@ class Service {
         },
       });
 
-      console.log(resonse?.data)
+      console.log(resonse?.data);
       return resonse?.data?.data;
     } catch (error) {
       console.log("Error in getting team list: ", error);
@@ -403,16 +401,12 @@ class Service {
       const token = sessionStorage.getItem("token");
 
       // Using Axios to make the POST request
-      const response = await axios.post(
-        `${BASE_URL}/task/tasks/`,
-        formData,
-        {
-          headers: {
-            Authorization: `Token ${token}`,
-            "Content-Type": "application/json",
-          },
+      const response = await axios.post(`${BASE_URL}/task/tasks/`, formData, {
+        headers: {
+          Authorization: `Token ${token}`,
+          "Content-Type": "application/json",
         },
-      );
+      });
 
       console.log(response.data);
       return response.data; // Return the response data

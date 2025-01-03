@@ -41,7 +41,7 @@ const AddTask = () => {
         const options = projects
           .filter((project) => project.team != null)
           .map((project) => ({
-            label: `${project.name} - ${project.fabricator.name}`,
+            label: `${project.name} - ${project.fabricator.fabName}`,
             value: project.id,
           }));
         setPtojectOptions(options);
