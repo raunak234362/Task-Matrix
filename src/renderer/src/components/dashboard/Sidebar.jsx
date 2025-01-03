@@ -65,7 +65,7 @@ const Sidebar = () => {
               <div>Dashboard</div>
             </NavLink>
           </li>
-          {userType === "admin" ? (
+          {/* {userType === "admin" ? (
               <li>
                 <NavLink
                   to="fabricator"
@@ -79,7 +79,7 @@ const Sidebar = () => {
                 </NavLink>
               </li>
              
-          ) : null}
+          ) : null} */}
          
           
           <li>

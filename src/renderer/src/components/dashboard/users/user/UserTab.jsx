@@ -57,7 +57,7 @@ const UserTab = () => {
                     </NavLink>
                   </li>
                 ) : null}
-                {userType === "admin" ? (
+                {/* {userType === "admin" ? (
                   <li className="px-2">
                     <NavLink
                       to="add-user"
@@ -70,7 +70,7 @@ const UserTab = () => {
                       Add User
                     </NavLink>
                   </li>
-                ) : null}
+                ) : null} */}
 
                 <li className="px-2">
                   <NavLink
