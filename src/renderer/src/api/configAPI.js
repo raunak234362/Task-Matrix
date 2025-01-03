@@ -39,7 +39,6 @@ class Service {
     }
   }
 
-
   //Team APIs
   static async addTeam({ name, created_by, leader }) {
     try {
@@ -69,16 +68,15 @@ class Service {
   static async getAllTeam() {
     const token = sessionStorage.getItem("token");
     try {
-      const response = await fetch(`${BASE_URL}api/team/teams/`, {
-        method: "GET",
+      const resonse = await axios.get(`${BASE_URL}/team/teams/`, {
         headers: {
           Authorization: `Token ${token}`,
           "Content-Type": "application/json",
         },
       });
-      const data = await response.json();
-      // console.log('Team fetched: ', data)
-      return data;
+
+      console.log(resonse?.data)
+      return resonse?.data?.data;
     } catch (error) {
       console.log("Error in getting team list: ", error);
       throw error;
@@ -171,7 +169,6 @@ class Service {
     }
   }
 
-
   static async getAllFabricator() {
     const token = sessionStorage.getItem("token");
     try {
@@ -231,19 +228,17 @@ class Service {
       throw error;
     }
   }
-  
+
   static async getAllProject() {
     const token = sessionStorage.getItem("token");
     try {
-      const response = await fetch(`${BASE_URL}api/project/projects/`, {
-        method: "GET",
+      const response = await axios.get(`${BASE_URL}/project/projects`, {
         headers: {
           Authorization: `Token ${token}`,
           "Content-Type": "application/json",
         },
       });
-      const data = await response.json();
-      return data;
+      return response?.data?.data;
     } catch (error) {
       console.log("Error in getting Project List: ", error);
       throw error;
@@ -288,12 +283,11 @@ class Service {
     }
   }
 
-
   //Task APIs
   static async getTask() {
     const token = sessionStorage.getItem("token");
     try {
-      const response = await fetch(`${BASE_URL}api/task/tasks/my_task/`, {
+      const response = await fetch(`${BASE_URL}/task/tasks/my_task/`, {
         method: "GET",
         headers: {
           Authorization: `Token ${token}`,
@@ -311,7 +305,7 @@ class Service {
   static async getMyTask() {
     const token = sessionStorage.getItem("token");
     try {
-      const response = await fetch(`${BASE_URL}api/task/tasks/my_task_list`, {
+      const response = await fetch(`${BASE_URL}/task/tasks/my_tasks`, {
         method: "GET",
         headers: {
           Authorization: `Token ${token}`,
@@ -329,7 +323,7 @@ class Service {
   static async getTaskById(Id) {
     const token = sessionStorage.getItem("token");
     try {
-      const response = await fetch(`${BASE_URL}api/task/tasks/${Id}`, {
+      const response = await fetch(`${BASE_URL}/task/tasks/${Id}`, {
         method: "GET",
         headers: {
           Authorization: `Token ${token}`,
@@ -347,15 +341,14 @@ class Service {
   static async getAllTask() {
     const token = sessionStorage.getItem("token");
     try {
-      const response = await fetch(`${BASE_URL}api/task/tasks/`, {
-        method: "GET",
+      const response = await axios.get(`${BASE_URL}/task/tasks/`, {
         headers: {
           Authorization: `Token ${token}`,
           "Content-Type": "application/json",
         },
       });
-      const data = await response.json();
-      return data;
+      console.log(response?.data);
+      return response?.data?.data;
     } catch (error) {
       console.log("Error in getting Task: ", error);
       throw error;
@@ -364,7 +357,7 @@ class Service {
   static async getParentTasks(id) {
     const token = sessionStorage.getItem("token");
     try {
-      const response = await fetch(`${BASE_URL}api/task/tasks/?project=${id}`, {
+      const response = await fetch(`${BASE_URL}/task/tasks/?project=${id}`, {
         method: "GET",
         headers: {
           Authorization: `Token ${token}`,
@@ -411,7 +404,7 @@ class Service {
 
       // Using Axios to make the POST request
       const response = await axios.post(
-        `${BASE_URL}api/task/tasks/`,
+        `${BASE_URL}/task/tasks/`,
         formData,
         {
           headers: {

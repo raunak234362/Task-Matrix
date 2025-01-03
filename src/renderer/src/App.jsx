@@ -10,12 +10,15 @@ import Service from './api/configAPI'
 // import FrappeService from "./frappeConfig/FrappeService";
 import { setUserData } from './store/userSlice'
 // import { loadFabricator, showClient } from "./store/fabricatorSlice";
-
+import { showProjects } from './store/projectSlice'
+import { showTask } from './store/taskSlice'
 const App = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const token = sessionStorage.getItem('token')
+
+  
 
   const toggleSidebar = useCallback(() => {
     setSidebarOpen((prev) => !prev)
@@ -26,34 +29,81 @@ const App = () => {
   useEffect(() => {
     const fetchUser = async () => {
       const user = await Service.getCurrentUser(token)
-      // console.log("User :", user);
-      try {
-        // const fabricator= await Service.allFabricator(token);
-        // const client = await Service.allClient(token);
-        // // const project = await Service.allprojects(token);
         dispatch(setUserData(user[0]))
-        // dispatch(loadFabricator(fabricator));
-        // dispatch(showClient(client));
-        // dispatch(showProjects(project));
-      } catch (error) {
-        console.log(error)
-        navigate('/')
-      }
     }
-
     fetchUser()
   }, [dispatch])
 
+
+   useEffect(() => {
+     const fetchProjects = async () => {
+       try {
+         const projectsData = await Service.getAllProject(token);
+         console.log(projectsData)
+         dispatch(showProjects(projectsData));
+         const segregatedProjects = await SegregateProject(projectsData);
+         setSegregateProject(segregatedProjects);
+       } catch (error) {
+         console.error("Error fetching projects:", error);
+       }
+     };
+
+     const fetchTasks = async () => {
+       try {
+         const tasksData = await Service.getAllTask(token);
+         dispatch(showTask(tasksData));
+       } catch (error) {
+         console.error("Error fetching tasks:", error);
+       }
+     };
+
+     const fetchUsers = async () => {
+       try {
+         const usersData = await Service.getAllUser(token);
+         dispatch(showStaff(usersData));
+         // setUsers(usersData)
+       } catch (error) {
+         console.error("Error fetching users:", error);
+       }
+     };
+
+     const fetchFabricators = async () => {
+       try {
+         const fabricatorsData = await Service.getAllFabricator(token);
+         dispatch(showFabricator(fabricatorsData));
+       } catch (error) {
+         console.error("Error fetching fabricators:", error);
+       }
+     };
+
+     const fetchTeam = async () => {
+       try {
+         const teamData = await Service.getAllTeam(token);
+         // console.log(teamData)
+         dispatch(showTeam(teamData));
+         // setTeam(teamData)
+       } catch (error) {
+         console.error("Error fetching team:", error);
+       }
+     };
+
+     fetchTeam();
+     fetchTasks();
+     fetchUsers();
+     fetchProjects();
+     fetchFabricators();
+   }, [token]);
+
   return (
     <Provider store={store}>
-      <div className="flex flex-col md:flex-row w-screen h-screen overflow-hidden bg-gradient-to-r from-green-300/50 to-teal-300">
+      <div className="flex flex-col w-screen h-screen overflow-hidden md:flex-row bg-gradient-to-r from-green-300/50 to-teal-300">
         {/* Sidebar */}
 
         {/* {!isConnected && (
           <>
-            <div className="absolute z-50 top-0 left-0 bg-black bg-opacity-50 w-screen h-screen">
-              <div className="flex w-full h-full items-center justify-center px-20 py-10">
-                <div className="bg-white text-red-700 px-32 py-20 rounded-3xl border-2 border-red-700">
+            <div className="absolute top-0 left-0 z-50 w-screen h-screen bg-black bg-opacity-50">
+              <div className="flex items-center justify-center w-full h-full px-20 py-10">
+                <div className="px-32 py-20 text-red-700 bg-white border-2 border-red-700 rounded-3xl">
                   {result
                     ? 'Connecting to Server, Please Wait...'
                     : 'Connection Failed, Please Check Your Internet Connection'}
@@ -74,7 +124,7 @@ const App = () => {
                 sidebarOpen ? 'translate-x-0' : '-translate-x-full'
               } md:translate-x-0 md:w-64`}
             >
-              <div className="flex justify-between items-center p-4">
+              <div className="flex items-center justify-between p-4">
                 <Sidebar />
               </div>
             </div>

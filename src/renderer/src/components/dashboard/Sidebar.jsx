@@ -134,11 +134,11 @@ const Sidebar = () => {
           <li></li>
         </ul>
       </nav>
-      <div className="md:flex md:justify-right mb-5">
-        {/* <Button className="bg-teal-400 mx-4 w-full" onClick={fetchLogout}>
+      <div className="mb-5 md:flex md:justify-right">
+        {/* <Button className="w-full mx-4 bg-teal-400" onClick={fetchLogout}>
           Logout
         </Button> */}
-        <div className="text-lg text-black md:hidden block">
+        <div className="block text-lg text-black md:hidden">
           {currentUser?.username}
         </div>
       </div>
