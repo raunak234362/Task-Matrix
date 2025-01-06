@@ -15,6 +15,8 @@ const Task = ({ taskId, setDisplay }) => {
   const [showProjectDetail, setShowProjectDetail] = useState(false);
   const [showFabricatorDetail, setShowFabricatorDetail] = useState(false);
   const [assignedTo, setAssignedTo] = useState("");
+  const [timer, setTimer] = useState(0); // Timer in seconds
+  const [isTimerRunning, setIsTimerRunning] = useState(false); // Timer state
   const {
     register,
     handleSubmit,
@@ -60,6 +62,18 @@ const Task = ({ taskId, setDisplay }) => {
       setTeamMember(members);
     }
   }, [tasks]);
+
+  useEffect(() => {
+    let interval;
+    if (isTimerRunning) {
+      interval = setInterval(() => {
+        setTimer((prevTimer) => prevTimer + 1);
+      }, 1000); // Increment every second
+    } else {
+      clearInterval(interval);
+    }
+    return () => clearInterval(interval); // Cleanup on unmount
+  }, [isTimerRunning]);
 
   useEffect(() => {
     fetchTask();
@@ -165,6 +179,7 @@ const Task = ({ taskId, setDisplay }) => {
     Service.startTask(id)
       .then((res) => {
         alert("Tasked Started");
+        setIsTimerRunning(true);
         console.log("Started Task: ", res);
         fetchTask();
       })
@@ -177,6 +192,7 @@ const Task = ({ taskId, setDisplay }) => {
     Service.pauseTask(tasks?.record)
       .then((res) => {
         alert("Tasked Paused");
+        setIsTimerRunning(false); // Pause the timer
         console.log("Paused Task: ", res);
         fetchTask();
       })
@@ -190,6 +206,7 @@ const Task = ({ taskId, setDisplay }) => {
       .then((res) => {
         setRecord(fetchResume);
         alert("Tasked Resumed");
+        setIsTimerRunning(true); // Stop the timer
         console.log("Resumed Task: ", res);
         fetchTask();
       })
@@ -202,6 +219,8 @@ const Task = ({ taskId, setDisplay }) => {
     Service.endTask(tasks?.record)
       .then((res) => {
         alert("Tasked Ended");
+        setIsTimerRunning(false); // Stop the timer
+        setTimer(0); // Reset the timer
         console.log("Ended Task: ", res);
         fetchTask();
       })
@@ -209,6 +228,16 @@ const Task = ({ taskId, setDisplay }) => {
         console.log("Error in ending task: ", err);
       });
   }
+
+  const formatTimer = (seconds) => {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    return `${hours.toString().padStart(2, "0")}:${minutes
+      .toString()
+      .padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+  };
+
   const handleAddAssign = async (data) => {
     try {
       if (handlePause) {
@@ -309,6 +338,7 @@ const Task = ({ taskId, setDisplay }) => {
                         {durToHour(tasks?.duration)}
                       </span>
                     </div>
+                    <div className="timer">Timer: {formatTimer(timer)}</div>
                     <div className="flex items-center my-3">
                       <span className="font-bold text-gray-800 w-40">
                         Status:
