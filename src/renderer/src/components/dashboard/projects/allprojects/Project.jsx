@@ -7,24 +7,19 @@ import Service from "../../../../api/configAPI";
 import SegregateTeam from "../../../../util/SegragateTeam";
 import { useSelector } from "react-redux";
 import { BASE_URL } from "../../../../config/constant";
-const Project = ({ projectId, isOpen, onClose, setProject }) => {
+const Project = ({ projectId, isOpen, onClose }) => {
   const project = useSelector((state) =>
     state?.projectData?.projectData?.find(
       (project) => project.id === projectId,
     ),
   );
 console.log(project);
-  const teams = useSelector((state) => state?.projectData?.teamData);
 
   const [members, setMembers] = useState({});
   const [teamTask, setTeamTask] = useState([]);
   const [teamData, setTeamData] = useState();
   const [taskDetail, setTaskDetail] = useState();
   const [loading, setLoading] = useState(true);
-  const userType = sessionStorage.getItem("userType");
-  const [selectedProject, setSelectedProject] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
   // Fetch team data once when the project is loaded
   useEffect(() => {
     const fetchTask = async () => {
@@ -81,14 +76,6 @@ console.log(project);
     fetchTasks();
   }, [teamTask]); // Only re-run when teamTask changes
 
-  const handleEditClick = () => {
-    setIsModalOpen(true);
-    setSelectedProject(project);
-  };
-  const handleModalClose = () => {
-    setSelectedProject(null);
-    setIsModalOpen(false);
-  };
 
   if (!isOpen) return null;
 
@@ -165,16 +152,7 @@ console.log(project);
                   <strong className="text-gray-700">Stage: </strong>
                   {project?.stage}
                 </div>
-                {userType !== "user" && (
-                  <div>
-                    <Button
-                      className="bg-teal-500/50 font-bold"
-                      onClick={handleEditClick}
-                    >
-                      Update
-                    </Button>
-                  </div>
-                )}
+               
               </div>
 
               <div className="">
@@ -237,13 +215,7 @@ console.log(project);
         </div>
       </div>
 
-      {selectedProject && (
-        <EditProject
-          isOpen={isModalOpen}
-          onClose={handleModalClose}
-          project={selectedProject}
-        />
-      )}
+     
     </div>
   );
 };

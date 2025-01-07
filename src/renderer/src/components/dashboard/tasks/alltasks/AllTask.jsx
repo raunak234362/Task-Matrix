@@ -9,6 +9,7 @@ import { showTask, showTaskByID } from "../../../../store/taskSlice";
 const AllTask = () => {
   const dispatch = useDispatch();
   const tasks = useSelector((state) => state?.taskData?.taskData);
+  console.log("All Task---------------",tasks);
   const [selectedTask, setSelectedTask] = useState(null);
   const [taskID, setTaskID] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -20,6 +21,7 @@ const AllTask = () => {
   const [totalDuration, setTotalDuration] = useState(0);
 
   const [projectFilter, setProjectFilter] = useState("");
+  const [toolFilter, setToolsFilter] = useState("");
   const [sortConfig, setSortConfig] = useState({
     key: "",
     direction: "ascending",
@@ -142,6 +144,10 @@ const AllTask = () => {
     setProjectFilter(e.target.value);
   };
 
+  const handleToolsFilter = (e)=>{
+    setToolsFilter(e.target.value);
+  }
+
   const handleSort = (key) => {
     let direction = "ascending";
     if (sortConfig.key === key && sortConfig.direction === "ascending") {
@@ -165,9 +171,10 @@ const AllTask = () => {
   const filteredTasks = sortedTasks.filter((task) => {
     return (
       (task.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        task.user.name.toLowerCase().includes(searchTerm.toLowerCase())) &&
+        task.user?.name.toLowerCase().includes(searchTerm.toLowerCase())) &&
       (statusFilter === "" || task.status === statusFilter) &&
-      (projectFilter === "" || task.project.name === projectFilter)
+      (projectFilter === "" || task.project?.name === projectFilter) &&
+      (toolFilter === "" || task.project?.tool === toolFilter)
     );
   });
 
@@ -260,6 +267,15 @@ const AllTask = () => {
                     {project}
                   </option>
                 ))}
+              </select>
+              <select
+                value={toolFilter}
+                onChange={handleToolsFilter}
+                className="px-4 py-2 border rounded-md w-full md:w-1/4"
+              >
+                <option value="">All Tools</option>
+                <option value="TEKLA">Tekla</option>
+                <option value="SDS-2">SDS-2</option>
               </select>
             </div>
 
