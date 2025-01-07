@@ -284,7 +284,7 @@ class Service {
   static async getTask() {
     const token = sessionStorage.getItem("token");
     try {
-      const response = await fetch(`${BASE_URL}/task/task/my_task/`, {
+      const response = await fetch(`${BASE_URL}/task/task/my_tasks/`, {
         method: "GET",
         headers: {
           Authorization: `Token ${token}`,
@@ -305,12 +305,12 @@ class Service {
 
       const response = await axios.get(`${BASE_URL}/task/task/my_tasks`, {
 headers: {
-          Authorization: `Token ${token}`,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       })
 
-      const data = await response.json();
+      const data = response?.data?.data
       // console.log('My Task list: ', data)
       return data;
     } catch (error) {
