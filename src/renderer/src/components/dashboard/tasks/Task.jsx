@@ -5,6 +5,8 @@ import React, { useCallback, useEffect, useState } from "react";
 import Service from "../../../api/configAPI";
 import { Button, Input, CustomSelect } from "../../index";
 import { useForm } from "react-hook-form";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Task = ({ taskId, setDisplay }) => {
   const [tasks, setTasks] = useState();
@@ -30,6 +32,7 @@ const Task = ({ taskId, setDisplay }) => {
       setTasks(taskData);
       updatePriorityColor(taskData?.priority);
     } catch (error) {
+      toast.error("Error fetching task details.");
       console.log("Error in fetching task: ", error);
     }
   }, [taskId]);
@@ -148,7 +151,6 @@ const Task = ({ taskId, setDisplay }) => {
   function handleAccept() {
     Service.acceptTask(tasks?.id)
       .then((res) => {
-        console.log("Accepted Task: ", res);
         if (window.confirm("Task Accepted \n\nDo you wish to start now?")) {
           handleStart(res?.id);
         }
@@ -164,24 +166,22 @@ const Task = ({ taskId, setDisplay }) => {
     console.log("Task ID: ", id);
     Service.startTask(id)
       .then((res) => {
-        alert("Tasked Started");
-        console.log("Started Task: ", res);
+        toast.success("Task started successfully!");
         fetchTask();
       })
       .catch((err) => {
-        console.log("Error in starting task: ", err);
+        toast.error("Failed to start task.");
       });
   }
 
   async function handlePause() {
     Service.pauseTask(tasks?.record)
       .then((res) => {
-        alert("Tasked Paused");
-        console.log("Paused Task: ", res);
+        toast.info("Task paused successfully.");
         fetchTask();
       })
       .catch((err) => {
-        console.log("Error in pausing task: ", err);
+        toast.error("Failed to pause task.");
       });
   }
 
@@ -189,23 +189,23 @@ const Task = ({ taskId, setDisplay }) => {
     const fetchResume = Service.resumeTask(tasks?.record)
       .then((res) => {
         setRecord(fetchResume);
-        alert("Tasked Resumed");
-        console.log("Resumed Task: ", res);
+        toast.info("Task resumed successfully.");
         fetchTask();
       })
       .catch((err) => {
-        console.log("Error in resuming task: ", err);
+        toast.error("Failed to resume task.");
       });
   }
 
   function handleEnd() {
     Service.endTask(tasks?.record)
       .then((res) => {
-        alert("Tasked Ended");
+        toast.success("Task ended successfully.");
         console.log("Ended Task: ", res);
         fetchTask();
       })
       .catch((err) => {
+        toast.error("Failed to end task.");
         console.log("Error in ending task: ", err);
       });
   }
@@ -217,7 +217,7 @@ const Task = ({ taskId, setDisplay }) => {
         console.log("Assigned Task: ", response);
         fetchTask();
       }
-      alert("Task Assigned Successfully");
+      toast.success("Task assigned successfully.");
     } catch (error) {
       console.error("Error in assigning task: ", error);
     }
@@ -695,6 +695,7 @@ const Task = ({ taskId, setDisplay }) => {
                 </h1>
               </div>
             )}
+            <ToastContainer />
           </div>
         </div>
       </div>
