@@ -233,7 +233,7 @@ class Service {
     try {
       const response = await axios.get(`${BASE_URL}/project/projects`, {
         headers: {
-          Authorization: `Token ${token}`,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       });
@@ -246,15 +246,13 @@ class Service {
   static async getProject(id) {
     const token = sessionStorage.getItem("token");
     try {
-      const response = await fetch(`${BASE_URL}api/project/projects/${id}`, {
-        method: "GET",
+      const response = await axios.get(`${BASE_URL}/project/projects/${id}`, {
         headers: {
-          Authorization: `Token ${token}`,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       });
-      const data = await response.json();
-      return data;
+      return response?.data;
     } catch (error) {
       console.log("Error in getting Project:", error);
       throw error;
@@ -265,7 +263,7 @@ class Service {
     const token = sessionStorage.getItem("token");
     try {
       const response = await axios.patch(
-        `${BASE_URL}api/project/projects/${id}/`,
+        `${BASE_URL}/project/projects/${id}/`,
         projectData,
         {
           headers: {
@@ -286,7 +284,7 @@ class Service {
   static async getTask() {
     const token = sessionStorage.getItem("token");
     try {
-      const response = await fetch(`${BASE_URL}/task/tasks/my_task/`, {
+      const response = await fetch(`${BASE_URL}/task/task/my_task/`, {
         method: "GET",
         headers: {
           Authorization: `Token ${token}`,
@@ -304,13 +302,14 @@ class Service {
   static async getMyTask() {
     const token = sessionStorage.getItem("token");
     try {
-      const response = await fetch(`${BASE_URL}/task/tasks/my_tasks`, {
-        method: "GET",
-        headers: {
+
+      const response = await axios.get(`${BASE_URL}/task/task/my_tasks`, {
+headers: {
           Authorization: `Token ${token}`,
           "Content-Type": "application/json",
         },
-      });
+      })
+
       const data = await response.json();
       // console.log('My Task list: ', data)
       return data;
@@ -404,13 +403,13 @@ class Service {
       // Using Axios to make the POST request
       const response = await axios.post(`${BASE_URL}/task/tasks/`, formData, {
         headers: {
-          Authorization: `Token ${token}`,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       });
 
       console.log(response.data);
-      return response.data; // Return the response data
+      return response.data?.data; // Return the response data
     } catch (error) {
       console.log("Error in adding Task: ", error);
       throw error; // Rethrow the error after logging
