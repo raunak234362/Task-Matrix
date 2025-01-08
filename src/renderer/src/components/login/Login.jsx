@@ -30,6 +30,7 @@ const Login = () => {
         const token = user.token;
         sessionStorage.setItem('token', token)
         const userData = await Service.getCurrentUser(token);
+        dispatch(setUserData(userData));
         console.log("UserData :", userData);
         let userType = "user";
         if (userData.role === "STAFF") {

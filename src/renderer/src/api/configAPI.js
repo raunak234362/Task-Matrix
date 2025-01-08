@@ -168,45 +168,6 @@ class Service {
     }
   }
 
-  static async getAllFabricator() {
-    const token = sessionStorage.getItem("token");
-    try {
-      const response = await fetch(`${BASE_URL}api/fabricator/fabricator/`, {
-        method: "GET",
-        headers: {
-          Authorization: `Token ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
-
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      console.log("Error in getting Fabricator List: ", error);
-      throw error;
-    }
-  }
-  static async getFabricator(id) {
-    const token = sessionStorage.getItem("token");
-    try {
-      const response = await fetch(
-        `${BASE_URL}api/fabricator/fabricator/${id}`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Token ${token}`,
-            "Content-Type": "application/json",
-          },
-        },
-      );
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      console.log("Error in getting Fabricator: ", error);
-      throw error;
-    }
-  }
-
   static async getAllProject() {
     const token = sessionStorage.getItem("token");
     try {
@@ -278,16 +239,14 @@ class Service {
   static async getTaskById(Id) {
     const token = sessionStorage.getItem("token");
     try {
-      const response = await fetch(`${BASE_URL}/task/tasks/${Id}`, {
-        method: "GET",
+      const response = await axios.get(`${BASE_URL}/task/tasks/${Id}`, {
         headers: {
-          Authorization: `Token ${token}`,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       });
-      const data = await response.json();
-      // console.log('Task: ', data)
-      return data;
+      console.log("Task: ", response?.data?.data);
+      return response?.data?.data?.task;
     } catch (error) {
       console.log("Error in getting Task: ", error);
       throw error;
@@ -336,7 +295,6 @@ class Service {
     hour,
     min,
     project,
-    parent,
     user,
   }) {
     try {
@@ -349,7 +307,6 @@ class Service {
         priority,
         duration: `${hour}:${min}:00`,
         project,
-        parent,
         user,
       };
 
@@ -447,6 +404,8 @@ class Service {
       throw error;
     }
   }
+
+  //to accept task
   static async acceptTask(id) {
     const token = sessionStorage.getItem("token");
     try {
@@ -466,6 +425,7 @@ class Service {
     }
   }
 
+  //to start task
   static async startTask(id) {
     const token = sessionStorage.getItem("token");
     try {
@@ -485,6 +445,7 @@ class Service {
     }
   }
 
+  //to pause task
   static async pauseTask(id) {
     const token = sessionStorage.getItem("token");
     try {
@@ -504,6 +465,7 @@ class Service {
     }
   }
 
+  //to resume task
   static async resumeTask(id) {
     const token = sessionStorage.getItem("token");
     try {
@@ -601,18 +563,16 @@ class Service {
     }
   }
 
+  //to add assignee --updated
   static async addAssigne(id, assigne) {
+    console.log("task id",id);
+    console.log("assigned id",assigne);
     const token = sessionStorage.getItem("token");
     try {
-      const response = await axios.post(
-        `${BASE_URL}api/task/tasks/${id}/add_assignes/`,
-        {
-          assigned_to: assigne,
-        },
-        {
+      const response = await axios.post(`${BASE_URL}/task/tasks/${id}/add_assignes/`, assigne,{
           headers: {
-            Authorization: `Token ${token}`,
-            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "Application/json",
           },
         },
       );

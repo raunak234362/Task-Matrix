@@ -30,7 +30,8 @@ const App = () => {
   useEffect(() => {
     const fetchUser = async () => {
       const user = await Service.getCurrentUser(token)
-        dispatch(setUserData(user[0]))
+      console.log(user)
+        dispatch(setUserData(user))
     }
     fetchUser()
   }, [dispatch])
@@ -60,7 +61,6 @@ const App = () => {
      const fetchUsers = async () => {
        try {
          const usersData = await Service.allEmployee(token);
-        //  console.log(usersData)
          dispatch(showStaff(usersData));
          // setUsers(usersData)
        } catch (error) {

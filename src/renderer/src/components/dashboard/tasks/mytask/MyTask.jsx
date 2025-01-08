@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import Task from "../Task";
 import { Button, Header } from "../../../index";
 import Service from "../../../../api/configAPI";
+import { useSelector } from "react-redux";
 
 const MyTask = () => {
   const [tasks, setTasks] = useState([]);
@@ -23,6 +24,8 @@ const MyTask = () => {
     fetchTask();
   }, []);
 
+  const projects = useSelector((state) => state?.projectData?.projectData);
+  console.log("Projects: ", projects);
   // Function to convert durations like '2 08:00:00' to total hours (56h for 2 days and 8 hours)
   function durToHour(params) {
     if (!params) return "N/A";
@@ -110,7 +113,7 @@ const MyTask = () => {
                   {index + 1}
                 </td>
                 <td className="px-1 py-2 border">
-                  {task.project?.name}
+                  {projects?.find((project) => project.id === task.project_id)?.name || "N/A"}
                 </td>
                 <td className="px-1 py-2 border">
                   {task.name}
