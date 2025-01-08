@@ -206,27 +206,6 @@ class Service {
       throw error;
     }
   }
-  static async addConnection(id, newConnection) {
-    const token = sessionStorage.getItem("token");
-    try {
-      const response = await fetch(
-        `${BASE_URL}api/fabricator/fabricator/${id}/add_connection/`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Token ${token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ ...newConnection }),
-        },
-      );
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      console.log("Error in adding Connection: ", error);
-      throw error;
-    }
-  }
 
   static async getAllProject() {
     const token = sessionStorage.getItem("token");
@@ -258,27 +237,6 @@ class Service {
       throw error;
     }
   }
-  static async editProject(id, projectData) {
-    console.log(projectData);
-    const token = sessionStorage.getItem("token");
-    try {
-      const response = await axios.patch(
-        `${BASE_URL}/project/projects/${id}/`,
-        projectData,
-        {
-          headers: {
-            Authorization: `Token ${token}`,
-            "Content-Type": "application/json",
-          },
-        },
-      );
-      console.log("Project Updated: ", response.data);
-      return response.data;
-    } catch (error) {
-      console.log("Error in getting Project:", error);
-      throw error;
-    }
-  }
 
   //Task APIs
   static async getTask() {
@@ -287,7 +245,7 @@ class Service {
       const response = await fetch(`${BASE_URL}/task/task/my_tasks/`, {
         method: "GET",
         headers: {
-          Authorization: `Token ${token}`,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       });
@@ -302,15 +260,14 @@ class Service {
   static async getMyTask() {
     const token = sessionStorage.getItem("token");
     try {
-
       const response = await axios.get(`${BASE_URL}/task/task/my_tasks`, {
-headers: {
+        headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-      })
+      });
 
-      const data = response?.data?.data
+      const data = response?.data?.data;
       // console.log('My Task list: ', data)
       return data;
     } catch (error) {
@@ -341,7 +298,7 @@ headers: {
     try {
       const response = await axios.get(`${BASE_URL}/task/tasks/`, {
         headers: {
-          Authorization: `Token ${token}`,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       });

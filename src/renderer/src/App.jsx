@@ -40,7 +40,7 @@ const App = () => {
      const fetchProjects = async () => {
        try {
          const projectsData = await Service.getAllProject(token);
-         console.log(projectsData)
+        //  console.log(projectsData)
          dispatch(showProjects(projectsData));
        } catch (error) {
          console.error("Error fetching projects:", error);
@@ -50,6 +50,7 @@ const App = () => {
      const fetchTasks = async () => {
        try {
          const tasksData = await Service.getAllTask(token);
+         console.log(tasksData)
          dispatch(showTask(tasksData));
        } catch (error) {
          console.error("Error fetching tasks:", error);
@@ -59,7 +60,7 @@ const App = () => {
      const fetchUsers = async () => {
        try {
          const usersData = await Service.allEmployee(token);
-         console.log(usersData)
+        //  console.log(usersData)
          dispatch(showStaff(usersData));
          // setUsers(usersData)
        } catch (error) {
