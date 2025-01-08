@@ -165,16 +165,7 @@ console.log(project);
                   <strong className="text-gray-700">Stage: </strong>
                   {project?.stage}
                 </div>
-                {userType !== "user" && (
-                  <div>
-                    <Button
-                      className="bg-teal-500/50 font-bold"
-                      onClick={handleEditClick}
-                    >
-                      Update
-                    </Button>
-                  </div>
-                )}
+               
               </div>
 
               <div className="">
