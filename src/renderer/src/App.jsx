@@ -23,7 +23,6 @@ const App = () => {
 
   const projects = useSelector((state) => state?.projectData?.projectData);
   const tasks = useSelector((state) => state?.taskData?.taskData);
-  console.log("Task data",tasks);
   const users = useSelector((state) => state?.userData?.staffData);
   const fabricators = useSelector(
     (state) => state?.fabricatorData?.fabricatorData,
@@ -88,7 +87,7 @@ const App = () => {
     fetchUsers();
     fetchProjects();
     fetchFabricators();
-  }, [token]);
+  }, [token,tasks]);
 
   const toggleSidebar = useCallback(() => {
     setSidebarOpen((prev) => !prev);
