@@ -2,7 +2,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable prettier/prettier */
 import { useEffect, useState } from "react";
-import { Button, GhantChart, EditProject } from "../../../index"; // Ensure GanttChart is imported correctly
+import { Button, GhantChart } from "../../../index"; // Ensure GanttChart is imported correctly
 import Service from "../../../../api/configAPI";
 import SegregateTeam from "../../../../util/SegragateTeam";
 import { useSelector } from "react-redux";
@@ -13,7 +13,7 @@ const Project = ({ projectId, isOpen, onClose, setProject }) => {
       (project) => project.id === projectId,
     ),
   );
-console.log(project);
+  console.log(project);
   const teams = useSelector((state) => state?.projectData?.teamData);
 
   const [members, setMembers] = useState({});
@@ -117,7 +117,6 @@ console.log(project);
             )}
           </div>
 
-
           <div className="h-fit overflow-y-auto rounded-lg">
             <div className="grid grid-cols-2 gap-5">
               <div className="bg-teal-100/70 rounded-lg p-5">
@@ -165,7 +164,6 @@ console.log(project);
                   <strong className="text-gray-700">Stage: </strong>
                   {project?.stage}
                 </div>
-               
               </div>
 
               <div className="">
@@ -228,13 +226,7 @@ console.log(project);
         </div>
       </div>
 
-      {selectedProject && (
-        <EditProject
-          isOpen={isModalOpen}
-          onClose={handleModalClose}
-          project={selectedProject}
-        />
-      )}
+   
     </div>
   );
 };
