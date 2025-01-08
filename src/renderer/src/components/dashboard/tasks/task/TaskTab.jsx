@@ -16,10 +16,13 @@ const TaskTab = () => {
     (task) => task.status === "COMPLETE",
   ).length;
 
-  console.log(completedTaskCount);
   const inReviewTaskCount = tasks.filter(
     (task) => task.status === "IN-REVIEW",
   ).length;
+  const assignedTaskCount = tasks.filter(
+    (task) => task.status === "ASSINGED",
+  ).length;
+  const breakTaskCount = tasks.filter((task) => task.status === "BREAK").length;
 
   const userType = sessionStorage.getItem("userType");
   return (
@@ -30,16 +33,10 @@ const TaskTab = () => {
         </div>
       </div>
       <div className="overflow-y-hidden">
-        <div className="my-5 grid md:grid-cols-4 grid-cols-2 gap-5">
+        <div className="my-5 grid md:grid-cols-3 lg:grid-cols-6 grid-cols-2 gap-5">
           <div className="flex flex-col justify-center items-center bg-white/50 rounded-lg p-3 shadow-lg">
             <div className="font-bold text-xl text-gray-800">Total Tasks</div>
             <div className="text-3xl font-bold">{tasks.length}</div>
-          </div>
-          <div className="flex flex-col justify-center items-center bg-white/50 rounded-lg p-3 shadow-lg">
-            <div className="font-bold text-xl text-gray-800">
-              No. of In-Progress Tasks
-            </div>
-            <div className="text-3xl font-bold">{activeTaskCount}</div>
           </div>
           <div className="flex flex-col justify-center items-center bg-white/50 rounded-lg p-3 shadow-lg">
             <div className="font-bold text-xl text-gray-800">
@@ -49,6 +46,25 @@ const TaskTab = () => {
           </div>
           <div className="flex flex-col justify-center items-center bg-white/50 rounded-lg p-3 shadow-lg">
             <div className="font-bold text-xl text-gray-800">
+              No. of In-Progress Tasks
+            </div>
+            <div className="text-3xl font-bold">{activeTaskCount}</div>
+          </div>
+          <div className="flex flex-col justify-center items-center bg-white/50 rounded-lg p-3 shadow-lg">
+            <div className="font-bold text-xl text-gray-800">
+              No. of Assigned Tasks
+            </div>
+            <div className="text-3xl font-bold">{assignedTaskCount}</div>
+          </div>
+          <div className="flex flex-col justify-center items-center bg-white/50 rounded-lg p-3 shadow-lg">
+            <div className="font-bold text-xl text-gray-800">
+              No. of In-Break Tasks
+            </div>
+            <div className="text-3xl font-bold">{breakTaskCount}</div>
+          </div>
+
+          <div className="flex flex-col justify-center items-center bg-white/50 rounded-lg p-3 shadow-lg">
+            <div className="font-bold text-xl text-gray-800">
               No. of In-Review Tasks
             </div>
             <div className="text-3xl font-bold">{inReviewTaskCount}</div>
@@ -56,7 +72,9 @@ const TaskTab = () => {
         </div>
 
         {/* Conditional rendering of menu */}
-        <div className={`overflow-y-auto h-[75vh] rounded-lg bg-white md:text-lg text-sm`}>
+        <div
+          className={`overflow-y-auto h-[75vh] rounded-lg bg-white md:text-lg text-sm`}
+        >
           <div className=" bg-teal-100 rounded-lg md:w-full w-[90vw]">
             <nav className="px-5 drop-shadow-md text-center">
               <ul className="flex items-center justify-evenly gap-10 py-1 text-center">
