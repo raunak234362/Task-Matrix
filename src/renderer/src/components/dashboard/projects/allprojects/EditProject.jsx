@@ -21,6 +21,7 @@ const EditProject = ({ onClose, project }) => {
   const [projectData, setProjectData] = useState(null);
   const [teamData, setTeamData] = useState(null);
   const [teamOptions, setTeamOptions] = useState([]);
+  const [isSuccessOpen, setIsSuccessOpen] = useState(false);
 
   useEffect(() => {
     const options = teams?.map((team) => ({
@@ -61,15 +62,19 @@ const EditProject = ({ onClose, project }) => {
   });
 
   const onSubmit = async (data) => {
-    console.log(data);
     try {
       const updatedProject = await Service.editProject(project.id, data);
-      console.log("Project updated:", updatedProject);
+      alert("Successfully Updated");
       dispatch(updateProjectData(updatedProject));
+      setIsSuccessOpen(true);
       onClose();
     } catch (error) {
+      alert("Error updating project");
       console.error("Error updating project:", error);
     }
+  };
+  const closeSuccessModal = () => {
+    setIsSuccessOpen(false);
   };
 
   const startDate = new Date(project?.startDate);
@@ -108,7 +113,7 @@ const EditProject = ({ onClose, project }) => {
                 {...register("description")}
               />
             </div>
-            
+
             <div>
               <Input
                 label="End Date"
@@ -120,19 +125,19 @@ const EditProject = ({ onClose, project }) => {
             <div className="my-2">
               <CustomSelect
                 label="Stage"
-                name= "stage"
+                name="stage"
                 options={[
-                  { label: 'RFI', value: 'RFI' },
-                  { label: 'IFA', value: 'IFA' },
-                  { label: 'BFA', value: 'BFA' },
-                  { label: 'BFA-Markup', value: 'BFA-M' },
-                  { label: 'RIFA', value: 'RIFA' },
-                  { label: 'RBFA', value: 'RBFA' },
-                  { label: 'IFC', value: 'IFC' },
-                  { label: 'BFC', value: 'BFC' },
-                  { label: 'RIFC', value: 'RIFC' },
-                  { label: 'REV', value: 'REV' },
-                  { label: 'CO#', value: 'CO#' }
+                  { label: "RFI", value: "RFI" },
+                  { label: "IFA", value: "IFA" },
+                  { label: "BFA", value: "BFA" },
+                  { label: "BFA-Markup", value: "BFA-M" },
+                  { label: "RIFA", value: "RIFA" },
+                  { label: "RBFA", value: "RBFA" },
+                  { label: "IFC", value: "IFC" },
+                  { label: "BFC", value: "BFC" },
+                  { label: "RIFC", value: "RIFC" },
+                  { label: "REV", value: "REV" },
+                  { label: "CO#", value: "CO#" },
                 ]}
                 defaultValue={projectData?.projectStatus}
                 {...register("stage")}
@@ -146,6 +151,7 @@ const EditProject = ({ onClose, project }) => {
                 options={[
                   { label: "ACTIVE", value: "ACTIVE" },
                   { label: "ON-HOLD", value: "ON-HOLD" },
+                  { label: "WAITING", value: "WAITING" },
                   { label: "INACTIVE", value: "INACTIVE" },
                   { label: "DELAY", value: "DELAY" },
                   { label: "REOPEN", value: "REOPEN" },
@@ -153,7 +159,6 @@ const EditProject = ({ onClose, project }) => {
                   { label: "SUBMIT", value: "SUBMIT" },
                   { label: "SUSPEND", value: "SUSPEND" },
                   { label: "CANCEL", value: "CANCEL" },
-
                 ]}
                 defaultValue={projectData?.projectStatus}
                 {...register("status")}
@@ -170,8 +175,22 @@ const EditProject = ({ onClose, project }) => {
                 onChange={setValue}
               />
             </div>
-
-            <Button type="submit">Update Project</Button>
+            <div>
+              <Button type="submit">Update Project</Button>
+              <Dialog open={isSuccessOpen} handler={setIsSuccessOpen}>
+                <DialogHeader>Project Edited</DialogHeader>
+                <DialogBody>The project edited successfully!</DialogBody>
+                <DialogFooter>
+                  <Button
+                    variant="gradient"
+                    color="green"
+                    onClick={closeSuccessModal}
+                  >
+                    Close
+                  </Button>
+                </DialogFooter>
+              </Dialog>
+            </div>
           </form>
         </div>
       </div>
