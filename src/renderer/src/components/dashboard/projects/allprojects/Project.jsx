@@ -13,7 +13,6 @@ const Project = ({ projectId, isOpen, onClose }) => {
       (project) => project.id === projectId,
     ),
   );
-  console.log(project);
 
   const [members, setMembers] = useState({});
   const [teamTask, setTeamTask] = useState([]);
