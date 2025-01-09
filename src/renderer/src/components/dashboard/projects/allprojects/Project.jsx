@@ -13,13 +13,16 @@ const Project = ({ projectId, isOpen, onClose }) => {
       (project) => project.id === projectId,
     ),
   );
-console.log(project);
+  console.log(project);
 
   const [members, setMembers] = useState({});
   const [teamTask, setTeamTask] = useState([]);
   const [teamData, setTeamData] = useState();
   const [taskDetail, setTaskDetail] = useState();
   const [loading, setLoading] = useState(true);
+  const userType = sessionStorage.getItem("userType");
+  const [selectedProject, setSelectedProject] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   // Fetch team data once when the project is loaded
   useEffect(() => {
     const fetchTask = async () => {
@@ -66,6 +69,15 @@ console.log(project);
     }
   }, [teamData, project?.endDate]);
 
+  const handleEditClick = () => {
+    setIsModalOpen(true);
+    setSelectedProject(project);
+  };
+  const handleModalClose = () => {
+    setSelectedProject(null);
+    setIsModalOpen(false);
+  };
+
   useEffect(() => {
     async function fetchTasks() {
       if (teamTask.length) {
@@ -75,7 +87,6 @@ console.log(project);
     }
     fetchTasks();
   }, [teamTask]); // Only re-run when teamTask changes
-
 
   if (!isOpen) return null;
 
@@ -103,7 +114,6 @@ console.log(project);
               <GhantChart taskData={taskDetail} />
             )}
           </div>
-
 
           <div className="h-fit overflow-y-auto rounded-lg">
             <div className="grid grid-cols-2 gap-5">
@@ -152,7 +162,16 @@ console.log(project);
                   <strong className="text-gray-700">Stage: </strong>
                   {project?.stage}
                 </div>
-               
+                {userType !== "user" && (
+                  <div>
+                    <Button
+                      className="bg-teal-500/50 font-bold"
+                      onClick={handleEditClick}
+                    >
+                      Update
+                    </Button>
+                  </div>
+                )}
               </div>
 
               <div className="">
@@ -214,8 +233,13 @@ console.log(project);
           </div>
         </div>
       </div>
-
-     
+      {selectedProject && (
+        <EditProject
+          isOpen={isModalOpen}
+          onClose={handleModalClose}
+          project={selectedProject}
+        />
+      )}
     </div>
   );
 };
