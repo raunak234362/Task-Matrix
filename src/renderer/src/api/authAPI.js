@@ -14,6 +14,7 @@ class AuthService {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
       }) 
+      console.log(response)
       if (response.status === 400) {
         throw new Error('Invalid Credentials')  
       }
