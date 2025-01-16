@@ -5,8 +5,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import Service from "../../../api/configAPI";
 import { Button, Input, CustomSelect } from "../../index";
 import { useForm } from "react-hook-form";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { useSelector } from "react-redux";
 
 const Task = ({ taskId, setDisplay }) => {
   const [tasks, setTasks] = useState();
@@ -17,6 +16,8 @@ const Task = ({ taskId, setDisplay }) => {
   const [showProjectDetail, setShowProjectDetail] = useState(false);
   const [showFabricatorDetail, setShowFabricatorDetail] = useState(false);
   const [assignedTo, setAssignedTo] = useState("");
+  const [timer, setTimer] = useState(0); // Timer in seconds
+  const [isTimerRunning, setIsTimerRunning] = useState(false); // Timer state
   const {
     register,
     handleSubmit,
@@ -25,6 +26,9 @@ const Task = ({ taskId, setDisplay }) => {
     formState: { errors },
   } = useForm();
   const [record, setRecord] = useState({});
+
+  const userData = useSelector((state) => state?.userData?.userData);
+  const staffs = useSelector((state) => state?.userData?.staffData);
 
   const fetchTask = useCallback(async () => {
     try {
@@ -57,12 +61,24 @@ const Task = ({ taskId, setDisplay }) => {
   useEffect(() => {
     if (tasks?.project?.team?.members) {
       const members = tasks.project.team.members.map((member) => ({
-        label: `${member?.role} - ${member?.employee?.name}`,
-        value: member?.employee?.id,
+        label: `${member?.role} - ${staffs?.find((staff) => staff.id === member?.id)?.f_name || "Unknown"}`,
+        value: member?.id,
       }));
       setTeamMember(members);
     }
   }, [tasks]);
+
+  useEffect(() => {
+    let interval;
+    if (isTimerRunning) {
+      interval = setInterval(() => {
+        setTimer((prevTimer) => prevTimer + 1);
+      }, 1000); // Increment every second
+    } else {
+      clearInterval(interval);
+    }
+    return () => clearInterval(interval); // Cleanup on unmount
+  }, [isTimerRunning]);
 
   useEffect(() => {
     fetchTask();
@@ -166,7 +182,9 @@ const Task = ({ taskId, setDisplay }) => {
     console.log("Task ID: ", id);
     Service.startTask(id)
       .then((res) => {
-        toast.success("Task started successfully!");
+        alert("Tasked Started");
+        setIsTimerRunning(true);
+        console.log("Started Task: ", res);
         fetchTask();
       })
       .catch((err) => {
@@ -177,7 +195,9 @@ const Task = ({ taskId, setDisplay }) => {
   async function handlePause() {
     Service.pauseTask(tasks?.record)
       .then((res) => {
-        toast.info("Task paused successfully.");
+        alert("Tasked Paused");
+        setIsTimerRunning(false); // Pause the timer
+        console.log("Paused Task: ", res);
         fetchTask();
       })
       .catch((err) => {
@@ -189,7 +209,9 @@ const Task = ({ taskId, setDisplay }) => {
     const fetchResume = Service.resumeTask(tasks?.record)
       .then((res) => {
         setRecord(fetchResume);
-        toast.info("Task resumed successfully.");
+        alert("Tasked Resumed");
+        setIsTimerRunning(true); // Stop the timer
+        console.log("Resumed Task: ", res);
         fetchTask();
       })
       .catch((err) => {
@@ -200,7 +222,9 @@ const Task = ({ taskId, setDisplay }) => {
   function handleEnd() {
     Service.endTask(tasks?.record)
       .then((res) => {
-        toast.success("Task ended successfully.");
+        alert("Tasked Ended");
+        setIsTimerRunning(false); // Stop the timer
+        setTimer(0); // Reset the timer
         console.log("Ended Task: ", res);
         fetchTask();
       })
@@ -209,13 +233,63 @@ const Task = ({ taskId, setDisplay }) => {
         console.log("Error in ending task: ", err);
       });
   }
-  const handleAddAssign = async (data) => {
+
+  const formatTimer = (seconds) => {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    return `${hours.toString().padStart(2, "0")}:${minutes
+      .toString()
+      .padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+  };
+
+  // For Comment Form
+  const onSubmitComment = async (data) => {
+    console.log(data);
     try {
-      if (handlePause) {
-        // console.log(data);
-        const response = await Service.addAssigne(tasks?.id, data?.assigned_to);
-        console.log("Assigned Task: ", response);
-        fetchTask();
+      const response = await Service.addComment(
+        tasks.id,
+        data.comment,
+        data.file,
+      );
+      alert("Comment Added Successfully", response);
+      await fetchTask();
+    } catch (error) {
+      console.error("Error in adding comment:", error);
+    }
+  };
+
+  // For Assign Form
+  const handleAddAssign = async (assigneedata) => {
+    const assigned_to = assigneedata?.assigned_to;
+    const assigned_by = userData.id;
+    const approved_by = userData.id;
+    const assigned_on = new Date().toISOString();
+
+    try {
+      if (userType === "admin" || userType === "manager") {
+        const updatedData = {
+          assigned_to,
+          assigned_by,
+          assigned_on,
+          approved_by
+        };
+        if (handlePause) {
+          const response = await Service.addAssigne(tasks?.id, updatedData);
+          console.log("Assigned Task: ", response);
+          fetchTask();
+        }
+      }else{
+        const updatedData = {
+          assigned_to,
+          assigned_by,
+          assigned_on,
+        };
+        if (handlePause) {
+          const response = await Service.addAssigne(tasks?.id, updatedData);
+          console.log("Assigned Task: ", response);
+          fetchTask();
+        }
       }
       toast.success("Task assigned successfully.");
     } catch (error) {
@@ -223,15 +297,6 @@ const Task = ({ taskId, setDisplay }) => {
     }
   };
 
-  const onSubmitComment = async (data) => {
-    try {
-      await Service.addComment(tasks.id, data.comment, data.file);
-      alert("Comment Added Successfully");
-      await fetchTask();
-    } catch (error) {
-      console.error("Error in adding comment:", error);
-    }
-  };
   function durToHour(params) {
     if (!params) return "N/A";
 
@@ -309,6 +374,7 @@ const Task = ({ taskId, setDisplay }) => {
                         {durToHour(tasks?.duration)}
                       </span>
                     </div>
+                    <div className="timer">Timer: {formatTimer(timer)}</div>
                     <div className="flex items-center my-3">
                       <span className="font-bold text-gray-800 w-40">
                         Status:
@@ -411,7 +477,7 @@ const Task = ({ taskId, setDisplay }) => {
                           </tr>
                         </thead>
                         <tbody className="text-gray-600 text-sm font-medium">
-                          {tasks?.assigned?.map((task, index) => (
+                          {tasks?.taskInAssignedList?.map((task, index) => (
                             <tr
                               key={task.id}
                               className="border-b border-gray-200 hover:bg-gray-100"
@@ -471,7 +537,7 @@ const Task = ({ taskId, setDisplay }) => {
                   {/* select Assignee */}
 
                   <form
-                    onSubmit={handleSubmit(handleAddAssign)}
+                    onSubmit={handleSubmit(handleAddAssign)} // separate handler
                     className="shadow-xl gap-5 rounded-lg w-full p-5 bg-teal-200/30"
                   >
                     <div className="font-bold text-gray-800 mb-4">
@@ -505,7 +571,7 @@ const Task = ({ taskId, setDisplay }) => {
 
                   <div className="grid grid-cols-2 gap-5">
                     {/* Project */}
-                    <div className="shadow-xl rounded-lg w-full p-5 bg-teal-200/50">
+                    <div className="shadow-xl h-fit rounded-lg w-full p-5 bg-teal-200/50">
                       <div className="text-xl flex gap-2 my-5 items-center">
                         <span className="font-bold text-gray-800">
                           Project Detail:
@@ -521,15 +587,9 @@ const Task = ({ taskId, setDisplay }) => {
                         <div className="space-y-4 ml-8">
                           <div className="flex items-center">
                             <span className="font-bold text-gray-800 w-40">
-                              Project Leader:
-                            </span>{" "}
-                            <span>{tasks?.project?.leader?.name}</span>
-                          </div>
-                          <div className="flex items-center">
-                            <span className="font-bold text-gray-800 w-40">
                               Project Manager:
                             </span>{" "}
-                            <span>{tasks?.project?.manager?.name}</span>
+                            <span>{tasks?.project?.manager?.f_name}</span>
                           </div>
                           <div className="flex items-center">
                             <span className="font-bold text-gray-800 w-40">
@@ -567,7 +627,7 @@ const Task = ({ taskId, setDisplay }) => {
 
                     {/* Fabricator */}
                     {userType === "admin" || userType === "manager" ? (
-                      <div className="shadow-xl rounded-lg w-full p-5 bg-teal-200/50">
+                      <div className="shadow-xl h-fit rounded-lg w-full p-5 bg-teal-200/50">
                         <div className="text-xl flex  my-5 items-center gap-2">
                           <span className="font-bold text-gray-800">
                             Fabricator Detail:
@@ -576,34 +636,36 @@ const Task = ({ taskId, setDisplay }) => {
                             className="cursor-pointer text-teal-600"
                             onClick={toggleFabricatorDetail}
                           >
-                            {tasks?.fabricator?.name}
+                            {tasks?.project?.fabricator?.fabName}
                           </span>
                         </div>
                         {showFabricatorDetail && (
                           <div className="space-y-4 ml-8">
-                            <div className="flex items-center">
+                            <div className="flex gap-4 items-center">
                               <span className="font-bold text-gray-800 w-40">
-                                Country:
+                                Website:
                               </span>{" "}
-                              <span>{tasks?.fabricator?.country}</span>
+                              <a
+                                href={tasks?.project?.fabricator?.website}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-blue-500 hover:text-blue-700 overflow-hidden overflow-ellipsis whitespace-nowrap"
+                              >
+                                {tasks?.project?.fabricator?.website}
+                              </a>
                             </div>
-                            <div className="flex items-center">
-                              <span className="font-bold text-gray-800 w-40">
-                                State:
+                            <div className="flex gap-4 items-center">
+                              <span className="font-bold text-gray-800 w-32">
+                                Drive:
                               </span>{" "}
-                              <span>{tasks?.fabricator?.state}</span>
-                            </div>
-                            <div className="flex items-center">
-                              <span className="font-bold text-gray-800 w-40">
-                                City:
-                              </span>{" "}
-                              <span>{tasks?.fabricator?.city}</span>
-                            </div>
-                            <div className="flex items-center">
-                              <span className="font-bold text-gray-800 w-40">
-                                Zipcode:
-                              </span>{" "}
-                              <span>{tasks?.fabricator?.zipCode}</span>
+                              <a
+                                href={tasks?.project?.fabricator?.drive}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-blue-500 hover:text-blue-700 overflow-hidden overflow-ellipsis whitespace-nowrap"
+                              >
+                                {tasks?.project?.fabricator?.drive}
+                              </a>
                             </div>
                           </div>
                         )}
@@ -617,6 +679,7 @@ const Task = ({ taskId, setDisplay }) => {
                     Comments:
                   </div>
                   <form onSubmit={handleSubmit(onSubmitComment)}>
+                    {" "}
                     <div className="flex flex-row w-full bg-gray-200/60 rounded-lg p-4">
                       <div className="w-full">
                         <Input
@@ -624,8 +687,6 @@ const Task = ({ taskId, setDisplay }) => {
                           label="Add Comment"
                           className="w-3/4 h-20"
                           placeholder="Add Comment"
-                          // value={newComment}
-                          // onChange={(e) => setNewComment(e.target.value)}
                           {...register("comment")}
                         />
                         <Input
@@ -635,9 +696,6 @@ const Task = ({ taskId, setDisplay }) => {
                           type="file"
                           id="file"
                           accept=".pdf, image/*"
-                          // onChange={handleContractChange}
-                          // onClick={handleContractChange}
-
                           {...register("file")}
                         />
                         <Button type="submit">Add Comment</Button>

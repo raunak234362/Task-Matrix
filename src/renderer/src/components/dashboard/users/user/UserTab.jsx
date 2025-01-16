@@ -17,21 +17,21 @@ const UserTab = () => {
         </div>
       </div>
       <div className="h-[85vh] mt-2 overflow-y-auto">
-        {userType === "admin" && "manager" ? (
+        {/* {userType === "admin" && "manager" ? (
           <div className="my-5 grid md:grid-cols-4 grid-cols-2 gap-5">
             <div className="flex flex-col justify-center items-center bg-white/50 rounded-lg p-3 shadow-lg">
               <div className="font-bold text-xl text-gray-800">All User</div>
               <div className="text-3xl font-bold">{users?.length}</div>
             </div>
           </div>
-        ) : null}
+        ) : null} */}
 
         {/* Conditional rendering of menu */}
         <div className={`rounded-lg bg-white md:text-lg text-sm`}>
           <div className="overflow-auto bg-teal-100 rounded-lg md:w-full w-[90vw]">
             <nav className="px-5 drop-shadow-md text-center">
               <ul className="flex items-center justify-evenly gap-10 py-1 text-center">
-                <li className="px-2">
+                {/* <li className="px-2">
                   <NavLink
                     to="all-user"
                     className={({ isActive }) =>
@@ -42,7 +42,7 @@ const UserTab = () => {
                   >
                     All User
                   </NavLink>
-                </li>
+                </li> */}
                 {(userType === "manager" || userType=== "admin") ? (
                   <li className="px-2">
                     <NavLink
@@ -57,7 +57,7 @@ const UserTab = () => {
                     </NavLink>
                   </li>
                 ) : null}
-                {userType === "admin" ? (
+                {/* {userType === "admin" ? (
                   <li className="px-2">
                     <NavLink
                       to="add-user"
@@ -70,7 +70,7 @@ const UserTab = () => {
                       Add User
                     </NavLink>
                   </li>
-                ) : null}
+                ) : null} */}
 
                 <li className="px-2">
                   <NavLink

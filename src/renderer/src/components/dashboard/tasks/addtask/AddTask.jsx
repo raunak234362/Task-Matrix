@@ -41,7 +41,7 @@ const AddTask = () => {
         const options = projects
           .filter((project) => project.team != null)
           .map((project) => ({
-            label: `${project.name} - ${project.fabricator.name}`,
+            label: `${project.name} - ${project.fabricator.fabName}`,
             value: project.id,
           }));
         setPtojectOptions(options);
@@ -57,18 +57,25 @@ const AddTask = () => {
     console.log("Project ID:", projectId);
     try {
       const project = await Service.getProject(projectId);
+      console.log(project)
       setProject(project);
-      console.log(project);
-      const assigned = project?.team?.members?.reduce((acc, member) => {
-        const exists = acc.find((item) => item.value === member?.employee?.id);
-        if (!exists) {
-          acc.push({
-            label: `${member?.role} - ${member?.employee?.name}`,
-            value: member?.employee?.id,
-          });
-        }
-        return acc;
-      }, []);
+        console.log(project?.data?.team?.members);
+      const assigned =
+        project?.data?.team?.members?.reduce((acc, member) => {
+          console.log(member);
+          const exists = acc.find(
+            (item) => item.value === member?.id,
+          );
+        
+          if (!exists) {
+            acc.push({
+              label: `${member?.role} - ${member?.username}`,
+              value: member?.id,
+            });
+          }
+          return acc;
+        }, []) || []; // Fallback to an empty array if reduce fails
+
       console.log("Assigned users---", assigned);
       setAssignedUser(assigned);
     } catch (error) {
@@ -124,8 +131,8 @@ const AddTask = () => {
   return (
     <div>
       <form onSubmit={handleSubmit(onSubmit)} className="w-full p-5">
-        <div className=" flex flex-col justify-between gap-5">
-          <div className="flex rounded-lg flex-col shadow-lg shadow-black/15 p-8">
+        <div className="flex flex-col justify-between gap-5 ">
+          <div className="flex flex-col p-8 rounded-lg shadow-lg shadow-black/15">
             <div className="mt-5">
               <CustomSelect
                 label="Project:"
@@ -164,7 +171,7 @@ const AddTask = () => {
                 onChange={setValue}
               />
             </div> */}
-            <div className="mt-5 flex flex-row gap-x-2">
+            <div className="flex flex-row mt-5 gap-x-2">
               <div className="w-[30%]">
                 <CustomSelect
                   label="Task Type: "
@@ -251,8 +258,8 @@ const AddTask = () => {
                 <p className="text-red-600">{errors.status.message}</p>
               )}
             </div>
-            <div className="flex flex-row gap-5 w-1/5 my-5">
-              <div className=" w-full">
+            <div className="flex flex-row w-1/5 gap-5 my-5">
+              <div className="w-full ">
                 <Input
                   label="Start Date:"
                   name="start_date"
@@ -266,7 +273,7 @@ const AddTask = () => {
                   <p className="text-red-600">{errors.due_date.message}</p>
                 )}
               </div>
-              <div className=" w-full">
+              <div className="w-full ">
                 <Input
                   label="Due Date:"
                   name="due_date"
@@ -283,7 +290,7 @@ const AddTask = () => {
             </div>
             <div className="mt-1">
               <div className="text-lg font-bold">Duration:</div>
-              <div className="flex flex-row gap-5 w-1/5">
+              <div className="flex flex-row w-1/5 gap-5">
                 <div className="w-full">
                   <Input
                     type="number"
@@ -333,9 +340,7 @@ const AddTask = () => {
                 })}
                 onChange={setValue}
               />
-              {errors.user && (
-                <p className="text-red-600">{errors.user.message}</p>
-              )}
+             
             </div>
             <div className="mt-5">
               <Input
@@ -352,7 +357,7 @@ const AddTask = () => {
                 <p className="text-red-600">{errors.description.message}</p>
               )}
             </div>
-            <div className="mt-5 w-full">
+            <div className="w-full mt-5">
               <Button type="submit">Add Task</Button>
               <Dialog open={isSuccessOpen} handler={setIsSuccessOpen}>
                 <DialogHeader>Task Added</DialogHeader>

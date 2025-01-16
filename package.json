@@ -45,6 +45,7 @@
     "react-toastify": "^11.0.2",
     "tailwind-merge": "^2.5.2",
     "tailwindcss-animate": "^1.0.7",
+    "taskmatrix": "file:",
     "update-electron-app": "^3.0.0"
   },
   "devDependencies": {

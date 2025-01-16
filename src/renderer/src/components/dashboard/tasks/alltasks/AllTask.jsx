@@ -188,7 +188,7 @@ const AllTask = () => {
       // console.log("Task Details:", task);
       // dispatch(showTaskByID(task));
       setSelectedTask(task);
-      setTaskID(task.id);
+      setTaskID(taskId);
       setIsModalOpen(true);
     } catch (error) {
       console.error("Error fetching project details:", error);
@@ -233,20 +233,20 @@ const AllTask = () => {
   return (
     <div>
       <div className="table-container h-[80vh] w-full rounded-lg">
-        <div className=" shadow-xl table-container w-full rounded-lg">
+        <div className="w-full rounded-lg shadow-xl table-container">
           <div className="mx-5 my-3">
-            <div className="flex flex-col md:flex-row gap-4 mb-4">
+            <div className="flex flex-col gap-4 mb-4 md:flex-row">
               <input
                 type="text"
                 placeholder="Search by Task name & User name..."
                 value={searchTerm}
                 onChange={handleSearch}
-                className="px-4 py-2 border rounded-md w-full md:w-1/4"
+                className="w-full px-4 py-2 border rounded-md md:w-1/4"
               />
               <select
                 value={statusFilter}
                 onChange={handleStatusFilter}
-                className="px-4 py-2 border rounded-md w-full md:w-1/4"
+                className="w-full px-4 py-2 border rounded-md md:w-1/4"
               >
                 <option value="">All Status</option>
                 <option value="ASSINGED">ASSIGNED</option>
@@ -259,7 +259,7 @@ const AllTask = () => {
               <select
                 value={projectFilter}
                 onChange={handleProjectFilter}
-                className="px-4 py-2 border rounded-md w-full md:w-1/4"
+                className="w-full px-4 py-2 border rounded-md md:w-1/4"
               >
                 <option value="">All Projects</option>
                 {uniqueProject?.map((project) => (
@@ -284,7 +284,7 @@ const AllTask = () => {
                 <div className="mb-2">
                   Project Completion %: {completionPercentage.toFixed(2)}%
                 </div>
-                <div className="h-4 w-full bg-gray-200 rounded-full">
+                <div className="w-full h-4 bg-gray-200 rounded-full">
                   <div
                     className={`h-4 rounded-full ${getCompletionBarColor(tasks?.project?.status)}`} // Use the getCompletionBarColor function
                     style={{ width: `${completionPercentage}%` }}
@@ -293,7 +293,7 @@ const AllTask = () => {
                 <div className="mb-2">
                   Project InReview %: {inReviewPercentage.toFixed(2)}%
                 </div>
-                <div className="h-4 w-full bg-gray-200 rounded-full">
+                <div className="w-full h-4 bg-gray-200 rounded-full">
                   <div
                     className={`h-4 rounded-full ${getInReviewBarColor(tasks?.project?.status)}`} // Use the getCompletionBarColor function
                     style={{ width: `${inReviewPercentage}%` }}
@@ -384,16 +384,16 @@ const AllTask = () => {
                           index % 2 === 0 ? "bg-white" : "bg-gray-200/50"
                         }
                       >
-                        <td className="border px-1 py-2">{index + 1}</td>
-                        <td className="border px-1 py-2">
+                        <td className="px-1 py-2 border">{index + 1}</td>
+                        <td className="px-1 py-2 border">
                           {task?.project?.name}
                         </td>
-                        <td className="border px-1 py-2">{task?.name}</td>
-                        <td className="border px-1 py-2">
-                          {task?.project?.manager?.name}
+                        <td className="px-1 py-2 border">{task?.name}</td>
+                        <td className="px-1 py-2 border">
+                          {task?.project?.manager?.f_name}
                         </td>
-                        <td className="border px-1 py-2">{task?.user?.name}</td>
-                        <td className="border px-1 py-2">{task?.status}</td>
+                        <td className="px-1 py-2 border">{task?.user?.f_name}</td>
+                        <td className="px-1 py-2 border">{task?.status}</td>
                         <td className={`border px-1 py-2`}>
                           <span
                             className={`text-sm text-center font-semibold px-3 py-0.5 mx-2 rounded-full border ${color(
@@ -403,11 +403,11 @@ const AllTask = () => {
                             {setPriorityValue(task?.priority)}
                           </span>
                         </td>
-                        <td className="border px-1 py-2">
+                        <td className="px-1 py-2 border">
                           {new Date(task?.due_date).toDateString()}
                         </td>
 
-                        <td className="border px-1 flex justify-center py-2">
+                        <td className="flex justify-center px-1 py-2 border">
                           <Button onClick={() => handleViewClick(task?.id)}>
                             View
                           </Button>
