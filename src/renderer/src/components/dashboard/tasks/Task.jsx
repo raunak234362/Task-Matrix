@@ -698,7 +698,7 @@ const Task = ({ taskId, setDisplay }) => {
                           type="file"
                           id="file"
                           accept=".pdf, image/*"
-                          {...register("file")}
+                          {...register("files")}
                         />
                         <Button type="submit">Add Comment</Button>
                       </div>

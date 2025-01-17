@@ -584,34 +584,26 @@ class Service {
     }
   }
 
-  static async addComment(id, comment, file) {
-    console.log(comment, file);
-    const token = sessionStorage.getItem("token");
+  static async addComment(id, data) {
+    console.log(data);
     try {
-      const doc = file ? file[0] : null;
-      const formData = new FormData();
-      formData.append("data", comment);
-      formData.append("file", doc);
-      console.log(formData);
-      const response = await fetch(
-        `${BASE_URL}api/task/tasks/${id}/add_comment/`,
+      const response = await axios.post(
+        `${BASE_URL}/task/tasks/add_comment/${id}`,
+        data,
         {
-          method: "POST",
           headers: {
-            Authorization: `Token ${token}`,
-            // 'Content-Type': 'application/json',
+            "Content-Type": "Multipart/form-data",
+            Authorization: `Bearer ${token}`,
           },
-          body: formData,
-        },
+        }
       );
-      const data = await response.json();
-      console.log("Comment Added: ", data);
-      return data;
+      return response.data;
     } catch (error) {
-      console.log("Error in Adding Comment: ", error);
+      console.log("Error fetching projects:", error);
       throw error;
     }
   }
+
   static async deleteAssignee(id) {
     const token = sessionStorage.getItem("token");
     try {
