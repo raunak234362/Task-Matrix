@@ -316,30 +316,32 @@ const Task = ({ taskId, setDisplay }) => {
     return `${totalHours}h ${minutes}m`;
   }
 
+  console.log(tasks)
+
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       <div className="bg-white h-[92%] fixed top-[8%] overflow-x-auto p-5 rounded-lg shadow-lg w-screen ">
-        <div className="text-3xl font-bold flex justify-between text-white bg-teal-200/50 shadow-xl px-5 py-1 mt-2 rounded-lg">
+        <div className="flex justify-between px-5 py-1 mt-2 text-3xl font-bold text-white rounded-lg shadow-xl bg-teal-200/50">
           <div className="text-2xl">
             <span className="font-bold text-gray-800">Task Name:</span>{" "}
             {tasks?.name}
           </div>
           <button
-            className="text-xl font-bold bg-teal-500/50 hover:bg-teal-700 text-white px-5 rounded-lg"
+            className="px-5 text-xl font-bold text-white rounded-lg bg-teal-500/50 hover:bg-teal-700"
             onClick={handleClose}
           >
             Close
           </button>
         </div>
         <div className="main-container h-[80vh] overflow-y-auto ">
-          <div className="m-2 p-5 ">
+          <div className="p-5 m-2 ">
             {taskId ? (
               <>
                 <div className="space-y-4">
                   {/* Task Detail */}
-                  <div className="shadow-xl rounded-lg w-full p-5 bg-teal-100/50">
+                  <div className="w-full p-5 rounded-lg shadow-xl bg-teal-100/50">
                     <div className="flex items-center my-3">
-                      <span className="font-bold text-gray-800 w-40">
+                      <span className="w-40 font-bold text-gray-800">
                         Task Description:
                       </span>{" "}
                       <span className="flex flex-wrap text-lg">
@@ -348,7 +350,7 @@ const Task = ({ taskId, setDisplay }) => {
                     </div>
 
                     <div className="flex items-center my-3">
-                      <span className="font-bold text-gray-800 w-40">
+                      <span className="w-40 font-bold text-gray-800">
                         Assigned Date:
                       </span>{" "}
                       <span className="text-lg">
@@ -357,7 +359,7 @@ const Task = ({ taskId, setDisplay }) => {
                     </div>
 
                     <div className="flex items-center my-3">
-                      <span className="font-bold text-gray-800 w-40">
+                      <span className="w-40 font-bold text-gray-800">
                         Due Date:
                       </span>{" "}
                       <span className="text-lg">
@@ -366,7 +368,7 @@ const Task = ({ taskId, setDisplay }) => {
                     </div>
 
                     <div className="flex items-center my-3">
-                      <span className="font-bold text-gray-800 w-40">
+                      <span className="w-40 font-bold text-gray-800">
                         Duration:
                       </span>{" "}
                       <span className="text-lg">
@@ -375,7 +377,7 @@ const Task = ({ taskId, setDisplay }) => {
                     </div>
                     <div className="timer">Timer: {formatTimer(timer)}</div>
                     <div className="flex items-center my-3">
-                      <span className="font-bold text-gray-800 w-40">
+                      <span className="w-40 font-bold text-gray-800">
                         Status:
                       </span>{" "}
                       <span className="text-lg">
@@ -389,7 +391,7 @@ const Task = ({ taskId, setDisplay }) => {
                       </span>
                     </div>
                     <div className="flex items-center my-3">
-                      <span className="font-bold text-gray-800 w-40">
+                      <span className="w-40 font-bold text-gray-800">
                         Priority:
                       </span>{" "}
                       <span
@@ -398,8 +400,8 @@ const Task = ({ taskId, setDisplay }) => {
                         {getPriorityLabel(tasks?.priority)}
                       </span>
                     </div>
-                    <div className="flex flex-row my-3 items-center">
-                      <div className="font-bold text-gray-800 w-40">
+                    <div className="flex flex-row items-center my-3">
+                      <div className="w-40 font-bold text-gray-800">
                         Task Actions:
                       </div>
                       <div>
@@ -407,7 +409,7 @@ const Task = ({ taskId, setDisplay }) => {
                         tasks?.status === "ON-HOLD" ? (
                           <>
                             <Button
-                              className="bg-green-500 flex justify-center font-semibold items-center rounded-full w-28 hover:bg-green-800"
+                              className="flex items-center justify-center font-semibold bg-green-500 rounded-full w-28 hover:bg-green-800"
                               onClick={
                                 tasks?.status === "ON-HOLD"
                                   ? handleStart
@@ -419,11 +421,11 @@ const Task = ({ taskId, setDisplay }) => {
                           </>
                         ) : (
                           <>
-                            <div className="flex flex-row justify-center items-center gap-x-5">
+                            <div className="flex flex-row items-center justify-center gap-x-5">
                               {/* Show Pause button if the task is running */}
                               {tasks?.status === "IN-PROGRESS" && (
                                 <Button
-                                  className="bg-yellow-500 flex justify-center font-semibold items-center rounded-full w-28 hover:bg-yellow-700"
+                                  className="flex items-center justify-center font-semibold bg-yellow-500 rounded-full w-28 hover:bg-yellow-700"
                                   onClick={handlePause}
                                 >
                                   Pause
@@ -433,7 +435,7 @@ const Task = ({ taskId, setDisplay }) => {
                               {/* Show Resume button if the task is paused */}
                               {tasks?.status === "BREAK" && (
                                 <Button
-                                  className="bg-green-500 flex justify-center font-semibold items-center rounded-full w-28 hover:bg-green-700"
+                                  className="flex items-center justify-center font-semibold bg-green-500 rounded-full w-28 hover:bg-green-700"
                                   onClick={handleResume}
                                 >
                                   Resume
@@ -442,7 +444,7 @@ const Task = ({ taskId, setDisplay }) => {
 
                               {/* Always show End button */}
                               <Button
-                                className="bg-red-500 flex justify-center font-semibold items-center rounded-full w-28 hover:bg-red-800"
+                                className="flex items-center justify-center font-semibold bg-red-500 rounded-full w-28 hover:bg-red-800"
                                 onClick={handleEnd}
                               >
                                 End
@@ -454,54 +456,54 @@ const Task = ({ taskId, setDisplay }) => {
                     </div>
                   </div>
 
-                  <div className="shadow-xl rounded-lg w-full p-5 bg-teal-200/50">
-                    <div className="font-bold text-gray-800 mb-4">
+                  <div className="w-full p-5 rounded-lg shadow-xl bg-teal-200/50">
+                    <div className="mb-4 font-bold text-gray-800">
                       People Assigned:
                     </div>
                     <div className="flex items-center">
                       <table className="min-w-full bg-white">
-                        <thead className="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+                        <thead className="text-sm leading-normal text-gray-600 uppercase bg-gray-200">
                           <tr>
-                            <th className="py-3 px-6 text-left">S.No</th>
-                            <th className="py-3 px-6 text-left">Assigned By</th>
-                            <th className="py-3 px-6 text-left">Assigned To</th>
-                            <th className="py-3 px-6 text-left">Assigned On</th>
-                            <th className="py-3 px-6 text-left">Approved By</th>
-                            <th className="py-3 px-6 text-left">Approved On</th>
+                            <th className="px-6 py-3 text-left">S.No</th>
+                            <th className="px-6 py-3 text-left">Assigned By</th>
+                            <th className="px-6 py-3 text-left">Assigned To</th>
+                            <th className="px-6 py-3 text-left">Assigned On</th>
+                            <th className="px-6 py-3 text-left">Approved By</th>
+                            <th className="px-6 py-3 text-left">Approved On</th>
                             {(userType === "admin" ||
                               username ===
                                 tasks?.project?.manager?.username) && (
-                              <th className="py-3 px-6 text-left">Action</th>
+                              <th className="px-6 py-3 text-left">Action</th>
                             )}
                           </tr>
                         </thead>
-                        <tbody className="text-gray-600 text-sm font-medium">
+                        <tbody className="text-sm font-medium text-gray-600">
                           {tasks?.taskInAssignedList?.map((task, index) => (
                             <tr
                               key={task.id}
                               className="border-b border-gray-200 hover:bg-gray-100"
                             >
-                              <td className="py-3 px-6 text-left whitespace-nowrap">
+                              <td className="px-6 py-3 text-left whitespace-nowrap">
                                 {index + 1}
                               </td>
 
-                              <td className="py-3 px-6 text-left">
+                              <td className="px-6 py-3 text-left">
                                 {task?.assigned_by?.name}
                               </td>
-                              <td className="py-3 px-6 text-left">
+                              <td className="px-6 py-3 text-left">
                                 {task?.assigned_to?.name}
                               </td>
-                              <td className="py-3 px-6 text-left">
+                              <td className="px-6 py-3 text-left">
                                 {new Date(task?.assigned_on).toDateString()}
                               </td>
-                              <td className="py-3 px-6 text-left">
+                              <td className="px-6 py-3 text-left">
                                 {task?.approved_by?.name || (
                                   <span className="text-red-500">
                                     Yet Not Approved
                                   </span>
                                 )}
                               </td>
-                              <td className="py-3 px-6 text-left">
+                              <td className="px-6 py-3 text-left">
                                 {task?.approved_on ? (
                                   new Date(task?.approved_on).toDateString()
                                 ) : (
@@ -513,7 +515,7 @@ const Task = ({ taskId, setDisplay }) => {
                               {(userType === "admin" ||
                                 username ===
                                   tasks?.project?.manager?.username) && (
-                                <td className="py-3 px-6 text-left">
+                                <td className="px-6 py-3 text-left">
                                   <Button
                                     className={`${
                                       task?.approved_on
@@ -537,25 +539,25 @@ const Task = ({ taskId, setDisplay }) => {
 
                   <form
                     onSubmit={handleSubmit(handleAddAssign)} // separate handler
-                    className="shadow-xl gap-5 rounded-lg w-full p-5 bg-teal-200/30"
+                    className="w-full gap-5 p-5 rounded-lg shadow-xl bg-teal-200/30"
                   >
-                    <div className="font-bold text-gray-800 mb-4">
+                    <div className="mb-4 font-bold text-gray-800">
                       Assign Other User:
                     </div>
 
-                    <div className="flex flex-col-2 justify-evenly gap-10 items-center w-1/2">
+                    <div className="flex items-center w-1/2 gap-10 flex-col-2 justify-evenly">
                       <div className="w-full">
                         <CustomSelect
                           label="Select Assignee"
                           options={teamMember}
-                          className=" 80 h-10"
+                          className="h-10  80"
                           {...register("assigned_to")}
                           onChange={setValue}
                         />
                       </div>
                       <div className="w-full">
                         <Button
-                          className="bg-teal-600 py-1 font-bold hover:bg-teal-900"
+                          className="py-1 font-bold bg-teal-600 hover:bg-teal-900"
                           type="submit"
                         >
                           Add
@@ -570,52 +572,52 @@ const Task = ({ taskId, setDisplay }) => {
 
                   <div className="grid grid-cols-2 gap-5">
                     {/* Project */}
-                    <div className="shadow-xl h-fit rounded-lg w-full p-5 bg-teal-200/50">
-                      <div className="text-xl flex gap-2 my-5 items-center">
+                    <div className="w-full p-5 rounded-lg shadow-xl h-fit bg-teal-200/50">
+                      <div className="flex items-center gap-2 my-5 text-xl">
                         <span className="font-bold text-gray-800">
                           Project Detail:
                         </span>{" "}
                         <span
-                          className="cursor-pointer text-teal-600"
+                          className="text-teal-600 cursor-pointer"
                           onClick={toggleProjectDetail}
                         >
                           {tasks?.project?.name}
                         </span>
                       </div>
                       {showProjectDetail && (
-                        <div className="space-y-4 ml-8">
+                        <div className="ml-8 space-y-4">
                           <div className="flex items-center">
-                            <span className="font-bold text-gray-800 w-40">
+                            <span className="w-40 font-bold text-gray-800">
                               Project Manager:
                             </span>{" "}
                             <span>{tasks?.project?.manager?.f_name}</span>
                           </div>
                           <div className="flex items-center">
-                            <span className="font-bold text-gray-800 w-40">
+                            <span className="w-40 font-bold text-gray-800">
                               Project Team:
                             </span>{" "}
                             <span>{tasks?.project?.team?.name}</span>
                           </div>
                           <div className="flex items-center">
-                            <span className="font-bold text-gray-800 w-40">
+                            <span className="w-40 font-bold text-gray-800">
                               Project Description:
                             </span>{" "}
                             <span>{tasks?.project?.description}</span>
                           </div>
                           <div className="flex items-center">
-                            <span className="font-bold text-gray-800 w-40">
+                            <span className="w-40 font-bold text-gray-800">
                               Project Stage:
                             </span>{" "}
                             <span>{tasks?.project?.stage}</span>
                           </div>
                           <div className="flex items-center">
-                            <span className="font-bold text-gray-800 w-40">
+                            <span className="w-40 font-bold text-gray-800">
                               Project Status:
                             </span>{" "}
                             <span>{tasks?.project?.status}</span>
                           </div>
                           <div className="flex items-center">
-                            <span className="font-bold text-gray-800 w-40">
+                            <span className="w-40 font-bold text-gray-800">
                               Project Approval Date:
                             </span>{" "}
                             <span>{endDate?.toDateString()}</span>
@@ -626,42 +628,42 @@ const Task = ({ taskId, setDisplay }) => {
 
                     {/* Fabricator */}
                     {userType === "admin" || userType === "manager" ? (
-                      <div className="shadow-xl h-fit rounded-lg w-full p-5 bg-teal-200/50">
-                        <div className="text-xl flex  my-5 items-center gap-2">
+                      <div className="w-full p-5 rounded-lg shadow-xl h-fit bg-teal-200/50">
+                        <div className="flex items-center gap-2 my-5 text-xl">
                           <span className="font-bold text-gray-800">
                             Fabricator Detail:
                           </span>{" "}
                           <span
-                            className="cursor-pointer text-teal-600"
+                            className="text-teal-600 cursor-pointer"
                             onClick={toggleFabricatorDetail}
                           >
                             {tasks?.project?.fabricator?.fabName}
                           </span>
                         </div>
                         {showFabricatorDetail && (
-                          <div className="space-y-4 ml-8">
-                            <div className="flex gap-4 items-center">
-                              <span className="font-bold text-gray-800 w-40">
+                          <div className="ml-8 space-y-4">
+                            <div className="flex items-center gap-4">
+                              <span className="w-40 font-bold text-gray-800">
                                 Website:
                               </span>{" "}
                               <a
                                 href={tasks?.project?.fabricator?.website}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-blue-500 hover:text-blue-700 overflow-hidden overflow-ellipsis whitespace-nowrap"
+                                className="overflow-hidden text-blue-500 hover:text-blue-700 overflow-ellipsis whitespace-nowrap"
                               >
                                 {tasks?.project?.fabricator?.website}
                               </a>
                             </div>
-                            <div className="flex gap-4 items-center">
-                              <span className="font-bold text-gray-800 w-32">
+                            <div className="flex items-center gap-4">
+                              <span className="w-32 font-bold text-gray-800">
                                 Drive:
                               </span>{" "}
                               <a
                                 href={tasks?.project?.fabricator?.drive}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-blue-500 hover:text-blue-700 overflow-hidden overflow-ellipsis whitespace-nowrap"
+                                className="overflow-hidden text-blue-500 hover:text-blue-700 overflow-ellipsis whitespace-nowrap"
                               >
                                 {tasks?.project?.fabricator?.drive}
                               </a>
@@ -673,13 +675,13 @@ const Task = ({ taskId, setDisplay }) => {
                   </div>
                 </div>
 
-                <div className="flex flex-col  shadow-xl gap-5 rounded-lg w-full p-5 mt-5 bg-teal-100">
-                  <div className="font-bold text-gray-800 text-2xl">
+                <div className="flex flex-col w-full gap-5 p-5 mt-5 bg-teal-100 rounded-lg shadow-xl">
+                  <div className="text-2xl font-bold text-gray-800">
                     Comments:
                   </div>
                   <form onSubmit={handleSubmit(onSubmitComment)}>
                     {" "}
-                    <div className="flex flex-row w-full bg-gray-200/60 rounded-lg p-4">
+                    <div className="flex flex-row w-full p-4 rounded-lg bg-gray-200/60">
                       <div className="w-full">
                         <Input
                           type="textarea"
@@ -691,7 +693,7 @@ const Task = ({ taskId, setDisplay }) => {
                         <Input
                           label="Upload file/document"
                           name="file"
-                          className="appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-green-500 peer"
+                          className="w-full px-4 py-3 leading-tight text-gray-700 border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-green-500 peer"
                           type="file"
                           id="file"
                           accept=".pdf, image/*"
@@ -702,18 +704,18 @@ const Task = ({ taskId, setDisplay }) => {
                     </div>
                   </form>
                   {tasks?.comments?.length > 0 && (
-                    <div className=" shadow-xl bg-gray-100/70 rounded-lg p-5">
+                    <div className="p-5 rounded-lg shadow-xl  bg-gray-100/70">
                       <div className="space-y-4">
                         {tasks?.comments?.map((comment, index) => (
                           <div
-                            className="bg-white p-4 rounded-lg shadow-md"
+                            className="p-4 bg-white rounded-lg shadow-md"
                             key={index}
                           >
                             <div className="flex items-center mb-2">
                               <span className="font-bold text-gray-800">
                                 {comment?.user?.name}
                               </span>
-                              <span className="text-gray-500 text-sm ml-2">
+                              <span className="ml-2 text-sm text-gray-500">
                                 {new Date(
                                   comment?.created_on,
                                 ).toLocaleDateString("en-US", {
@@ -747,7 +749,7 @@ const Task = ({ taskId, setDisplay }) => {
               </>
             ) : (
               <div>
-                <h1 className="text-2xl flex font-bold uppercase bg-slate-500 text-white py-10 justify-center items-center">
+                <h1 className="flex items-center justify-center py-10 text-2xl font-bold text-white uppercase bg-slate-500">
                   No Task
                 </h1>
               </div>

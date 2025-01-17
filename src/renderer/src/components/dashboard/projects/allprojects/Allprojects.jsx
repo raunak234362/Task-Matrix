@@ -74,6 +74,8 @@ const AllProjects = () => {
     setIsModalOpen(false);
   };
 
+  console.log(filteredProjects)
+
   return (
     <div className="bg-white/70 rounded-lg md:w-full w-[90vw] p-4">
       {/* Search and Filter Section */}
