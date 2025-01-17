@@ -94,20 +94,22 @@ const Project = ({ projectId, isOpen, onClose }) => {
   const startDate = new Date(project?.startDate);
   const endDate = new Date(project?.endDate);
 
+  console.log(project);
+
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       <div className="bg-white h-[92%] fixed top-[8%] overflow-x-auto p-5 rounded-lg shadow-lg w-screen ">
-        <div className="text-3xl font-bold flex justify-between text-white bg-teal-200/50 shadow-xl px-5 py-1 mt-2 rounded-lg">
+        <div className="flex justify-between px-5 py-1 mt-2 text-3xl font-bold text-white rounded-lg shadow-xl bg-teal-200/50">
           <h2 className="text-3xl font-bold text-gray-800">Project Details</h2>
           <button
-            className="text-xl font-bold bg-teal-500/50 hover:bg-teal-700 text-white px-5 rounded-lg"
+            className="px-5 text-xl font-bold text-white rounded-lg bg-teal-500/50 hover:bg-teal-700"
             onClick={onClose}
           >
             Close
           </button>
         </div>
         <div className=" h-[80vh] overflow-y-auto">
-          <div className="bg-blue-gray-200/50 rounded-lg my-5">
+          <div className="my-5 rounded-lg bg-blue-gray-200/50">
             {/* Conditionally render Gantt Chart */}
             {loading ? (
               <div className="text-center">Loading Gantt Chart...</div>
@@ -116,9 +118,9 @@ const Project = ({ projectId, isOpen, onClose }) => {
             )}
           </div>
 
-          <div className="h-fit overflow-y-auto rounded-lg">
+          <div className="overflow-y-auto rounded-lg h-fit">
             <div className="grid grid-cols-2 gap-5">
-              <div className="bg-teal-100/70 rounded-lg p-5">
+              <div className="p-5 rounded-lg bg-teal-100/70">
                 <div className="my-3">
                   <strong className="text-gray-700">Project Name:</strong>
                   <div>{project?.name}</div>
@@ -137,7 +139,7 @@ const Project = ({ projectId, isOpen, onClose }) => {
                 </div>
                 <p className="my-3">
                   <strong className="text-gray-700">Tools:</strong>{" "}
-                  {project?.tool}
+                  {project?.tools}
                 </p>
                 <p className="my-3">
                   <strong className="text-gray-700">Connection Design:</strong>{" "}
@@ -153,7 +155,7 @@ const Project = ({ projectId, isOpen, onClose }) => {
                 </p>
                 <div>
                   <strong className="text-gray-700">Team: </strong>
-                  {teamData?.name}
+                  {project?.team?.name}
                 </div>
                 <div className="my-3">
                   <strong className="text-gray-700">Status: </strong>
@@ -166,7 +168,7 @@ const Project = ({ projectId, isOpen, onClose }) => {
               </div>
 
               <div className="">
-                <div className="bg-teal-100/50 p-5 h-fit rounded-lg my-3">
+                <div className="p-5 my-3 rounded-lg bg-teal-100/50 h-fit">
                   <div className="text-xl font-bold text-gray-800">
                     Fabricator Detail:
                   </div>
@@ -175,7 +177,7 @@ const Project = ({ projectId, isOpen, onClose }) => {
                       <strong className="text-gray-700">
                         Fabricator Name:
                       </strong>
-                      <div>{project?.fabricator?.name}</div>
+                      <div>{project?.fabricator?.fabName}</div>
                     </div>
                     <div className="my-3">
                       <strong className="text-gray-700">
@@ -195,21 +197,30 @@ const Project = ({ projectId, isOpen, onClose }) => {
                   </div>
                 </div>
                 <div className="bg-teal-100/60 p-5 h-[40vh] overflow-y-auto rounded-lg my-1">
-                  <div className="text-xl font-bold text-gray-800">
+                  <div className="my-2 text-2xl tex-gray-800 fon2t-bold">
                     Team Members:
                   </div>
-                  <h3 className="text-sm font-bold text-gray-800">Manager</h3>
-                  <li>{project?.manager?.name}</li>
+                  <div className="my-4">
+                    {" "}
+                    <h3 className="text-gray-800 font-lgbold text-">Manager</h3>
+                    <li>{project?.team?.manager?.username}</li>
+                  </div>
 
-                  <h3 className="text-sm font-bold text-gray-800">Leader</h3>
-                  <li>{project?.leader?.name}</li>
+                  <h3 className="text-lg font-bold text-gray-800">Members</h3>
+                  {project?.team?.members.map((user) => {
+                    return (
+                      <li key={user.id}>
+                        {user.username} - {user.role}
+                      </li>
+                    );
+                  })}
 
                   {Object.keys(members).map((role) => (
                     <div key={role}>
                       <h3 className="text-sm font-bold text-gray-800">
                         {role}
                       </h3>
-                      <ol className="list-decimal list-inside ml-4">
+                      <ol className="ml-4 list-decimal list-inside">
                         {members[role]?.map((member) => (
                           <li key={member?.id} className="mt-1">
                             {member?.employee?.name}

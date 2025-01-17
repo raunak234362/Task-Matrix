@@ -9,24 +9,17 @@ import { useDispatch, useSelector } from "react-redux";
 import { updateTask } from "../../../../store/taskSlice";
 
 const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
-
-
-  console.log(taskID)
-let taskData = useSelector((state) =>
+  console.log(taskID);
+  let taskData = useSelector((state) =>
     state?.taskData?.taskData.filter((task) => task.id === taskID),
   );
 
+  taskData = taskData[0];
 
-  taskData = taskData[0]
-
-  console.log(taskData)
+  console.log(taskData);
 
   const [selectedTask, setSelectedTask] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  
-
-  
-  
 
   const username = sessionStorage.getItem("username");
   const userType = sessionStorage.getItem("userType");
@@ -115,6 +108,8 @@ let taskData = useSelector((state) =>
   const start_date = new Date(taskDetail?.start_date);
   const due_date = new Date(taskDetail?.due_date);
 
+  console.log(taskData);
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       <div className="bg-white h-[92%] fixed top-[8%] overflow-x-auto p-5 rounded-lg shadow-lg w-screen ">
@@ -143,7 +138,7 @@ let taskData = useSelector((state) =>
 
               <div className="my-2">
                 <strong className="text-gray-700">Current User:</strong>{" "}
-                {taskData?.user?.name}
+                {taskData?.user?.f_name}
               </div>
 
               <div className="my-2">
@@ -200,7 +195,7 @@ let taskData = useSelector((state) =>
                 </p>
                 <p className="mb-2">
                   <strong className="text-gray-700">Project Manager:</strong>{" "}
-                  {taskData?.project?.manager?.name}
+                  {taskData?.project.manager?.username}
                 </p>
                 <p className="mb-2">
                   <strong className="text-gray-700">Project Stage:</strong>{" "}
