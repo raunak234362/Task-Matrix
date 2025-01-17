@@ -90,7 +90,7 @@ const Project = ({ projectId, isOpen, onClose }) => {
   useEffect(() => {
     async function fetchTasks() {
       if (teamTask.length) {
-        const data1 = await SegregateTeam(teamTask);
+        const data1 = await SegregateTeam(teamTask); // For Seggregation
         setTaskDetail(data1);
       }
     }
