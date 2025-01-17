@@ -565,19 +565,6 @@ class Service {
 
   //to add assignee --updated
   static async addAssigne(id, assigne) {
-<<<<<<< HEAD
-    const token = sessionStorage.getItem("token");
-    try {
-      const response = await axios.post(
-        `${BASE_URL}api/task/tasks/${id}/add_assignes/`,
-        {
-          assigned_to: assigne,
-        },
-        {
-          headers: {
-            Authorization: `Token ${token}`,
-            "Content-Type": "application/json",
-=======
     console.log("task id",id);
     console.log("assigned id",assigne);
     const token = sessionStorage.getItem("token");
@@ -586,7 +573,6 @@ class Service {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "Application/json",
->>>>>>> 258f278fe4103925e5fbb36306e888c0f061a426
           },
         },
       );

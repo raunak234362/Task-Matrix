@@ -87,7 +87,7 @@ const App = () => {
     fetchUsers();
     fetchProjects();
     fetchFabricators();
-  }, [token,tasks]);
+  }, []);
 
 
 

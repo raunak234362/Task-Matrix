@@ -41,7 +41,7 @@ const Project = ({ projectId, isOpen, onClose }) => {
       setLoading(true);
       fetchTask();
     }
-  }, [project?.team]);
+  }, []);
 
   useEffect(() => {
     if (teamData) {
