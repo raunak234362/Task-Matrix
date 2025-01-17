@@ -36,7 +36,7 @@ const Task = ({ taskId, setDisplay }) => {
       setTasks(taskData);
       updatePriorityColor(taskData?.priority);
     } catch (error) {
-      toast.error("Error fetching task details.");
+      error("Error fetching task details.");
       console.log("Error in fetching task: ", error);
     }
   }, [taskId]);
@@ -188,7 +188,7 @@ const Task = ({ taskId, setDisplay }) => {
         fetchTask();
       })
       .catch((err) => {
-        toast.error("Failed to start task.");
+        err("Failed to start task.");
       });
   }
 
@@ -201,7 +201,7 @@ const Task = ({ taskId, setDisplay }) => {
         fetchTask();
       })
       .catch((err) => {
-        toast.error("Failed to pause task.");
+        err("Failed to pause task.");
       });
   }
 
@@ -215,7 +215,7 @@ const Task = ({ taskId, setDisplay }) => {
         fetchTask();
       })
       .catch((err) => {
-        toast.error("Failed to resume task.");
+        err("Failed to resume task.");
       });
   }
 
@@ -229,7 +229,7 @@ const Task = ({ taskId, setDisplay }) => {
         fetchTask();
       })
       .catch((err) => {
-        toast.error("Failed to end task.");
+        err("Failed to end task.");
         console.log("Error in ending task: ", err);
       });
   }
@@ -291,7 +291,7 @@ const Task = ({ taskId, setDisplay }) => {
           fetchTask();
         }
       }
-      toast.success("Task assigned successfully.");
+      alert("Task assigned successfully.");
     } catch (error) {
       console.error("Error in assigning task: ", error);
     }
@@ -755,7 +755,6 @@ const Task = ({ taskId, setDisplay }) => {
                 </h1>
               </div>
             )}
-            <ToastContainer />
           </div>
         </div>
       </div>
