@@ -3,7 +3,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Button, Header, Input, CustomSelect } from "../../../index";
 import Service from "../../../../api/configAPI";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import {
   Dialog,
@@ -14,6 +14,11 @@ import {
 import { addTask } from "../../../../store/taskSlice";
 
 const AddTask = () => {
+  const projectData = useSelector((state) =>
+    state?.projectData?.projectData?.find(
+      (project) => project.id === projectId,
+    ),
+  );
   const [projectOptions, setPtojectOptions] = useState([]);
   const [project, setProject] = useState({});
   const [isSuccessOpen, setIsSuccessOpen] = useState(false);
@@ -37,15 +42,14 @@ const AddTask = () => {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const projects = await Service.getAllProject();
-        const options = projects
+        const options = projectData
           .filter((project) => project.team != null)
           .map((project) => ({
             label: `${project.name} - ${project.fabricator.name}`,
             value: project.id,
           }));
         setPtojectOptions(options);
-        console.log(projects);
+        console.log(projectData);
       } catch (error) {
         console.error("Error fetching projects:", error);
       }
