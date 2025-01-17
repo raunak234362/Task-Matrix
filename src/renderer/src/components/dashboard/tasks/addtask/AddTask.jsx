@@ -14,11 +14,6 @@ import {
 import { addTask } from "../../../../store/taskSlice";
 
 const AddTask = () => {
-  const projectData = useSelector((state) =>
-    state?.projectData?.projectData?.find(
-      (project) => project.id === projectId,
-    ),
-  );
   const [projectOptions, setPtojectOptions] = useState([]);
   const [project, setProject] = useState({});
   const [isSuccessOpen, setIsSuccessOpen] = useState(false);
@@ -38,6 +33,11 @@ const AddTask = () => {
   // Fetch project details
 
   const projectId = watch("project");
+  const projectData = useSelector((state) =>
+    state?.projectData?.projectData?.find(
+      (project) => project.id === projectId,
+    ),
+  );
 
   useEffect(() => {
     const fetchProjects = async () => {
