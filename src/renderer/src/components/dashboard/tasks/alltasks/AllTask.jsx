@@ -380,9 +380,15 @@ const AllTask = () => {
                     filteredTasks.map((task, index) => (
                       <tr
                         key={task.id}
-                        className={
-                          index % 2 === 0 ? "bg-white" : "bg-gray-200/50"
-                        }
+                        // Apply conditional class for overdue tasks not in review or complete
+                        className={`${
+                          (task.status !== "IN-REVIEW" && task.status !== "COMPLETE" &&
+                            new Date(task.due_date) < new Date())
+                            ? "bg-red-200" // Overdue task background
+                            : index % 2 === 0
+                            ? "bg-white"
+                            : "bg-gray-200/50" // Alternate row styling
+                        }`} 
                       >
                         <td className="border px-1 py-2">{index + 1}</td>
                         <td className="border px-1 py-2">
@@ -406,7 +412,7 @@ const AllTask = () => {
                         <td className="border px-1 py-2">
                           {new Date(task?.due_date).toDateString()}
                         </td>
-
+                  
                         <td className="border px-1 flex justify-center py-2">
                           <Button onClick={() => handleViewClick(task?.id)}>
                             View
