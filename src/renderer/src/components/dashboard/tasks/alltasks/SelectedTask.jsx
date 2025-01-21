@@ -13,10 +13,12 @@ const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
   let taskData = useSelector((state) =>
     state?.taskData?.taskData.filter((task) => task.id === taskID),
   );
-
+  
+const staffData = useSelector((state) => state?.userData?.staffData);
+console.log("staffData------------",staffData);
   taskData = taskData[0];
 
-  console.log(taskData);
+  console.log("taskData------------",taskData);
 
   const [selectedTask, setSelectedTask] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -63,11 +65,7 @@ const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
 
   const addComment = async (commentData) => {
     try {
-      const response = await Service.addComment(
-        taskDetail?.id,
-        commentData?.comment,
-        commentData?.file,
-      );
+      const response = await Service.addComment(taskDetail?.id, commentData);
       console.log("Comment Response: ", response);
       alert("Comment Added Successfully");
     } catch (error) {
@@ -292,15 +290,15 @@ const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
                         placeholder="Add Comment"
                         {...register("comment")}
                       />
-                      <Input
+                      {/* <Input
                         label="Upload file/document"
                         placeholder="Upload file"
-                        name="file"
+                        name="files"
                         type="file"
                         id="file"
                         accept=".pdf, .zip, .doc, image/*"
-                        {...register("file")}
-                      />
+                        {...register("files")}
+                      /> */}
                       <Button
                         className="bg-teal-500 py-0.5 hover:bg-teal-800 font-semibold"
                         type="submit"
@@ -313,17 +311,17 @@ const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
               </div>
             </div>
 
-            {taskDetail?.comments?.length > 0 && (
+            {taskData?.taskcomment?.length > 0 && (
               <div className="p-5 rounded-lg shadow-xl bg-gray-100/70">
                 <div className="space-y-4">
-                  {taskDetail?.comments?.map((comment, index) => (
+                  {taskData?.taskcomment?.map((comment, index) => (
                     <div
                       className="p-4 bg-white rounded-lg shadow-md"
                       key={index}
                     >
                       <div className="flex items-center mb-2">
                         <span className="font-bold text-gray-800">
-                          {comment?.user?.name}
+                          {staffData?.find((staff) => staff?.id === comment?.user_id)?.f_name}
                         </span>
                         <span className="ml-2 text-sm text-gray-500">
                           {new Date(comment?.created_on).toLocaleDateString(
@@ -338,7 +336,7 @@ const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
                       </div>
                       <div className="text-gray-600">
                         <div>{comment?.data} </div>
-                        {comment?.file && (
+                        {/* {comment?.file && (
                           <div>
                             <a
                               href={comment?.file}
@@ -349,7 +347,7 @@ const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
                               View File
                             </a>
                           </div>
-                        )}
+                        )} */}
                       </div>
                     </div>
                   ))}

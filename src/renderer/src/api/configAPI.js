@@ -5,9 +5,10 @@ import { BASE_URL } from "../config/constant";
 const token = sessionStorage.getItem("token");
 class Service {
   // Fetch the logged-in user - updated
-  static async getCurrentUser(token) {
-    console.log(token);
+  static async getCurrentUser() {
+    console.log();
     try {
+      const token = sessionStorage.getItem("token");
       const response = await axios.post(`${BASE_URL}/auth/getuserbytoken`, {
         headers: {
           "Content-Type": "application/json",
@@ -587,12 +588,13 @@ class Service {
   static async addComment(id, data) {
     console.log(data);
     try {
+      const token = sessionStorage.getItem("token");
       const response = await axios.post(
         `${BASE_URL}/task/tasks/add_comment/${id}`,
         data,
         {
           headers: {
-            "Content-Type": "Multipart/form-data",
+            "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
         }
