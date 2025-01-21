@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /* eslint-disable prettier/prettier */
 /* eslint-disable no-unused-vars */
 import { Provider, useDispatch, useSelector } from "react-redux";
