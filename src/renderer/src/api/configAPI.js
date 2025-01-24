@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable prettier/prettier */
-import axios from "axios";
+import api from "./api";
 import { BASE_URL } from "../config/constant";
 const token = sessionStorage.getItem("token");
 class Service {
@@ -9,7 +9,7 @@ class Service {
     console.log();
     try {
       const token = sessionStorage.getItem("token");
-      const response = await axios.post(`${BASE_URL}/auth/getuserbytoken`, {
+      const response = await api.post(`/api/auth/getuserbytoken`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -24,7 +24,7 @@ class Service {
 
   static async allEmployee(token) {
     try {
-      const response = await axios.get(`${BASE_URL}/employee/employee`, {
+      const response = await api.get(`/api/employee/employee`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -47,7 +47,7 @@ class Service {
   //       leader,
   //     });
   //     const token = sessionStorage.getItem("token");
-  //     const response = await fetch(`${BASE_URL}api/team/teams/`, {
+  //     const response = await fetch(`/apiapi/team/teams/`, {
   //       method: "POST",
   //       headers: {
   //         Authorization: `Token ${token}`,
@@ -67,7 +67,7 @@ class Service {
   static async getAllTeam() {
     const token = sessionStorage.getItem("token");
     try {
-      const resonse = await axios.get(`${BASE_URL}/team/teams/`, {
+      const resonse = await api.get(`/api/team/teams/`, {
         headers: {
           Authorization: `Token ${token}`,
           "Content-Type": "application/json",
@@ -85,8 +85,8 @@ class Service {
   static async getTeam(projectId) {
     const token = sessionStorage.getItem("token");
     try {
-      const response = await axios.get(
-        `${BASE_URL}api/team/teams/${projectId}`,
+      const response = await api.get(
+        `/api/team/teams/${projectId}`,
         {
           headers: {
             Authorization: `Token ${token}`,
@@ -105,8 +105,8 @@ class Service {
   //   console.log(teamId);
   //   try {
   //     console.log(teamId);
-  //     const response = await axios.delete(
-  //       `${BASE_URL}api/team/teams/${teamId}`,
+  //     const response = await api.delete(
+  //       `/apiapi/team/teams/${teamId}`,
   //       {
   //         headers: {
   //           Authorization: `Token ${sessionStorage.getItem("token")}`,
@@ -124,11 +124,11 @@ class Service {
     console.log(projectId);
     const token = sessionStorage.getItem("token");
     try {
-      const response = await axios.get(
-        `${BASE_URL}api/team/teams/${projectId}/add_members/`,
+      const response = await api.get(
+        `/api/team/teams/${projectId}/add_members/`,
         {
           headers: {
-            Authorization: `Token ${token}`,
+            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
         },
@@ -151,8 +151,8 @@ class Service {
       console.log("---------------");
 
       const token = sessionStorage.getItem("token");
-      const response = await axios.post(
-        `${BASE_URL}api/team/teams/${teamId}/add_member/`,
+      const response = await api.post(
+        `/api/team/teams/${teamId}/add_member/`,
         formData,
         {
           headers: {
@@ -172,7 +172,7 @@ class Service {
   static async getAllProject() {
     const token = sessionStorage.getItem("token");
     try {
-      const response = await axios.get(`${BASE_URL}/project/projects`, {
+      const response = await api.get(`/api/project/projects`, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
@@ -187,7 +187,7 @@ class Service {
   static async getProject(id) {
     const token = sessionStorage.getItem("token");
     try {
-      const response = await axios.get(`${BASE_URL}/project/projects/${id}`, {
+      const response = await api.get(`/api/project/projects/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
@@ -204,8 +204,7 @@ class Service {
   static async getTask() {
     const token = sessionStorage.getItem("token");
     try {
-      const response = await fetch(`${BASE_URL}/task/task/my_tasks/`, {
-        method: "GET",
+      const response = await api.get(`/api/task/task/my_tasks/`, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
@@ -222,7 +221,7 @@ class Service {
   static async getMyTask() {
     const token = sessionStorage.getItem("token");
     try {
-      const response = await axios.get(`${BASE_URL}/task/task/my_tasks`, {
+      const response = await api.get(`/api/task/task/my_tasks`, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
@@ -240,7 +239,7 @@ class Service {
   static async getTaskById(Id) {
     const token = sessionStorage.getItem("token");
     try {
-      const response = await axios.get(`${BASE_URL}/task/tasks/${Id}`, {
+      const response = await api.get(`/api/task/tasks/${Id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
@@ -256,7 +255,7 @@ class Service {
   static async getAllTask() {
     const token = sessionStorage.getItem("token");
     try {
-      const response = await axios.get(`${BASE_URL}/task/tasks/`, {
+      const response = await api.get(`/api/task/tasks/`, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
@@ -272,8 +271,7 @@ class Service {
   static async getParentTasks(id) {
     const token = sessionStorage.getItem("token");
     try {
-      const response = await fetch(`${BASE_URL}/task/tasks/?project=${id}`, {
-        method: "GET",
+      const response = await api.get(`/api/task/tasks/?project=${id}`, {
         headers: {
           Authorization: `Token ${token}`,
           "Content-Type": "application/json",
@@ -315,11 +313,11 @@ class Service {
 
       const token = sessionStorage.getItem("token");
 
-      // Using Axios to make the POST request
-      const response = await axios.post(`${BASE_URL}/task/tasks/`, formData, {
+      // Using api to make the POST request
+      const response = await api.post(`/api/task/tasks/`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
+          "Content-Type": "Application/json",
         },
       });
 
@@ -334,13 +332,11 @@ class Service {
     console.log(taskData);
     const token = sessionStorage.getItem("token");
     try {
-      const response = await fetch(`${BASE_URL}api/task/tasks/${id}/`, {
-        method: "PATCH",
+      const response = await api.patch(`/api/task/tasks/${id}/`, taskData, {
         headers: {
-          Authorization: `Token ${token}`,
-          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "Application/json",
         },
-        body: JSON.stringify(taskData),
       });
       const data = await response.json();
       return data;
@@ -352,11 +348,10 @@ class Service {
   static async deleteTask(id) {
     const token = sessionStorage.getItem("token");
     try {
-      const response = await fetch(`${BASE_URL}api/task/tasks/${id}/`, {
-        method: "DELETE",
+      const response = await api.delete(`/api/task/tasks/${id}/`, {
         headers: {
           Authorization: `Token ${token}`,
-          "Content-Type": "application/json",
+          "Content-Type": "Application/json",
         },
       });
       if (response) return true;
@@ -370,8 +365,7 @@ class Service {
     console.log(user);
     const token = sessionStorage.getItem("token");
     try {
-      const response = await fetch(`${BASE_URL}api/user/record?user=${user}`, {
-        method: "GET",
+      const response = await api.get(`/api/user/record?user=${user}`, {
         headers: {
           Authorization: `Token ${token}`,
           "Content-Type": "application/json",
@@ -390,8 +384,7 @@ class Service {
   static async userTaskRecord() {
     const token = sessionStorage.getItem("token");
     try {
-      const response = await fetch(`${BASE_URL}api/user/record`, {
-        method: "GET",
+      const response = await api.get(`/api/user/record`, {
         headers: {
           Authorization: `Token ${token}`,
           "Content-Type": "application/json",
@@ -406,40 +399,38 @@ class Service {
     }
   }
 
-  //to accept task
-  static async acceptTask(id) {
-    const token = sessionStorage.getItem("token");
-    try {
-      const response = await fetch(`${BASE_URL}api/task/tasks/${id}/accept/`, {
-        method: "POST",
-        headers: {
-          Authorization: `Token ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
-      const data = await response.json();
-      console.log("Accept Task: ", data);
-      return data;
-    } catch (error) {
-      console.log("Error in getting Accept Task: ", error);
-      throw error;
-    }
-  }
+  // //to accept task
+  // static async acceptTask(taskData) {
+  //   console.log("Accept Task: ", taskData);
+  //   const token = sessionStorage.getItem("token");
+  //   try {
+  //     const response = await api.post(`/api/tasks/tasks/${taskData}/accept/`, taskData, {
+  //       headers: {
+  //         Authorization: `Bearer ${token}`,
+  //         "Content-Type": "application/json",
+  //       },
+  //     });
+  //     console.log("Accept Task Response: ", response.data);
+  //     return response.data;
+  //   } catch (error) {
+  //     console.log("Error in getting Accept Task: ", error);
+  //     throw error;
+  //   }
+  // }
 
   //to start task
-  static async startTask(id) {
+  static async startTask(taskData) {
+    console.log("Start Task: ", taskData);
     const token = sessionStorage.getItem("token");
     try {
-      const response = await fetch(`${BASE_URL}api/user/record/${id}/start/`, {
-        method: "POST",
+      const response = await api.post(`/api/wh/wh/start/`, taskData, {
         headers: {
-          Authorization: `Token ${token}`,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       });
-      const data = await response.json();
-      console.log("Start Task: ", data);
-      return data;
+      console.log("Start Task Response: ", response.data);
+      return response.data;
     } catch (error) {
       console.log("Error in getting Start Task: ", error);
       throw error;
@@ -447,19 +438,18 @@ class Service {
   }
 
   //to pause task
-  static async pauseTask(id) {
+  static async pauseTask(taskData) {
+    console.log("Pause Task: ", taskData);
     const token = sessionStorage.getItem("token");
     try {
-      const response = await fetch(`${BASE_URL}api/user/record/${id}/pause/`, {
-        method: "POST",
+      const response = await api.patch('/api/wh/wh/pause/', taskData, {
         headers: {
-          Authorization: `Token ${token}`,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
-        },
+        }
       });
-      const data = await response.json();
-      console.log("Pause Task: ", data);
-      return data;
+      console.log("Pause Task Response: ", response.data);
+      return response.data;
     } catch (error) {
       console.log("Error in getting Pause Task: ", error);
       throw error;
@@ -467,13 +457,12 @@ class Service {
   }
 
   //to resume task
-  static async resumeTask(id) {
+  static async resumeTask(taskData) {
     const token = sessionStorage.getItem("token");
     try {
-      const response = await fetch(`${BASE_URL}api/user/record/${id}/resume/`, {
-        method: "POST",
+      const response = await api.patch(`/api/wh/wh/resume/`, taskData, {
         headers: {
-          Authorization: `Token ${token}`,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       });
@@ -489,8 +478,7 @@ class Service {
   static async endTask(id) {
     const token = sessionStorage.getItem("token");
     try {
-      const response = await fetch(`${BASE_URL}api/user/record/${id}/end/`, {
-        method: "POST",
+      const response = await api.post(`/api/user/record/${id}/end/`, {
         headers: {
           Authorization: `Token ${token}`,
           "Content-Type": "application/json",
@@ -509,8 +497,7 @@ class Service {
   static async getAssignee() {
     const token = sessionStorage.getItem("token");
     try {
-      const response = await fetch(`${BASE_URL}api/task/assigned-list/`, {
-        method: "GET",
+      const response = await api.get(`/api/task/assigned-list/`, {
         headers: {
           Authorization: `Token ${token}`,
           "Content-Type": "application/json",
@@ -527,8 +514,7 @@ class Service {
   static async getAssigneeById(id) {
     const token = sessionStorage.getItem("token");
     try {
-      const response = await fetch(`${BASE_URL}api/task/assigned-list/${id}`, {
-        method: "GET",
+      const response = await api.get(`/api/task/assigned-list/${id}`, {
         headers: {
           Authorization: `Token ${token}`,
           "Content-Type": "application/json",
@@ -545,10 +531,9 @@ class Service {
   static async approveAssignee(id) {
     const token = sessionStorage.getItem("token");
     try {
-      const response = await fetch(
-        `${BASE_URL}api/task/assigned-list/${id}/confirm/`,
+      const response = await api.post(
+        `/api/task/assigned-list/${id}/confirm/`,
         {
-          method: "POST",
           headers: {
             Authorization: `Token ${token}`,
             "Content-Type": "application/json",
@@ -570,7 +555,7 @@ class Service {
     console.log("assigned id",assigne);
     const token = sessionStorage.getItem("token");
     try {
-      const response = await axios.post(`${BASE_URL}/task/tasks/${id}/add_assignes/`, assigne,{
+      const response = await api.post(`/api/task/tasks/${id}/add_assignes/`, assigne,{
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "Application/json",
@@ -589,8 +574,8 @@ class Service {
     console.log(data);
     try {
       const token = sessionStorage.getItem("token");
-      const response = await axios.post(
-        `${BASE_URL}/task/tasks/add_comment/${id}`,
+      const response = await api.post(
+        `/api/task/tasks/add_comment/${id}`,
         data,
         {
           headers: {
@@ -609,8 +594,7 @@ class Service {
   static async deleteAssignee(id) {
     const token = sessionStorage.getItem("token");
     try {
-      const response = await fetch(`${BASE_URL}api/task/assigned-list/${id}/`, {
-        method: "DELETE",
+      const response = await api.delete(`/api/task/assigned-list/${id}/`, {
         headers: {
           Authorization: `Token ${token}`,
           "Content-Type": "application/json",
@@ -628,8 +612,7 @@ class Service {
   static async getComment() {
     const token = sessionStorage.getItem("token");
     try {
-      const response = await fetch(`${BASE_URL}api/task/comment/`, {
-        method: "GET",
+      const response = await api.get(`/api/task/comment/`, {
         headers: {
           Authorization: `Token ${token}`,
           "Content-Type": "application/json",
@@ -653,7 +636,7 @@ class Service {
       `?date=${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`,
     );
     try {
-      let url = `${BASE_URL}api/task/tasks/calender/`;
+      let url = `/api/task/tasks/calender/`;
       if (date && user) {
         url += `?date=${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}&user=${user}`;
       } else if (date) {
@@ -662,8 +645,7 @@ class Service {
         url += `?user=${user}`;
       }
 
-      const response = await fetch(url, {
-        method: "GET",
+      const response = await api.get(url, {
         headers: {
           Authorization: `Token ${token}`,
           "Content-Type": "application/json",
@@ -681,10 +663,9 @@ class Service {
   static async fetchCalendar2(date, user) {
     const token = sessionStorage.getItem("token");
     try {
-      let url = `${BASE_URL}api/task/tasks/calender/?date=${date.substring(0, 10)}&user=${user}`;
+      let url = `/api/task/tasks/calender/?date=${date.substring(0, 10)}&user=${user}`;
 
-      const response = await fetch(url, {
-        method: "GET",
+      const response = await api.get(url, {
         headers: {
           Authorization: `Token ${token}`,
           "Content-Type": "application/json",

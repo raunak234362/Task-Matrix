@@ -164,74 +164,67 @@ const Task = ({ taskId, setDisplay }) => {
     setShowFabricatorDetail(!showFabricatorDetail);
   };
 
-  function handleAccept() {
-    Service.acceptTask(tasks?.id)
-      .then((res) => {
-        if (window.confirm("Task Accepted \n\nDo you wish to start now?")) {
-          handleStart(res?.id);
-        }
-        fetchTask();
-      })
-      .catch((err) => {
-        console.log("Error in accepting task: ", err);
-      });
-  }
+  // async function handleAccept() {
+  //     const taskID = tasks?.id;
+  //     try {
+  //       const accept = await Service.acceptTask(taskID);
+  //       if (window.confirm("Task Accepted \n\nDo you wish to start now?")) {
+  //         handleStart(accept?.id);
+  //       }
+  //       alert("Task Accepted");
+  //       fetchTask();
+  //       console.log("Accepted Task: ", accept);
+  //     } catch (error) {
+  //       console.log("Error in accepting task: ", error);
+  //     }
+  // }
 
-  function handleStart() {
-    const id = tasks?.record;
-    console.log("Task ID: ", id);
-    Service.startTask(id)
-      .then((res) => {
-        alert("Tasked Started");
-        setIsTimerRunning(true);
-        console.log("Started Task: ", res);
-        fetchTask();
-      })
-      .catch((err) => {
-        err("Failed to start task.");
-      });
+  async function handleStart() {
+    const taskID = tasks?.id;
+    try {
+      const accept = await Service.startTask(taskID);
+      alert("Task Accepted");
+      console.log("Accepted Task: ", accept);
+    } catch (error) {
+      console.log("Error in accepting task: ", error);
+    }
   }
 
   async function handlePause() {
-    Service.pauseTask(tasks?.record)
-      .then((res) => {
-        alert("Tasked Paused");
-        setIsTimerRunning(false); // Pause the timer
-        console.log("Paused Task: ", res);
-        fetchTask();
-      })
-      .catch((err) => {
-        err("Failed to pause task.");
-      });
+    console.log("Pause Task: ", tasks?.id);
+    const taskID = tasks?.id;
+    try {
+      const pause = await Service.pauseTask(taskID);
+      console.log("Paused Task: ", pause);
+      alert("Tasked Paused");
+      fetchTask();
+    } catch (error) {
+      console.log("Error in pausing task: ", error);
+    }
   }
 
-  function handleResume() {
-    const fetchResume = Service.resumeTask(tasks?.record)
-      .then((res) => {
-        setRecord(fetchResume);
-        alert("Tasked Resumed");
-        setIsTimerRunning(true); // Stop the timer
-        console.log("Resumed Task: ", res);
-        fetchTask();
-      })
-      .catch((err) => {
-        err("Failed to resume task.");
-      });
+  async function handleResume() {
+    const taskID = tasks?.id;
+    try {
+      const resume = await Service.resumeTask(taskID);
+      console.log("Resumed Task: ", resume);
+      alert("Tasked Resumed");
+      fetchTask();
+    } catch (error) {
+      console.log("Error in resuming task: ", error);
+    }
   }
 
-  function handleEnd() {
-    Service.endTask(tasks?.record)
-      .then((res) => {
-        alert("Tasked Ended");
-        setIsTimerRunning(false); // Stop the timer
-        setTimer(0); // Reset the timer
-        console.log("Ended Task: ", res);
-        fetchTask();
-      })
-      .catch((err) => {
-        err("Failed to end task.");
-        console.log("Error in ending task: ", err);
-      });
+  async function handleEnd() {
+    const taskID = tasks?.id;
+    try {
+      const end = await Service.endTask(taskID);
+      console.log("Ended Task: ", end);
+      alert("Tasked Ended");
+      fetchTask();
+    } catch (error) {
+      console.log("Error in ending task: ", error);
+    }
   }
 
   const formatTimer = (seconds) => {
@@ -272,14 +265,14 @@ const Task = ({ taskId, setDisplay }) => {
           assigned_to,
           assigned_by,
           assigned_on,
-          approved_by
+          approved_by,
         };
         if (handlePause) {
           const response = await Service.addAssigne(tasks?.id, updatedData);
           console.log("Assigned Task: ", response);
           fetchTask();
         }
-      }else{
+      } else {
         const updatedData = {
           assigned_to,
           assigned_by,
@@ -317,7 +310,7 @@ const Task = ({ taskId, setDisplay }) => {
     return `${totalHours}h ${minutes}m`;
   }
 
-  console.log(tasks)
+  console.log(tasks);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
@@ -411,13 +404,9 @@ const Task = ({ taskId, setDisplay }) => {
                           <>
                             <Button
                               className="flex items-center justify-center font-semibold bg-green-500 rounded-full w-28 hover:bg-green-800"
-                              onClick={
-                                tasks?.status === "ON-HOLD"
-                                  ? handleStart
-                                  : handleAccept
-                              }
+                              onClick={handleStart}
                             >
-                              {tasks?.status === "ON-HOLD" ? "Start" : "Accept"}
+                              Start
                             </Button>
                           </>
                         ) : (

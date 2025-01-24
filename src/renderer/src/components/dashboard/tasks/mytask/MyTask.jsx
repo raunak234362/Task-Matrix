@@ -113,7 +113,7 @@ const MyTask = () => {
                   {index + 1}
                 </td>
                 <td className="px-1 py-2 border">
-                  {projects?.find((project) => project.id === task.project_id)?.name || "N/A"}
+                  {projects?.find((project) => project.id === task?.project_id)?.name || "N/A"}
                 </td>
                 <td className="px-1 py-2 border">
                   {task.name}

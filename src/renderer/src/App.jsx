@@ -4,23 +4,23 @@
 import { Provider, useDispatch, useSelector } from "react-redux";
 import store from "./store/store";
 
-import { useCallback, useEffect, useState } from 'react'
-import { Header, Sidebar } from './components/index'
-import { Outlet, useNavigate } from 'react-router-dom'
-import Service from './api/configAPI'
+import { useCallback, useEffect, useState } from "react";
+import { Header, Sidebar } from "./components/index";
+import { Outlet, useNavigate } from "react-router-dom";
+import Service from "./api/configAPI";
 // import FrappeService from "./frappeConfig/FrappeService";
-import { setUserData, showStaff } from './store/userSlice'
+import { setUserData, showStaff } from "./store/userSlice";
 // import { loadFabricator, showClient } from "./store/fabricatorSlice";
-import { showProjects, showTeam } from './store/projectSlice'
-import { showTask } from './store/taskSlice'
-import { showFabricator } from './store/fabricatorSlice'
+import { showProjects, showTeam } from "./store/projectSlice";
+import { showTask } from "./store/taskSlice";
+import { showFabricator } from "./store/fabricatorSlice";
 const App = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const token = sessionStorage.getItem("token");
 
-    const [segregateProject, setSegregateProject] = useState({});
+  const [segregateProject, setSegregateProject] = useState({});
 
   const projects = useSelector((state) => state?.projectData?.projectData);
   const tasks = useSelector((state) => state?.taskData?.taskData);
@@ -35,6 +35,7 @@ const App = () => {
     const fetchProjects = async () => {
       try {
         const projectsData = await Service.getAllProject(token);
+        console.log("Projects data-------------", projectsData);
         dispatch(showProjects(projectsData));
         const segregatedProjects = await SegregateProject(projectsData);
         setSegregateProject(segregatedProjects);
@@ -46,7 +47,7 @@ const App = () => {
     const fetchTasks = async () => {
       try {
         const tasksData = await Service.getAllTask(token);
-        console.log("Task data-------------",tasksData);
+        console.log("Task data-------------", tasksData);
         dispatch(showTask(tasksData));
       } catch (error) {
         console.error("Error fetching tasks:", error);
@@ -90,79 +91,76 @@ const App = () => {
     fetchFabricators();
   }, []);
 
-
-
   const toggleSidebar = useCallback(() => {
     setSidebarOpen((prev) => !prev);
   }, [setSidebarOpen]);
 
   useEffect(() => {
     const fetchUser = async () => {
-      const user = await Service.getCurrentUser(token)
-      console.log(user)
-        dispatch(setUserData(user))
-    }
-    fetchUser()
-  }, [dispatch])
+      const user = await Service.getCurrentUser(token);
+      console.log(user);
+      dispatch(setUserData(user));
+    };
+    fetchUser();
+  }, [dispatch]);
 
-
-   useEffect(() => {
-     const fetchProjects = async () => {
-       try {
-         const projectsData = await Service.getAllProject(token);
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const projectsData = await Service.getAllProject(token);
         //  console.log(projectsData)
-         dispatch(showProjects(projectsData));
-       } catch (error) {
-         console.error("Error fetching projects:", error);
-       }
-     };
+        dispatch(showProjects(projectsData));
+      } catch (error) {
+        console.error("Error fetching projects:", error);
+      }
+    };
 
-     const fetchTasks = async () => {
-       try {
-         const tasksData = await Service.getAllTask(token);
-         console.log(tasksData)
-         dispatch(showTask(tasksData));
-       } catch (error) {
-         console.error("Error fetching tasks:", error);
-       }
-     };
+    const fetchTasks = async () => {
+      try {
+        const tasksData = await Service.getAllTask(token);
+        console.log(tasksData);
+        dispatch(showTask(tasksData));
+      } catch (error) {
+        console.error("Error fetching tasks:", error);
+      }
+    };
 
-     const fetchUsers = async () => {
-       try {
-         const usersData = await Service.allEmployee(token);
-         dispatch(showStaff(usersData));
-         // setUsers(usersData)
-       } catch (error) {
-         console.error("Error fetching users:", error);
-       }
-     };
+    const fetchUsers = async () => {
+      try {
+        const usersData = await Service.allEmployee(token);
+        dispatch(showStaff(usersData));
+        // setUsers(usersData)
+      } catch (error) {
+        console.error("Error fetching users:", error);
+      }
+    };
 
-     const fetchFabricators = async () => {
-       try {
-         const fabricatorsData = await Service.getAllFabricator(token);
-         dispatch(showFabricator(fabricatorsData));
-       } catch (error) {
-         console.error("Error fetching fabricators:", error);
-       }
-     };
+    const fetchFabricators = async () => {
+      try {
+        const fabricatorsData = await Service.getAllFabricator(token);
+        dispatch(showFabricator(fabricatorsData));
+      } catch (error) {
+        console.error("Error fetching fabricators:", error);
+      }
+    };
 
-     const fetchTeam = async () => {
-       try {
-         const teamData = await Service.getAllTeam(token);
-         // console.log(teamData)
-         dispatch(showTeam(teamData));
-         // setTeam(teamData)
-       } catch (error) {
-         console.error("Error fetching team:", error);
-       }
-     };
+    const fetchTeam = async () => {
+      try {
+        const teamData = await Service.getAllTeam(token);
+        // console.log(teamData)
+        dispatch(showTeam(teamData));
+        // setTeam(teamData)
+      } catch (error) {
+        console.error("Error fetching team:", error);
+      }
+    };
 
-     fetchTeam();
-     fetchTasks();
-     fetchUsers();
-     fetchProjects();
-     fetchFabricators();
-   }, [token]);
+    fetchTeam();
+    fetchTasks();
+    fetchUsers();
+    fetchProjects();
+    fetchFabricators();
+  }, [token]);
 
   return (
     <Provider store={store}>

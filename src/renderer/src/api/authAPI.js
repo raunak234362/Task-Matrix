@@ -1,6 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { BASE_URL } from "../config/constant";
-import axios from 'axios'
+import api from "./api";
 class AuthService {
 
   static async login({ username, password }) {
@@ -8,8 +7,7 @@ class AuthService {
       const formData = new URLSearchParams()
       formData.append('username', username.toUpperCase())
       formData.append('password', password)
-       
-      const response = await axios.post(`${BASE_URL}/auth/login/`, formData, {
+      const response = await api.post(`/api/auth/login/`, formData, {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
