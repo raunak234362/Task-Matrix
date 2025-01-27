@@ -85,15 +85,12 @@ class Service {
   static async getTeam(projectId) {
     const token = sessionStorage.getItem("token");
     try {
-      const response = await api.get(
-        `/api/team/teams/${projectId}`,
-        {
-          headers: {
-            Authorization: `Token ${token}`,
-            "Content-Type": "application/json",
-          },
+      const response = await api.get(`/api/team/teams/${projectId}`, {
+        headers: {
+          Authorization: `Token ${token}`,
+          "Content-Type": "application/json",
         },
-      );
+      });
       return response.data;
     } catch (error) {
       console.log("Error in getting team: ", error);
@@ -221,7 +218,7 @@ class Service {
   static async getMyTask() {
     const token = sessionStorage.getItem("token");
     try {
-      const response = await api.get(`/api/task/task/my_tasks`, {
+      const response = await api.get(`/api/task/tasks/my_tasks`, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
@@ -268,6 +265,23 @@ class Service {
       throw error;
     }
   }
+
+  static async getAllMyTask() {
+    const token = sessionStorage.getItem("token");
+    try {
+      const response = await api.get(`/api/task/task/all_my_tasks/`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      return response?.data?.data;
+    } catch (error) {
+      console.log("Error in getting Task: ", error);
+      throw error;
+    }
+  }
+
   static async getParentTasks(id) {
     const token = sessionStorage.getItem("token");
     try {
@@ -380,7 +394,6 @@ class Service {
     }
   }
 
-
   static async userTaskRecord() {
     const token = sessionStorage.getItem("token");
     try {
@@ -399,92 +412,92 @@ class Service {
     }
   }
 
-  // //to accept task
-  // static async acceptTask(taskData) {
-  //   console.log("Accept Task: ", taskData);
-  //   const token = sessionStorage.getItem("token");
-  //   try {
-  //     const response = await api.post(`/api/tasks/tasks/${taskData}/accept/`, taskData, {
-  //       headers: {
-  //         Authorization: `Bearer ${token}`,
-  //         "Content-Type": "application/json",
-  //       },
-  //     });
-  //     console.log("Accept Task Response: ", response.data);
-  //     return response.data;
-  //   } catch (error) {
-  //     console.log("Error in getting Accept Task: ", error);
-  //     throw error;
-  //   }
-  // }
-
-  //to start task
-  static async startTask(taskData) {
-    console.log("Start Task: ", taskData);
+  static async getWorkHours(task_id) {
+    console.log("Task ID: ", task_id);
     const token = sessionStorage.getItem("token");
     try {
-      const response = await api.post(`/api/wh/wh/start/`, taskData, {
+      const response = await api.get(`/api/wh/wh/${task_id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       });
-      console.log("Start Task Response: ", response.data);
-      return response.data;
+      console.log("Work Hours:--------------- ", response.data.data);
+      return response.data.data;
     } catch (error) {
-      console.log("Error in getting Start Task: ", error);
+      console.log("Error in getting Work ID:", error);
       throw error;
     }
   }
 
-  //to pause task
-  static async pauseTask(taskData) {
-    console.log("Pause Task: ", taskData);
+  static async startTask(task_id) {
+    const formData = { task_id };
     const token = sessionStorage.getItem("token");
     try {
-      const response = await api.patch('/api/wh/wh/pause/', taskData, {
+      const response = await api.post(`/api/wh/wh/start/`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
-        }
+        },
       });
-      console.log("Pause Task Response: ", response.data);
       return response.data;
     } catch (error) {
-      console.log("Error in getting Pause Task: ", error);
+      console.log("Error in getting Project:", error);
+      throw error;
+    }
+  }
+
+  static async pauseTask(task_id, work_id) {
+    console.log("pause-=-=-=-==-=-=-", task_id, work_id);
+    const formData = { task_id, work_id };
+    const token = sessionStorage.getItem("token");
+    try {
+      const response = await api.patch(`/api/wh/wh/pause/`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      console.log("Pause Task: ", response.data);
+      return response.data;
+    } catch (error) {
+      console.log("Error in getting Project:", error);
       throw error;
     }
   }
 
   //to resume task
-  static async resumeTask(taskData) {
+  static async resumeTask(task_id, work_id) {
+    console.log("resume-=-=-=-==-=-=-", task_id);
+    const formData = { task_id, work_id };
     const token = sessionStorage.getItem("token");
     try {
-      const response = await api.patch(`/api/wh/wh/resume/`, taskData, {
+      const response = await api.patch(`/api/wh/wh/resume/`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       });
-      const data = await response.json();
-      console.log("Resume Task: ", data);
-      return data;
+      console.log("Resume Task: ", response.data);
+      return response.data;
     } catch (error) {
       console.log("Error in getting Resume Task: ", error);
       throw error;
     }
   }
 
-  static async endTask(id) {
+  static async endTask(task_id, work_id) {
+    console.log("end-=-=-=-==-=-=-", task_id, work_id);
+    const formData = { task_id, work_id };
     const token = sessionStorage.getItem("token");
     try {
-      const response = await api.post(`/api/user/record/${id}/end/`, {
+      const response = await api.patch(`/api/wh/wh/end/`, formData, {
         headers: {
-          Authorization: `Token ${token}`,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       });
-      const data = await response.json();
+      const data = await response.data;
       console.log("End Task: ", data);
       return data;
     } catch (error) {
@@ -551,11 +564,14 @@ class Service {
 
   //to add assignee --updated
   static async addAssigne(id, assigne) {
-    console.log("task id",id);
-    console.log("assigned id",assigne);
+    console.log("task id", id);
+    console.log("assigned id", assigne);
     const token = sessionStorage.getItem("token");
     try {
-      const response = await api.post(`/api/task/tasks/${id}/add_assignes/`, assigne,{
+      const response = await api.post(
+        `/api/task/tasks/${id}/add_assignes/`,
+        assigne,
+        {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "Application/json",
@@ -571,18 +587,19 @@ class Service {
   }
 
   static async addComment(id, data) {
+    const formData = { ...data };
     console.log(data);
     try {
       const token = sessionStorage.getItem("token");
       const response = await api.post(
         `/api/task/tasks/add_comment/${id}`,
-        data,
+        formData,
         {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
       return response.data;
     } catch (error) {

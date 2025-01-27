@@ -5,7 +5,7 @@ import Service from "../api/configAPI";
 
 const initialState = {
   projectData: [],
-  teamData: null,
+  teamData: [],
   error: null
 }
 

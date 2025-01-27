@@ -29,67 +29,6 @@ const App = () => {
     (state) => state?.fabricatorData?.fabricatorData,
   );
   const teams = useSelector((state) => state?.projectData?.teamData);
-  // console.log(teams)
-
-  useEffect(() => {
-    const fetchProjects = async () => {
-      try {
-        const projectsData = await Service.getAllProject(token);
-        console.log("Projects data-------------", projectsData);
-        dispatch(showProjects(projectsData));
-        const segregatedProjects = await SegregateProject(projectsData);
-        setSegregateProject(segregatedProjects);
-      } catch (error) {
-        console.error("Error fetching projects:", error);
-      }
-    };
-
-    const fetchTasks = async () => {
-      try {
-        const tasksData = await Service.getAllTask(token);
-        console.log("Task data-------------", tasksData);
-        dispatch(showTask(tasksData));
-      } catch (error) {
-        console.error("Error fetching tasks:", error);
-      }
-    };
-
-    const fetchUsers = async () => {
-      try {
-        const usersData = await Service.getAllUser(token);
-        dispatch(showStaff(usersData));
-        // setUsers(usersData)
-      } catch (error) {
-        console.error("Error fetching users:", error);
-      }
-    };
-
-    const fetchFabricators = async () => {
-      try {
-        const fabricatorsData = await Service.getAllFabricator(token);
-        dispatch(showFabricator(fabricatorsData));
-      } catch (error) {
-        console.error("Error fetching fabricators:", error);
-      }
-    };
-
-    const fetchTeam = async () => {
-      try {
-        const teamData = await Service.getAllTeam(token);
-        // console.log(teamData)
-        dispatch(showTeam(teamData));
-        // setTeam(teamData)
-      } catch (error) {
-        console.error("Error fetching team:", error);
-      }
-    };
-
-    fetchTeam();
-    fetchTasks();
-    fetchUsers();
-    fetchProjects();
-    fetchFabricators();
-  }, []);
 
   const toggleSidebar = useCallback(() => {
     setSidebarOpen((prev) => !prev);
@@ -98,88 +37,30 @@ const App = () => {
   useEffect(() => {
     const fetchUser = async () => {
       const user = await Service.getCurrentUser(token);
-      console.log(user);
       dispatch(setUserData(user));
-    };
-    fetchUser();
-  }, [dispatch]);
-
-  useEffect(() => {
-    const fetchProjects = async () => {
       try {
         const projectsData = await Service.getAllProject(token);
-        //  console.log(projectsData)
         dispatch(showProjects(projectsData));
-      } catch (error) {
-        console.error("Error fetching projects:", error);
-      }
-    };
-
-    const fetchTasks = async () => {
-      try {
-        const tasksData = await Service.getAllTask(token);
-        console.log(tasksData);
+        const tasksData = await Service.getAllMyTask(token);
         dispatch(showTask(tasksData));
-      } catch (error) {
-        console.error("Error fetching tasks:", error);
-      }
-    };
-
-    const fetchUsers = async () => {
-      try {
         const usersData = await Service.allEmployee(token);
         dispatch(showStaff(usersData));
-        // setUsers(usersData)
-      } catch (error) {
-        console.error("Error fetching users:", error);
-      }
-    };
-
-    const fetchFabricators = async () => {
-      try {
-        const fabricatorsData = await Service.getAllFabricator(token);
-        dispatch(showFabricator(fabricatorsData));
-      } catch (error) {
-        console.error("Error fetching fabricators:", error);
-      }
-    };
-
-    const fetchTeam = async () => {
-      try {
         const teamData = await Service.getAllTeam(token);
-        // console.log(teamData)
         dispatch(showTeam(teamData));
-        // setTeam(teamData)
       } catch (error) {
-        console.error("Error fetching team:", error);
+        console.error("Error fetching user:", error);
+        navigate("/");
       }
     };
 
-    fetchTeam();
-    fetchTasks();
-    fetchUsers();
-    fetchProjects();
-    fetchFabricators();
-  }, [token]);
+    fetchUser();
+  }, [dispatch]);
 
   return (
     <Provider store={store}>
       <div className="flex flex-col w-screen h-screen overflow-hidden md:flex-row bg-gradient-to-r from-green-300/50 to-teal-300">
         {/* Sidebar */}
 
-        {/* {!isConnected && (
-          <>
-            <div className="absolute top-0 left-0 z-50 w-screen h-screen bg-black bg-opacity-50">
-              <div className="flex items-center justify-center w-full h-full px-20 py-10">
-                <div className="px-32 py-20 text-red-700 bg-white border-2 border-red-700 rounded-3xl">
-                  {result
-                    ? 'Connecting to Server, Please Wait...'
-                    : 'Connection Failed, Please Check Your Internet Connection'}
-                </div>
-              </div>
-            </div>
-          </>
-        )} */}
 
         <div className="flex flex-col w-full">
           <div className="mx-5 my-2 shadow-2xl drop-shadow-lg">

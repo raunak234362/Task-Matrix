@@ -8,16 +8,22 @@ import { useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
 
 const Task = ({ taskId, setDisplay }) => {
+  const work_id = sessionStorage.getItem("work_id");
   const [tasks, setTasks] = useState();
+  const [workHours, setWorkHours] = useState(null);
   const userType = sessionStorage.getItem("userType");
   const username = sessionStorage.getItem("username");
+  const [workdata, setWorkData] = useState({})
   const [teamMember, setTeamMember] = useState([]);
   const [color, setColor] = useState("");
   const [showProjectDetail, setShowProjectDetail] = useState(false);
   const [showFabricatorDetail, setShowFabricatorDetail] = useState(false);
   const [assignedTo, setAssignedTo] = useState("");
   const [timer, setTimer] = useState(0); // Timer in seconds
-  const [isTimerRunning, setIsTimerRunning] = useState(false); // Timer state
+  const [isTimerRunning, setIsTimerRunning] = useState(false);
+  const teamData = useSelector((state) => state?.projectData?.teamData);
+  const staffData = useSelector((state) => state?.userData?.staffData);
+  console.log("Stafff  Data: ", staffData);
   const {
     register,
     handleSubmit,
@@ -41,27 +47,27 @@ const Task = ({ taskId, setDisplay }) => {
     }
   }, [taskId]);
 
-  // useEffect(() => {
-  //   const handleProjectChange = async () => {
-  //     try {
-  //       const assigned = tasks?.project?.team?.members?.map((member) => ({
-  //         label: `${member?.role} - ${member?.employee?.name}`,
-  //         value: member?.employee?.id,
-  //       }));
-  //       console.log("Assigned: ", assigned);
-  //       setTeamMember(assigned);
-  //     } catch (error) {
-  //       console.error("Error fetching team details:", error);
-  //     }
-  //   };
+  useEffect(() => {
+    const fetchWorkId = async () => {
+      const workHour = await Service.getWorkHours(taskId);
+      console.log("Work Hour: ", workHour);
+      setWorkData(workHour)
+      setWorkHours(workHour);
+    };
+    fetchWorkId();
+  }, [taskId]);
 
-  //   handleProjectChange();
-  // }, []);
+  console.log(tasks)
+
+  console.log("Work Hours: ", workHours);
 
   useEffect(() => {
-    if (tasks?.project?.team?.members) {
-      const members = tasks.project.team.members.map((member) => ({
-        label: `${member?.role} - ${staffs?.find((staff) => staff.id === member?.id)?.f_name || "Unknown"}`,
+    const teamID = tasks?.project?.teamID;
+    if (teamID) {
+      let memberData = teamData?.find((team) => team.id === teamID);
+      console.log("Member Data: ", memberData);
+      const members = memberData?.members?.map((member) => ({
+        label: `${member?.role} - ${staffData?.find((staff) => staff.id === member?.id)?.f_name || "Unknown"}`,
         value: member?.id,
       }));
       setTeamMember(members);
@@ -106,7 +112,7 @@ const Task = ({ taskId, setDisplay }) => {
 
   const getStatusLabel = (status) => {
     const labels = {
-      "IN-PROGRESS": "In-Progress",
+      "IN-PROGRESS": "IN PROGRESS",
       "ON-HOLD": "On-Hold",
       BREAK: "Break",
       "IN-REVIEW": "In-Review",
@@ -120,10 +126,10 @@ const Task = ({ taskId, setDisplay }) => {
   // Status styles mapping
   const getStatusBadge = (status) => {
     const statusStyles = {
-      "IN-PROGRESS": "bg-green-100 text-green-400 border-green-400",
-      "ON-HOLD": "bg-yellow-100 text-yellow-700 border-yellow-700",
+      "IN PROGRESS": "bg-green-100 text-green-400 border-green-400",
+      "ON HOLD": "bg-yellow-100 text-yellow-700 border-yellow-700",
       BREAK: "bg-red-100 text-red-600 border-red-600",
-      "IN-REVIEW": "bg-orange-100 text-orange-600 border-orange-600",
+      "IN REVIEW": "bg-orange-100 text-orange-600 border-orange-600",
       Completed: "bg-green-100 text-green-800 border-green-800",
       APPROVED: "bg-purple-100 text-purple-600 border-purple-600",
       ASSINGED: "bg-pink-100 text-pink-500 border-pink-500",
@@ -142,7 +148,7 @@ const Task = ({ taskId, setDisplay }) => {
           label: `${member?.role} - ${member?.employee?.name}`,
           value: member?.employee?.id,
         }));
-        console.log("Assigned: ", assigned);
+        // console.log("Assigned: ", assigned);
         setTeamMember(assigned);
       } catch (error) {
         console.error("Error fetching team details:", error);
@@ -164,38 +170,24 @@ const Task = ({ taskId, setDisplay }) => {
     setShowFabricatorDetail(!showFabricatorDetail);
   };
 
-  // async function handleAccept() {
-  //     const taskID = tasks?.id;
-  //     try {
-  //       const accept = await Service.acceptTask(taskID);
-  //       if (window.confirm("Task Accepted \n\nDo you wish to start now?")) {
-  //         handleStart(accept?.id);
-  //       }
-  //       alert("Task Accepted");
-  //       fetchTask();
-  //       console.log("Accepted Task: ", accept);
-  //     } catch (error) {
-  //       console.log("Error in accepting task: ", error);
-  //     }
-  // }
-
   async function handleStart() {
     const taskID = tasks?.id;
     try {
       const accept = await Service.startTask(taskID);
       alert("Task Accepted");
-      console.log("Accepted Task: ", accept);
+      // console.log("Accepted Task: ", accept);
+
+      sessionStorage.setItem("work_id", accept.data.id);
     } catch (error) {
       console.log("Error in accepting task: ", error);
     }
   }
 
-  async function handlePause() {
-    console.log("Pause Task: ", tasks?.id);
-    const taskID = tasks?.id;
+  async function handlePause(ev) {
+    const taskId = tasks?.id;
     try {
-      const pause = await Service.pauseTask(taskID);
-      console.log("Paused Task: ", pause);
+      const pause = await Service.pauseTask(taskId, ev?.target?.value);
+      // console.log("Paused Task: ", pause);
       alert("Tasked Paused");
       fetchTask();
     } catch (error) {
@@ -203,11 +195,11 @@ const Task = ({ taskId, setDisplay }) => {
     }
   }
 
-  async function handleResume() {
+  async function handleResume(ev) {
     const taskID = tasks?.id;
     try {
-      const resume = await Service.resumeTask(taskID);
-      console.log("Resumed Task: ", resume);
+      const resume = await Service.resumeTask(taskID, ev?.target?.value);
+      // console.log("Resumed Task: ", resume);
       alert("Tasked Resumed");
       fetchTask();
     } catch (error) {
@@ -215,11 +207,11 @@ const Task = ({ taskId, setDisplay }) => {
     }
   }
 
-  async function handleEnd() {
+  async function handleEnd(ev) {
     const taskID = tasks?.id;
     try {
-      const end = await Service.endTask(taskID);
-      console.log("Ended Task: ", end);
+      const end = await Service.endTask(taskID, ev?.target?.value);
+      console.log("End Task: ", end);
       alert("Tasked Ended");
       fetchTask();
     } catch (error) {
@@ -227,24 +219,20 @@ const Task = ({ taskId, setDisplay }) => {
     }
   }
 
-  const formatTimer = (seconds) => {
-    const hours = Math.floor(seconds / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
-    const secs = seconds % 60;
-    return `${hours.toString().padStart(2, "0")}:${minutes
-      .toString()
-      .padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+  const formatMinutesToHoursAndMinutes = (totalMinutes) => {
+    if (!totalMinutes) return "0h 0m";
+
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+
+    return `${hours}h ${minutes}m`;
   };
 
   // For Comment Form
   const onSubmitComment = async (data) => {
-    console.log(data);
+    // console.log(data);
     try {
-      const response = await Service.addComment(
-        tasks.id,
-        data.comment,
-        data.file,
-      );
+      const response = await Service.addComment(tasks.id, data);
       alert("Comment Added Successfully", response);
       await fetchTask();
     } catch (error) {
@@ -269,7 +257,7 @@ const Task = ({ taskId, setDisplay }) => {
         };
         if (handlePause) {
           const response = await Service.addAssigne(tasks?.id, updatedData);
-          console.log("Assigned Task: ", response);
+          // console.log("Assigned Task: ", response);
           fetchTask();
         }
       } else {
@@ -280,7 +268,7 @@ const Task = ({ taskId, setDisplay }) => {
         };
         if (handlePause) {
           const response = await Service.addAssigne(tasks?.id, updatedData);
-          console.log("Assigned Task: ", response);
+          // console.log("Assigned Task: ", response);
           fetchTask();
         }
       }
@@ -310,7 +298,7 @@ const Task = ({ taskId, setDisplay }) => {
     return `${totalHours}h ${minutes}m`;
   }
 
-  console.log(tasks);
+  // console.log(tasks);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
@@ -369,7 +357,14 @@ const Task = ({ taskId, setDisplay }) => {
                         {durToHour(tasks?.duration)}
                       </span>
                     </div>
-                    <div className="timer">Timer: {formatTimer(timer)}</div>
+                    <div className="flex items-center my-3">
+                      <span className="w-40 font-bold text-gray-800">
+                        Work Hours:
+                      </span>
+                      <span className="text-lg">
+                        {formatMinutesToHoursAndMinutes(workHours?.duration)}
+                      </span>
+                    </div>
                     <div className="flex items-center my-3">
                       <span className="w-40 font-bold text-gray-800">
                         Status:
@@ -400,7 +395,7 @@ const Task = ({ taskId, setDisplay }) => {
                       </div>
                       <div>
                         {tasks?.status === "ASSINGED" ||
-                        tasks?.status === "ON-HOLD" ? (
+                        tasks?.status === "ON HOLD"  || workdata.id === undefined ? (
                           <>
                             <Button
                               className="flex items-center justify-center font-semibold bg-green-500 rounded-full w-28 hover:bg-green-800"
@@ -413,9 +408,10 @@ const Task = ({ taskId, setDisplay }) => {
                           <>
                             <div className="flex flex-row items-center justify-center gap-x-5">
                               {/* Show Pause button if the task is running */}
-                              {tasks?.status === "IN-PROGRESS" && (
+                              {tasks?.status === "IN PROGRESS" && (
                                 <Button
                                   className="flex items-center justify-center font-semibold bg-yellow-500 rounded-full w-28 hover:bg-yellow-700"
+                                  value={workdata?.id}
                                   onClick={handlePause}
                                 >
                                   Pause
@@ -426,6 +422,7 @@ const Task = ({ taskId, setDisplay }) => {
                               {tasks?.status === "BREAK" && (
                                 <Button
                                   className="flex items-center justify-center font-semibold bg-green-500 rounded-full w-28 hover:bg-green-700"
+                                  value={workdata?.id}
                                   onClick={handleResume}
                                 >
                                   Resume
@@ -435,6 +432,7 @@ const Task = ({ taskId, setDisplay }) => {
                               {/* Always show End button */}
                               <Button
                                 className="flex items-center justify-center font-semibold bg-red-500 rounded-full w-28 hover:bg-red-800"
+                                value={workdata?.id}
                                 onClick={handleEnd}
                               >
                                 End
@@ -693,10 +691,10 @@ const Task = ({ taskId, setDisplay }) => {
                       </div>
                     </div>
                   </form>
-                  {tasks?.comments?.length > 0 && (
+                  {tasks?.taskcomment?.length > 0 && (
                     <div className="p-5 rounded-lg shadow-xl  bg-gray-100/70">
                       <div className="space-y-4">
-                        {tasks?.comments?.map((comment, index) => (
+                        {tasks?.taskcomment?.map((comment, index) => (
                           <div
                             className="p-4 bg-white rounded-lg shadow-md"
                             key={index}

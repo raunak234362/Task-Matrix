@@ -16,7 +16,7 @@ const MyTask = () => {
       try {
         const task = await Service.getMyTask();
         setTasks(task);
-        console.log("My Task list: ", task);
+        // console.log("My Task list: ", task);
       } catch (error) {
         console.log("Error in fetching task: ", error);
       }
@@ -25,7 +25,7 @@ const MyTask = () => {
   }, []);
 
   const projects = useSelector((state) => state?.projectData?.projectData);
-  console.log("Projects: ", projects);
+  // console.log("Projects: ", projects);
   // Function to convert durations like '2 08:00:00' to total hours (56h for 2 days and 8 hours)
   function durToHour(params) {
     if (!params) return "N/A";

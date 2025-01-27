@@ -9,7 +9,8 @@ import { showTask, showTaskByID } from "../../../../store/taskSlice";
 const AllTask = () => {
   const dispatch = useDispatch();
   const tasks = useSelector((state) => state?.taskData?.taskData);
-  console.log("All Task---------------",tasks);
+  const projectData = useSelector((state) => state?.projectData?.projectData);
+  const userData = useSelector((state) => state?.userData?.staffData);
   const [selectedTask, setSelectedTask] = useState(null);
   const [taskID, setTaskID] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -144,9 +145,9 @@ const AllTask = () => {
     setProjectFilter(e.target.value);
   };
 
-  const handleToolsFilter = (e)=>{
+  const handleToolsFilter = (e) => {
     setToolsFilter(e.target.value);
-  }
+  };
 
   const handleSort = (key) => {
     let direction = "ascending";
@@ -198,6 +199,23 @@ const AllTask = () => {
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setTaskID(null);
+  };
+
+  const durToHour = (params) => {
+    if (!params) return "N/A";
+
+    const parts = params.split(" ");
+    let days = 0;
+    let timePart = params;
+
+    if (parts.length === 2) {
+      days = parseInt(parts[0], 10);
+      timePart = parts[1];
+    }
+
+    const [hours, minutes, seconds] = timePart.split(":").map(Number);
+    const totalHours = days * 24 + hours;
+    return `${totalHours}h ${minutes}m`;
   };
 
   const color = (priority) => {
@@ -333,14 +351,7 @@ const AllTask = () => {
                       {sortConfig.key === "name " &&
                         (sortConfig.direction === "ascending" ? "" : "")}
                     </th>
-                    <th
-                      className="px-2 py-1 cursor-pointer"
-                      onClick={() => handleSort("manager")}
-                    >
-                      Manager Name{" "}
-                      {sortConfig.key === "name " &&
-                        (sortConfig.direction === "ascending" ? "" : "")}
-                    </th>
+
                     <th className="px-2 py-1 cursor-default">Assigned User </th>
                     <th
                       className="px-2 py-1 cursor-pointer"
@@ -358,12 +369,29 @@ const AllTask = () => {
                       {sortConfig.key === "priority" &&
                         (sortConfig.direction === "ascending" ? "" : "")}
                     </th>
+
                     <th
                       className="px-2 py-1 cursor-pointer"
                       onClick={() => handleSort("due_date")}
                     >
                       Task Due Date{" "}
                       {sortConfig.key === "due_date" &&
+                        (sortConfig.direction === "ascending" ? "" : "")}
+                    </th>
+                    <th
+                      className="px-2 py-1 cursor-pointer"
+                      onClick={() => handleSort("duration")}
+                    >
+                      Allocated Hours{" "}
+                      {sortConfig.key === "duration" &&
+                        (sortConfig.direction === "ascending" ? "" : "")}
+                    </th>
+                    <th
+                      className="px-2 py-1 cursor-pointer"
+                      onClick={() => handleSort("duration")}
+                    >
+                      Hours Taken{" "}
+                      {sortConfig.key === "duration" &&
                         (sortConfig.direction === "ascending" ? "" : "")}
                     </th>
                     <th className="px-2 py-1">Actions</th>
@@ -379,20 +407,21 @@ const AllTask = () => {
                   ) : (
                     filteredTasks.map((task, index) => (
                       <tr
-                        key={task.id}
-                        className={
-                          index % 2 === 0 ? "bg-white" : "bg-gray-200/50"
-                        }
+                      key={task.id}
+                      className={
+                        index % 2 === 0 ? "bg-white" : "bg-gray-200/50"
+                      }
                       >
+                        
                         <td className="px-1 py-2 border">{index + 1}</td>
                         <td className="px-1 py-2 border">
-                          {task?.project?.name}
+                          {projectData?.find((project) => project?.id === task?.project_id)?.name}
                         </td>
                         <td className="px-1 py-2 border">{task?.name}</td>
+
                         <td className="px-1 py-2 border">
-                          {task?.project?.manager?.f_name}
+                          {userData?.find((user) => user?.id === task?.user_id)?.f_name}
                         </td>
-                        <td className="px-1 py-2 border">{task?.user?.f_name}</td>
                         <td className="px-1 py-2 border">{task?.status}</td>
                         <td className={`border px-1 py-2`}>
                           <span
@@ -404,7 +433,14 @@ const AllTask = () => {
                           </span>
                         </td>
                         <td className="px-1 py-2 border">
-                          {new Date(task?.due_date).toDateString()}
+                          {new Date(task?.start_date).toDateString()}
+                        </td>
+                        <td className="px-1 py-2 border">
+                          {durToHour(task?.duration)}
+                        </td>
+                        <td className="px-1 py-2 border">
+                          {durToHour(task?.workingHourTask?.duration)}
+                          {console.log("task working hour-------------------",task?.workingHourTask)}
                         </td>
 
                         <td className="flex justify-center px-1 py-2 border">

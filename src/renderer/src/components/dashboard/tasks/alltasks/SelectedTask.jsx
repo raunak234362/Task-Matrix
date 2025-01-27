@@ -13,19 +13,29 @@ const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
   let taskData = useSelector((state) =>
     state?.taskData?.taskData.filter((task) => task.id === taskID),
   );
-  
-const staffData = useSelector((state) => state?.userData?.staffData);
-console.log("staffData------------",staffData);
+  const [workHours, setWorkHours] = useState(null);
+  const [workdata, setWorkData] = useState({});
+
+  const staffData = useSelector((state) => state?.userData?.staffData);
+  console.log("staffData------------", staffData);
   taskData = taskData[0];
 
-  console.log("taskData------------",taskData);
+  console.log("taskData------------", taskData);
 
   const [selectedTask, setSelectedTask] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const username = sessionStorage.getItem("username");
   const userType = sessionStorage.getItem("userType");
-
+  useEffect(() => {
+    const fetchWorkId = async () => {
+      const workHour = await Service.getWorkHours(taskID);
+      console.log("Work Hour: ", workHour);
+      setWorkData(workHour);
+      setWorkHours(workHour);
+    };
+    fetchWorkId();
+  }, [taskID]);
   const {
     register,
     handleSubmit,
@@ -62,7 +72,14 @@ console.log("staffData------------",staffData);
     const totalHours = days * 24 + hours;
     return `${totalHours}h ${minutes}m`;
   };
+  const formatMinutesToHoursAndMinutes = (totalMinutes) => {
+    if (!totalMinutes) return "0h 0m";
 
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+
+    return `${hours}h ${minutes}m`;
+  };
   const addComment = async (commentData) => {
     try {
       const response = await Service.addComment(taskDetail?.id, commentData);
@@ -105,8 +122,6 @@ console.log("staffData------------",staffData);
 
   const start_date = new Date(taskDetail?.start_date);
   const due_date = new Date(taskDetail?.due_date);
-
-  console.log(taskData);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
@@ -152,7 +167,14 @@ console.log("staffData------------",staffData);
                 <strong className="text-gray-700">Duration:</strong>
                 {durToHour(taskData?.duration)}
               </div>
-
+              <div className="flex items-center my-3">
+                <span className="w-40 font-bold text-gray-800">
+                  Work Hours:
+                </span>
+                <span className="text-lg">
+                  {formatMinutesToHoursAndMinutes(workHours?.duration)}
+                </span>
+              </div>
               <div className="my-2">
                 <strong className="text-gray-700">Status:</strong>
                 {taskData?.status}
@@ -193,7 +215,7 @@ console.log("staffData------------",staffData);
                 </p>
                 <p className="mb-2">
                   <strong className="text-gray-700">Project Manager:</strong>{" "}
-                  {taskData?.project.manager?.username}
+                  {taskData?.project?.manager?.username}
                 </p>
                 <p className="mb-2">
                   <strong className="text-gray-700">Project Stage:</strong>{" "}
@@ -321,7 +343,11 @@ console.log("staffData------------",staffData);
                     >
                       <div className="flex items-center mb-2">
                         <span className="font-bold text-gray-800">
-                          {staffData?.find((staff) => staff?.id === comment?.user_id)?.f_name}
+                          {
+                            staffData?.find(
+                              (staff) => staff?.id === comment?.user_id,
+                            )?.f_name
+                          }
                         </span>
                         <span className="ml-2 text-sm text-gray-500">
                           {new Date(comment?.created_on).toLocaleDateString(
