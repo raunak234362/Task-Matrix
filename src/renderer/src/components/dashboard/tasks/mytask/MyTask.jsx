@@ -24,6 +24,8 @@ const MyTask = () => {
     fetchTask();
   }, []);
 
+  
+
   const projects = useSelector((state) => state?.projectData?.projectData);
   // console.log("Projects: ", projects);
   // Function to convert durations like '2 08:00:00' to total hours (56h for 2 days and 8 hours)

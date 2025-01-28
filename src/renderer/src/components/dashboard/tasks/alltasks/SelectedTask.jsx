@@ -9,7 +9,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { updateTask } from "../../../../store/taskSlice";
 
 const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
-  console.log(taskID);
   let taskData = useSelector((state) =>
     state?.taskData?.taskData.filter((task) => task.id === taskID),
   );
@@ -17,7 +16,12 @@ const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
   const [workdata, setWorkData] = useState({});
 
   const staffData = useSelector((state) => state?.userData?.staffData);
-  console.log("staffData------------", staffData);
+  const projectData = useSelector((state) =>
+    state?.projectData?.projectData.find(
+      (project) => project?.id === taskDetail?.project?.id,
+    ),
+  );
+  console.log("Project Data------------", projectData);
   taskData = taskData[0];
 
   console.log("taskData------------", taskData);
@@ -139,35 +143,50 @@ const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
         <div className="h-[80vh] overflow-y-auto p-4 rounded-lg">
           <div className="grid grid-cols-2 gap-5">
             <div className="p-5 rounded-lg bg-teal-100/70">
-              <div className="my-2">
-                <strong className="text-gray-700">Task Name:</strong>
+              <div className="flex items-center my-2">
+                <strong className="w-40 font-bold text-gray-800">
+                  Task Name:
+                </strong>
                 <div>{taskData?.name}</div>
               </div>
 
-              <div className="my-2">
-                <strong className="text-gray-700">Description:</strong>
+              <div className="flex items-center my-2">
+                <strong className="w-40 font-bold text-gray-800">
+                  Description:
+                </strong>
                 {taskData?.description}
               </div>
 
-              <div className="my-2">
-                <strong className="text-gray-700">Current User:</strong>{" "}
-                {taskData?.user?.f_name}
+              <div className="flex items-center my-2">
+                <strong className="w-40 font-bold text-gray-800">
+                  Current User:
+                </strong>{" "}
+                {
+                  staffData?.find((staff) => staff?.id === taskData?.user_id)
+                    ?.f_name
+                }
               </div>
 
-              <div className="my-2">
-                <strong className="text-gray-700">Start Date:</strong>
+              <div className="flex items-center my-2">
+                <strong className="w-40 font-bold text-gray-800">
+                  Start Date:
+                </strong>
                 {start_date?.toDateString()}
               </div>
-              <div className="my-2">
-                <strong className="text-gray-700">Due Date:</strong>
+              <div className="flex items-center my-2">
+                <strong className="w-40 font-bold text-gray-800">
+                  Due Date:
+                </strong>
                 {due_date?.toDateString()}
               </div>
 
-              <div className="my-2">
-                <strong className="text-gray-700">Duration:</strong>
+              <div className="flex items-center my-2">
+                <strong className="w-40 font-bold text-gray-800">
+                  Duration:
+                </strong>
                 {durToHour(taskData?.duration)}
               </div>
-              <div className="flex items-center my-3">
+              <div className="flex items-center my-2">
                 <span className="w-40 font-bold text-gray-800">
                   Work Hours:
                 </span>
@@ -175,22 +194,24 @@ const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
                   {formatMinutesToHoursAndMinutes(workHours?.duration)}
                 </span>
               </div>
-              <div className="my-2">
-                <strong className="text-gray-700">Status:</strong>
-                {taskData?.status}
+              <div className="flex items-center my-2">
+                <strong className="w-40 font-bold text-gray-800">
+                  Status:
+                </strong>
+                <span className="text-lg">{taskData?.status}</span>
               </div>
 
-              <div>
-                <div>
-                  <strong className="text-gray-700">Priority:</strong>
-                  <span
-                    className={`text-sm font-semibold px-3 py-0.5 mx-2 rounded-full border ${color(
-                      taskData?.priority,
-                    )}`}
-                  >
-                    {setPriorityValue(taskData?.priority)}
-                  </span>
-                </div>
+              <div className="flex items-center my-2">
+                <strong className="w-40 font-bold text-gray-800">
+                  Priority:
+                </strong>
+                <span
+                  className={`text-sm font-semibold px-3 py-0.5 mx-2 rounded-full border ${color(
+                    taskData?.priority,
+                  )}`}
+                >
+                  {setPriorityValue(taskData?.priority)}
+                </span>
               </div>
               {userType == !"user" ? null : (
                 <Button onClick={handleEditClick}>Update</Button>
@@ -203,28 +224,28 @@ const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
                   Project Detail:
                 </div>
                 <hr className="m-2" />
-                <p className="mb-2">
-                  <strong className="text-gray-700">Project Name:</strong>{" "}
-                  {taskData?.project?.name}
-                </p>
-                <p className="mb-2">
-                  <strong className="text-gray-700">
+                <div className="flex items-center mb-2">
+                  <strong className="w-40 font-bold text-gray-800">Project Name:</strong>{" "}
+                  {projectData.name}
+                </div>
+                <div className="flex items-center mb-2">
+                  <strong className="w-40 font-bold text-gray-800">
                     Project Description:
                   </strong>{" "}
-                  {taskData?.project?.description}
-                </p>
-                <p className="mb-2">
-                  <strong className="text-gray-700">Project Manager:</strong>{" "}
-                  {taskData?.project?.manager?.username}
-                </p>
-                <p className="mb-2">
-                  <strong className="text-gray-700">Project Stage:</strong>{" "}
-                  {taskData?.project?.stage}
-                </p>
-                <p className="mb-2">
-                  <strong className="text-gray-700">Project Status:</strong>{" "}
-                  {taskData?.project?.status}
-                </p>
+                  {projectData?.description}
+                </div>
+                <div className="flex items-center mb-2">
+                  <strong className="w-40 font-bold text-gray-800">Project Manager:</strong>{" "}
+                  {projectData?.manager?.f_name}
+                </div>
+                <div className="flex items-center mb-2">
+                  <strong className="w-40 font-bold text-gray-800">Project Stage:</strong>{" "}
+                  {projectData?.stage}
+                </div>
+                <div className="flex items-center mb-2">
+                  <strong className="w-40 font-bold text-gray-800">Project Status:</strong>{" "}
+                  {projectData?.status}
+                </div>
               </div>
             </div>
           </div>

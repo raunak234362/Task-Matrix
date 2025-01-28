@@ -30,39 +30,13 @@ class Service {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log(response?.data);
+      // console.log(response?.data);
       return response.data?.data;
     } catch (error) {
       console.log("Error fetching employees:", error);
       throw error;
     }
   }
-
-  //Team APIs
-  // static async addTeam({ name, created_by, leader }) {
-  //   try {
-  //     const formData = JSON.stringify({
-  //       name,
-  //       created_by,
-  //       leader,
-  //     });
-  //     const token = sessionStorage.getItem("token");
-  //     const response = await fetch(`/apiapi/team/teams/`, {
-  //       method: "POST",
-  //       headers: {
-  //         Authorization: `Token ${token}`,
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: formData,
-  //     });
-  //     const data = await response.json();
-  //     console.log("Successfully Added Team: ", data);
-  //     return data;
-  //   } catch (error) {
-  //     console.log("Error in Adding Team: ", error);
-  //     throw error;
-  //   }
-  // }
 
   static async getAllTeam() {
     const token = sessionStorage.getItem("token");
@@ -74,7 +48,7 @@ class Service {
         },
       });
 
-      console.log(resonse?.data);
+      // console.log(resonse?.data);
       return resonse?.data?.data;
     } catch (error) {
       console.log("Error in getting team list: ", error);
@@ -98,24 +72,6 @@ class Service {
     }
   }
 
-  // static async deleteTeam(teamId) {
-  //   console.log(teamId);
-  //   try {
-  //     console.log(teamId);
-  //     const response = await api.delete(
-  //       `/apiapi/team/teams/${teamId}`,
-  //       {
-  //         headers: {
-  //           Authorization: `Token ${sessionStorage.getItem("token")}`,
-  //           "Content-Type": "application/json",
-  //         },
-  //       },
-  //     );
-  //     console.log("Team Deleted: ", response.data);
-  //   } catch (error) {
-  //     console.log("Error deleting the team", error);
-  //   }
-  // }
 
   static async getTeamMember(projectId) {
     console.log(projectId);
@@ -397,15 +353,13 @@ class Service {
   static async userTaskRecord() {
     const token = sessionStorage.getItem("token");
     try {
-      const response = await api.get(`/api/user/record`, {
+      const response = await api.get(`/api/task/tasks/my_task_records/`, {
         headers: {
-          Authorization: `Token ${token}`,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       });
-      const data = await response.json();
-      console.log("Users Task Record: ", data);
-      return data;
+      return response.data.data;
     } catch (error) {
       console.log("Error in getting Task Record: ", error);
       throw error;
@@ -413,7 +367,7 @@ class Service {
   }
 
   static async getWorkHours(task_id) {
-    console.log("Task ID: ", task_id);
+    
     const token = sessionStorage.getItem("token");
     try {
       const response = await api.get(`/api/wh/wh/${task_id}`, {
@@ -422,7 +376,7 @@ class Service {
           "Content-Type": "application/json",
         },
       });
-      console.log("Work Hours:--------------- ", response.data.data);
+      
       return response.data.data;
     } catch (error) {
       console.log("Error in getting Work ID:", error);

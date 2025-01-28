@@ -12,7 +12,7 @@ import Service from "./api/configAPI";
 import { setUserData, showStaff } from "./store/userSlice";
 // import { loadFabricator, showClient } from "./store/fabricatorSlice";
 import { showProjects, showTeam } from "./store/projectSlice";
-import { showTask } from "./store/taskSlice";
+import { showTask, showTaskRecord } from "./store/taskSlice";
 import { showFabricator } from "./store/fabricatorSlice";
 const App = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -30,6 +30,9 @@ const App = () => {
   );
   const teams = useSelector((state) => state?.projectData?.teamData);
 
+    
+  const userType = sessionStorage.getItem("userType");
+
   const toggleSidebar = useCallback(() => {
     setSidebarOpen((prev) => !prev);
   }, [setSidebarOpen]);
@@ -41,8 +44,10 @@ const App = () => {
       try {
         const projectsData = await Service.getAllProject(token);
         dispatch(showProjects(projectsData));
-        const tasksData = await Service.getAllMyTask(token);
+        const tasksData = await Service.getAllTask(token);
         dispatch(showTask(tasksData));
+        const allMyTaskData = await Service.getAllMyTask(token);
+        dispatch(showTaskRecord(allMyTaskData));
         const usersData = await Service.allEmployee(token);
         dispatch(showStaff(usersData));
         const teamData = await Service.getAllTeam(token);
@@ -54,7 +59,8 @@ const App = () => {
     };
 
     fetchUser();
-  }, [dispatch]);
+  }, [dispatch]); 
+
 
   return (
     <Provider store={store}>

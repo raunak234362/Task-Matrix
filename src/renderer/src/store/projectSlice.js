@@ -32,7 +32,6 @@ const projectSlice = createSlice({
       state.projectData.push(action.payload)
     },
     showProjects: (state, action) => {
-      console.log("Hello")
       state.projectData = action.payload
     },
     deleteProject: (state, action) => {

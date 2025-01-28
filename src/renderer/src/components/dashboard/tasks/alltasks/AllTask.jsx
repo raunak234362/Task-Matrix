@@ -9,6 +9,7 @@ import { showTask, showTaskByID } from "../../../../store/taskSlice";
 const AllTask = () => {
   const dispatch = useDispatch();
   const tasks = useSelector((state) => state?.taskData?.taskData);
+  console.log("tasks------------", tasks);
   const projectData = useSelector((state) => state?.projectData?.projectData);
   const userData = useSelector((state) => state?.userData?.staffData);
   const [selectedTask, setSelectedTask] = useState(null);
@@ -75,6 +76,16 @@ const AllTask = () => {
     setTotalDuration({ hours, minutes }); // Store as an object
   };
 
+  function formatMinutesToHours(totalMinutes) {
+    console.log("totalMinutes: ", totalMinutes);
+    if (!totalMinutes && totalMinutes !== 0) return "N/A";
+    
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+    
+    return `${hours}h ${minutes}m`;
+  }
+
   useEffect(() => {
     if (projectFilter) {
       const projectTasks = tasks.filter(
@@ -91,7 +102,7 @@ const AllTask = () => {
 
       const inReviewPercentage =
         totalTasks > 0 ? (inReviewTasks / totalTasks) * 100 : 0;
-      console.log("In Review Percentage:", inReviewPercentage);
+      // console.log("In Review Percentage:", inReviewPercentage);
       setInReviewPercentage(inReviewPercentage);
       const percentage =
         totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
@@ -407,20 +418,26 @@ const AllTask = () => {
                   ) : (
                     filteredTasks.map((task, index) => (
                       <tr
-                      key={task.id}
-                      className={
-                        index % 2 === 0 ? "bg-white" : "bg-gray-200/50"
-                      }
+                        key={task.id}
+                        className={
+                          index % 2 === 0 ? "bg-white" : "bg-gray-200/50"
+                        }
                       >
-                        
                         <td className="px-1 py-2 border">{index + 1}</td>
                         <td className="px-1 py-2 border">
-                          {projectData?.find((project) => project?.id === task?.project_id)?.name}
+                          {
+                            projectData?.find(
+                              (project) => project?.id === task?.project_id,
+                            )?.name
+                          }
                         </td>
                         <td className="px-1 py-2 border">{task?.name}</td>
 
                         <td className="px-1 py-2 border">
-                          {userData?.find((user) => user?.id === task?.user_id)?.f_name}
+                          {
+                            userData?.find((user) => user?.id === task?.user_id)
+                              ?.f_name
+                          }
                         </td>
                         <td className="px-1 py-2 border">{task?.status}</td>
                         <td className={`border px-1 py-2`}>
@@ -439,8 +456,7 @@ const AllTask = () => {
                           {durToHour(task?.duration)}
                         </td>
                         <td className="px-1 py-2 border">
-                          {durToHour(task?.workingHourTask?.duration)}
-                          {console.log("task working hour-------------------",task?.workingHourTask)}
+                        {formatMinutesToHours(task?.workingHourTask?.map((rec) => rec?.duration))}
                         </td>
 
                         <td className="flex justify-center px-1 py-2 border">
