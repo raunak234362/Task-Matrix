@@ -226,7 +226,7 @@ const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
                 <hr className="m-2" />
                 <div className="flex items-center mb-2">
                   <strong className="w-40 font-bold text-gray-800">Project Name:</strong>{" "}
-                  {projectData.name}
+                  {projectData?.name}
                 </div>
                 <div className="flex items-center mb-2">
                   <strong className="w-40 font-bold text-gray-800">

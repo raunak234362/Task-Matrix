@@ -43,6 +43,7 @@ const App = () => {
       dispatch(setUserData(user));
       try {
         const projectsData = await Service.getAllProject(token);
+        console.log(projectsData)
         dispatch(showProjects(projectsData));
         const tasksData = await Service.getAllTask(token);
         dispatch(showTask(tasksData));
