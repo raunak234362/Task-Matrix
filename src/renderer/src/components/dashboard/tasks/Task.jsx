@@ -7,6 +7,7 @@ import { Button, Input, CustomSelect } from "../../index";
 import { useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
+import { BASE_URL } from "../../../config/constant";
 
 const Task = ({ taskId, setDisplay }) => {
   const work_id = sessionStorage.getItem("work_id");
@@ -24,7 +25,6 @@ const Task = ({ taskId, setDisplay }) => {
   const [isTimerRunning, setIsTimerRunning] = useState(false);
   const teamData = useSelector((state) => state?.projectData?.teamData);
   const staffData = useSelector((state) => state?.userData?.staffData);
-  console.log("Stafff  Data: ", staffData);
   const {
     register,
     handleSubmit,
@@ -36,7 +36,7 @@ const Task = ({ taskId, setDisplay }) => {
 
   const userData = useSelector((state) => state?.userData?.userData);
   const staffs = useSelector((state) => state?.userData?.staffData);
-
+  const projectData = useSelector((state) => state?.projectData?.projectData?.find((project) => project.id === tasks?.project_id));
   const fetchTask = useCallback(async () => {
     try {
       const taskData = await Service.getTaskById(taskId);
@@ -584,43 +584,114 @@ const Task = ({ taskId, setDisplay }) => {
                         </span>
                       </div>
                       {showProjectDetail && (
-                        <div className="ml-8 space-y-4">
-                          <div className="flex items-center">
-                            <span className="w-40 font-bold text-gray-800">
-                              Project Manager:
-                            </span>{" "}
-                            <span>{tasks?.project?.manager?.f_name}</span>
-                          </div>
-                          <div className="flex items-center">
-                            <span className="w-40 font-bold text-gray-800">
-                              Project Team:
-                            </span>{" "}
-                            <span>{tasks?.project?.team?.name}</span>
-                          </div>
-                          <div className="flex items-center">
-                            <span className="w-40 font-bold text-gray-800">
-                              Project Description:
-                            </span>{" "}
-                            <span>{tasks?.project?.description}</span>
-                          </div>
-                          <div className="flex items-center">
-                            <span className="w-40 font-bold text-gray-800">
-                              Project Stage:
-                            </span>{" "}
-                            <span>{tasks?.project?.stage}</span>
-                          </div>
-                          <div className="flex items-center">
-                            <span className="w-40 font-bold text-gray-800">
-                              Project Status:
-                            </span>{" "}
-                            <span>{tasks?.project?.status}</span>
-                          </div>
-                          <div className="flex items-center">
-                            <span className="w-40 font-bold text-gray-800">
-                              Project Approval Date:
-                            </span>{" "}
-                            <span>{endDate?.toDateString()}</span>
-                          </div>
+                        // <div className="ml-8 space-y-4">
+                        //   <div className="flex items-center">
+                        //     <span className="w-40 font-bold text-gray-800">
+                        //       Project Team:
+                        //     </span>{" "}
+                        //     <span>{tasks?.project?.team?.name}</span>
+                        //   </div>
+                        //   <div className="flex items-center">
+                        //     <span className="w-40 font-bold text-gray-800">
+                        //       Project Description:
+                        //     </span>{" "}
+                        //     <span>{tasks?.project?.description}</span>
+                        //   </div>
+                        //   <div className="flex items-center">
+                        //     <span className="w-40 font-bold text-gray-800">
+                        //       Project Stage:
+                        //     </span>{" "}
+                        //     <span>{tasks?.project?.stage}</span>
+                        //   </div>
+                        //   <div className="flex items-center">
+                        //     <span className="w-40 font-bold text-gray-800">
+                        //       Project Status:
+                        //     </span>{" "}
+                        //     <span>{tasks?.project?.status}</span>
+                        //   </div>
+                        //   <div className="flex items-center">
+                        //     <span className="w-40 font-bold text-gray-800">
+                        //       Project Approval Date:
+                        //     </span>{" "}
+                        //     <span>{endDate?.toDateString()}</span>
+                        //   </div>
+                        // </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 overflow-x-hidden overflow-y-hidden">
+                          {[
+                            {
+                              label: "Description",
+                              value: projectData?.description,
+                            },
+                            {
+                              label: "Fabricator",
+                              value: projectData?.fabricator?.fabName,
+                            },
+                            { label: "Status", value: projectData?.status },
+                            {
+                              label: "Estimated Hours",
+                              value: projectData?.estimatedHours,
+                            },
+                            { label: "Stage", value: projectData?.stage },
+                            { label: "Tool", value: projectData?.tools },
+                            {
+                              label: "Start Date",
+                              value: projectData?.startDate,
+                            },
+                            {
+                              label: "Department",
+                              value: projectData?.department?.name,
+                            },
+                            {
+                              label: "End Date",
+                              value: projectData?.approvalDate,
+                            },
+                            {
+                              label: "Department Manager",
+                              value: projectData?.manager?.f_name,
+                            },
+                            {
+                              label: "Project Manager",
+                              value: projectData?.manager?.f_name,
+                            },
+                            // {
+                            //   label: "Files",
+                            //   value: Array.isArray(projectData?.files)
+                            //     ? projectData?.files.map((file, index) => (
+                            //         <Button
+                            //           key={index}
+                            //           onClick={() => fetchFileAndOpen(file.id)} // Open file in a new tab
+                            //         >
+                            //           {file.originalName || `File ${index + 1}`}
+                            //         </Button>
+                            //       ))
+                            //     : "Not available",
+                            // },
+                            {
+                              label: "Files",
+                              value: Array.isArray(projectData?.files)
+                                ? projectData?.files?.map((file, index) => (
+                                    <a
+                                      key={index}
+                                      href={`${BASE_URL}/project/projects/viewfile/${projectData?.id}/${file.id}`} // Use the file path with baseURL
+                                      target="_blank" // Open in a new tab
+                                      rel="noopener noreferrer"
+                                      className="px-5 py-2 text-teal-500 hover:underline"
+                                    >
+                                      {file.originalName || `File ${index + 1}`}
+                                    </a>
+                                  ))
+                                : "Not available",
+                            },
+                          ]?.map(({ label, value }) => (
+                            <div key={label} className="flex flex-col">
+                              <span className="font-medium text-gray-700">
+                                {label}:
+                              </span>
+                              <span className="text-gray-600">
+                                {value || "Not available"}
+                              </span>
+                            </div>
+                          ))}
                         </div>
                       )}
                     </div>
