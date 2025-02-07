@@ -5,7 +5,6 @@ import { NavLink, Outlet } from "react-router-dom";
 
 const UserTab = () => {
   const users = useSelector((state) => state?.userData?.staffData);
-  console.log(users);
   // Count the number of active projects
 
   const userType = sessionStorage.getItem("userType");

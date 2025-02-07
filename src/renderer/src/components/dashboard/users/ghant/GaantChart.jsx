@@ -1,97 +1,155 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable prettier/prettier */
-import React, { useState, useEffect } from 'react';
-import Service from '../../../../api/configAPI';
-import GanttChart from '../../charts/GhantChart';
-import GaantChartt from '../../charts/GaantChartt';
-import Header from '../../Header';
+import { useState, useEffect } from "react";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
+import { format, parseISO, differenceInDays } from "date-fns";
+import { Check, ChevronsUpDown } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { useSelector } from "react-redux";
+import Service from "../../../../api/configAPI";
 
-const GaantChart = () => {
-  const [users, setUsers] = useState([]);
+export default function GanttChart() {
+  const [open, setOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
   const [taskDetails, setTaskDetails] = useState([]);
-  const [filterRole, setFilterRole] = useState('All'); // New state for filtering by role
-  const [sortOption, setSortOption] = useState('name'); // New state for sorting
-  const token = sessionStorage.getItem('token');
 
-  // Fetch all users
+  const staffs = useSelector((state) => state?.userData?.staffData);
+
   useEffect(() => {
-    async function fetchUsers() {
-      try {
-        const userData = await Service.getAllUser(token); // Assume you have a Service method to fetch all users
-        setUsers(userData);
-      } catch (error) {
-        console.error('Error fetching users:', error);
+    async function fetchTasksForUser() {
+      if (selectedUser) {
+        try {
+          const tasks = await Service.fetchCalendar2(
+            new Date().toISOString(),
+            selectedUser.username,
+          );
+          setTaskDetails(
+            tasks.map((task) => ({
+              name: `${task.project} - ${task.task}`,
+              start: parseISO(task.created_on),
+              end: parseISO(task.due_date),
+              duration: differenceInDays(
+                parseISO(task.due_date),
+                parseISO(task.created_on),
+              ),
+            })),
+          );
+        } catch (error) {
+          console.error("Error fetching tasks:", error);
+        }
       }
     }
+    fetchTasksForUser();
+  }, [selectedUser]);
 
-    fetchUsers();
-  }, []);
-
-  // Fetch tasks for each user and segregate the team
-  useEffect(() => {
-    async function fetchTasksForUsers() {
-      const userTaskDetails = await Promise.all(
-        users.map(async (user) => {
-          const tasks = await Service.fetchCalendar2(new Date().toISOString(), user.username); // Fetch tasks by user
-          return {
-            ...user,
-            tasks, // Add tasks for this user
-          };
-        })
-      );
-      setTaskDetails(userTaskDetails); // Set all task details with user data
-    }
-
-    if (users.length > 0) {
-      fetchTasksForUsers();
-    }
-  }, [users]);
-
-  // Filter users by role
-  const filteredTaskDetails = filterRole === 'All' 
-    ? taskDetails 
-    : taskDetails.filter((user) => user.role === filterRole);
-
-  // Sort users based on selected option
-  const sortedTaskDetails = [...filteredTaskDetails].sort((a, b) => {
-    if (sortOption === 'name') {
-      return a.name.localeCompare(b.name);
-    } else if (sortOption === 'role') {
-      return a.role.localeCompare(b.role);
-    } else if (sortOption === 'startDate') {
-      return new Date(a.tasks[0]?.created_on) - new Date(b.tasks[0]?.created_on);
-    } else if (sortOption === 'endDate') {
-      return new Date(a.tasks[0]?.due_date) - new Date(b.tasks[0]?.due_date);
-    }
-    return 0;
-  });
+  const minDate =
+    taskDetails.length > 0
+      ? Math.min(...taskDetails.map((d) => d.start.getTime()))
+      : 0;
+  const maxDate =
+    taskDetails.length > 0
+      ? Math.max(...taskDetails.map((d) => d.end.getTime()))
+      : 0;
 
   return (
-    <div className="w-full">
-      <h1 className="text-2xl font-semibold mb-6"></h1>
-
-      {/* Filters and Sorting */}
-      <div className="flex items-center justify-between mb-6">
-        {/* Filter by Role */}
-       
-        {/* Sorting */}
-        <div className="flex items-center">
-          <label className="mr-2 font-medium">Sort by:</label>
-          <select
-            className="px-4 py-2 border border-gray-300 rounded-md"
-            value={sortOption}
-            onChange={(e) => setSortOption(e.target.value)}
+    <div className="w-full max-w-4xl mx-auto p-4">
+      <h1 className="text-2xl font-bold mb-4">User Tasks Gantt Chart</h1>
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>
+          <Button
+            variant="outline"
+            role="combobox"
+            aria-expanded={open}
+            className="w-[200px] justify-between"
           >
-            <option value="name">Name</option>
-            <option value="startDate">Task Start Date</option>
-          </select>
-        </div>
-      </div>
+            {selectedUser
+              ? `${selectedUser.f_name} ${selectedUser.l_name}`
+              : "Select user..."}
+            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-[200px] p-0">
+          <Command>
+            <CommandInput placeholder="Search user..." />
+            <CommandList>
+              <CommandEmpty>No user found.</CommandEmpty>
+              <CommandGroup>
+                {staffs?.map((user) => (
+                  <CommandItem
+                    key={user.id}
+                    onSelect={() => {
+                      setSelectedUser(user);
+                      setOpen(false);
+                    }}
+                  >
+                    <Check
+                      className={cn(
+                        "mr-2 h-4 w-4",
+                        selectedUser?.id === user.id
+                          ? "opacity-100"
+                          : "opacity-0",
+                      )}
+                    />
+                    {user.f_name} {user.l_name}
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            </CommandList>
+          </Command>
+        </PopoverContent>
+      </Popover>
 
-      {/* Gantt Chart */}
-      <GaantChartt taskData={sortedTaskDetails} />
+      {selectedUser && taskDetails.length > 0 && (
+        <div className="mt-8 h-[400px]">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart
+              data={taskDetails}
+              layout="vertical"
+              margin={{ top: 20, right: 30, left: 100, bottom: 20 }}
+            >
+              <XAxis
+                type="number"
+                domain={[minDate, maxDate]}
+                tickFormatter={(unixTime) =>
+                  format(new Date(unixTime), "MM/dd/yyyy")
+                }
+              />
+              <YAxis type="category" dataKey="name" width={150} />
+              <Tooltip
+                labelFormatter={(value) => `Task: ${value}`}
+                formatter={(value, name) => {
+                  if (name === "start")
+                    return format(new Date(value), "MM/dd/yyyy");
+                  if (name === "end")
+                    return format(new Date(value), "MM/dd/yyyy");
+                  return value;
+                }}
+              />
+              <Bar dataKey="duration" fill="hsl(var(--primary))" barSize={20} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      )}
     </div>
   );
-};
-
-export default GaantChart;
+}

@@ -20,7 +20,7 @@ const Home = () => {
   const dispatch = useDispatch();
 
   const projects = useSelector((state) => state?.projectData?.projectData);
-  console.log(projects);
+  console.log(projects)
   const tasks = useSelector((state) => state?.taskData?.taskData);
   const users = useSelector((state) => state?.userData?.staffData);
   const fabricators = useSelector(
@@ -31,11 +31,13 @@ const Home = () => {
 
   useEffect(() => {
     const segregateProject = async () => {
-      const segregatedProjects = await SegregateProject(projects);
-      setSegregateProject(segregatedProjects);
-    };
-    segregateProject();
-  }, []);
+      const segregatedProjects = await SegregateProject(projects)
+      setSegregateProject(segregatedProjects)
+    }
+    segregateProject()
+  },[])
+
+
 
   return (
     <div className="w-full h-[89vh] overflow-y-hidden mx-5">
@@ -46,7 +48,7 @@ const Home = () => {
       </div>
       <div className="h-[85vh] mt-2 overflow-y-auto">
         <div className="grid grid-cols-1 gap-6 px-2 my-6 md:grid-cols-2 lg:grid-cols-5">
-          {/* {(userType === "manager" || userType=== "admin") ? (
+        {/* {(userType === "manager" || userType=== "admin") ? (
             <div className="flex flex-col items-center p-2 text-center text-gray-800 bg-gray-200 rounded-lg shadow-md">
               <NavLink to="/admin/fabricator">
                 <span className="text-4xl font-bold text-gray-900">
@@ -76,7 +78,7 @@ const Home = () => {
               <p className="mt-2 text-xl font-semibold">Total No. of Tasks</p>
             </NavLink>
           </div>
-          {userType === "manager" || userType === "admin" ? (
+          {(userType === "manager" || userType=== "admin") ? (
             <div className="flex flex-col items-center p-2 text-center text-gray-800 bg-green-200 rounded-lg shadow-md">
               <NavLink to="/admin/user">
                 <span className="text-4xl font-bold text-gray-900">
@@ -86,7 +88,7 @@ const Home = () => {
               </NavLink>
             </div>
           ) : null}
-          {userType === "manager" || userType === "admin" ? (
+          {(userType === "manager" || userType=== "admin") ? (
             <div className="flex flex-col items-center p-2 text-center text-gray-800 bg-gray-200 rounded-lg shadow-md">
               <NavLink to="/admin/project/manage-team">
                 <span className="text-4xl font-bold text-gray-900">
@@ -106,10 +108,10 @@ const Home = () => {
         <div className="grid grid-cols-[69%,30%]  gap-2">
           <div className="p-6 bg-white rounded-lg shadow-lg ">
             <BarViews
-              segregateProject={segregateProject}
-              setProject={projects}
-              setFabricator={fabricators}
-            />
+                     segregateProject={segregateProject}
+                     setProject={projects}
+                     setFabricator={fabricators}
+                   />
           </div>
 
           <div className="flex-grow p-6 bg-white rounded-lg shadow-lg">
