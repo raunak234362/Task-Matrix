@@ -23,23 +23,11 @@ ChartJS.register(
 );
 
 const BarViews = ({ segregateProject, setProject, setFabricator }) => {
-  console.log("PROJECT--", segregateProject);
-  console.log("FABRICATOR--", setFabricator);
-  const stages = [
-    "RFI",
-    "IFA",
-    "BFA",
-    "BFA-M",
-    "RIFA",
-    "RBFA",
-    "IFC",
-    "BFC",
-    "RIFC",
-    "REV",
-    "CO#",
-  ];
-  // const colors = ['#FF6347', '#FFD700', '#32CD32', ]; // Red, Yellow, Green
-  // const colors = ['#FF6347', '#FFD700', '#32CD32', '#4169E1', '#FF1493', '#00FFFF', '#FF4500', '#8A2BE2', '#00FF00', '#FF00FF', '#FFFF00', '#00CED1'];
+    console.log("PROJECT--",segregateProject)
+    console.log("FABRICATOR--",setFabricator)
+const stages = ['RFI', 'IFA', 'BFA', 'BFA-M', 'RIFA', 'RBFA', 'IFC', 'BFC', 'RIFC', 'REV', 'CO#'];
+// const colors = ['#FF6347', '#FFD700', '#32CD32', ]; // Red, Yellow, Green
+// const colors = ['#FF6347', '#FFD700', '#32CD32', '#4169E1', '#FF1493', '#00FFFF', '#FF4500', '#8A2BE2', '#00FF00', '#FF00FF', '#FFFF00', '#00CED1'];
 
   const generateColors = (count) => {
     const colors = [];
