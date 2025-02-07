@@ -4,10 +4,10 @@ import { electronAPI } from '@electron-toolkit/preload'
 
 // Custom APIs for renderer
 const api = {
-  // showNotification: (task) => {
-  //   console.log('Received task in preload:', task);
-  //   ipcRenderer.send('show-notification', task);
-  // },
+  showNotification: (task) => {
+    console.log('Received task in preload:', task);
+    ipcRenderer.send('show-notification', task);
+  },
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

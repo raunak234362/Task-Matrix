@@ -1,30 +1,36 @@
 /* eslint-disable prettier/prettier */
 // projectSlice.js
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   taskData: [],
+  taskRecord: [],
   commentData: [],
   taskById: {},
-}
+};
 
 const taskSlice = createSlice({
-  name: 'task',
+  name: "task",
   initialState,
   reducers: {
     addTask: (state, action) => {
-      state.taskData.push(action.payload)
+      state.taskData.push(action.payload);
     },
     showTask: (state, action) => {
-      state.taskData = action.payload
+      state.taskData = action.payload;
     },
     deleteTask: (state, action) => {
-      state.taskData = state.taskData.filter((project) => project.id !== action.payload)
+      state.taskData = state.taskData.filter(
+        (project) => project.id !== action.payload,
+      );
     },
     updateTask: (state, action) => {
       state.taskData = state.taskData.map((task) =>
-        task.id === action.payload.id ? { ...task, ...action.payload } : task
-      )
+        task.id === action.payload.id ? { ...task, ...action.payload } : task,
+      );
+    },
+    showTaskRecord: (state, action) => {
+      state.taskRecord = action.payload;
     },
     addCommentToTask: (state, action) => {
       const { taskId, comment } = action.payload;
@@ -37,14 +43,25 @@ const taskSlice = createSlice({
       }
     },
     showTaskByID: (state, action) => {
-      state.taskById = action.payload
+      state.taskById = action.payload;
     },
     deleteTaskByID: (state, action) => {
-      state.taskById = state.taskById.filter((task) => task.id !== action.payload)
-    }
-  }
-})
+      state.taskById = state.taskById.filter(
+        (task) => task.id !== action.payload,
+      );
+    },
+  },
+});
 
-export const { addTask, showTask, deleteTask, updateTask, addCommentToTask, showTaskByID,deleteTaskByID } = taskSlice.actions
+export const {
+  addTask,
+  showTask,
+  deleteTask,
+  showTaskRecord,
+  updateTask,
+  addCommentToTask,
+  showTaskByID,
+  deleteTaskByID,
+} = taskSlice.actions;
 
-export default taskSlice.reducer
+export default taskSlice.reducer;

@@ -1,4 +1,4 @@
-/* eslint-disable prettier/prettier */
+  /* eslint-disable prettier/prettier */
 import { useEffect, useState } from 'react';
 import { Pie } from 'react-chartjs-2';
 import { Chart, ArcElement, Tooltip, Legend } from 'chart.js';
@@ -49,10 +49,10 @@ const ProjectPie = () => {
       {total > 0 ? (
         <>
           <Pie data={chartData} />
-          <h3 className="text-center mt-3 font-semibold mb-2">Number of Projects in Fabricator</h3>
+          <h3 className="mt-3 mb-2 font-semibold text-center">Number of Projects in Fabricator</h3>
         </>
       ) : (
-        <h3 className="text-center mt-3 font-semibold mb-2">No Projects Found</h3>
+        <h3 className="mt-3 mb-2 font-semibold text-center">No Projects Found</h3>
       )}
     </div>
   );

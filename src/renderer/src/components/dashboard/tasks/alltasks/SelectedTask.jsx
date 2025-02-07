@@ -9,16 +9,37 @@ import { useDispatch, useSelector } from "react-redux";
 import { updateTask } from "../../../../store/taskSlice";
 
 const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
-  const taskData = useSelector((state) =>
-    state?.taskData?.taskData.find((task) => task.id === taskID),
+  let taskData = useSelector((state) =>
+    state?.taskData?.taskData.filter((task) => task.id === taskID),
   );
+  const [workHours, setWorkHours] = useState(null);
+  const [workdata, setWorkData] = useState({});
+
+  const staffData = useSelector((state) => state?.userData?.staffData);
+  const projectData = useSelector((state) =>
+    state?.projectData?.projectData.find(
+      (project) => project?.id === taskDetail?.project?.id,
+    ),
+  );
+  console.log("Project Data------------", projectData);
+  taskData = taskData[0];
+
+  console.log("taskData------------", taskData);
 
   const [selectedTask, setSelectedTask] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const username = sessionStorage.getItem("username");
   const userType = sessionStorage.getItem("userType");
-
+  useEffect(() => {
+    const fetchWorkId = async () => {
+      const workHour = await Service.getWorkHours(taskID);
+      console.log("Work Hour: ", workHour);
+      setWorkData(workHour);
+      setWorkHours(workHour);
+    };
+    fetchWorkId();
+  }, [taskID]);
   const {
     register,
     handleSubmit,
@@ -55,14 +76,17 @@ const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
     const totalHours = days * 24 + hours;
     return `${totalHours}h ${minutes}m`;
   };
+  const formatMinutesToHoursAndMinutes = (totalMinutes) => {
+    if (!totalMinutes) return "0h 0m";
 
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+
+    return `${hours}h ${minutes}m`;
+  };
   const addComment = async (commentData) => {
     try {
-      const response = await Service.addComment(
-        taskDetail?.id,
-        commentData?.comment,
-        commentData?.file,
-      );
+      const response = await Service.addComment(taskDetail?.id, commentData);
       console.log("Comment Response: ", response);
       alert("Comment Added Successfully");
     } catch (error) {
@@ -104,12 +128,12 @@ const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
   const due_date = new Date(taskDetail?.due_date);
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       <div className="bg-white h-[92%] fixed top-[8%] overflow-x-auto p-5 rounded-lg shadow-lg w-screen ">
-        <div className="text-3xl font-bold flex justify-between text-white bg-teal-200/50 shadow-xl px-5 py-1 mt-2 rounded-lg">
+        <div className="flex justify-between px-5 py-1 mt-2 text-3xl font-bold text-white rounded-lg shadow-xl bg-teal-200/50">
           <h2 className="text-3xl font-bold text-gray-800">Task Details</h2>
           <button
-            className="text-xl font-bold bg-teal-500/50 hover:bg-teal-700 text-white px-5 rounded-lg"
+            className="px-5 text-xl font-bold text-white rounded-lg bg-teal-500/50 hover:bg-teal-700"
             onClick={onClose}
           >
             Close
@@ -118,132 +142,156 @@ const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
 
         <div className="h-[80vh] overflow-y-auto p-4 rounded-lg">
           <div className="grid grid-cols-2 gap-5">
-            <div className="bg-teal-100/70 rounded-lg p-5">
-              <div className="my-2">
-                <strong className="text-gray-700">Task Name:</strong>
+            <div className="p-5 rounded-lg bg-teal-100/70">
+              <div className="flex items-center my-2">
+                <strong className="w-40 font-bold text-gray-800">
+                  Task Name:
+                </strong>
                 <div>{taskData?.name}</div>
               </div>
 
-              <div className="my-2">
-                <strong className="text-gray-700">Description:</strong>
+              <div className="flex items-center my-2">
+                <strong className="w-40 font-bold text-gray-800">
+                  Description:
+                </strong>
                 {taskData?.description}
               </div>
 
-              <div className="my-2">
-                <strong className="text-gray-700">Current User:</strong>{" "}
-                {taskData?.user?.name}
+              <div className="flex items-center my-2">
+                <strong className="w-40 font-bold text-gray-800">
+                  Current User:
+                </strong>{" "}
+                {
+                  staffData?.find((staff) => staff?.id === taskData?.user_id)
+                    ?.f_name
+                }
               </div>
 
-              <div className="my-2">
-                <strong className="text-gray-700">Start Date:</strong>
+              <div className="flex items-center my-2">
+                <strong className="w-40 font-bold text-gray-800">
+                  Start Date:
+                </strong>
                 {start_date?.toDateString()}
               </div>
-              <div className="my-2">
-                <strong className="text-gray-700">Due Date:</strong>
+              <div className="flex items-center my-2">
+                <strong className="w-40 font-bold text-gray-800">
+                  Due Date:
+                </strong>
                 {due_date?.toDateString()}
               </div>
 
-              <div className="my-2">
-                <strong className="text-gray-700">Duration:</strong>
+              <div className="flex items-center my-2">
+                <strong className="w-40 font-bold text-gray-800">
+                  Duration:
+                </strong>
                 {durToHour(taskData?.duration)}
               </div>
-
-              <div className="my-2">
-                <strong className="text-gray-700">Status:</strong>
-                {taskData?.status}
+              <div className="flex items-center my-2">
+                <span className="w-40 font-bold text-gray-800">
+                  Work Hours:
+                </span>
+                <span className="text-lg">
+                  {formatMinutesToHoursAndMinutes(workHours?.duration)}
+                </span>
+              </div>
+              <div className="flex items-center my-2">
+                <strong className="w-40 font-bold text-gray-800">
+                  Status:
+                </strong>
+                <span className="text-lg">{taskData?.status}</span>
               </div>
 
-              <div>
-                <div>
-                  <strong className="text-gray-700">Priority:</strong>
-                  <span
-                    className={`text-sm font-semibold px-3 py-0.5 mx-2 rounded-full border ${color(
-                      taskData?.priority,
-                    )}`}
-                  >
-                    {setPriorityValue(taskData?.priority)}
-                  </span>
-                </div>
+              <div className="flex items-center my-2">
+                <strong className="w-40 font-bold text-gray-800">
+                  Priority:
+                </strong>
+                <span
+                  className={`text-sm font-semibold px-3 py-0.5 mx-2 rounded-full border ${color(
+                    taskData?.priority,
+                  )}`}
+                >
+                  {setPriorityValue(taskData?.priority)}
+                </span>
               </div>
               {userType == !"user" ? null : (
                 <Button onClick={handleEditClick}>Update</Button>
               )}
             </div>
 
-            <div className="flex flex-col justify-between bg-gray-200 pl-4 gap-y-5">
+            <div className="flex flex-col justify-between pl-4 bg-gray-200 gap-y-5">
               <div>
-                <div className="text-xl font-bold my-5 text-gray-900">
+                <div className="my-5 text-xl font-bold text-gray-900">
                   Project Detail:
                 </div>
                 <hr className="m-2" />
-                <p className="mb-2">
-                  <strong className="text-gray-700">Project Name:</strong>{" "}
-                  {taskData?.project?.name}
-                </p>
-                <p className="mb-2">
-                  <strong className="text-gray-700">
+                <div className="flex items-center mb-2">
+                  <strong className="w-40 font-bold text-gray-800">Project Name:</strong>{" "}
+                  {projectData?.name}
+                </div>
+                <div className="flex items-center mb-2">
+                  <strong className="w-40 font-bold text-gray-800">
                     Project Description:
                   </strong>{" "}
-                  {taskData?.project?.description}
-                </p>
-                <p className="mb-2">
-                  <strong className="text-gray-700">Project Manager:</strong>{" "}
-                  {taskData?.project?.manager?.name}
-                </p>
-                <p className="mb-2">
-                  <strong className="text-gray-700">Project Stage:</strong>{" "}
-                  {taskData?.project?.stage}
-                </p>
-                <p className="mb-2">
-                  <strong className="text-gray-700">Project Status:</strong>{" "}
-                  {taskData?.project?.status}
-                </p>
+                  {projectData?.description}
+                </div>
+                <div className="flex items-center mb-2">
+                  <strong className="w-40 font-bold text-gray-800">Project Manager:</strong>{" "}
+                  {projectData?.manager?.f_name}
+                </div>
+                <div className="flex items-center mb-2">
+                  <strong className="w-40 font-bold text-gray-800">Project Stage:</strong>{" "}
+                  {projectData?.stage}
+                </div>
+                <div className="flex items-center mb-2">
+                  <strong className="w-40 font-bold text-gray-800">Project Status:</strong>{" "}
+                  {projectData?.status}
+                </div>
               </div>
             </div>
           </div>
-          <div className="shadow-xl rounded-lg w-full my-5 p-5 bg-teal-200/60">
-            <div className="font-bold text-gray-800 mb-4">People Assigned:</div>
+          <div className="w-full p-5 my-5 rounded-lg shadow-xl bg-teal-200/60">
+            <div className="mb-4 font-bold text-gray-800">People Assigned:</div>
             <div className="flex items-center">
               <table className="min-w-full bg-white">
-                <thead className="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+                <thead className="text-sm leading-normal text-gray-600 uppercase bg-gray-200">
                   <tr>
-                    <th className="py-3 px-6 text-left">S.No</th>
-                    <th className="py-3 px-6 text-left">Assigned By</th>
-                    <th className="py-3 px-6 text-left">Assigned To</th>
-                    <th className="py-3 px-6 text-left">Assigned On</th>
-                    <th className="py-3 px-6 text-left">Approved By</th>
-                    <th className="py-3 px-6 text-left">Approved On</th>
+                    <th className="px-6 py-3 text-left">S.No</th>
+                    <th className="px-6 py-3 text-left">Assigned By</th>
+                    <th className="px-6 py-3 text-left">Assigned To</th>
+                    <th className="px-6 py-3 text-left">Assigned On</th>
+                    <th className="px-6 py-3 text-left">Approved By</th>
+                    <th className="px-6 py-3 text-left">Approved On</th>
                     {(userType === "admin" ||
                       username === taskDetail?.project?.manager?.username) && (
-                      <th className="py-3 px-6 text-left">Action</th>
+                      <th className="px-6 py-3 text-left">Action</th>
                     )}
                   </tr>
                 </thead>
-                <tbody className="text-gray-600 text-sm font-medium">
+                <tbody className="text-sm font-medium text-gray-600">
                   {taskDetail?.assigned?.map((tasks, index) => (
                     <tr
                       key={tasks.id}
                       className="border-b border-gray-200 hover:bg-gray-100"
                     >
-                      <td className="py-3 px-6 text-left whitespace-nowrap">
+                      <td className="px-6 py-3 text-left whitespace-nowrap">
                         {index + 1}
                       </td>
 
-                      <td className="py-3 px-6 text-left">
+                      <td className="px-6 py-3 text-left">
                         {tasks?.assigned_by?.name}
                       </td>
-                      <td className="py-3 px-6 text-left">
+                      <td className="px-6 py-3 text-left">
                         {tasks?.assigned_to?.name}
                       </td>
-                      <td className="py-3 px-6 text-left">
+                      <td className="px-6 py-3 text-left">
                         {new Date(tasks?.assigned_on).toDateString()}
                       </td>
-                      <td className="py-3 px-6 text-left">
+                      <td className="px-6 py-3 text-left">
                         {tasks?.approved_by?.name || (
                           <span className="text-red-500">Yet Not Approved</span>
                         )}
                       </td>
-                      <td className="py-3 px-6 text-left">
+                      <td className="px-6 py-3 text-left">
                         {tasks?.approved_on ? (
                           new Date(tasks?.approved_on).toDateString()
                         ) : (
@@ -252,7 +300,7 @@ const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
                       </td>
                       {(userType === "admin" ||
                         username === tasks.project?.manager?.username) && (
-                        <td className="py-3 px-6 text-left">
+                        <td className="px-6 py-3 text-left">
                           <Button
                             className={`${
                               tasks?.approved_on
@@ -271,12 +319,12 @@ const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
               </table>
             </div>
           </div>
-          <div className="flex flex-col  shadow-xl gap-5 rounded-lg w-full p-5 mt-5 bg-teal-100">
-            <div className="font-bold text-gray-800 text-2xl">Comments:</div>
+          <div className="flex flex-col w-full gap-5 p-5 mt-5 bg-teal-100 rounded-lg shadow-xl">
+            <div className="text-2xl font-bold text-gray-800">Comments:</div>
             <div className="flex flex-row w-full">
               <div className="w-full">
                 <form onSubmit={handleSubmit(addComment)}>
-                  <div className="flex flex-row w-full bg-gray-200/60 rounded-lg p-4">
+                  <div className="flex flex-row w-full p-4 rounded-lg bg-gray-200/60">
                     <div className="w-full">
                       <Input
                         type="textarea"
@@ -285,15 +333,15 @@ const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
                         placeholder="Add Comment"
                         {...register("comment")}
                       />
-                      <Input
+                      {/* <Input
                         label="Upload file/document"
                         placeholder="Upload file"
-                        name="file"
+                        name="files"
                         type="file"
                         id="file"
                         accept=".pdf, .zip, .doc, image/*"
-                        {...register("file")}
-                      />
+                        {...register("files")}
+                      /> */}
                       <Button
                         className="bg-teal-500 py-0.5 hover:bg-teal-800 font-semibold"
                         type="submit"
@@ -306,19 +354,23 @@ const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
               </div>
             </div>
 
-            {taskDetail?.comments?.length > 0 && (
-              <div className=" shadow-xl bg-gray-100/70 rounded-lg p-5">
+            {taskData?.taskcomment?.length > 0 && (
+              <div className="p-5 rounded-lg shadow-xl bg-gray-100/70">
                 <div className="space-y-4">
-                  {taskDetail?.comments?.map((comment, index) => (
+                  {taskData?.taskcomment?.map((comment, index) => (
                     <div
-                      className="bg-white p-4 rounded-lg shadow-md"
+                      className="p-4 bg-white rounded-lg shadow-md"
                       key={index}
                     >
                       <div className="flex items-center mb-2">
                         <span className="font-bold text-gray-800">
-                          {comment?.user?.name}
+                          {
+                            staffData?.find(
+                              (staff) => staff?.id === comment?.user_id,
+                            )?.f_name
+                          }
                         </span>
-                        <span className="text-gray-500 text-sm ml-2">
+                        <span className="ml-2 text-sm text-gray-500">
                           {new Date(comment?.created_on).toLocaleDateString(
                             "en-US",
                             {
@@ -331,7 +383,7 @@ const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
                       </div>
                       <div className="text-gray-600">
                         <div>{comment?.data} </div>
-                        {comment?.file && (
+                        {/* {comment?.file && (
                           <div>
                             <a
                               href={comment?.file}
@@ -342,7 +394,7 @@ const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
                               View File
                             </a>
                           </div>
-                        )}
+                        )} */}
                       </div>
                     </div>
                   ))}

@@ -11,7 +11,6 @@ const UsersTaskRecord = () => {
   const [record, setRecord] = useState([]);
   // const [user, setUser] = useState('')
   const [searchTerm, setSearchTerm] = useState("");
-  const [searchUser, setSearchUser] = useState([]);
   const [sortedUser, setSortedUser] = useState([]);
   const [listTask, setListTask] = useState([]);
   const [selectedTask, setSelectedTask] = useState(null); // For the selected task
@@ -35,21 +34,6 @@ const UsersTaskRecord = () => {
   const user = watch("user");
   console.log(user);
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const taskRecordUser = await Service.getAllUser(token);
-        setSearchUser(taskRecordUser);
-        setSortedUser(taskRecordUser);
-        // console.log(taskRecordUser)
-      } catch (error) {
-        console.log("Error fetching Task Record of the User:", error);
-      }
-    };
-
-    fetchUser();
-  }, [token]);
-
   // const fetchTaskRecords = async () => {
   //   try {
   //     const taskRecord = await Service.allTaskRecord();
@@ -64,7 +48,7 @@ const UsersTaskRecord = () => {
     const fetchTask = async () => {
       console.log(user);
       try {
-        const UserTask = await Service.taskRecord(user);
+        const UserTask = await Service.userTaskRecord(user);
         console.log("user Task:--------", UserTask);
         setListTask(UserTask);
         setRecord(UserTask);
@@ -77,6 +61,8 @@ const UsersTaskRecord = () => {
       fetchTask();
     }
   }, [user]);
+
+  console.log("Record:---------0----- ", record);
 
   useEffect(() => {
     const filterTasks = () => {

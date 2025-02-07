@@ -10,11 +10,11 @@ const ProjectStats = () => {
   const [project, setProject] = useState(null)
   const [segregateProject, setSegregateProject] = useState({})
 
-  const projects = useSelector((state) => state?.projectData?.projectData)
-
+  const projectData = useSelector((state) => state?.projectData?.projectData)
+  const fabricatorData = useSelector((state) => state?.fabricatorData?.fabricatorData)
   useEffect(()=>{
     const segregateProject = async () => {
-      const segregatedProjects = await SegregateProject(projects)
+      const segregatedProjects = await SegregateProject(projectData)
       setSegregateProject(segregatedProjects)
     }
     segregateProject()
@@ -27,8 +27,8 @@ const ProjectStats = () => {
       <div className=" bg-white shadow-lg rounded-lg p-6 ">
         <BarViews
           segregateProject={segregateProject}
-          setProject={setProject}
-          setFabricator={setFabricator}
+          setProject={projectData}
+          setFabricator={fabricatorData}
         />
       </div>
     </div>

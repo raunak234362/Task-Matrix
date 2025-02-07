@@ -1,176 +1,70 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable prettier/prettier */
-import axios from "axios";
+import api from "./api";
 import { BASE_URL } from "../config/constant";
 const token = sessionStorage.getItem("token");
 class Service {
-  //Users APIs
-  static async getCurrentUser(token) {
-    sessionStorage.getItem(token);
-    try {
-      const response = await fetch(`${BASE_URL}api/user/emp/me/`, {
-        method: "GET",
-        headers: {
-          Authorization: `Token ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
-      const data = await response.json();
-
-      return data;
-    } catch (error) {
-      console.error("Error in getCurrentUser:", error);
-      throw error;
-    }
-  }
-  static async getAllUser(token) {
-    sessionStorage.getItem(token);
-    try {
-      const response = await fetch(`${BASE_URL}api/user/emp/`, {
-        method: "GET",
-        headers: {
-          Authorization: `Token ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
-      const data = await response.json();
-
-      return data;
-    } catch (error) {
-      console.error("Error in getAllUser:", error);
-      throw error;
-    }
-  }
-  static async addUser({ username, email, name, accessPermission, password }) {
-    console.log("Successfully Added User: ", username, email, name);
-    const is_staff =
-      accessPermission === "manager" || accessPermission === "admin";
-    const is_superuser = accessPermission === "admin";
+  // Fetch the logged-in user - updated
+  static async getCurrentUser() {
+    console.log();
     try {
       const token = sessionStorage.getItem("token");
-      const response = await fetch(`${BASE_URL}api/user/emp/`, {
-        method: "POST",
+      const response = await api.post(`/api/auth/getuserbytoken`, {
         headers: {
-          Authorization: `Token ${token}`,
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          username,
-          email,
-          name,
-          is_staff,
-          is_superuser,
-          password,
-        }),
       });
-      const data = await response.json();
-      return data;
+      return response?.data?.data;
     } catch (error) {
-      console.log("Error in adding User: ", error);
-      throw error;
-    }
-  }
-  static async addUserCSV({ csv_file }) {
-    const token = sessionStorage.getItem("token");
-    const file = csv_file[0];
-
-    if (!file) {
-      console.error("No file selected");
-      return;
-    }
-    try {
-      const formData = new FormData();
-      formData.append("csv_file", file, file.name);
-
-      const response = await fetch(`${BASE_URL}api/user/emp/add_csv/`, {
-        method: "POST",
-        headers: {
-          Authorization: `Token ${token}`,
-          // 'Content-Type': 'multipart/form-data', // Do not set this header, the browser will do it automatically
-        },
-        body: formData,
-      });
-      // const data = await response.json();
-      // console.log(data);
-      return true;
-    } catch (error) {
-      console.log("Error in adding User: ", error);
+      console.log("Error finding Current user:", error);
       throw error;
     }
   }
 
-  static async sampleCSV() {
+  static async allEmployee(token) {
     try {
-      const token = sessionStorage.getItem("token");
-      const response = await fetch(`${BASE_URL}api/user/emp/get_sample_csv`, {
-        method: "GET",
+      const response = await api.get(`/api/employee/employee`, {
         headers: {
-          Authorization: `Token ${token}`,
-        },
-      });
-      const blob = await response.blob();
-      return blob;
-    } catch (error) {
-      console.log("Error in fetching sample CSV: ", error);
-      throw error;
-    }
-  }
-
-  //Team APIs
-  static async addTeam({ name, created_by, leader }) {
-    try {
-      const formData = JSON.stringify({
-        name,
-        created_by,
-        leader,
-      });
-      const token = sessionStorage.getItem("token");
-      const response = await fetch(`${BASE_URL}api/team/teams/`, {
-        method: "POST",
-        headers: {
-          Authorization: `Token ${token}`,
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
-        body: formData,
       });
-      const data = await response.json();
-      console.log("Successfully Added Team: ", data);
-      return data;
+      // console.log(response?.data);
+      return response.data?.data;
     } catch (error) {
-      console.log("Error in Adding Team: ", error);
+      console.log("Error fetching employees:", error);
       throw error;
     }
   }
+
   static async getAllTeam() {
     const token = sessionStorage.getItem("token");
     try {
-      const response = await fetch(`${BASE_URL}api/team/teams/`, {
-        method: "GET",
+      const resonse = await api.get(`/api/team/teams/`, {
         headers: {
           Authorization: `Token ${token}`,
           "Content-Type": "application/json",
         },
       });
-      const data = await response.json();
-      // console.log('Team fetched: ', data)
-      return data;
+
+      // console.log(resonse?.data);
+      return resonse?.data?.data;
     } catch (error) {
       console.log("Error in getting team list: ", error);
       throw error;
     }
   }
+
   static async getTeam(projectId) {
     const token = sessionStorage.getItem("token");
     try {
-      const response = await axios.get(
-        `${BASE_URL}api/team/teams/${projectId}`,
-        {
-          headers: {
-            Authorization: `Token ${token}`,
-            "Content-Type": "application/json",
-          },
+      const response = await api.get(`/api/team/teams/${projectId}`, {
+        headers: {
+          Authorization: `Token ${token}`,
+          "Content-Type": "application/json",
         },
-      );
+      });
       return response.data;
     } catch (error) {
       console.log("Error in getting team: ", error);
@@ -178,34 +72,16 @@ class Service {
     }
   }
 
-  static async deleteTeam(teamId) {
-    console.log(teamId);
-    try {
-      console.log(teamId);
-      const response = await axios.delete(
-        `${BASE_URL}api/team/teams/${teamId}`,
-        {
-          headers: {
-            Authorization: `Token ${sessionStorage.getItem("token")}`,
-            "Content-Type": "application/json",
-          },
-        },
-      );
-      console.log("Team Deleted: ", response.data);
-    } catch (error) {
-      console.log("Error deleting the team", error);
-    }
-  }
 
   static async getTeamMember(projectId) {
     console.log(projectId);
     const token = sessionStorage.getItem("token");
     try {
-      const response = await axios.get(
-        `${BASE_URL}api/team/teams/${projectId}/add_members/`,
+      const response = await api.get(
+        `/api/team/teams/${projectId}/add_members/`,
         {
           headers: {
-            Authorization: `Token ${token}`,
+            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
         },
@@ -228,8 +104,8 @@ class Service {
       console.log("---------------");
 
       const token = sessionStorage.getItem("token");
-      const response = await axios.post(
-        `${BASE_URL}api/team/teams/${teamId}/add_member/`,
+      const response = await api.post(
+        `/api/team/teams/${teamId}/add_member/`,
         formData,
         {
           headers: {
@@ -246,190 +122,17 @@ class Service {
     }
   }
 
-  //Fabricator APIs
-  static async addFabricator({
-    name,
-    country,
-    state,
-    city,
-    zipCode,
-    design,
-    token,
-  }) {
-    console.log("Successfully Added Fabricator: ", design[0]);
-    const file = design[0];
-    try {
-      const formData = new FormData();
-      formData.append("name", name);
-      formData.append("country", country);
-      formData.append("state", state);
-      formData.append("city", city);
-      formData.append("zipCode", zipCode);
-      formData.append("design", file);
-
-      const response = await fetch(`${BASE_URL}api/fabricator/fabricator/`, {
-        method: "POST",
-        headers: {
-          Authorization: `Token ${token}`,
-          // 'Content-Type': 'application/json',
-        },
-        body: formData,
-      });
-
-      const data = await response.json();
-      console.log(data);
-      return data;
-    } catch (error) {
-      console.log("Error in adding Fabricator: ", error);
-      throw error;
-    }
-  }
-  static async deleteFabricator(id) {
-    const token = sessionStorage.getItem("token");
-    try {
-      const response = await fetch(
-        `${BASE_URL}api/fabricator/fabricator/${id}/`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Token ${token}`,
-            "Content-Type": "application/json",
-          },
-        },
-      );
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      console.log("Error in deleting Fabricator: ", error);
-      throw error;
-    }
-  }
-  static async getAllFabricator() {
-    const token = sessionStorage.getItem("token");
-    try {
-      const response = await fetch(`${BASE_URL}api/fabricator/fabricator/`, {
-        method: "GET",
-        headers: {
-          Authorization: `Token ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
-
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      console.log("Error in getting Fabricator List: ", error);
-      throw error;
-    }
-  }
-  static async getFabricator(id) {
-    const token = sessionStorage.getItem("token");
-    try {
-      const response = await fetch(
-        `${BASE_URL}api/fabricator/fabricator/${id}`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Token ${token}`,
-            "Content-Type": "application/json",
-          },
-        },
-      );
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      console.log("Error in getting Fabricator: ", error);
-      throw error;
-    }
-  }
-  static async addConnection(id, newConnection) {
-    const token = sessionStorage.getItem("token");
-    try {
-      const response = await fetch(
-        `${BASE_URL}api/fabricator/fabricator/${id}/add_connection/`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Token ${token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ ...newConnection }),
-        },
-      );
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      console.log("Error in adding Connection: ", error);
-      throw error;
-    }
-  }
-
-  //Project APIs
-  static async addProject({
-    name,
-    description,
-    startDate,
-    endDate,
-    duration,
-    connectionDesign,
-    miscDesign,
-    customer,
-    status,
-    stage,
-    tool,
-    manager,
-    team,
-    fabricator,
-  }) {
-    duration = parseInt(duration);
-    try {
-      const formData = JSON.stringify({
-        name,
-        description,
-        startDate,
-        endDate,
-        duration,
-        connectionDesign,
-        miscDesign,
-        customer,
-        status,
-        stage,
-        tool,
-        manager,
-        fabricator,
-        team,
-      });
-
-      console.log(formData);
-
-      const token = sessionStorage.getItem("token");
-      const response = await fetch(`${BASE_URL}api/project/projects/`, {
-        method: "POST",
-        headers: {
-          Authorization: `Token ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: formData,
-      });
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      console.log("Error in adding Project: ", error);
-      throw error;
-    }
-  }
   static async getAllProject() {
     const token = sessionStorage.getItem("token");
     try {
-      const response = await fetch(`${BASE_URL}api/project/projects/`, {
-        method: "GET",
+      const response = await api.get(`/api/project/projects`, {
         headers: {
-          Authorization: `Token ${token}`,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       });
-      const data = await response.json();
-      return data;
+      console.log(response?.data)
+      return response?.data?.data;
     } catch (error) {
       console.log("Error in getting Project List: ", error);
       throw error;
@@ -438,54 +141,13 @@ class Service {
   static async getProject(id) {
     const token = sessionStorage.getItem("token");
     try {
-      const response = await fetch(`${BASE_URL}api/project/projects/${id}`, {
-        method: "GET",
+      const response = await api.get(`/api/project/projects/${id}`, {
         headers: {
-          Authorization: `Token ${token}`,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       });
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      console.log("Error in getting Project:", error);
-      throw error;
-    }
-  }
-  static async editProject(id, projectData) {
-    console.log(projectData);
-    const token = sessionStorage.getItem("token");
-    try {
-      const response = await axios.patch(
-        `${BASE_URL}api/project/projects/${id}/`,
-        projectData,
-        {
-          headers: {
-            Authorization: `Token ${token}`,
-            "Content-Type": "application/json",
-          },
-        },
-      );
-      console.log("Project Updated: ", response.data);
-      return response.data;
-    } catch (error) {
-      console.log("Error in getting Project:", error);
-      throw error;
-    }
-  }
-
-  static async DeleteProject(id) {
-    const token = sessionStorage.getItem("token");
-    try {
-      const response = await fetch(`${BASE_URL}api/project/projects/${id}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Token ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
-      if (response) return true;
-      return false;
+      return response?.data;
     } catch (error) {
       console.log("Error in getting Project:", error);
       throw error;
@@ -496,15 +158,13 @@ class Service {
   static async getTask() {
     const token = sessionStorage.getItem("token");
     try {
-      const response = await fetch(`${BASE_URL}api/task/tasks/my_task/`, {
-        method: "GET",
+      const response = await api.get(`/api/task/task/my_tasks/`, {
         headers: {
-          Authorization: `Token ${token}`,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       });
       const data = await response.json();
-      console.log("My Task: ", data);
       return data;
     } catch (error) {
       console.log("Error in getting Task: ", error);
@@ -514,14 +174,14 @@ class Service {
   static async getMyTask() {
     const token = sessionStorage.getItem("token");
     try {
-      const response = await fetch(`${BASE_URL}api/task/tasks/my_task_list`, {
-        method: "GET",
+      const response = await api.get(`/api/task/tasks/my_tasks`, {
         headers: {
-          Authorization: `Token ${token}`,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       });
-      const data = await response.json();
+
+      const data = response?.data?.data;
       // console.log('My Task list: ', data)
       return data;
     } catch (error) {
@@ -532,16 +192,13 @@ class Service {
   static async getTaskById(Id) {
     const token = sessionStorage.getItem("token");
     try {
-      const response = await fetch(`${BASE_URL}api/task/tasks/${Id}`, {
-        method: "GET",
+      const response = await api.get(`/api/task/tasks/${Id}`, {
         headers: {
-          Authorization: `Token ${token}`,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       });
-      const data = await response.json();
-      // console.log('Task: ', data)
-      return data;
+      return response?.data?.data?.task;
     } catch (error) {
       console.log("Error in getting Task: ", error);
       throw error;
@@ -550,25 +207,39 @@ class Service {
   static async getAllTask() {
     const token = sessionStorage.getItem("token");
     try {
-      const response = await fetch(`${BASE_URL}api/task/tasks/`, {
-        method: "GET",
+      const response = await api.get(`/api/task/tasks/`, {
         headers: {
-          Authorization: `Token ${token}`,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       });
-      const data = await response.json();
-      return data;
+      return response?.data?.data;
     } catch (error) {
       console.log("Error in getting Task: ", error);
       throw error;
     }
   }
+
+  static async getAllMyTask() {
+    const token = sessionStorage.getItem("token");
+    try {
+      const response = await api.get(`/api/task/task/all_my_tasks/`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      return response?.data?.data;
+    } catch (error) {
+      console.log("Error in getting Task: ", error);
+      throw error;
+    }
+  }
+
   static async getParentTasks(id) {
     const token = sessionStorage.getItem("token");
     try {
-      const response = await fetch(`${BASE_URL}api/task/tasks/?project=${id}`, {
-        method: "GET",
+      const response = await api.get(`/api/task/tasks/?project=${id}`, {
         headers: {
           Authorization: `Token ${token}`,
           "Content-Type": "application/json",
@@ -591,7 +262,6 @@ class Service {
     hour,
     min,
     project,
-    parent,
     user,
   }) {
     try {
@@ -604,7 +274,6 @@ class Service {
         priority,
         duration: `${hour}:${min}:00`,
         project,
-        parent,
         user,
       };
 
@@ -612,20 +281,16 @@ class Service {
 
       const token = sessionStorage.getItem("token");
 
-      // Using Axios to make the POST request
-      const response = await axios.post(
-        `${BASE_URL}api/task/tasks/`,
-        formData,
-        {
-          headers: {
-            Authorization: `Token ${token}`,
-            "Content-Type": "application/json",
-          },
+      // Using api to make the POST request
+      const response = await api.post(`/api/task/tasks/`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "Application/json",
         },
-      );
+      });
 
       console.log(response.data);
-      return response.data; // Return the response data
+      return response.data?.data; // Return the response data
     } catch (error) {
       console.log("Error in adding Task: ", error);
       throw error; // Rethrow the error after logging
@@ -635,13 +300,11 @@ class Service {
     console.log(taskData);
     const token = sessionStorage.getItem("token");
     try {
-      const response = await fetch(`${BASE_URL}api/task/tasks/${id}/`, {
-        method: "PATCH",
+      const response = await api.patch(`/api/task/tasks/${id}/`, taskData, {
         headers: {
-          Authorization: `Token ${token}`,
-          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "Application/json",
         },
-        body: JSON.stringify(taskData),
       });
       const data = await response.json();
       return data;
@@ -653,11 +316,10 @@ class Service {
   static async deleteTask(id) {
     const token = sessionStorage.getItem("token");
     try {
-      const response = await fetch(`${BASE_URL}api/task/tasks/${id}/`, {
-        method: "DELETE",
+      const response = await api.delete(`/api/task/tasks/${id}/`, {
         headers: {
           Authorization: `Token ${token}`,
-          "Content-Type": "application/json",
+          "Content-Type": "Application/json",
         },
       });
       if (response) return true;
@@ -671,8 +333,7 @@ class Service {
     console.log(user);
     const token = sessionStorage.getItem("token");
     try {
-      const response = await fetch(`${BASE_URL}api/user/record?user=${user}`, {
-        method: "GET",
+      const response = await api.get(`/api/user/record?user=${user}`, {
         headers: {
           Authorization: `Token ${token}`,
           "Content-Type": "application/json",
@@ -687,112 +348,108 @@ class Service {
     }
   }
 
-
   static async userTaskRecord() {
     const token = sessionStorage.getItem("token");
     try {
-      const response = await fetch(`${BASE_URL}api/user/record`, {
-        method: "GET",
+      const response = await api.get(`/api/task/tasks/my_task_records/`, {
         headers: {
-          Authorization: `Token ${token}`,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       });
-      const data = await response.json();
-      console.log("Users Task Record: ", data);
-      return data;
+      return response.data.data;
     } catch (error) {
       console.log("Error in getting Task Record: ", error);
       throw error;
     }
   }
-  static async acceptTask(id) {
+
+  static async getWorkHours(task_id) {
+    
     const token = sessionStorage.getItem("token");
     try {
-      const response = await fetch(`${BASE_URL}api/task/tasks/${id}/accept/`, {
-        method: "POST",
+      const response = await api.get(`/api/wh/wh/${task_id}`, {
         headers: {
-          Authorization: `Token ${token}`,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       });
-      const data = await response.json();
-      console.log("Accept Task: ", data);
-      return data;
+      
+      return response.data.data;
     } catch (error) {
-      console.log("Error in getting Accept Task: ", error);
+      console.log("Error in getting Work ID:", error);
       throw error;
     }
   }
 
-  static async startTask(id) {
+  static async startTask(task_id) {
+    const formData = { task_id };
     const token = sessionStorage.getItem("token");
     try {
-      const response = await fetch(`${BASE_URL}api/user/record/${id}/start/`, {
-        method: "POST",
+      const response = await api.post(`/api/wh/wh/start/`, formData, {
         headers: {
-          Authorization: `Token ${token}`,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       });
-      const data = await response.json();
-      console.log("Start Task: ", data);
-      return data;
+      return response.data;
     } catch (error) {
-      console.log("Error in getting Start Task: ", error);
+      console.log("Error in getting Project:", error);
       throw error;
     }
   }
 
-  static async pauseTask(id) {
+  static async pauseTask(task_id, work_id) {
+    console.log("pause-=-=-=-==-=-=-", task_id, work_id);
+    const formData = { task_id, work_id };
     const token = sessionStorage.getItem("token");
     try {
-      const response = await fetch(`${BASE_URL}api/user/record/${id}/pause/`, {
-        method: "POST",
+      const response = await api.patch(`/api/wh/wh/pause/`, formData, {
         headers: {
-          Authorization: `Token ${token}`,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       });
-      const data = await response.json();
-      console.log("Pause Task: ", data);
-      return data;
+      console.log("Pause Task: ", response.data);
+      return response.data;
     } catch (error) {
-      console.log("Error in getting Pause Task: ", error);
+      console.log("Error in getting Project:", error);
       throw error;
     }
   }
 
-  static async resumeTask(id) {
+  //to resume task
+  static async resumeTask(task_id, work_id) {
+    console.log("resume-=-=-=-==-=-=-", task_id);
+    const formData = { task_id, work_id };
     const token = sessionStorage.getItem("token");
     try {
-      const response = await fetch(`${BASE_URL}api/user/record/${id}/resume/`, {
-        method: "POST",
+      const response = await api.patch(`/api/wh/wh/resume/`, formData, {
         headers: {
-          Authorization: `Token ${token}`,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       });
-      const data = await response.json();
-      console.log("Resume Task: ", data);
-      return data;
+      console.log("Resume Task: ", response.data);
+      return response.data;
     } catch (error) {
       console.log("Error in getting Resume Task: ", error);
       throw error;
     }
   }
 
-  static async endTask(id) {
+  static async endTask(task_id, work_id) {
+    console.log("end-=-=-=-==-=-=-", task_id, work_id);
+    const formData = { task_id, work_id };
     const token = sessionStorage.getItem("token");
     try {
-      const response = await fetch(`${BASE_URL}api/user/record/${id}/end/`, {
-        method: "POST",
+      const response = await api.patch(`/api/wh/wh/end/`, formData, {
         headers: {
-          Authorization: `Token ${token}`,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       });
-      const data = await response.json();
+      const data = await response.data;
       console.log("End Task: ", data);
       return data;
     } catch (error) {
@@ -805,8 +462,7 @@ class Service {
   static async getAssignee() {
     const token = sessionStorage.getItem("token");
     try {
-      const response = await fetch(`${BASE_URL}api/task/assigned-list/`, {
-        method: "GET",
+      const response = await api.get(`/api/task/assigned-list/`, {
         headers: {
           Authorization: `Token ${token}`,
           "Content-Type": "application/json",
@@ -823,8 +479,7 @@ class Service {
   static async getAssigneeById(id) {
     const token = sessionStorage.getItem("token");
     try {
-      const response = await fetch(`${BASE_URL}api/task/assigned-list/${id}`, {
-        method: "GET",
+      const response = await api.get(`/api/task/assigned-list/${id}`, {
         headers: {
           Authorization: `Token ${token}`,
           "Content-Type": "application/json",
@@ -841,10 +496,9 @@ class Service {
   static async approveAssignee(id) {
     const token = sessionStorage.getItem("token");
     try {
-      const response = await fetch(
-        `${BASE_URL}api/task/assigned-list/${id}/confirm/`,
+      const response = await api.post(
+        `/api/task/assigned-list/${id}/confirm/`,
         {
-          method: "POST",
           headers: {
             Authorization: `Token ${token}`,
             "Content-Type": "application/json",
@@ -860,18 +514,19 @@ class Service {
     }
   }
 
+  //to add assignee --updated
   static async addAssigne(id, assigne) {
+    console.log("task id", id);
+    console.log("assigned id", assigne);
     const token = sessionStorage.getItem("token");
     try {
-      const response = await axios.post(
-        `${BASE_URL}api/task/tasks/${id}/add_assignes/`,
-        {
-          assigned_to: assigne,
-        },
+      const response = await api.post(
+        `/api/task/tasks/${id}/add_assignes/`,
+        assigne,
         {
           headers: {
-            Authorization: `Token ${token}`,
-            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "Application/json",
           },
         },
       );
@@ -883,39 +538,32 @@ class Service {
     }
   }
 
-  static async addComment(id, comment, file) {
-    console.log(comment, file);
-    const token = sessionStorage.getItem("token");
+  static async addComment(id, data) {
+    const formData = { ...data };
+    console.log(data);
     try {
-      const doc = file ? file[0] : null;
-      const formData = new FormData();
-      formData.append("data", comment);
-      formData.append("file", doc);
-      console.log(formData);
-      const response = await fetch(
-        `${BASE_URL}api/task/tasks/${id}/add_comment/`,
+      const token = sessionStorage.getItem("token");
+      const response = await api.post(
+        `/api/task/tasks/add_comment/${id}`,
+        formData,
         {
-          method: "POST",
           headers: {
-            Authorization: `Token ${token}`,
-            // 'Content-Type': 'application/json',
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
-          body: formData,
         },
       );
-      const data = await response.json();
-      console.log("Comment Added: ", data);
-      return data;
+      return response.data;
     } catch (error) {
-      console.log("Error in Adding Comment: ", error);
+      console.log("Error fetching projects:", error);
       throw error;
     }
   }
+
   static async deleteAssignee(id) {
     const token = sessionStorage.getItem("token");
     try {
-      const response = await fetch(`${BASE_URL}api/task/assigned-list/${id}/`, {
-        method: "DELETE",
+      const response = await api.delete(`/api/task/assigned-list/${id}/`, {
         headers: {
           Authorization: `Token ${token}`,
           "Content-Type": "application/json",
@@ -933,8 +581,7 @@ class Service {
   static async getComment() {
     const token = sessionStorage.getItem("token");
     try {
-      const response = await fetch(`${BASE_URL}api/task/comment/`, {
-        method: "GET",
+      const response = await api.get(`/api/task/comment/`, {
         headers: {
           Authorization: `Token ${token}`,
           "Content-Type": "application/json",
@@ -958,7 +605,7 @@ class Service {
       `?date=${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`,
     );
     try {
-      let url = `${BASE_URL}api/task/tasks/calender/`;
+      let url = `/api/task/tasks/calender/`;
       if (date && user) {
         url += `?date=${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}&user=${user}`;
       } else if (date) {
@@ -967,8 +614,7 @@ class Service {
         url += `?user=${user}`;
       }
 
-      const response = await fetch(url, {
-        method: "GET",
+      const response = await api.get(url, {
         headers: {
           Authorization: `Token ${token}`,
           "Content-Type": "application/json",
@@ -986,10 +632,9 @@ class Service {
   static async fetchCalendar2(date, user) {
     const token = sessionStorage.getItem("token");
     try {
-      let url = `${BASE_URL}api/task/tasks/calender/?date=${date.substring(0, 10)}&user=${user}`;
+      let url = `/api/task/tasks/calender/?date=${date.substring(0, 10)}&user=${user}`;
 
-      const response = await fetch(url, {
-        method: "GET",
+      const response = await api.get(url, {
         headers: {
           Authorization: `Token ${token}`,
           "Content-Type": "application/json",

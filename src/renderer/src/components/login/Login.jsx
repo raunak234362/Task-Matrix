@@ -1,19 +1,20 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable prettier/prettier */
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Input } from "../index";
 import Logo from "../../assets/logo.png";
 import Background from "../../assets/background-image.jpg";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { login as authLogin } from "../../store/userSlice";
+import { login as authLogin, setUserData } from "../../store/userSlice";
 import AuthService from "../../api/authAPI";
 import Service from "../../api/configAPI";
 
 const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const token = sessionStorage.getItem("token");
   const {
     register,
     handleSubmit,
@@ -23,51 +24,71 @@ const Login = () => {
 
   const login = async (data) => {
     try {
-      const session = await AuthService.login(data);
-      if (session && session.token) {
-        // Check if session and token exist
-        const token = session.token;
+      const user = await AuthService.login(data);
+      console.log(user);
+      if ("token" in user) {
+        const token = user.token;
+        sessionStorage.setItem('token', token)
         const userData = await Service.getCurrentUser(token);
-        let userType = "";
-
-        if (userData.is_superuser) {
-          userType = "admin";
-        } else if (userData.is_staff) {
-          userType = "manager";
-        } else {
-          userType = "user";
+        dispatch(setUserData(userData));
+        console.log("UserData :", userData);
+        let userType = "user";
+        if (userData.role === "STAFF") {
+          if (userData.is_superuser) {
+            userType = "admin";
+          } else if (userData.is_sales) {
+            userType = "sales";
+          } else if (userData.is_staff && userData.is_manager) {
+            userType = "department-manager";
+          } else if (userData.is_manager) {
+            userType = "project-manager";
+          }
+        } else if (userData.role === "CLIENT") {
+          userType = "client";
+        } else if (userData.role === "VENDOR") {
+          userType = "vendor";
         }
 
         sessionStorage.setItem("userType", userType);
-        sessionStorage.setItem("username", userData?.username);
-        sessionStorage.setItem("token", token);
-        dispatch(authLogin({ token, userType }));
-        if (userType != "user") {
-          navigate("/admin/home");
-        } else {
-          navigate("/admin/home");
-        }
+        dispatch(authLogin(user));
+        // dispatch(setUserData(userData.data))
+        console.log(userData.is_firstLogin);
+        if (userData?.is_firstLogin) navigate("/admin/home");
+        else if (userType === "user" || userType === "project-manager" || userType ==="admin") navigate("/admin/home");
+        // else if (userType === "client") navigate("/client");
+        // else if (userType === "sales") navigate("/sales");
+        // else if (userType === "staff") navigate("/staff");
+        // else if(userType === 'department-manager') navigate('/department-manager')
+        // else if (userType === "project-manager") navigate("/project-manager");
+        // else if(userType === 'project-manager-officer') navigate('/project-manager')
+        // else if (userType === "vendor") navigate("/vendor");
+        else navigate("/");
       } else {
-        // Handle case where session or token is missing
-        setError(
-          "Invalid credentials. Please check your username and password.",
-        );
+        alert("Invalid Credentials Check");
+        navigate("/");
       }
     } catch (error) {
-      console.error("Login failed: ", error);
-      handleLoginError(error);
+      console.log(error);
+      if (error.message === "Invalid Credentials") {
+        alert("Invalid Credentials");
+      } else {
+        alert("Could not connect to server");
+      }
     }
   };
 
-  const handleLoginError = (error) => {
-    if (error.message.includes("429")) {
-      setError("Too many requests. Please try again later.");
-    } else if (error.message.includes("401")) {
-      setError("Invalid credentials. Please check your username and password.");
-    } else {
-      setError("An error occurred during login.");
+  const fetchUser = async () => {
+    try {
+      const User = await Service.getCurrentUser(token);
+      dispatch(setUserData(User));
+    } catch (error) {
+      console.log(error);
     }
   };
+  useEffect(() => {
+    fetchUser();
+  }, []);
+
 
   return (
     <>
@@ -126,14 +147,13 @@ const Login = () => {
             {error && <p className="text-red-500 mt-2">{error}</p>}
           </div>
         </div>
-        <div>
+        <div></div>
       </div>
-      </div>
-        <img
-          src={Background}
-          alt="background"
-          className="h-screen w-screen object-cover blur-[8px]"
-        />
+      <img
+        src={Background}
+        alt="background"
+        className="h-screen w-screen object-cover blur-[8px]"
+      />
     </>
   );
 };

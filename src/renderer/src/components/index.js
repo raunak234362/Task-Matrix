@@ -15,7 +15,6 @@ import Layout from './Layout'
 import Header from './dashboard/Header'
 
 //Users
-import AddUser from './dashboard//users/adduser/AddUser'
 import AllUser from './dashboard/users/alluser/AllUser';
 import MyProfile from './dashboard/users/myprofile/MyProfile';
 import UsersTaskRecord from './dashboard/users/taskrecord/UsersTaskRecord'
@@ -38,24 +37,13 @@ import TaskTab from './dashboard/tasks/task/TaskTab.jsx'
 import EditTask from './dashboard/tasks/editTask/EditTask.jsx'
 
 //Projects
-import AddProject from './dashboard/projects/addproject/AddProject'
-import ManageTeam from './dashboard/projects/manageteam/ManageTeam'
-import AddTeam from './dashboard/projects/addteams/AddTeam'
 import Allprojects from './dashboard/projects/allprojects/Allprojects';
 import Project from './dashboard/projects/allprojects/Project'
-import EditProject from './dashboard/projects/allprojects/EditProject'
-import TeamView from './dashboard/projects/manageteam/TeamView'
 import BarView from './dashboard/projects/allprojects/BarView'
 import BarViews from './dashboard/projects/allprojects/BarViews'
 import FabricatorCharts from './dashboard/projects/allprojects/FabricatorChart'
 import ProjectStats from './dashboard/projects/stats/ProjectStats.jsx'
 import ProjectTab from './dashboard/projects/project/ProjectTab.jsx'
-
-//Fabricators
-import Fabricator from './dashboard/fabricators/fabricator/Fabricator'
-import AddFabricator from './dashboard/fabricators/addfabricator/AddFabricator'
-import AllFabricators from './dashboard/fabricators/allfabricators/AllFabricators';
-import ManageFabricator from './dashboard/fabricators/allfabricators/ManageFabricator'
 
 
 //Charts
@@ -79,10 +67,8 @@ export {
   GaantChartt,
   FabricatorCharts,
   MyProfile,
-  EditProject,
   Login,
   Header,
-  ManageFabricator,
   Task,
   Approve,
   AllTask,
@@ -93,24 +79,16 @@ export {
   UsersTaskRecord,
   CustomSelect,
   Input,
-  TeamView,
   ProjectPie,
   MultiSelectCheckbox,
-  AddTeam,
   MyTask,
   EditTask,
-  ManageTeam,
   TaskRecord,
   Button,
-  AddProject,
   AddTask,
-  AddUser,
-  AddFabricator,
-  Fabricator,
   Calendar,
   Layout,
   Sidebar,
   Home,
-  AllFabricators,
   Allprojects
 }

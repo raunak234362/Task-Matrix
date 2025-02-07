@@ -9,7 +9,9 @@ import { showTask, showTaskByID } from "../../../../store/taskSlice";
 const AllTask = () => {
   const dispatch = useDispatch();
   const tasks = useSelector((state) => state?.taskData?.taskData);
-  console.log("All Task---------------",tasks);
+  console.log("tasks------------", tasks);
+  const projectData = useSelector((state) => state?.projectData?.projectData);
+  const userData = useSelector((state) => state?.userData?.staffData);
   const [selectedTask, setSelectedTask] = useState(null);
   const [taskID, setTaskID] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -74,6 +76,16 @@ const AllTask = () => {
     setTotalDuration({ hours, minutes }); // Store as an object
   };
 
+  function formatMinutesToHours(totalMinutes) {
+    console.log("totalMinutes: ", totalMinutes);
+    if (!totalMinutes && totalMinutes !== 0) return "N/A";
+    
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+    
+    return `${hours}h ${minutes}m`;
+  }
+
   useEffect(() => {
     if (projectFilter) {
       const projectTasks = tasks.filter(
@@ -90,7 +102,7 @@ const AllTask = () => {
 
       const inReviewPercentage =
         totalTasks > 0 ? (inReviewTasks / totalTasks) * 100 : 0;
-      console.log("In Review Percentage:", inReviewPercentage);
+      // console.log("In Review Percentage:", inReviewPercentage);
       setInReviewPercentage(inReviewPercentage);
       const percentage =
         totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
@@ -144,9 +156,9 @@ const AllTask = () => {
     setProjectFilter(e.target.value);
   };
 
-  const handleToolsFilter = (e)=>{
+  const handleToolsFilter = (e) => {
     setToolsFilter(e.target.value);
-  }
+  };
 
   const handleSort = (key) => {
     let direction = "ascending";
@@ -188,7 +200,7 @@ const AllTask = () => {
       // console.log("Task Details:", task);
       // dispatch(showTaskByID(task));
       setSelectedTask(task);
-      setTaskID(task.id);
+      setTaskID(taskId);
       setIsModalOpen(true);
     } catch (error) {
       console.error("Error fetching project details:", error);
@@ -198,6 +210,23 @@ const AllTask = () => {
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setTaskID(null);
+  };
+
+  const durToHour = (params) => {
+    if (!params) return "N/A";
+
+    const parts = params.split(" ");
+    let days = 0;
+    let timePart = params;
+
+    if (parts.length === 2) {
+      days = parseInt(parts[0], 10);
+      timePart = parts[1];
+    }
+
+    const [hours, minutes, seconds] = timePart.split(":").map(Number);
+    const totalHours = days * 24 + hours;
+    return `${totalHours}h ${minutes}m`;
   };
 
   const color = (priority) => {
@@ -230,23 +259,25 @@ const AllTask = () => {
     }
   };
 
+  console.log("PROJECT DATA_____", projectData)
+
   return (
     <div>
       <div className="table-container h-[80vh] w-full rounded-lg">
-        <div className=" shadow-xl table-container w-full rounded-lg">
+        <div className="w-full rounded-lg shadow-xl table-container">
           <div className="mx-5 my-3">
-            <div className="flex flex-col md:flex-row gap-4 mb-4">
+            <div className="flex flex-col gap-4 mb-4 md:flex-row">
               <input
                 type="text"
                 placeholder="Search by Task name & User name..."
                 value={searchTerm}
                 onChange={handleSearch}
-                className="px-4 py-2 border rounded-md w-full md:w-1/4"
+                className="w-full px-4 py-2 border rounded-md md:w-1/4"
               />
               <select
                 value={statusFilter}
                 onChange={handleStatusFilter}
-                className="px-4 py-2 border rounded-md w-full md:w-1/4"
+                className="w-full px-4 py-2 border rounded-md md:w-1/4"
               >
                 <option value="">All Status</option>
                 <option value="ASSINGED">ASSIGNED</option>
@@ -259,7 +290,7 @@ const AllTask = () => {
               <select
                 value={projectFilter}
                 onChange={handleProjectFilter}
-                className="px-4 py-2 border rounded-md w-full md:w-1/4"
+                className="w-full px-4 py-2 border rounded-md md:w-1/4"
               >
                 <option value="">All Projects</option>
                 {uniqueProject?.map((project) => (
@@ -284,7 +315,7 @@ const AllTask = () => {
                 <div className="mb-2">
                   Project Completion %: {completionPercentage.toFixed(2)}%
                 </div>
-                <div className="h-4 w-full bg-gray-200 rounded-full">
+                <div className="w-full h-4 bg-gray-200 rounded-full">
                   <div
                     className={`h-4 rounded-full ${getCompletionBarColor(tasks?.project?.status)}`} // Use the getCompletionBarColor function
                     style={{ width: `${completionPercentage}%` }}
@@ -293,7 +324,7 @@ const AllTask = () => {
                 <div className="mb-2">
                   Project InReview %: {inReviewPercentage.toFixed(2)}%
                 </div>
-                <div className="h-4 w-full bg-gray-200 rounded-full">
+                <div className="w-full h-4 bg-gray-200 rounded-full">
                   <div
                     className={`h-4 rounded-full ${getInReviewBarColor(tasks?.project?.status)}`} // Use the getCompletionBarColor function
                     style={{ width: `${inReviewPercentage}%` }}
@@ -333,14 +364,7 @@ const AllTask = () => {
                       {sortConfig.key === "name " &&
                         (sortConfig.direction === "ascending" ? "" : "")}
                     </th>
-                    <th
-                      className="px-2 py-1 cursor-pointer"
-                      onClick={() => handleSort("manager")}
-                    >
-                      Manager Name{" "}
-                      {sortConfig.key === "name " &&
-                        (sortConfig.direction === "ascending" ? "" : "")}
-                    </th>
+
                     <th className="px-2 py-1 cursor-default">Assigned User </th>
                     <th
                       className="px-2 py-1 cursor-pointer"
@@ -358,12 +382,29 @@ const AllTask = () => {
                       {sortConfig.key === "priority" &&
                         (sortConfig.direction === "ascending" ? "" : "")}
                     </th>
+
                     <th
                       className="px-2 py-1 cursor-pointer"
                       onClick={() => handleSort("due_date")}
                     >
                       Task Due Date{" "}
                       {sortConfig.key === "due_date" &&
+                        (sortConfig.direction === "ascending" ? "" : "")}
+                    </th>
+                    <th
+                      className="px-2 py-1 cursor-pointer"
+                      onClick={() => handleSort("duration")}
+                    >
+                      Allocated Hours{" "}
+                      {sortConfig.key === "duration" &&
+                        (sortConfig.direction === "ascending" ? "" : "")}
+                    </th>
+                    <th
+                      className="px-2 py-1 cursor-pointer"
+                      onClick={() => handleSort("duration")}
+                    >
+                      Hours Taken{" "}
+                      {sortConfig.key === "duration" &&
                         (sortConfig.direction === "ascending" ? "" : "")}
                     </th>
                     <th className="px-2 py-1">Actions</th>
@@ -380,26 +421,27 @@ const AllTask = () => {
                     filteredTasks.map((task, index) => (
                       <tr
                         key={task.id}
-                        // Apply conditional class for overdue tasks not in review or complete
-                        className={`${
-                          (task.status !== "IN-REVIEW" && task.status !== "COMPLETE" &&
-                            new Date(task.due_date) < new Date())
-                            ? "bg-red-200" // Overdue task background
-                            : index % 2 === 0
-                            ? "bg-white"
-                            : "bg-gray-200/50" // Alternate row styling
-                        }`} 
+                        className={
+                          index % 2 === 0 ? "bg-white" : "bg-gray-200/50"
+                        }
                       >
-                        <td className="border px-1 py-2">{index + 1}</td>
-                        <td className="border px-1 py-2">
-                          {task?.project?.name}
+                        <td className="px-1 py-2 border">{index + 1}</td>
+                        <td className="px-1 py-2 border">
+                          {
+                            projectData?.find(
+                              (project) => project?.id === task?.project_id,
+                            )?.name
+                          }
                         </td>
-                        <td className="border px-1 py-2">{task?.name}</td>
-                        <td className="border px-1 py-2">
-                          {task?.project?.manager?.name}
+                        <td className="px-1 py-2 border">{task?.name}</td>
+
+                        <td className="px-1 py-2 border">
+                          {
+                            userData?.find((user) => user?.id === task?.user_id)
+                              ?.f_name
+                          }
                         </td>
-                        <td className="border px-1 py-2">{task?.user?.name}</td>
-                        <td className="border px-1 py-2">{task?.status}</td>
+                        <td className="px-1 py-2 border">{task?.status}</td>
                         <td className={`border px-1 py-2`}>
                           <span
                             className={`text-sm text-center font-semibold px-3 py-0.5 mx-2 rounded-full border ${color(
@@ -409,11 +451,17 @@ const AllTask = () => {
                             {setPriorityValue(task?.priority)}
                           </span>
                         </td>
-                        <td className="border px-1 py-2">
-                          {new Date(task?.due_date).toDateString()}
+                        <td className="px-1 py-2 border">
+                          {new Date(task?.start_date).toDateString()}
                         </td>
-                  
-                        <td className="border px-1 flex justify-center py-2">
+                        <td className="px-1 py-2 border">
+                          {durToHour(task?.duration)}
+                        </td>
+                        <td className="px-1 py-2 border">
+                        {formatMinutesToHours(task?.workingHourTask?.map((rec) => rec?.duration))}
+                        </td>
+
+                        <td className="flex justify-center px-1 py-2 border">
                           <Button onClick={() => handleViewClick(task?.id)}>
                             View
                           </Button>

@@ -5,6 +5,9 @@ import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import { updateElectronApp } from 'update-electron-app'
 
+// Disable SSL certificate errors
+app.commandLine.appendSwitch('ignore-certificate-errors');
+
 function createWindow() {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
@@ -16,7 +19,6 @@ function createWindow() {
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
       sandbox: false
-      
     }
   })
 
@@ -29,8 +31,8 @@ function createWindow() {
     return { action: 'deny' }
   })
 
-  // HMR for renderer base on electron-vite cli.
-  // Load the remote URL for development or the local html file for production.
+  // HMR for renderer based on electron-vite cli.
+  // Load the remote URL for development or the local HTML file for production.
   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
     mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
   } else {
@@ -38,8 +40,8 @@ function createWindow() {
   }
 }
 
- // Handle notifications from renderer
- ipcMain.on('show-notification', (event, task) => {
+// Handle notifications from renderer
+ipcMain.on('show-notification', (event, task) => {
   const notification = new Notification({
     title: 'New Task Assigned',
     body: `You have a new task: ${task.name}`,
@@ -48,12 +50,11 @@ function createWindow() {
   notification.show();
 });
 
-
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
-  // Set app user model id for windows
+  // Set app user model id for Windows
   electronApp.setAppUserModelId('com.electron')
 
   // Default open or close DevTools by F12 in development

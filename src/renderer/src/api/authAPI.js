@@ -1,29 +1,29 @@
 /* eslint-disable prettier/prettier */
-import { BASE_URL } from "../config/constant";
-
+import api from "./api";
 class AuthService {
 
-  static async login({ username, password,token,userType }) {
+  static async login({ username, password }) {
     try {
-      const formData = new URLSearchParams();
-      formData.append('username', username.toUpperCase());
-      formData.append('password', password);
-
-      const response = await fetch(`${BASE_URL}api/user/login/`, {
-        method: 'POST',
+      const formData = new URLSearchParams()
+      formData.append('username', username.toUpperCase())
+      formData.append('password', password)
+      const response = await api.post(`/api/auth/login/`, formData, {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: formData,
-      });
-      sessionStorage.setItem("token",token)
-      localStorage.setItem("userType",userType)
-      const data = await response.json();
-      console.log(data)
-      return data;
+      }) 
+      console.log(response)
+      if (response.status === 400) {
+        throw new Error('Invalid Credentials')  
+      }
+      return response.data;
     } catch (error) {
-      console.error('Error in login:', error);
-      throw error;
+      if (error.response && error.response.status === 400) {
+        throw new Error('Invalid Credentials')
+      } else {
+        console.error('Error in login:', error)
+        throw new Error('Could not connect to server')
+      }
     }
   }
 }

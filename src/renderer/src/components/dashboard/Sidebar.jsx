@@ -52,7 +52,6 @@ const Sidebar = () => {
     <div className="flex flex-col justify-between md:h-[88vh] h-[88vh] w-64 bg-white/70 md:border-4 text-black md:rounded-xl rounded-lg">
       <nav className="p-5">
         <ul className="flex flex-col gap-5">
-
           <li>
             <NavLink
               to="home"
@@ -65,7 +64,7 @@ const Sidebar = () => {
               <div>Dashboard</div>
             </NavLink>
           </li>
-          {userType === "admin" ? (
+          {/* {userType === "admin" ? (
               <li>
                 <NavLink
                   to="fabricator"
@@ -79,9 +78,8 @@ const Sidebar = () => {
                 </NavLink>
               </li>
              
-          ) : null}
-         
-          
+          ) : null} */}
+
           <li>
             <NavLink
               to="project"
@@ -94,7 +92,7 @@ const Sidebar = () => {
               <div>Project</div>
             </NavLink>
           </li>
-         
+
           <li>
             <NavLink
               to="task"
@@ -107,18 +105,21 @@ const Sidebar = () => {
               <div>Task</div>
             </NavLink>
           </li>
-          <li>
-            <NavLink
-              to="user"
-              className={({ isActive }) =>
-                isActive
-                  ? "flex justify-center items-center text-white bg-teal-400 rounded-md w-full delay-150"
-                  : "text-black hover:text-white hover:flex hover:justify-center hover:items-center hover:bg-teal-200  rounded-md"
-              }
-            >
-              <div>Users</div>
-            </NavLink>
-          </li>
+          {(userType === "manager" || userType === "admin") ? (
+            <li>
+              <NavLink
+                to="user"
+                className={({ isActive }) =>
+                  isActive
+                    ? "flex justify-center items-center text-white bg-teal-400 rounded-md w-full delay-150"
+                    : "text-black hover:text-white hover:flex hover:justify-center hover:items-center hover:bg-teal-200  rounded-md"
+                }
+              >
+                <div>Users</div>
+              </NavLink>
+            </li>
+          ) : null}
+
           <li className="w-full">
             <NavLink
               to="profile"
@@ -134,11 +135,11 @@ const Sidebar = () => {
           <li></li>
         </ul>
       </nav>
-      <div className="md:flex md:justify-right mb-5">
-        {/* <Button className="bg-teal-400 mx-4 w-full" onClick={fetchLogout}>
+      <div className="mb-5 md:flex md:justify-right">
+        {/* <Button className="w-full mx-4 bg-teal-400" onClick={fetchLogout}>
           Logout
         </Button> */}
-        <div className="text-lg text-black md:hidden block">
+        <div className="block text-lg text-black md:hidden">
           {currentUser?.username}
         </div>
       </div>

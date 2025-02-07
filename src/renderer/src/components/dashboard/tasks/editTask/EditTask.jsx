@@ -3,8 +3,9 @@
 
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { updateTask } from "../../../../store/taskSlice";
+import { fetchTeam } from "../../../../store/projectSlice";
 import Service from "../../../../api/configAPI";
 import Input from "../../../fields/Input";
 import { CustomSelect, Button } from "../../../index";
@@ -14,7 +15,7 @@ const EditTask = ({ onClose, task }) => {
   // console.log(task);
   const dispatch = useDispatch();
   const [assignedUser, setAssignedUser] = useState([]);
-
+  console.log("TASK-=-==-=-=-=-=-=", task);
   const {
     register,
     handleSubmit,
@@ -26,42 +27,65 @@ const EditTask = ({ onClose, task }) => {
     defaultValues: {
       name: task?.name || "",
       description: task?.description || "",
-      hour: task?.duration ? task.duration.split(":")[0] : "",
-      min: task?.duration ? task.duration.split(":")[1] : "",
+      duration: task?.duration || "",
       start_date: task?.start_date || "",
       due_date: task?.due_date || "",
       status: task?.status || "",
-      stage: task?.stage || "",
-      manager: task?.manager?.id || "",
     },
   });
 
+  const teamData = useSelector((state) =>
+    state?.projectData?.teamData.find(
+      (team) => team.id === task?.project?.teamID,
+    ),
+  );
+  const staffData = useSelector((state) => state?.projectData?.staffData);
+  console.log("STAFF-=-=-=-=-=-=-=-", staffData);
   useEffect(() => {
-    const assigned = task?.project?.team?.members?.reduce((acc, member) => {
-      const exists = acc?.find((item) => item?.value === member?.employee?.id);
-      if (!exists) {
-        acc.push({
-          label: `${member?.role} - ${member?.employee?.name}`,
-          value: member?.employee?.id,
-        });
+    const processTeamMembers = () => {
+      try {
+        if (!teamData) {
+          console.log("No team data available");
+          return;
+        }
+
+        const assigned = teamData?.members?.reduce((acc, member) => {
+          const exists = acc?.find((item) => item?.value === member?.id);
+          console.log("EXISTS-=-=-=-=-=-=-=-", exists);
+          if (!exists) {
+            acc.push({
+              label: `${member?.role} - ${member?.id}`,
+              value: member?.id,
+            });
+          }
+          return acc;
+        }, []);
+
+        console.log("Team members processed:", assigned);
+        setAssignedUser(assigned || []);
+      } catch (error) {
+        console.error("Error processing team members:", error);
       }
-      return acc;
-    }, []);
-    // console.log("Assigned users---", assigned);
-    setAssignedUser(assigned || []);
-  }, [task]);
+    };
+
+    processTeamMembers();
+  }, [teamData]);
 
   const onSubmit = async (data) => {
-    console.log(data)
+    console.log("Data: +++++++++++++++", data);
     try {
-      const TaskName = data?.type
-        ? `${data?.type} - ${data?.taskname}`
-        : data?.name;
-
-      const updatedTask = await Service.editTask(task?.id, {
+      // Combine type and taskname into name field
+      const taskData = {
         ...data,
-        name: TaskName,
-      });
+        name: data?.type ? `${data?.type} - ${data?.taskname}` : data?.name,
+        user_id: task?.user_id
+      };
+
+      // Remove type and taskname before sending to backend
+      delete taskData.type;
+      delete taskData.taskname;
+
+      const updatedTask = await Service.editTask(task?.id, taskData);
       dispatch(updateTask(updatedTask));
       console.log("Successfully Updated Task: ", updatedTask);
     } catch (error) {
@@ -183,8 +207,7 @@ const EditTask = ({ onClose, task }) => {
                 onChange={setValue}
               />
             </div>
-            
-             
+
             <div className=" w-full my-2">
               <Input
                 label="Start Date:"

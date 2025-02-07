@@ -11,30 +11,29 @@ const TaskRecord = () => {
   const [searchUser, setSearchUser] = useState([]);
   const [sortedUser, setSortedUser] = useState([]);
   const [listTask, setListTask] = useState([]);
+  const [workHours, setWorkHours] = useState({});
   const token = sessionStorage.getItem("token");
   const userType = sessionStorage.getItem("userType");
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const taskRecordUser = await Service.getAllUser(token);
-        setSearchUser(taskRecordUser);
-        setSortedUser(taskRecordUser);
-        console.log(taskRecordUser);
-      } catch (error) {
-        console.log("Error fetching Task Record of the User:", error);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchUser = async () => {
+  //     try {
+  //       const taskRecordUser = await Service.getAllUser(token);
+  //       setSearchUser(taskRecordUser);
+  //       setSortedUser(taskRecordUser);
+  //       console.log(taskRecordUser);
+  //     } catch (error) {
+  //       console.log("Error fetching Task Record of the User:", error);
+  //     }
+  //   };
 
-    fetchUser();
-  }, [token]);
-
- 
+  //   fetchUser();
+  // }, [token]);
 
   useEffect(() => {
     const fetchTask = async () => {
       try {
-        const UserTask = await Service.taskRecord(user);
+        const UserTask = await Service.userTaskRecord();
         console.log("user Task:--------", UserTask);
         setListTask(UserTask);
         setRecord(UserTask);
@@ -62,6 +61,32 @@ const TaskRecord = () => {
     filterTasks();
   }, [user, listTask, userType]);
 
+  useEffect(() => {
+    const fetchWorkHours = async () => {
+      try {
+        // Fetch work hours for each task
+        const workHoursPromises = record.map(task => 
+          Service.getWorkHours(task.id)
+        );
+        const workHoursResults = await Promise.all(workHoursPromises);
+        
+        // Create an object with task IDs as keys and work hours as values
+        const workHoursMap = {};
+        workHoursResults.forEach((hours, index) => {
+          workHoursMap[record[index].id] = hours?.duration || 0;
+        });
+        
+        setWorkHours(workHoursMap);
+      } catch (error) {
+        console.log("Error fetching work hours:", error);
+      }
+    };
+
+    if (record?.length > 0) {
+      fetchWorkHours();
+    }
+  }, [record]);
+
   function durToHour(params) {
     if (!params) return "N/A";
 
@@ -82,22 +107,28 @@ const TaskRecord = () => {
     return `${totalHours}h ${minutes}m`;
   }
 
-  function secToHour(params) {
-    const hours = Math.floor(params / 3600);
-    const minutes = Math.floor((params % 3600) / 60);
-    return `${hours}h ${minutes}m`;
-  }
 
   function compare(duration, time) {
-    const durationInSeconds = convertToSeconds(duration);
-    return durationInSeconds >= time;
+    if (!duration || !time) return false;
+    // Convert both values to minutes for comparison
+    const durationInMinutes = convertToMinutes(duration);
+    return durationInMinutes >= time;
   }
 
-  function convertToSeconds(duration) {
-    const [hours, minutes, seconds] = duration.split(":");
-    const totalSeconds =
-      parseInt(hours) * 3600 + parseInt(minutes) * 60 + parseInt(seconds);
-    return totalSeconds;
+  function convertToMinutes(duration) {
+    if (!duration) return 0;
+    const [hours, minutes] = duration.split(":");
+    return parseInt(hours) * 60 + parseInt(minutes);
+  }
+
+  function formatMinutesToHours(totalMinutes) {
+    
+    if (!totalMinutes && totalMinutes !== 0) return "N/A";
+    
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+    
+    return `${hours}h ${minutes}m`;
   }
 
   return (
@@ -149,31 +180,25 @@ const TaskRecord = () => {
                   key={rec?.id}
                   className={index % 2 === 0 ? "bg-white" : "bg-gray-200/50"}
                 >
-                  {console.log("usertask&&&&&&&&&&&&&&", record)}
+                  
                   <td className="border px-1 py-2">{index + 1}</td>
+                  <td className="border px-1 py-2">{rec?.project?.name}</td>
+                  <td className="border px-1 py-2">{rec?.name}</td>
                   <td className="border px-1 py-2">
-                    {rec?.task?.project?.name}
-                  </td>
-                  <td className="border px-1 py-2">{rec?.task?.name}</td>
-                  <td className="border px-1 py-2">
-                    {new Date(rec?.task?.due_date).toDateString()}
+                    {new Date(rec?.start_date).toDateString()}
                   </td>
                   <td className="border px-1 py-2">
-                    {new Date(rec?.task?.due_date).toDateString()}
+                    {new Date(rec?.due_date).toDateString()}
                   </td>
                   <td className="border px-1 py-2">
-                    {durToHour(rec?.task?.duration)}
+                    {durToHour(rec?.duration)}
                   </td>
                   <td
-                    className={`border px-1 py-2 ${
-                      compare(rec?.task?.duration, rec?.time_taken)
-                        ? "text-green-600"
-                        : "text-red-600"
-                    }`}
+                    className={`border px-1 py-2 `}
                   >
-                    {secToHour(rec?.time_taken)}
+                    {formatMinutesToHours(workHours[rec?.id])}
                   </td>
-                  <td className="border px-1 py-2">{rec?.task?.status}</td>
+                  <td className="border px-1 py-2">{rec?.status}</td>
                 </tr>
               ))
             )}

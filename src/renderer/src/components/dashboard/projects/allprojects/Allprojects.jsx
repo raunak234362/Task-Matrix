@@ -54,14 +54,14 @@ const AllProjects = () => {
     return (
       project?.name?.toLowerCase().includes(searchTerm?.toLowerCase()) &&
       (statusFilter === "" || project.status === statusFilter) &&
-      (fabricatorFilter === "" || project.fabricator.name === fabricatorFilter)
+      (fabricatorFilter === "" || project.fabricator.fabName === fabricatorFilter)
     );
   });
 
   // console.log(filteredProjects)
   // Get unique fabricator names for the filter dropdown.
   const uniqueFabricators = [
-    ...new Set(projects?.map((project) => project?.fabricator?.name)),
+    ...new Set(projects?.map((project) => project?.fabricator?.fabName)),
   ];
 
   const handleViewClick = async (projectID) => {
@@ -74,21 +74,23 @@ const AllProjects = () => {
     setIsModalOpen(false);
   };
 
+  console.log(filteredProjects)
+
   return (
     <div className="bg-white/70 rounded-lg md:w-full w-[90vw] p-4">
       {/* Search and Filter Section */}
-      <div className="flex flex-col md:flex-row gap-4 mb-4">
+      <div className="flex flex-col gap-4 mb-4 md:flex-row">
         <input
           type="text"
           placeholder="Search by project name..."
           value={searchTerm}
           onChange={handleSearch}
-          className="px-4 py-2 border rounded-md w-full md:w-1/4"
+          className="w-full px-4 py-2 border rounded-md md:w-1/4"
         />
         <select
           value={statusFilter}
           onChange={handleStatusFilter}
-          className="px-4 py-2 border rounded-md w-full md:w-1/4"
+          className="w-full px-4 py-2 border rounded-md md:w-1/4"
         >
           <option value="">All Status</option>
           <option value="ASSIGNED">ASSIGNED</option>
@@ -101,7 +103,7 @@ const AllProjects = () => {
         <select
           value={fabricatorFilter}
           onChange={handleFabricatorFilter}
-          className="px-4 py-2 border rounded-md w-full md:w-1/4"
+          className="w-full px-4 py-2 border rounded-md md:w-1/4"
         >
           <option value="">All Fabricators</option>
           {uniqueFabricators?.map((fabricator) => (
@@ -118,7 +120,7 @@ const AllProjects = () => {
           <thead>
             <tr className="bg-teal-200/70">
               <th
-                className="px-2 py-1 cursor-pointer text-left"
+                className="px-2 py-1 text-left cursor-pointer"
                 onClick={() => handleSort("fabricator")}
               >
                 Fabricator Name{" "}
@@ -171,20 +173,20 @@ const AllProjects = () => {
             ) : (
               filteredProjects?.map((project, index) => (
                 <tr key={project.id} className={index % 2 === 0 ? "hover:bg-blue-100 border":"bg-gray-100"}>
-                  <td className="border px-2 py-1 text-left">
-                    {project.fabricator.name}
+                  <td className="px-2 py-1 text-left border">
+                    {project.fabricator.fabName}
                   </td>
-                  <td className="border px-2 py-1 text-left">{project.name}</td>
-                  <td className="border px-2 py-1">{project.status}</td>
-                  <td className="border px-2 py-1">
+                  <td className="px-2 py-1 text-left border">{project.name}</td>
+                  <td className="px-2 py-1 border">{project.status}</td>
+                  <td className="px-2 py-1 border">
                     {" "}
                     {new Date(project.startDate).toDateString()}
                   </td>
-                  <td className="border px-2 py-1">
+                  <td className="px-2 py-1 border">
                     {" "}
                     {new Date(project.endDate).toDateString()}
                   </td>
-                  <td className="border px-2 py-1">
+                  <td className="px-2 py-1 border">
                     <Button onClick={() => handleViewClick(project.id)}>
                       View
                     </Button>
