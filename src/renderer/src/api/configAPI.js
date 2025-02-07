@@ -131,6 +131,7 @@ class Service {
           "Content-Type": "application/json",
         },
       });
+      console.log(response?.data)
       return response?.data?.data;
     } catch (error) {
       console.log("Error in getting Project List: ", error);
@@ -164,7 +165,6 @@ class Service {
         },
       });
       const data = await response.json();
-      console.log("My Task: ", data);
       return data;
     } catch (error) {
       console.log("Error in getting Task: ", error);
@@ -198,7 +198,6 @@ class Service {
           "Content-Type": "application/json",
         },
       });
-      console.log("Task: ", response?.data?.data);
       return response?.data?.data?.task;
     } catch (error) {
       console.log("Error in getting Task: ", error);
@@ -214,7 +213,6 @@ class Service {
           "Content-Type": "application/json",
         },
       });
-      console.log(response?.data);
       return response?.data?.data;
     } catch (error) {
       console.log("Error in getting Task: ", error);

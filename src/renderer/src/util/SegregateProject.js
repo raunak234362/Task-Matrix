@@ -17,8 +17,7 @@ async function SegregateProject(projects) {
     const result = {};
 
     await projects?.forEach((project) => {
-        // console.log('segrate data-------',project)
-        const fabricatorName = project?.fabricator?.name;
+        const fabricatorName = project?.fabricator?.fabName;
         const stage = project?.stage;
         const projectName = project?.name; // Assuming `project` has a `name` property
         // console.log('segrated data-------',projectName )

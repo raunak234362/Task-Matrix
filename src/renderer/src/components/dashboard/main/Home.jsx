@@ -13,8 +13,6 @@ import { showFabricator } from "../../../store/fabricatorSlice";
 
 const Home = () => {
   const userType = sessionStorage.getItem("userType");
-  const [fabricator, setFabricator] = useState(null);
-  const [project, setProject] = useState(null);
   const [team, setTeam] = useState([]);
   const [segregateProject, setSegregateProject] = useState({});
   const token = sessionStorage.getItem("token");
@@ -22,9 +20,8 @@ const Home = () => {
   const dispatch = useDispatch();
 
   const projects = useSelector((state) => state?.projectData?.projectData);
-  console.log(projects)
+  console.log(projects);
   const tasks = useSelector((state) => state?.taskData?.taskData);
-  console.log("Task data",tasks);
   const users = useSelector((state) => state?.userData?.staffData);
   const fabricators = useSelector(
     (state) => state?.fabricatorData?.fabricatorData,
@@ -33,69 +30,12 @@ const Home = () => {
   // console.log(teams)
 
   useEffect(() => {
-    if(projects){
-      const segregatedProjects = SegregateProject(projects);
+    const segregateProject = async () => {
+      const segregatedProjects = await SegregateProject(projects);
       setSegregateProject(segregatedProjects);
-    }
-  }, [projects, tasks, users, fabricators, teams]);
-
-  // useEffect(() => {
-  //   const fetchProjects = async () => {
-  //     try {
-  //       const projectsData = await Service.getAllProject(token);
-  //       dispatch(showProjects(projectsData));
-  //       const segregatedProjects = await SegregateProject(projectsData);
-  //       setSegregateProject(segregatedProjects);
-  //     } catch (error) {
-  //       console.error("Error fetching projects:", error);
-  //     }
-  //   };
-
-  //   const fetchTasks = async () => {
-  //     try {
-  //       const tasksData = await Service.getAllTask(token);
-  //       dispatch(showTask(tasksData));
-  //     } catch (error) {
-  //       console.error("Error fetching tasks:", error);
-  //     }
-  //   };
-
-  //   const fetchUsers = async () => {
-  //     try {
-  //       const usersData = await Service.getAllUser(token);
-  //       dispatch(showStaff(usersData));
-  //       // setUsers(usersData)
-  //     } catch (error) {
-  //       console.error("Error fetching users:", error);
-  //     }
-  //   };
-
-  //   const fetchFabricators = async () => {
-  //     try {
-  //       const fabricatorsData = await Service.getAllFabricator(token);
-  //       dispatch(showFabricator(fabricatorsData));
-  //     } catch (error) {
-  //       console.error("Error fetching fabricators:", error);
-  //     }
-  //   };
-
-  //   const fetchTeam = async () => {
-  //     try {
-  //       const teamData = await Service.getAllTeam(token);
-  //       // console.log(teamData)
-  //       dispatch(showTeam(teamData));
-  //       // setTeam(teamData)
-  //     } catch (error) {
-  //       console.error("Error fetching team:", error);
-  //     }
-  //   };
-
-  //   fetchTeam();
-  //   fetchTasks();
-  //   fetchUsers();
-  //   fetchProjects();
-  //   fetchFabricators();
-  // }, [token]);
+    };
+    segregateProject();
+  }, []);
 
   return (
     <div className="w-full h-[89vh] overflow-y-hidden mx-5">
@@ -106,7 +46,7 @@ const Home = () => {
       </div>
       <div className="h-[85vh] mt-2 overflow-y-auto">
         <div className="grid grid-cols-1 gap-6 px-2 my-6 md:grid-cols-2 lg:grid-cols-5">
-        {/* {(userType === "manager" || userType=== "admin") ? (
+          {/* {(userType === "manager" || userType=== "admin") ? (
             <div className="flex flex-col items-center p-2 text-center text-gray-800 bg-gray-200 rounded-lg shadow-md">
               <NavLink to="/admin/fabricator">
                 <span className="text-4xl font-bold text-gray-900">
@@ -136,7 +76,7 @@ const Home = () => {
               <p className="mt-2 text-xl font-semibold">Total No. of Tasks</p>
             </NavLink>
           </div>
-          {(userType === "manager" || userType=== "admin") ? (
+          {userType === "manager" || userType === "admin" ? (
             <div className="flex flex-col items-center p-2 text-center text-gray-800 bg-green-200 rounded-lg shadow-md">
               <NavLink to="/admin/user">
                 <span className="text-4xl font-bold text-gray-900">
@@ -146,7 +86,7 @@ const Home = () => {
               </NavLink>
             </div>
           ) : null}
-          {(userType === "manager" || userType=== "admin") ? (
+          {userType === "manager" || userType === "admin" ? (
             <div className="flex flex-col items-center p-2 text-center text-gray-800 bg-gray-200 rounded-lg shadow-md">
               <NavLink to="/admin/project/manage-team">
                 <span className="text-4xl font-bold text-gray-900">
@@ -167,8 +107,8 @@ const Home = () => {
           <div className="p-6 bg-white rounded-lg shadow-lg ">
             <BarViews
               segregateProject={segregateProject}
-              setProject={setProject}
-              setFabricator={setFabricator}
+              setProject={projects}
+              setFabricator={fabricators}
             />
           </div>
 

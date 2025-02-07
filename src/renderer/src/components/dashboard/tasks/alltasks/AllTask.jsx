@@ -259,6 +259,8 @@ const AllTask = () => {
     }
   };
 
+  console.log("PROJECT DATA_____", projectData)
+
   return (
     <div>
       <div className="table-container h-[80vh] w-full rounded-lg">

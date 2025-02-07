@@ -6,6 +6,7 @@ import Service from "../../../api/configAPI";
 import { Button, Input, CustomSelect } from "../../index";
 import { useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
+import { toast } from "react-toastify";
 
 const Task = ({ taskId, setDisplay }) => {
   const work_id = sessionStorage.getItem("work_id");
@@ -13,7 +14,7 @@ const Task = ({ taskId, setDisplay }) => {
   const [workHours, setWorkHours] = useState(null);
   const userType = sessionStorage.getItem("userType");
   const username = sessionStorage.getItem("username");
-  const [workdata, setWorkData] = useState({})
+  const [workdata, setWorkData] = useState({});
   const [teamMember, setTeamMember] = useState([]);
   const [color, setColor] = useState("");
   const [showProjectDetail, setShowProjectDetail] = useState(false);
@@ -51,13 +52,13 @@ const Task = ({ taskId, setDisplay }) => {
     const fetchWorkId = async () => {
       const workHour = await Service.getWorkHours(taskId);
       console.log("Work Hour: ", workHour);
-      setWorkData(workHour)
+      setWorkData(workHour);
       setWorkHours(workHour);
     };
     fetchWorkId();
   }, [taskId]);
 
-  console.log(tasks)
+  console.log(tasks);
 
   console.log("Work Hours: ", workHours);
 
@@ -175,10 +176,13 @@ const Task = ({ taskId, setDisplay }) => {
     try {
       const accept = await Service.startTask(taskID);
       alert("Task Accepted");
-      // console.log("Accepted Task: ", accept);
-
+      toast.success("Task Accepted");
       sessionStorage.setItem("work_id", accept.data.id);
+      setTasks((prev) => {
+        return { ...prev, status: "IN PROGRESS" };
+      });
     } catch (error) {
+      toast.error("Error in accepting task");
       console.log("Error in accepting task: ", error);
     }
   }
@@ -189,8 +193,10 @@ const Task = ({ taskId, setDisplay }) => {
       const pause = await Service.pauseTask(taskId, ev?.target?.value);
       // console.log("Paused Task: ", pause);
       alert("Tasked Paused");
+      toast.success("Task Paused");
       fetchTask();
     } catch (error) {
+      toast.error("Error in pausing task");
       console.log("Error in pausing task: ", error);
     }
   }
@@ -201,8 +207,10 @@ const Task = ({ taskId, setDisplay }) => {
       const resume = await Service.resumeTask(taskID, ev?.target?.value);
       // console.log("Resumed Task: ", resume);
       alert("Tasked Resumed");
+      toast.success("Task Resumed");
       fetchTask();
     } catch (error) {
+      toast.error("Error in resuming task");
       console.log("Error in resuming task: ", error);
     }
   }
@@ -213,8 +221,10 @@ const Task = ({ taskId, setDisplay }) => {
       const end = await Service.endTask(taskID, ev?.target?.value);
       console.log("End Task: ", end);
       alert("Tasked Ended");
+      toast.success("Task Ended");
       fetchTask();
     } catch (error) {
+      toast.error("Error in ending task");
       console.log("Error in ending task: ", error);
     }
   }
@@ -395,7 +405,8 @@ const Task = ({ taskId, setDisplay }) => {
                       </div>
                       <div>
                         {tasks?.status === "ASSINGED" ||
-                        tasks?.status === "ON HOLD"  || workdata.id === undefined ? (
+                        tasks?.status === "ON HOLD" ||
+                        workdata.id === undefined ? (
                           <>
                             <Button
                               className="flex items-center justify-center font-semibold bg-green-500 rounded-full w-28 hover:bg-green-800"
@@ -678,15 +689,7 @@ const Task = ({ taskId, setDisplay }) => {
                           placeholder="Add Comment"
                           {...register("comment")}
                         />
-                        <Input
-                          label="Upload file/document"
-                          name="file"
-                          className="w-full px-4 py-3 leading-tight text-gray-700 border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-green-500 peer"
-                          type="file"
-                          id="file"
-                          accept=".pdf, image/*"
-                          {...register("files")}
-                        />
+
                         <Button type="submit">Add Comment</Button>
                       </div>
                     </div>
@@ -712,21 +715,6 @@ const Task = ({ taskId, setDisplay }) => {
                                   day: "numeric",
                                 })}
                               </span>
-                            </div>
-                            <div className="text-gray-600">
-                              <div>{comment?.data} </div>
-                              {comment?.file && (
-                                <div>
-                                  <a
-                                    href={comment?.file}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="text-blue-500 hover:text-blue-700"
-                                  >
-                                    View File
-                                  </a>
-                                </div>
-                              )}
                             </div>
                           </div>
                         ))}
