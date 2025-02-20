@@ -3,7 +3,7 @@
 /* eslint-disable no-unused-vars */
 import { Provider, useDispatch, useSelector } from "react-redux";
 import store from "./store/store";
-
+import { ToastContainer } from "react-toastify";
 import { useCallback, useEffect, useState } from "react";
 import { Header, Sidebar } from "./components/index";
 import { Outlet, useNavigate } from "react-router-dom";
@@ -30,7 +30,6 @@ const App = () => {
   );
   const teams = useSelector((state) => state?.projectData?.teamData);
 
-    
   const userType = sessionStorage.getItem("userType");
 
   const toggleSidebar = useCallback(() => {
@@ -43,7 +42,7 @@ const App = () => {
       dispatch(setUserData(user));
       try {
         const projectsData = await Service.getAllProject(token);
-        console.log(projectsData)
+        console.log(projectsData);
         dispatch(showProjects(projectsData));
         const tasksData = await Service.getAllTask(token);
         dispatch(showTask(tasksData));
@@ -60,14 +59,13 @@ const App = () => {
     };
 
     fetchUser();
-  }, [dispatch]); 
-
+  }, [dispatch]);
 
   return (
     <Provider store={store}>
+      <ToastContainer />
       <div className="flex flex-col w-screen h-screen overflow-hidden md:flex-row bg-gradient-to-r from-green-300/50 to-teal-300">
         {/* Sidebar */}
-
 
         <div className="flex flex-col w-full">
           <div className="mx-5 my-2 shadow-2xl drop-shadow-lg">

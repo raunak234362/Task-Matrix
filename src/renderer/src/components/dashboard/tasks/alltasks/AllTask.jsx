@@ -79,10 +79,10 @@ const AllTask = () => {
   function formatMinutesToHours(totalMinutes) {
     console.log("totalMinutes: ", totalMinutes);
     if (!totalMinutes && totalMinutes !== 0) return "N/A";
-    
+
     const hours = Math.floor(totalMinutes / 60);
     const minutes = totalMinutes % 60;
-    
+
     return `${hours}h ${minutes}m`;
   }
 
@@ -181,13 +181,25 @@ const AllTask = () => {
   });
 
   const filteredTasks = sortedTasks.filter((task) => {
-    return (
-      (task.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        task.user?.name.toLowerCase().includes(searchTerm.toLowerCase())) &&
-      (statusFilter === "" || task.status === statusFilter) &&
-      (projectFilter === "" || task.project?.name === projectFilter) &&
-      (toolFilter === "" || task.project?.tool === toolFilter)
-    );
+    if (
+      task.user_id === useSelector((state) => state?.userData?.userData?.id)
+    ) {
+      return (
+        (task.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          task.user?.name.toLowerCase().includes(searchTerm.toLowerCase())) &&
+        (statusFilter === "" || task.status === statusFilter) &&
+        (projectFilter === "" || task.project?.name === projectFilter) &&
+        (toolFilter === "" || task.project?.tool === toolFilter)
+      );
+    } else if (useSelector((state) => state?.userData?.userData?.is_superuser)) { 
+      return (
+        (task.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          task.user?.name.toLowerCase().includes(searchTerm.toLowerCase())) &&
+        (statusFilter === "" || task.status === statusFilter) &&
+        (projectFilter === "" || task.project?.name === projectFilter) &&
+        (toolFilter === "" || task.project?.tool === toolFilter)
+      );
+    }
   });
 
   const uniqueProject = [
@@ -258,8 +270,7 @@ const AllTask = () => {
         break;
     }
   };
-
-  console.log("PROJECT DATA_____", projectData)
+  console.log("TASKS:", tasks);
 
   return (
     <div>
@@ -283,7 +294,7 @@ const AllTask = () => {
                 <option value="ASSINGED">ASSIGNED</option>
                 <option value="IN-PROGRESS">IN PROGRESS</option>
                 <option value="ON-HOLD">ON-HOLD</option>
-                <option value="BREAK">BREAK</option>
+                <option value="sBREAK">BREAK</option>
                 <option value="IN-REVIEW">IN REVIEW</option>
                 <option value="COMPLETE">COMPLETED</option>
               </select>
@@ -302,7 +313,7 @@ const AllTask = () => {
               <select
                 value={toolFilter}
                 onChange={handleToolsFilter}
-                className="px-4 py-2 border rounded-md w-full md:w-1/4"
+                className="w-full px-4 py-2 border rounded-md md:w-1/4"
               >
                 <option value="">All Tools</option>
                 <option value="TEKLA">Tekla</option>
@@ -458,7 +469,15 @@ const AllTask = () => {
                           {durToHour(task?.duration)}
                         </td>
                         <td className="px-1 py-2 border">
-                        {formatMinutesToHours(task?.workingHourTask?.map((rec) => rec?.duration))}
+                          {formatMinutesToHours(
+                            task?.workingHourTask?.find(
+                              (rec) =>
+                                rec.user_id ===
+                                useSelector(
+                                  (state) => state?.userData?.userData?.id,
+                                ),
+                            )?.duration,
+                          )}
                         </td>
 
                         <td className="flex justify-center px-1 py-2 border">

@@ -91,8 +91,9 @@ handleApproveModalClose();
 useEffect(() => {
 const fetchAssigneeTasks = async () => {
     try {
-    const assignee = await Service.getAssignee();
-    setAssigneeTask(assignee);
+        const assignee = await Service.getAssignee();
+    console.log("Assignee Tasks:", assignee);
+    setAssigneeTask(assignee.data);
     console.log("Assignee Tasks:", assignee);
     } catch (error) {
     console.log("Error fetching tasks:", error);
@@ -141,34 +142,34 @@ switch (value) {
 
 return (
 <div className="h-[70vh]">
-    <div className="shadow-xl rounded-lg w-full p-5 bg-gray-50">
+    <div className="w-full p-5 rounded-lg shadow-xl bg-gray-50">
     <div className="h-[75vh] overflow-y-auto">
-    <table className="w-full table-auto border-collapse text-center rounded-xl">
+    <table className="w-full text-center border-collapse table-auto rounded-xl">
     <thead className="sticky top-0 bg-gray-200">
             <tr>
-            <th className="py-3 px-6 text-left">S.No</th>
-            <th className="py-3 px-6 text-left">Task</th>
-            <th className="py-3 px-6 text-left">Task Priority</th>
-            <th className="py-3 px-6 text-left">Assigned By</th>
-            <th className="py-3 px-6 text-left">Assigned To</th>
-            <th className="py-3 px-6 text-left">Assigned On</th>
-            <th className="py-3 px-6 text-left">Approved By</th>
-            <th className="py-3 px-6 text-left">Approved On</th>
-            <th className="py-3 px-6 text-left">Action</th>
+            <th className="px-6 py-3 text-left">S.No</th>
+            <th className="px-6 py-3 text-left">Task</th>
+            <th className="px-6 py-3 text-left">Task Priority</th>
+            <th className="px-6 py-3 text-left">Assigned By</th>
+            <th className="px-6 py-3 text-left">Assigned To</th>
+            <th className="px-6 py-3 text-left">Assigned On</th>
+            <th className="px-6 py-3 text-left">Approved By</th>
+            <th className="px-6 py-3 text-left">Approved On</th>
+            <th className="px-6 py-3 text-left">Action</th>
             </tr>
         </thead>
-        <tbody className="text-gray-600 text-sm font-medium">
+        <tbody className="text-sm font-medium text-gray-600">
             {assigneeTask.map((task, index) => (
             <tr key={task.id} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-200/50'}>
-                <td className="py-3 px-6 text-left whitespace-nowrap">
+                <td className="px-6 py-3 text-left whitespace-nowrap">
                 {index + 1}
                 </td>
-                <td className="py-3 px-6 text-left">
+                <td className="px-6 py-3 text-left">
                 <button onClick={() => handleViewClick(task.id)}>
                     {task?.task?.name}
                 </button>
                 </td>
-                <td className="py-3 px-6 text-left">
+                <td className="px-6 py-3 text-left">
                 <span
                     className={`text-sm text-center font-semibold px-3 py-0.5 mx-2 rounded-full border ${color(
                     task?.task?.priority
@@ -177,21 +178,21 @@ return (
                     {setPriorityValue(task?.task?.priority)}
                 </span>
                 </td>
-                <td className="py-3 px-6 text-left">
-                {task?.assigned_by?.name}
+                <td className="px-6 py-3 text-left">
+                {task?.users.username}
                 </td>
-                <td className="py-3 px-6 text-left">
-                {task?.assigned_to?.name}
+                <td className="px-6 py-3 text-left">
+                        {task?.userss.username}
                 </td>
-                <td className="py-3 px-6 text-left">
+                <td className="px-6 py-3 text-left">
                 {new Date(task?.assigned_on).toDateString()}
                 </td>
-                <td className="py-3 px-6 text-left">
+                <td className="px-6 py-3 text-left">
                 {task?.approved_by?.name || (
                     <span className="text-red-500">Yet Not Approved</span>
                 )}
                 </td>
-                <td className="py-3 px-6 text-left">
+                <td className="px-6 py-3 text-left">
                 {task?.approved_on ? (
                     new Date(task?.approved_on).toDateString()
                 ) : (
@@ -200,11 +201,11 @@ return (
                 </td>
                 {(userType === "admin" ||
                 username === task?.task?.project?.manager?.username) && (
-                <td className="py-3 px-6 text-left">
+                <td className="px-6 py-3 text-left">
                     <button
                     onClick={() => handleApproveClick(task.id)}
                     className={`${
-                        task?.approved_on
+                        task?.approved
                         ? "bg-gray-300 text-gray-700"
                         : "bg-green-300 text-green-900"
                     } px-2 py-0.5 rounded-full`}

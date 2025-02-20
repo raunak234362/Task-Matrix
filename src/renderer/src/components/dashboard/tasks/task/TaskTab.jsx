@@ -26,45 +26,45 @@ const TaskTab = () => {
 
   const userType = sessionStorage.getItem("userType");
   return (
-    <div className="w-full h-full overflow-y-hidden mx-5">
-      <div className="flex w-full justify-center items-center">
-        <div className="text-3xl font-bold text-white bg-green-500/70 shadow-xl px-5 py-1 mt-2 rounded-lg">
+    <div className="w-full h-full mx-5 overflow-y-hidden">
+      <div className="flex items-center justify-center w-full">
+        <div className="px-5 py-1 mt-2 text-3xl font-bold text-white rounded-lg shadow-xl bg-green-500/70">
           Task
         </div>
       </div>
       <div className="overflow-y-hidden">
-        <div className="my-5 grid md:grid-cols-3 lg:grid-cols-6 grid-cols-2 gap-5">
-          <div className="flex flex-col justify-center items-center bg-white/50 rounded-lg p-3 shadow-lg">
-            <div className="font-bold text-xl text-gray-800">Total Tasks</div>
+        <div className="grid grid-cols-2 gap-5 my-5 md:grid-cols-3 lg:grid-cols-6">
+          <div className="flex flex-col items-center justify-center p-3 rounded-lg shadow-lg bg-white/50">
+            <div className="text-xl font-bold text-gray-800">Total Tasks</div>
             <div className="text-3xl font-bold">{tasks.length}</div>
           </div>
-          <div className="flex flex-col justify-center items-center bg-white/50 rounded-lg p-3 shadow-lg">
-            <div className="font-bold text-xl text-gray-800">
+          <div className="flex flex-col items-center justify-center p-3 rounded-lg shadow-lg bg-white/50">
+            <div className="text-xl font-bold text-gray-800">
               No. of Completed Tasks
             </div>
             <div className="text-3xl font-bold">{completedTaskCount}</div>
           </div>
-          <div className="flex flex-col justify-center items-center bg-white/50 rounded-lg p-3 shadow-lg">
-            <div className="font-bold text-xl text-gray-800">
+          <div className="flex flex-col items-center justify-center p-3 rounded-lg shadow-lg bg-white/50">
+            <div className="text-xl font-bold text-gray-800">
               No. of In-Progress Tasks
             </div>
             <div className="text-3xl font-bold">{activeTaskCount}</div>
           </div>
-          <div className="flex flex-col justify-center items-center bg-white/50 rounded-lg p-3 shadow-lg">
-            <div className="font-bold text-xl text-gray-800">
+          <div className="flex flex-col items-center justify-center p-3 rounded-lg shadow-lg bg-white/50">
+            <div className="text-xl font-bold text-gray-800">
               No. of Assigned Tasks
             </div>
             <div className="text-3xl font-bold">{assignedTaskCount}</div>
           </div>
-          <div className="flex flex-col justify-center items-center bg-white/50 rounded-lg p-3 shadow-lg">
-            <div className="font-bold text-xl text-gray-800">
+          <div className="flex flex-col items-center justify-center p-3 rounded-lg shadow-lg bg-white/50">
+            <div className="text-xl font-bold text-gray-800">
               No. of In-Break Tasks
             </div>
             <div className="text-3xl font-bold">{breakTaskCount}</div>
           </div>
 
-          <div className="flex flex-col justify-center items-center bg-white/50 rounded-lg p-3 shadow-lg">
-            <div className="font-bold text-xl text-gray-800">
+          <div className="flex flex-col items-center justify-center p-3 rounded-lg shadow-lg bg-white/50">
+            <div className="text-xl font-bold text-gray-800">
               No. of In-Review Tasks
             </div>
             <div className="text-3xl font-bold">{inReviewTaskCount}</div>
@@ -76,8 +76,8 @@ const TaskTab = () => {
           className={`overflow-y-auto h-[75vh] rounded-lg bg-white md:text-lg text-sm`}
         >
           <div className=" bg-teal-100 rounded-lg md:w-full w-[90vw]">
-            <nav className="px-5 drop-shadow-md text-center">
-              <ul className="flex items-center justify-evenly gap-10 py-1 text-center">
+            <nav className="px-5 text-center drop-shadow-md">
+              <ul className="flex items-center gap-10 py-1 text-center justify-evenly">
                 <li className="px-2">
                   <NavLink
                     to="my-task"

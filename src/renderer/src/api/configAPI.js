@@ -462,13 +462,13 @@ class Service {
   static async getAssignee() {
     const token = sessionStorage.getItem("token");
     try {
-      const response = await api.get(`/api/task/assigned-list/`, {
+      const response = await api.get(`/api/task/get_assigned-list/`, {
         headers: {
-          Authorization: `Token ${token}`,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       });
-      const data = await response.json();
+      const data = await response.data;
       console.log("Assignee: ", data);
       return data;
     } catch (error) {

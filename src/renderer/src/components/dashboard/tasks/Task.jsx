@@ -6,12 +6,13 @@ import Service from "../../../api/configAPI";
 import { Button, Input, CustomSelect } from "../../index";
 import { useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
-import { toast } from "react-toastify";
+  import { toast } from "react-toastify";
 import { BASE_URL } from "../../../config/constant";
 
 const Task = ({ taskId, setDisplay }) => {
   const work_id = sessionStorage.getItem("work_id");
   const [tasks, setTasks] = useState();
+
   const [workHours, setWorkHours] = useState(null);
   const userType = sessionStorage.getItem("userType");
   const username = sessionStorage.getItem("username");
@@ -36,7 +37,11 @@ const Task = ({ taskId, setDisplay }) => {
 
   const userData = useSelector((state) => state?.userData?.userData);
   const staffs = useSelector((state) => state?.userData?.staffData);
-  const projectData = useSelector((state) => state?.projectData?.projectData?.find((project) => project.id === tasks?.project_id));
+  const projectData = useSelector((state) =>
+    state?.projectData?.projectData?.find(
+      (project) => project.id === tasks?.project_id,
+    ),
+  );
   const fetchTask = useCallback(async () => {
     try {
       const taskData = await Service.getTaskById(taskId);
@@ -98,7 +103,7 @@ const Task = ({ taskId, setDisplay }) => {
       2: "bg-purple-200 border-purple-800 text-purple-800",
       3: "bg-red-200 border-red-700 text-red-700",
     };
-    setColor(colors[priority] || "");
+    setColor(colors[priority] || "")
   };
 
   const getPriorityLabel = (value) => {
@@ -171,16 +176,24 @@ const Task = ({ taskId, setDisplay }) => {
     setShowFabricatorDetail(!showFabricatorDetail);
   };
 
+  console.log(tasks);
+
   async function handleStart() {
     const taskID = tasks?.id;
     try {
       const accept = await Service.startTask(taskID);
-      alert("Task Accepted");
-      toast.success("Task Accepted");
-      sessionStorage.setItem("work_id", accept.data.id);
       setTasks((prev) => {
-        return { ...prev, status: "IN PROGRESS" };
+        return {
+          ...prev,
+          status: "IN PROGRESS",
+        };
       });
+      console.log( {
+          ...tasks,
+          status: "IN PROGRESS",
+        })
+      toast.success("Task Started");
+      sessionStorage.setItem("work_id", accept.data.id);
     } catch (error) {
       toast.error("Error in accepting task");
       console.log("Error in accepting task: ", error);
@@ -192,7 +205,12 @@ const Task = ({ taskId, setDisplay }) => {
     try {
       const pause = await Service.pauseTask(taskId, ev?.target?.value);
       // console.log("Paused Task: ", pause);
-      alert("Tasked Paused");
+       setTasks((prev) => {
+         return {
+           ...prev,
+           status: "BREAK",
+         };
+       });
       toast.success("Task Paused");
       fetchTask();
     } catch (error) {
@@ -206,7 +224,12 @@ const Task = ({ taskId, setDisplay }) => {
     try {
       const resume = await Service.resumeTask(taskID, ev?.target?.value);
       // console.log("Resumed Task: ", resume);
-      alert("Tasked Resumed");
+       setTasks((prev) => {
+         return {
+           ...prev,
+           status: "IN PROGRESS",
+         };
+       });
       toast.success("Task Resumed");
       fetchTask();
     } catch (error) {
@@ -220,9 +243,8 @@ const Task = ({ taskId, setDisplay }) => {
     try {
       const end = await Service.endTask(taskID, ev?.target?.value);
       console.log("End Task: ", end);
-      alert("Tasked Ended");
       toast.success("Task Ended");
-      fetchTask();
+      fetchTask();  
     } catch (error) {
       toast.error("Error in ending task");
       console.log("Error in ending task: ", error);
@@ -249,7 +271,6 @@ const Task = ({ taskId, setDisplay }) => {
       console.error("Error in adding comment:", error);
     }
   };
-
   // For Assign Form
   const handleAddAssign = async (assigneedata) => {
     const assigned_to = assigneedata?.assigned_to;
@@ -549,7 +570,7 @@ const Task = ({ taskId, setDisplay }) => {
                         <CustomSelect
                           label="Select Assignee"
                           options={teamMember}
-                          className="h-10  80"
+                          className="h-10 80"
                           {...register("assigned_to")}
                           onChange={setValue}
                         />
@@ -616,7 +637,7 @@ const Task = ({ taskId, setDisplay }) => {
                         //     <span>{endDate?.toDateString()}</span>
                         //   </div>
                         // </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 overflow-x-hidden overflow-y-hidden">
+                        <div className="grid grid-cols-1 gap-6 overflow-x-hidden overflow-y-hidden md:grid-cols-2">
                           {[
                             {
                               label: "Description",
@@ -766,7 +787,7 @@ const Task = ({ taskId, setDisplay }) => {
                     </div>
                   </form>
                   {tasks?.taskcomment?.length > 0 && (
-                    <div className="p-5 rounded-lg shadow-xl  bg-gray-100/70">
+                    <div className="p-5 rounded-lg shadow-xl bg-gray-100/70">
                       <div className="space-y-4">
                         {tasks?.taskcomment?.map((comment, index) => (
                           <div
