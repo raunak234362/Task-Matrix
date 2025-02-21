@@ -605,38 +605,7 @@ const Task = ({ taskId, setDisplay }) => {
                         </span>
                       </div>
                       {showProjectDetail && (
-                        // <div className="ml-8 space-y-4">
-                        //   <div className="flex items-center">
-                        //     <span className="w-40 font-bold text-gray-800">
-                        //       Project Team:
-                        //     </span>{" "}
-                        //     <span>{tasks?.project?.team?.name}</span>
-                        //   </div>
-                        //   <div className="flex items-center">
-                        //     <span className="w-40 font-bold text-gray-800">
-                        //       Project Description:
-                        //     </span>{" "}
-                        //     <span>{tasks?.project?.description}</span>
-                        //   </div>
-                        //   <div className="flex items-center">
-                        //     <span className="w-40 font-bold text-gray-800">
-                        //       Project Stage:
-                        //     </span>{" "}
-                        //     <span>{tasks?.project?.stage}</span>
-                        //   </div>
-                        //   <div className="flex items-center">
-                        //     <span className="w-40 font-bold text-gray-800">
-                        //       Project Status:
-                        //     </span>{" "}
-                        //     <span>{tasks?.project?.status}</span>
-                        //   </div>
-                        //   <div className="flex items-center">
-                        //     <span className="w-40 font-bold text-gray-800">
-                        //       Project Approval Date:
-                        //     </span>{" "}
-                        //     <span>{endDate?.toDateString()}</span>
-                        //   </div>
-                        // </div>
+                       
                         <div className="grid grid-cols-1 gap-6 overflow-x-hidden overflow-y-hidden md:grid-cols-2">
                           {[
                             {
@@ -674,19 +643,7 @@ const Task = ({ taskId, setDisplay }) => {
                               label: "Project Manager",
                               value: projectData?.manager?.f_name,
                             },
-                            // {
-                            //   label: "Files",
-                            //   value: Array.isArray(projectData?.files)
-                            //     ? projectData?.files.map((file, index) => (
-                            //         <Button
-                            //           key={index}
-                            //           onClick={() => fetchFileAndOpen(file.id)} // Open file in a new tab
-                            //         >
-                            //           {file.originalName || `File ${index + 1}`}
-                            //         </Button>
-                            //       ))
-                            //     : "Not available",
-                            // },
+                            
                             {
                               label: "Files",
                               value: Array.isArray(projectData?.files)
@@ -796,7 +753,7 @@ const Task = ({ taskId, setDisplay }) => {
                           >
                             <div className="flex items-center mb-2">
                               <span className="font-bold text-gray-800">
-                                {comment?.user?.name}
+                                {comment?.data}
                               </span>
                               <span className="ml-2 text-sm text-gray-500">
                                 {new Date(

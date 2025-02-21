@@ -470,12 +470,12 @@ const AllTask = () => {
                         </td>
                         <td className="px-1 py-2 border">
                           {formatMinutesToHours(
-                            task?.workingHourTask?.find(
-                              (rec) =>
-                                rec.user_id ===
-                                useSelector(
-                                  (state) => state?.userData?.userData?.id,
-                                ),
+                            task?.workingHourTask?.find((rec) =>
+                              useSelector((state) =>
+                                state?.taskData?.taskData
+                                  .map((task) => task.id)
+                                  .includes(rec.task_id),
+                              ),
                             )?.duration,
                           )}
                         </td>

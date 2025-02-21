@@ -134,7 +134,7 @@ const TaskRecord = () => {
   return (
     <div>
       {/* {userType !== 'user' && (
-        <div className="flex w-1/2 flex-row gap-5 mt-5">
+        <div className="flex flex-row w-1/2 gap-5 mt-5">
           <Input
             type="text"
             placeholder="Search user..."
@@ -161,13 +161,12 @@ const TaskRecord = () => {
               <th className="px-2 py-1 uppercase">Task Title</th>
               <th className="px-2 py-1 uppercase">Start Date</th>
               <th className="px-2 py-1 uppercase">Due Date</th>
-
               <th className="px-2 py-1 uppercase">Time Alloted</th>
               <th className="px-2 py-1 uppercase">Time Taken</th>
               <th className="px-2 py-1 uppercase">Task Status</th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200 text-left font-medium">
+          <tbody className="font-medium text-left bg-white divide-y divide-gray-200">
             {record?.length === 0 ? (
               <tr className="bg-white">
                 <td colSpan="6" className="text-center">
@@ -180,25 +179,23 @@ const TaskRecord = () => {
                   key={rec?.id}
                   className={index % 2 === 0 ? "bg-white" : "bg-gray-200/50"}
                 >
-                  
-                  <td className="border px-1 py-2">{index + 1}</td>
-                  <td className="border px-1 py-2">{rec?.project?.name}</td>
-                  <td className="border px-1 py-2">{rec?.name}</td>
-                  <td className="border px-1 py-2">
+                  <td className="px-1 py-2 border">{index + 1}</td>
+                  <td className="px-1 py-2 border">{rec?.project?.name}</td>
+                  <td className="px-1 py-2 border">{rec?.name}</td>
+                  <td className="px-1 py-2 border">
                     {new Date(rec?.start_date).toDateString()}
                   </td>
-                  <td className="border px-1 py-2">
+                  <td className="px-1 py-2 border">
                     {new Date(rec?.due_date).toDateString()}
                   </td>
-                  <td className="border px-1 py-2">
+                  <td className="px-1 py-2 border">
                     {durToHour(rec?.duration)}
                   </td>
-                  <td
-                    className={`border px-1 py-2 `}
-                  >
-                    {formatMinutesToHours(workHours[rec?.id])}
+                  <td className={`border px-1 py-2 `}>
+                    {formatMinutesToHours(rec.workingHourTask.map((task) => task.duration).reduce((a, b) => a + b, 0))}
+                    {console.log(rec.workingHourTask)}
                   </td>
-                  <td className="border px-1 py-2">{rec?.status}</td>
+                  <td className="px-1 py-2 border">{rec?.status}</td>
                 </tr>
               ))
             )}

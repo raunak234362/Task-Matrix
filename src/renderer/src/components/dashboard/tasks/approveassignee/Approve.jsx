@@ -1,49 +1,63 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable prettier/prettier */
 /* eslint-disable react/prop-types */
-import React from "react";
+import React, { useEffect, useState } from "react";
 
-const Approve = ({ task, isOpen, onClose, onApprove, onReject }) => {
+const Approve = ({
+  task,
+  isOpen,
+  onClose,
+  onApprove,
+  onReject,
+  isApproved,
+  setIsApproved,
+}) => {
   if (!isOpen) return null;
-  // console.log("Approval task", task);
+  console.log("Approval task", task);
+
+  useEffect(() => {
+    setIsApproved(task?.approved);
+  }, []);
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white rounded-lg p-5 shadow-xl z-50">
-        <h1 className="text-2xl flex font-bold uppercase text-black bg-slate-500 px-5 py-2 justify-center items-center">
+      <div className="z-50 p-5 bg-white rounded-lg shadow-xl">
+        <h1 className="flex items-center justify-center px-5 py-2 text-2xl font-bold text-black uppercase bg-slate-500">
           Approve Assign
         </h1>
 
-        <div className="shadow-xl rounded-lg w-full p-5 bg-teal-100/50">
-          <div className="font-bold text-gray-800 mb-4">People Assigned:</div>
+        <div className="w-full p-5 rounded-lg shadow-xl bg-teal-100/50">
+          <div className="mb-4 font-bold text-gray-800">People Assigned:</div>
           <div className="flex items-center">
-          <table className="w-full table-auto border-collapse text-center rounded-xl">
-          <thead className="sticky top-0 z-10 bg-gray-200">
+            <table className="w-full text-center border-collapse table-auto rounded-xl">
+              <thead className="sticky top-0 z-10 bg-gray-200">
                 <tr>
-                  <th className="py-3 px-6 text-left">Assigned By</th>
-                  <th className="py-3 px-6 text-left">Assigned To</th>
-                  <th className="py-3 px-6 text-left">Assigned On</th>
-                  <th className="py-3 px-6 text-left">Approved By</th>
-                  <th className="py-3 px-6 text-left">Approved On</th>
+                  <th className="px-6 py-3 text-left">Assigned By</th>
+                  <th className="px-6 py-3 text-left">Assigned To</th>
+                  <th className="px-6 py-3 text-left">Assigned On</th>
+                  <th className="px-6 py-3 text-left">Approved By</th>
+                  <th className="px-6 py-3 text-left">Approved On</th>
                 </tr>
               </thead>
-              <tbody className="text-gray-600 text-sm font-medium">
-                <tr className="border-b bg-gray-100 border-gray-200 hover:bg-gray-100">
-                  <td className="py-3 px-6 text-left">
-                    {task?.assigned_by?.name}
+              <tbody className="text-sm font-medium text-gray-600">
+                <tr className="bg-gray-100 border-b border-gray-200 hover:bg-gray-100">
+                  <td className="px-6 py-3 text-left">
+                    {task?.users?.username}
                   </td>
-                  <td className="py-3 px-6 text-left">
-                    {task?.assigned_to?.name}
+                  <td className="px-6 py-3 text-left">
+                    {task?.userss?.username}
                   </td>
-                  <td className="py-3 px-6 text-left">
+                  <td className="px-6 py-3 text-left">
                     {new Date(task?.assigned_on).toDateString()}
                   </td>
-                  <td className="py-3 px-6 text-left">
-                    {task?.approved_by?.name || (
+                  <td className="px-6 py-3 text-left">
+                    {task?.user?.username ? (
+                      <span>{task?.user?.username}</span>
+                    ) : (
                       <span className="text-red-500">Yet Not Approved</span>
                     )}
                   </td>
-                  <td className="py-3 px-6 text-left">
+                  <td className="px-6 py-3 text-left">
                     {task?.approved_on ? (
                       new Date(task?.approved_on).toDateString()
                     ) : (
@@ -58,19 +72,21 @@ const Approve = ({ task, isOpen, onClose, onApprove, onReject }) => {
 
         <div className="mt-4">
           <button
-            className="bg-green-500 text-white px-4 py-2 rounded mr-2"
+            className="px-4 py-2 mr-2 text-white bg-green-500 rounded"
             onClick={onApprove}
+            style={{ cursor: isApproved ? "not-allowed" : "pointer" }}
+            disabled={isApproved}
           >
-            Approve
+            {isApproved ? "Approved" : "Approve"}
           </button>
-          <button
-            className="bg-red-500 text-white px-4 py-2 rounded mr-2"
+          {/* <button
+            className="px-4 py-2 mr-2 text-white bg-red-500 rounded"
             onClick={onReject}
           >
             Reject
-          </button>
+          </button> */}
           <button
-            className="bg-gray-500 text-white px-4 py-2 rounded ml-4"
+            className="px-4 py-2 ml-4 text-white bg-gray-500 rounded"
             onClick={onClose}
           >
             Close

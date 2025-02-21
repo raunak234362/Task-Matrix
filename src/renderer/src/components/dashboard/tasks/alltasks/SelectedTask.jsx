@@ -7,6 +7,7 @@ import Service from "../../../../api/configAPI";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { updateTask } from "../../../../store/taskSlice";
+import { BASE_URL } from "../../../../config/constant";
 
 const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
   let taskData = useSelector((state) =>
@@ -225,7 +226,9 @@ const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
                 </div>
                 <hr className="m-2" />
                 <div className="flex items-center mb-2">
-                  <strong className="w-40 font-bold text-gray-800">Project Name:</strong>{" "}
+                  <strong className="w-40 font-bold text-gray-800">
+                    Project Name:
+                  </strong>{" "}
                   {projectData?.name}
                 </div>
                 <div className="flex items-center mb-2">
@@ -235,16 +238,38 @@ const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
                   {projectData?.description}
                 </div>
                 <div className="flex items-center mb-2">
-                  <strong className="w-40 font-bold text-gray-800">Project Manager:</strong>{" "}
+                  <strong className="w-40 font-bold text-gray-800">
+                    Project Manager:
+                  </strong>{" "}
                   {projectData?.manager?.f_name}
                 </div>
                 <div className="flex items-center mb-2">
-                  <strong className="w-40 font-bold text-gray-800">Project Stage:</strong>{" "}
+                  <strong className="w-40 font-bold text-gray-800">
+                    Project Stage:
+                  </strong>{" "}
                   {projectData?.stage}
                 </div>
                 <div className="flex items-center mb-2">
-                  <strong className="w-40 font-bold text-gray-800">Project Status:</strong>{" "}
+                  <strong className="w-40 font-bold text-gray-800">
+                    Project Status:
+                  </strong>{" "}
                   {projectData?.status}
+                </div>
+                <div className="flex items-center mb-2">
+                  <strong className="w-40 font-bold text-gray-800">
+                    Project Status:
+                  </strong>{" "}
+                  {projectData?.files?.map((file, index) => (
+                  <a
+                    key={index}
+                    href={`${BASE_URL}/project/projects/viewfile/${projectData?.id}/${file.id}`} // Use the file path with baseURL
+                    target="_blank" // Open in a new tab
+                    rel="noopener noreferrer"
+                    className="px-5 py-2 text-teal-500 hover:underline"
+                  >
+                    {file.originalName || `File ${index + 1}`}
+                  </a>
+                ))}
                 </div>
               </div>
             </div>

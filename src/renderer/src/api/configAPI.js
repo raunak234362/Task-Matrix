@@ -479,13 +479,13 @@ class Service {
   static async getAssigneeById(id) {
     const token = sessionStorage.getItem("token");
     try {
-      const response = await api.get(`/api/task/assigned-list/${id}`, {
+      const response = await api.get(`/api/task/get_assigned-list/${id}`, {
         headers: {
-          Authorization: `Token ${token}`,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       });
-      const data = await response.json();
+      const data = await response.data;
       console.log("Assignee: ", data);
       return data;
     } catch (error) {
@@ -493,21 +493,20 @@ class Service {
       throw error;
     }
   }
-  static async approveAssignee(id) {
+  static async approveAssignee({tid}) {
     const token = sessionStorage.getItem("token");
+    const data={approved:true}
     try {
-      const response = await api.post(
-        `/api/task/assigned-list/${id}/confirm/`,
+      const response = await api.patch(
+        `/api/task/update_assigned-list/${tid}`,data,
         {
           headers: {
-            Authorization: `Token ${token}`,
+            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
         },
       );
-      const data = await response.json();
-      console.log("Assignee Approved: ", data);
-      return data;
+      return response?.data;
     } catch (error) {
       console.log("Error in Approving Assignee: ", error);
       throw error;
