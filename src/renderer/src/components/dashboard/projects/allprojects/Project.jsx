@@ -15,7 +15,7 @@ const Project = ({ projectId, isOpen, onClose }) => {
   );
   console.log(project);
   const teams = useSelector((state) => state?.projectData?.teamData);
-
+  const staffData = useSelector((state)=> state?.userData?.staffData)
   const [members, setMembers] = useState({});
   const [teamTask, setTeamTask] = useState([]);
   const [teamData, setTeamData] = useState();
@@ -99,7 +99,7 @@ const Project = ({ projectId, isOpen, onClose }) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       <div className="bg-white h-[92%] fixed top-[8%] overflow-x-auto p-5 rounded-lg shadow-lg w-screen ">
-        <div className="flex justify-between px-5 py-1 mt-2 text-3xl font-bold text-white rounded-lg shadow-xl bg-teal-200/50">
+        <div className="flex justify-between px-5 py-1 my-5 text-3xl font-bold text-white rounded-lg shadow-xl bg-teal-200/50">
           <h2 className="text-3xl font-bold text-gray-800">Project Details</h2>
           <button
             className="px-5 text-xl font-bold text-white rounded-lg bg-teal-500/50 hover:bg-teal-700"
@@ -109,15 +109,6 @@ const Project = ({ projectId, isOpen, onClose }) => {
           </button>
         </div>
         <div className=" h-[80vh] overflow-y-auto">
-          <div className="my-5 rounded-lg bg-blue-gray-200/50">
-            {/* Conditionally render Gantt Chart */}
-            {loading ? (
-              <div className="text-center">Loading Gantt Chart...</div>
-            ) : (
-              <GhantChart taskData={taskDetail} />
-            )}
-          </div>
-
           <div className="overflow-y-auto rounded-lg h-fit">
             <div className="grid grid-cols-2 gap-5">
               <div className="p-5 rounded-lg bg-teal-100/70">
@@ -210,7 +201,7 @@ const Project = ({ projectId, isOpen, onClose }) => {
                   {project?.team?.members.map((user) => {
                     return (
                       <li key={user.id}>
-                        {user.username} - {user.role}
+                        {`${staffData.find((staff) => staff.id === user.id)?.f_name} ${staffData.find((staff) => staff.id === user.id)?.m_name} ${staffData.find((staff) => staff.id === user.id)?.l_name}`} - {user.role}
                       </li>
                     );
                   })}
@@ -235,8 +226,6 @@ const Project = ({ projectId, isOpen, onClose }) => {
           </div>
         </div>
       </div>
-
-
     </div>
   );
 };

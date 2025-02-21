@@ -150,14 +150,12 @@ const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
                 </strong>
                 <div>{taskData?.name}</div>
               </div>
-
               <div className="flex items-center my-2">
                 <strong className="w-40 font-bold text-gray-800">
                   Description:
                 </strong>
                 {taskData?.description}
               </div>
-
               <div className="flex items-center my-2">
                 <strong className="w-40 font-bold text-gray-800">
                   Current User:
@@ -167,7 +165,6 @@ const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
                     ?.f_name
                 }
               </div>
-
               <div className="flex items-center my-2">
                 <strong className="w-40 font-bold text-gray-800">
                   Start Date:
@@ -180,7 +177,6 @@ const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
                 </strong>
                 {due_date?.toDateString()}
               </div>
-
               <div className="flex items-center my-2">
                 <strong className="w-40 font-bold text-gray-800">
                   Duration:
@@ -201,7 +197,6 @@ const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
                 </strong>
                 <span className="text-lg">{taskData?.status}</span>
               </div>
-
               <div className="flex items-center my-2">
                 <strong className="w-40 font-bold text-gray-800">
                   Priority:
@@ -214,9 +209,9 @@ const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
                   {setPriorityValue(taskData?.priority)}
                 </span>
               </div>
-              {userType == !"user" ? null : (
+              {userType !== "user" ? (
                 <Button onClick={handleEditClick}>Update</Button>
-              )}
+              ) : null}
             </div>
 
             <div className="flex flex-col justify-between pl-4 bg-gray-200 gap-y-5">
@@ -260,16 +255,16 @@ const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
                     Project Status:
                   </strong>{" "}
                   {projectData?.files?.map((file, index) => (
-                  <a
-                    key={index}
-                    href={`${BASE_URL}/project/projects/viewfile/${projectData?.id}/${file.id}`} // Use the file path with baseURL
-                    target="_blank" // Open in a new tab
-                    rel="noopener noreferrer"
-                    className="px-5 py-2 text-teal-500 hover:underline"
-                  >
-                    {file.originalName || `File ${index + 1}`}
-                  </a>
-                ))}
+                    <a
+                      key={index}
+                      href={`${BASE_URL}/project/projects/viewfile/${projectData?.id}/${file.id}`} // Use the file path with baseURL
+                      target="_blank" // Open in a new tab
+                      rel="noopener noreferrer"
+                      className="px-5 py-2 text-teal-500 hover:underline"
+                    >
+                      {file.originalName || `File ${index + 1}`}
+                    </a>
+                  ))}
                 </div>
               </div>
             </div>
