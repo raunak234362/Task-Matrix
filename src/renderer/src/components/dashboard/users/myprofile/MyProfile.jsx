@@ -24,15 +24,22 @@ useEffect(() => {
 }, []);
   return (
     <div className="w-full h-[89vh] overflow-y-hidden mx-5">
-      <div className="flex w-full justify-center items-center">
-        <div className="text-3xl font-bold text-white bg-teal-500/50 shadow-xl px-5 py-1 mt-2 rounded-lg">
+      <div className="flex items-center justify-center w-full">
+        <div className="px-5 py-1 mt-2 text-3xl font-bold text-white rounded-lg shadow-xl bg-teal-500/50">
           My Profile
         </div>
       </div>
-      <div className="bg-white mt-2 shadow-md rounded-lg p-4">
-        <p><strong>Name:</strong> {userData?.name}</p>
-        <p><strong>Employee ID:</strong> {userData?.username}</p>
-        <p><strong>Email:</strong> {userData?.email}</p>
+      <div className="p-4 mt-2 bg-white rounded-lg shadow-md">
+        <p>
+          <strong>Name:</strong> {userData?.f_name}
+          {userData?.m_name} {userData?.l_name}
+        </p>
+        <p>
+          <strong>Employee ID:</strong> {userData?.username}
+        </p>
+        <p>
+          <strong>Email:</strong> {userData?.email}
+        </p>
       </div>
     </div>
   );
