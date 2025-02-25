@@ -86,6 +86,7 @@ const EditTask = ({ onClose, task }) => {
       delete taskData.taskname;
 
       const updatedTask = await Service.editTask(task?.id, taskData);
+      console.log("Updated Task: ", updatedTask);
       dispatch(updateTask(updatedTask));
       console.log("Successfully Updated Task: ", updatedTask);
     } catch (error) {

@@ -303,8 +303,7 @@ class Service {
           "Content-Type": "Application/json",
         },
       });
-      const data = await response.json();
-      return data;
+      return response.data?.data; 
     } catch (error) {
       console.log("Error in getting Project:", error);
       throw error;
