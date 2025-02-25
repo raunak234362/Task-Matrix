@@ -9,7 +9,10 @@ import { showTask, showTaskByID } from "../../../../store/taskSlice";
 const AllTask = () => {
   const dispatch = useDispatch();
   const tasks = useSelector((state) => state?.taskData?.taskData);
-  console.log("tasks------------", tasks);
+  const currentUserId = useSelector((state) => state?.userData?.userData?.id);
+  const isSuperUser = useSelector(
+    (state) => state?.userData?.userData?.is_superuser,
+  );
   const projectData = useSelector((state) => state?.projectData?.projectData);
   const userData = useSelector((state) => state?.userData?.staffData);
   const [selectedTask, setSelectedTask] = useState(null);
@@ -23,7 +26,7 @@ const AllTask = () => {
   const [totalDuration, setTotalDuration] = useState(0);
 
   const [projectFilter, setProjectFilter] = useState("");
-  const [toolFilter, setToolsFilter] = useState("");
+  const [toolFilter, setToolsFilter] = useState();
   const [sortConfig, setSortConfig] = useState({
     key: "",
     direction: "ascending",
@@ -162,7 +165,7 @@ const AllTask = () => {
 
   const handleSort = (key) => {
     let direction = "ascending";
-    if (sortConfig.key === key && sortConfig.direction === "ascending") {
+    if (sortConfig.key === key && sortConfig?.direction === "ascending") {
       direction = "descending";
     }
     setSortConfig({ key, direction });
@@ -181,9 +184,7 @@ const AllTask = () => {
   });
 
   const filteredTasks = sortedTasks.filter((task) => {
-    if (
-      task.user_id === useSelector((state) => state?.userData?.userData?.id)
-    ) {
+    if (task.user_id === currentUserId) {
       return (
         (task.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
           task.user?.name.toLowerCase().includes(searchTerm.toLowerCase())) &&
@@ -191,7 +192,7 @@ const AllTask = () => {
         (projectFilter === "" || task.project?.name === projectFilter) &&
         (toolFilter === "" || task.project?.tool === toolFilter)
       );
-    } else if (useSelector((state) => state?.userData?.userData?.is_superuser)) { 
+    } else if (isSuperUser) {
       return (
         (task.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
           task.user?.name.toLowerCase().includes(searchTerm.toLowerCase())) &&
@@ -201,7 +202,6 @@ const AllTask = () => {
       );
     }
   });
-
   const uniqueProject = [
     ...new Set(tasks?.map((project) => project?.project?.name)),
   ];
@@ -270,6 +270,10 @@ const AllTask = () => {
         break;
     }
   };
+
+  const taskIds = useSelector((state) =>
+    state?.taskData?.taskData.map((task) => task.id),
+  );
   console.log("TASKS:", tasks);
 
   return (
@@ -471,11 +475,7 @@ const AllTask = () => {
                         <td className="px-1 py-2 border">
                           {formatMinutesToHours(
                             task?.workingHourTask?.find((rec) =>
-                              useSelector((state) =>
-                                state?.taskData?.taskData
-                                  .map((task) => task.id)
-                                  .includes(rec.task_id),
-                              ),
+                              taskIds.includes(rec.task_id),
                             )?.duration,
                           )}
                         </td>
