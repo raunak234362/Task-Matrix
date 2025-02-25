@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
-"use client";
+
 
 import { useSelector } from "react-redux";
 import { Clock, Users, CheckCircle, AlertCircle } from "lucide-react";
@@ -86,7 +86,6 @@ const ProjectStatus = ({ projectId, onClose }) => {
       const userTasks = projectTasks?.filter(
         (task) => task.user?.id === user.id
       );
-      console.log(userTasks);
       return {
         name: user.f_name,
         taskCount: userTasks.length,
