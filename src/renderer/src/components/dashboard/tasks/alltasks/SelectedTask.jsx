@@ -11,6 +11,7 @@ import { BASE_URL } from "../../../../config/constant";
 import { toast } from "react-toastify";
 
 const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
+  const dispatch = useDispatch();
   let taskData = useSelector((state) =>
     state?.taskData?.taskData.filter((task) => task.id === taskID),
   );
@@ -23,10 +24,7 @@ const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
       (project) => project?.id === taskDetail?.project?.id,
     ),
   );
-  console.log("Project Data------------", projectData);
   taskData = taskData[0];
-
-  console.log("taskData------------", taskData);
 
   const [selectedTask, setSelectedTask] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -88,8 +86,10 @@ const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
   };
   const addComment = async (commentData) => {
     try {
-      const response = await Service.addComment(taskDetail?.id, commentData);
-      toast.success("Comment Added successfully")
+      const comment = await Service.addComment(taskDetail?.id, commentData);
+      console.log("Comment: ", comment.data);
+      dispatch(updateTask({ ...taskData, taskcomment: [...taskData.taskcomment, comment.data] }));
+      toast.success("Comment Added successfully");
     } catch (error) {
       toast.error(error)
       console.error("Error in adding comment: ", error);
@@ -253,7 +253,7 @@ const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
                 </div>
                 <div className="flex items-center mb-2">
                   <strong className="w-40 font-bold text-gray-800">
-                    Project Status:
+                    Project Files:
                   </strong>{" "}
                   {projectData?.files?.map((file, index) => (
                     <a
@@ -380,8 +380,8 @@ const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
                 <div className="space-y-4">
                   {taskData?.taskcomment?.map((comment, index) => (
                     <div
-                      className="p-4 bg-white rounded-lg shadow-md"
-                      key={index}
+                    className="p-4 bg-white rounded-lg shadow-md"
+                    key={index}
                     >
                       <div className="flex items-center mb-2">
                         <span className="font-bold text-gray-800">
