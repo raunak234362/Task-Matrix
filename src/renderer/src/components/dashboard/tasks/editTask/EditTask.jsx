@@ -109,6 +109,7 @@ const EditTask = ({ onClose, task }) => {
         <div>
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="my-2">
+              <p className="text-red-700 text-xs">*If you want to update the Task Name you have to select the Task Type</p>
               <CustomSelect
                 label="Task Type: "
                 name="type"
