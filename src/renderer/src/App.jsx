@@ -69,7 +69,7 @@ const App = () => {
     fetchProjects();
     fetchUserData();
     fetchTeam();
-  }, [dispatch]);
+  }, [token,dispatch]);
 
   return (
     <Provider store={store}>
