@@ -10,7 +10,6 @@ import {
   AllTask,
   AllUser,
   ApproveAssignee,
-  Calendar,
   GaantChart,
   Home,
   Login,
@@ -20,7 +19,6 @@ import {
   ProjectTab,
   TaskRecord,
   TaskTab,
-  UsersTaskRecord,
   UserTab,
 } from "./components/index.js";
 
@@ -88,14 +86,6 @@ const router = createHashRouter([
           {
             path: "all-user",
             element: <AllUser />,
-          },
-          {
-            path: "user-task-record",
-            element: <UsersTaskRecord />,
-          },
-          {
-            path: "calendar",
-            element: <Calendar />,
           },
           {
             path: "gaant-chart",

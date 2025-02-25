@@ -115,7 +115,7 @@ const Sidebar = () => {
                     : "text-black hover:text-white hover:flex hover:justify-center hover:items-center hover:bg-teal-200  rounded-md"
                 }
               >
-                <div>Users</div>
+                <div>Ghant Chart</div>
               </NavLink>
             </li>
           ) : null}

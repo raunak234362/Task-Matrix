@@ -6,9 +6,8 @@ const token = sessionStorage.getItem("token");
 class Service {
   // Fetch the logged-in user - updated
   static async getCurrentUser() {
-    console.log();
+    const token = sessionStorage.getItem("token");
     try {
-      const token = sessionStorage.getItem("token");
       const response = await api.post(`/api/auth/getuserbytoken`, {
         headers: {
           "Content-Type": "application/json",
@@ -43,12 +42,10 @@ class Service {
     try {
       const resonse = await api.get(`/api/team/teams/`, {
         headers: {
-          Authorization: `Token ${token}`,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       });
-
-      // console.log(resonse?.data);
       return resonse?.data?.data;
     } catch (error) {
       console.log("Error in getting team list: ", error);
@@ -61,7 +58,7 @@ class Service {
     try {
       const response = await api.get(`/api/team/teams/${projectId}`, {
         headers: {
-          Authorization: `Token ${token}`,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       });
@@ -109,7 +106,7 @@ class Service {
         formData,
         {
           headers: {
-            Authorization: `Token ${token}`,
+            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
         },
@@ -241,7 +238,7 @@ class Service {
     try {
       const response = await api.get(`/api/task/tasks/?project=${id}`, {
         headers: {
-          Authorization: `Token ${token}`,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       });
@@ -318,7 +315,7 @@ class Service {
     try {
       const response = await api.delete(`/api/task/tasks/${id}/`, {
         headers: {
-          Authorization: `Token ${token}`,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "Application/json",
         },
       });
@@ -335,7 +332,7 @@ class Service {
     try {
       const response = await api.get(`/api/user/record?user=${user}`, {
         headers: {
-          Authorization: `Token ${token}`,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       });
@@ -564,7 +561,7 @@ class Service {
     try {
       const response = await api.delete(`/api/task/assigned-list/${id}/`, {
         headers: {
-          Authorization: `Token ${token}`,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       });
@@ -582,7 +579,7 @@ class Service {
     try {
       const response = await api.get(`/api/task/comment/`, {
         headers: {
-          Authorization: `Token ${token}`,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       });
@@ -596,57 +593,57 @@ class Service {
   }
 
   //Calendar API
-  static async fetchCalendar(date, user) {
-    const token = sessionStorage.getItem("token");
-    console.log(date, "==================");
-    if (date) date = new Date(date);
-    console.log(
-      `?date=${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`,
-    );
-    try {
-      let url = `/api/task/tasks/calender/`;
-      if (date && user) {
-        url += `?date=${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}&user=${user}`;
-      } else if (date) {
-        url += `?date=${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
-      } else if (user) {
-        url += `?user=${user}`;
-      }
+  // static async fetchCalendar(date, user) {
+  //   const token = sessionStorage.getItem("token");
+  //   console.log(date, "==================");
+  //   if (date) date = new Date(date);
+  //   console.log(
+  //     `?date=${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`,
+  //   );
+  //   try {
+  //     let url = `/api/task/tasks/calender/`;
+  //     if (date && user) {
+  //       url += `?date=${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}&user=${user}`;
+  //     } else if (date) {
+  //       url += `?date=${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+  //     } else if (user) {
+  //       url += `?user=${user}`;
+  //     }
 
-      const response = await api.get(url, {
-        headers: {
-          Authorization: `Token ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
-      const data = await response.json();
-      console.log("Calendar: ", data);
-      return data;
-    } catch (error) {
-      console.log("Error in getting Calendar: ", error);
-      throw error;
-    }
-  }
+  //     const response = await api.get(url, {
+  //       headers: {
+  //         Authorization: `Bearer ${token}`,
+  //         "Content-Type": "application/json",
+  //       },
+  //     });
+  //     const data = await response.json();
+  //     console.log("Calendar: ", data);
+  //     return data;
+  //   } catch (error) {
+  //     console.log("Error in getting Calendar: ", error);
+  //     throw error;
+  //   }
+  // }
 
-  static async fetchCalendar2(date, user) {
-    const token = sessionStorage.getItem("token");
-    try {
-      let url = `/api/task/tasks/calender/?date=${date.substring(0, 10)}&user=${user}`;
+  // static async fetchCalendar2(date, user) {
+  //   const token = sessionStorage.getItem("token");
+  //   try {
+  //     let url = `/api/task/tasks/calender/?date=${date.substring(0, 10)}&user=${user}`;
 
-      const response = await api.get(url, {
-        headers: {
-          Authorization: `Token ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
-      const data = await response.json();
-      // console.log('Calendar: ', data)
-      return data;
-    } catch (error) {
-      console.log("Error in getting Calendar: ", error);
-      throw error;
-    }
-  }
+  //     const response = await api.get(url, {
+  //       headers: {
+  //         Authorization: `Bearer ${token}`,
+  //         "Content-Type": "application/json",
+  //       },
+  //     });
+  //     const data = await response.json();
+  //     // console.log('Calendar: ', data)
+  //     return data;
+  //   } catch (error) {
+  //     console.log("Error in getting Calendar: ", error);
+  //     throw error;
+  //   }
+  // }
 }
 
 export default Service;
