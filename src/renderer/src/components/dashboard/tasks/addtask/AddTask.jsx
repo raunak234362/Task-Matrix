@@ -69,7 +69,7 @@ const AddTask = () => {
         
           if (!exists) {
             acc.push({
-              label: `${member?.role} - ${member?.username}`,
+              label: `${member.role} - ${member.f_name} ${member.m_name} ${member.l_name}`,
               value: member?.id,
             });
           }
