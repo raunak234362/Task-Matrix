@@ -17,9 +17,9 @@ import Header from './dashboard/Header'
 //Users
 import AllUser from './dashboard/users/alluser/AllUser';
 import MyProfile from './dashboard/users/myprofile/MyProfile';
-import UsersTaskRecord from './dashboard/users/taskrecord/UsersTaskRecord'
-import Calendar from './dashboard/users/calendar/Calendar'
-import TaskRecord from './dashboard/users/taskrecord/TaskRecord'
+//import UsersTaskRecord from './dashboard/users/taskrecord/UsersTaskRecord'
+// import Calendar from './dashboard/users/calendar/Calendar'
+ import TaskRecord from './dashboard/users/taskrecord/TaskRecord'
 import AddCSV from './dashboard/users/adduser/AddCSV'
 import GaantChart from './dashboard/users/ghant/GaantChart'
 import UserTab from './dashboard/users/user/UserTab.jsx'
@@ -76,7 +76,7 @@ export {
   SelectedTask,
   TaskSelected,
   ApproveAssignee,
-  UsersTaskRecord,
+  // UsersTaskRecord,
   CustomSelect,
   Input,
   ProjectPie,
@@ -86,7 +86,6 @@ export {
   TaskRecord,
   Button,
   AddTask,
-  Calendar,
   Layout,
   Sidebar,
   Home,

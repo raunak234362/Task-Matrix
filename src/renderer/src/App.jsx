@@ -36,29 +36,39 @@ const App = () => {
     setSidebarOpen((prev) => !prev);
   }, [setSidebarOpen]);
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      const user = await Service.getCurrentUser(token);
-      dispatch(setUserData(user));
-      try {
-        const projectsData = await Service.getAllProject(token);
-        console.log(projectsData);
-        dispatch(showProjects(projectsData));
-        const tasksData = await Service.getAllTask(token);
-        dispatch(showTask(tasksData));
-        const allMyTaskData = await Service.getAllMyTask(token);
-        dispatch(showTaskRecord(allMyTaskData));
-        const usersData = await Service.allEmployee(token);
-        dispatch(showStaff(usersData));
-        const teamData = await Service.getAllTeam(token);
-        dispatch(showTeam(teamData));
-      } catch (error) {
-        console.error("Error fetching user:", error);
-        navigate("/");
-      }
-    };
+  const fetchProjects = async () => {
+    const projectsData = await Service.getAllProject(token);
+    dispatch(showProjects(projectsData));
+  };
 
+  const fetchTasks = async () => {
+    const tasksData = await Service.getAllTask(token);
+    dispatch(showTask(tasksData));
+  };
+  const fetchMyTasks = async () => {
+    const allMyTaskData = await Service.getAllMyTask(token);
+    dispatch(showTaskRecord(allMyTaskData));
+  };
+
+  const fetchUserData = async () => {
+    const usersData = await Service.allEmployee(token);
+    dispatch(showStaff(usersData));
+  };
+  const fetchTeam = async () => {
+    const teamData = await Service.getAllTeam(token);
+    dispatch(showTeam(teamData));
+  };
+  const fetchUser = async () => {
+    const user = await Service.getCurrentUser(token);
+    
+  };
+  useEffect(() => {
     fetchUser();
+    fetchMyTasks();
+    fetchTasks();
+    fetchProjects();
+    fetchUserData();
+    fetchTeam();
   }, [dispatch]);
 
   return (
