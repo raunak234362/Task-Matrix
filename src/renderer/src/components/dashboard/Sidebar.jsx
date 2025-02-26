@@ -82,7 +82,7 @@ const Sidebar = () => {
 
           <li>
             <NavLink
-              to="project"
+              to="project/all-project"
               className={({ isActive }) =>
                 isActive
                   ? "flex justify-center items-center text-white bg-teal-400 rounded-md w-full  delay-150"
@@ -95,7 +95,7 @@ const Sidebar = () => {
 
           <li>
             <NavLink
-              to="task"
+              to="task/all-task"
               className={({ isActive }) =>
                 isActive
                   ? "flex justify-center items-center text-white bg-teal-400 rounded-md w-full  delay-150"
