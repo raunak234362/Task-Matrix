@@ -263,9 +263,10 @@ const Task = ({ taskId, setDisplay }) => {
     // console.log(data);
     try {
       const response = await Service.addComment(tasks.id, data);
-      alert("Comment Added Successfully", response);
+      toast.success("Comment Added Successfully");
       await fetchTask();
     } catch (error) {
+      toast.error(error)
       console.error("Error in adding comment:", error);
     }
   };

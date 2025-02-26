@@ -8,6 +8,7 @@ import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { updateTask } from "../../../../store/taskSlice";
 import { BASE_URL } from "../../../../config/constant";
+import { toast } from "react-toastify";
 
 const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
   let taskData = useSelector((state) =>
@@ -88,9 +89,9 @@ const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
   const addComment = async (commentData) => {
     try {
       const response = await Service.addComment(taskDetail?.id, commentData);
-      console.log("Comment Response: ", response);
-      alert("Comment Added Successfully");
+      toast.success("Comment Added successfully")
     } catch (error) {
+      toast.error(error)
       console.error("Error in adding comment: ", error);
     }
   };
