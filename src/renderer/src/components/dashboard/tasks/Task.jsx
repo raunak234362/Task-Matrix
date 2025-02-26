@@ -6,7 +6,7 @@ import Service from "../../../api/configAPI";
 import { Button, Input, CustomSelect } from "../../index";
 import { useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
-  import { toast } from "react-toastify";
+import { toast } from "react-toastify";
 import { BASE_URL } from "../../../config/constant";
 
 const Task = ({ taskId, setDisplay }) => {
@@ -101,9 +101,9 @@ const Task = ({ taskId, setDisplay }) => {
       0: "bg-green-200 border-green-800 text-green-800",
       1: "bg-yellow-200 border-yellow-800 text-yellow-800",
       2: "bg-purple-200 border-purple-800 text-purple-800",
-      3: "bg-red-200 border-red-700 text-red-700",
+      3: "bg-red-200 border-red-700m text-red-700",
     };
-    setColor(colors[priority] || "")
+    setColor(colors[priority] || "");
   };
 
   const getPriorityLabel = (value) => {
@@ -182,21 +182,19 @@ const Task = ({ taskId, setDisplay }) => {
     const taskID = tasks?.id;
     try {
       const accept = await Service.startTask(taskID);
+
       setTasks((prev) => {
         return {
           ...prev,
           status: "IN PROGRESS",
         };
-      });
-      console.log( {
-          ...tasks,
-          status: "IN PROGRESS",
-        })
+      })
+
       toast.success("Task Started");
       sessionStorage.setItem("work_id", accept.data.id);
     } catch (error) {
       toast.error("Error in accepting task");
-      console.log("Error in accepting task: ", error);
+      console.error("Error in accepting task:", error);
     }
   }
 
@@ -205,12 +203,12 @@ const Task = ({ taskId, setDisplay }) => {
     try {
       const pause = await Service.pauseTask(taskId, ev?.target?.value);
       // console.log("Paused Task: ", pause);
-       setTasks((prev) => {
-         return {
-           ...prev,
-           status: "BREAK",
-         };
-       });
+      setTasks((prev) => {
+        return {
+          ...prev,
+          status: "BREAK",
+        };
+      });
       toast.success("Task Paused");
       fetchTask();
     } catch (error) {
@@ -224,12 +222,12 @@ const Task = ({ taskId, setDisplay }) => {
     try {
       const resume = await Service.resumeTask(taskID, ev?.target?.value);
       // console.log("Resumed Task: ", resume);
-       setTasks((prev) => {
-         return {
-           ...prev,
-           status: "IN PROGRESS",
-         };
-       });
+      setTasks((prev) => {
+        return {
+          ...prev,
+          status: "IN PROGRESS",
+        };
+      });
       toast.success("Task Resumed");
       fetchTask();
     } catch (error) {
@@ -244,7 +242,7 @@ const Task = ({ taskId, setDisplay }) => {
       const end = await Service.endTask(taskID, ev?.target?.value);
       console.log("End Task: ", end);
       toast.success("Task Ended");
-      fetchTask();  
+      fetchTask();
     } catch (error) {
       toast.error("Error in ending task");
       console.log("Error in ending task: ", error);
@@ -605,7 +603,6 @@ const Task = ({ taskId, setDisplay }) => {
                         </span>
                       </div>
                       {showProjectDetail && (
-                       
                         <div className="grid grid-cols-1 gap-6 overflow-x-hidden overflow-y-hidden md:grid-cols-2">
                           {[
                             {
@@ -643,7 +640,7 @@ const Task = ({ taskId, setDisplay }) => {
                               label: "Project Manager",
                               value: projectData?.manager?.f_name,
                             },
-                            
+
                             {
                               label: "Files",
                               value: Array.isArray(projectData?.files)

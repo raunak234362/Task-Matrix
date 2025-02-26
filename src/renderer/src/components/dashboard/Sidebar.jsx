@@ -105,7 +105,7 @@ const Sidebar = () => {
               <div>Task</div>
             </NavLink>
           </li>
-          {(userType === "manager" || userType === "admin") ? (
+          {/* {(userType === "manager" || userType === "admin") ? (
             <li>
               <NavLink
                 to="user"
@@ -118,7 +118,7 @@ const Sidebar = () => {
                 <div>Ghant Chart</div>
               </NavLink>
             </li>
-          ) : null}
+          ) : null} */}
 
           <li className="w-full">
             <NavLink
