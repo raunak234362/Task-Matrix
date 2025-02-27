@@ -67,12 +67,8 @@ const Login = () => {
         navigate("/");
       }
     } catch (error) {
-      toast.error("Invalid Credentials",error);
-      if (error.message === "Invalid Credentials") {
-        toast.error("Invalid Credentials",error);
-      } else {
-        toast.error("Something went wrong with server",error);
-      }
+      toast.error("Error message: ",error);
+      
     }
   };
 
