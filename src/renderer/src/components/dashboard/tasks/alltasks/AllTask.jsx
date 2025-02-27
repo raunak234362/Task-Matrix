@@ -275,7 +275,7 @@ const AllTask = () => {
                   >
                     <option value="">All Status</option>
                     <option value="ASSIGNED">ASSIGNED</option>
-                    <option value="IN-PROGRESS">IN PROGRESS</option>
+                    <option value="IN PROGRESS">IN PROGRESS</option>
                     <option value="ON-HOLD">ON HOLD</option>
                     <option value="BREAK">BREAK</option>
                     <option value="IN REVIEW">IN REVIEW</option>
