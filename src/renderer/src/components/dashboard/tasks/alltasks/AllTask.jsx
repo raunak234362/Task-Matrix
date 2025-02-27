@@ -113,15 +113,15 @@ const AllTask = () => {
   useEffect(() => {
     if (projectFilter) {
       const projectTasks = tasks.filter(
-        (task) => task.project.name === projectFilter,
+        (task) => task?.project?.name === projectFilter,
       );
       const completedTasks = projectTasks.filter(
-        (task) => task.status === "COMPLETE",
+        (task) => task?.status === "COMPLETE",
       ).length;
       const totalTasks = projectTasks.length;
 
       const inReviewTasks = projectTasks.filter(
-        (task) => task.status === "IN-REVIEW",
+        (task) => task?.status === "IN-REVIEW",
       ).length;
 
       const inReviewPercentage =
@@ -231,7 +231,7 @@ const AllTask = () => {
   };
 
   const taskIds = useSelector((state) =>
-    state?.taskData?.taskData.map((task) => task.id),
+    state?.taskData?.taskData?.map((task) => task.id),
   );
   console.log("TASKS:", tasks);
 
@@ -339,7 +339,7 @@ const AllTask = () => {
                       <td className="px-1 py-2 border">
                         {
                           userData?.find((user) => user?.id === task?.user_id)
-                            ? `${userData.find((user) => user.id === task.user_id).f_name || ''} ${userData.find((user) => user.id === task.user_id).m_name || ''} ${userData.find((user) => user.id === task.user_id).l_name || ''}`.trim()
+                            ? `${userData.find((user) => user.id === task.user_id)?.f_name || ''} ${userData.find((user) => user.id === task.user_id)?.m_name || ''} ${userData.find((user) => user.id === task.user_id)?.l_name || ''}`.trim()
                             : ''
                         }
                       </td>

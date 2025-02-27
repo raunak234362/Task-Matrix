@@ -1,5 +1,5 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable prettier/prettier */
+/* eslint-disable no-unused-vars */
 
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -39,7 +39,7 @@ const EditTask = ({ onClose, task }) => {
       (team) => team.id === task?.project?.teamID,
     ),
   );
-  const staffData = useSelector((state) => state?.projectData?.staffData);
+  const staffData = useSelector((state) => state?.userData?.staffData) || [];
   console.log("STAFF-=-=-=-=-=-=-=-", staffData);
   useEffect(() => {
     const processTeamMembers = () => {
@@ -51,10 +51,10 @@ const EditTask = ({ onClose, task }) => {
 
         const assigned = teamData?.members?.reduce((acc, member) => {
           const exists = acc?.find((item) => item?.value === member?.id);
-          console.log("EXISTS-=-=-=-=-=-=-=-", exists);
+          console.log("EXISTS-=-=-=-=-=-=-=-", member);
           if (!exists) {
             acc.push({
-              label: `${member?.role} - ${member?.id}`,
+              label: `${member?.role} - ${staffData.find(staff => staff.id === member.id)?.f_name} ${staffData.find(staff => staff.id === member.id)?.m_name} ${staffData.find(staff => staff.id === member.id)?.l_name}`,
               value: member?.id,
             });
           }
@@ -97,7 +97,7 @@ const EditTask = ({ onClose, task }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-white h-[65vh] overflow-x-auto p-5 rounded-lg shadow-lg w-[40vw] ">
+      <div className="bg-white h-[65vh] overflow-x-auto p-5 rounded-lg shadow-lg w-full md:w-[40vw] ">
         <div className="flex justify-between my-5 bg-teal-200/50 p-2 rounded-lg">
           <h2 className="text-2xl font-bold">Edit Project</h2>
           <button

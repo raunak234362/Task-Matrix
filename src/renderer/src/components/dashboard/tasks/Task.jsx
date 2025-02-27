@@ -5,14 +5,15 @@ import React, { useCallback, useEffect, useState } from "react";
 import Service from "../../../api/configAPI";
 import { Button, Input, CustomSelect } from "../../index";
 import { useForm } from "react-hook-form";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { BASE_URL } from "../../../config/constant";
 
 const Task = ({ taskId, setDisplay }) => {
   const work_id = sessionStorage.getItem("work_id");
+  const myTasks = useSelector((state) => state?.taskData?.myTaskData);
   const [tasks, setTasks] = useState();
-
+  const dispatch = useDispatch();
   const [workHours, setWorkHours] = useState(null);
   const userType = sessionStorage.getItem("userType");
   const username = sessionStorage.getItem("username");
@@ -64,10 +65,6 @@ const Task = ({ taskId, setDisplay }) => {
     fetchWorkId();
   }, []);
 
-  console.log(tasks);
-
-  console.log("Work Hours: ", workHours);
-
   useEffect(() => {
     const teamID = tasks?.project?.teamID;
     if (teamID) {
@@ -79,7 +76,7 @@ const Task = ({ taskId, setDisplay }) => {
       }));
       setTeamMember(members);
     }
-  }, [tasks]);
+  }, []);
 
   useEffect(() => {
     let interval;
@@ -190,21 +187,24 @@ const Task = ({ taskId, setDisplay }) => {
           ...prev,
           status: "IN PROGRESS",
         };
-      })
+      });
 
       toast.success("Task Started");
       sessionStorage.setItem("work_id", accept.data.id);
     } catch (error) {
       toast.error("Error in accepting task");
-      console.error("Error in accepting task:", error);
     }
   }
 
   async function handlePause(ev) {
     const taskId = tasks?.id;
     try {
-      const pause = await Service.pauseTask(taskId, ev?.target?.value);
-      // console.log("Paused Task: ", pause);
+      await Service.pauseTask(taskId, ev?.target?.value);
+      const updatedTasks = myTasks.map((task) =>
+        task.id === taskId ? { ...task, status: "BREAK" } : task,
+      );
+      console.log("Updated Tasks: ", updatedTasks);
+      dispatch(updateMyTask(updatedTasks));
       setTasks((prev) => {
         return {
           ...prev,
@@ -222,8 +222,11 @@ const Task = ({ taskId, setDisplay }) => {
   async function handleResume(ev) {
     const taskID = tasks?.id;
     try {
-      const resume = await Service.resumeTask(taskID, ev?.target?.value);
-      // console.log("Resumed Task: ", resume);
+      await Service.resumeTask(taskID, ev?.target?.value);
+      const updatedTasks = myTasks.map((task) =>
+        task.id === taskID ? { ...task, status: "IN PROGRESS" } : task,
+      );
+      dispatch(updateMyTask(updatedTasks));
       setTasks((prev) => {
         return {
           ...prev,
@@ -268,7 +271,7 @@ const Task = ({ taskId, setDisplay }) => {
       toast.success("Comment Added Successfully");
       await fetchTask();
     } catch (error) {
-      toast.error(error)
+      toast.error(error);
       console.error("Error in adding comment:", error);
     }
   };

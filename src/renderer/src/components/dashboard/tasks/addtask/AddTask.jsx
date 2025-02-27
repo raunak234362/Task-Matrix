@@ -1,25 +1,18 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable no-unused-vars */
-import React, { useCallback, useEffect, useState } from "react";
-import { Button, Header, Input, CustomSelect } from "../../../index";
+import { useEffect, useState } from "react";
+import { Button, Input, CustomSelect } from "../../../index";
 import Service from "../../../../api/configAPI";
 import { useDispatch } from "react-redux";
 import { useForm } from "react-hook-form";
-import {
-  Dialog,
-  DialogHeader,
-  DialogBody,
-  DialogFooter,
-} from "@material-tailwind/react";
 import { addTask } from "../../../../store/taskSlice";
+import { toast } from "react-toastify";
 
 const AddTask = () => {
   const [projectOptions, setPtojectOptions] = useState([]);
   const [project, setProject] = useState({});
-  const [isSuccessOpen, setIsSuccessOpen] = useState(false);
   const [parentTaskOptions, setParentTaskOptions] = useState([]);
   const [assignedUser, setAssignedUser] = useState([]);
-  const token = sessionStorage.getItem("token");
   const dispatch = useDispatch();
   const {
     register,
@@ -29,8 +22,6 @@ const AddTask = () => {
     formState: { errors },
   } = useForm();
 
-  // FETCH task related to project
-  // Fetch project details
 
   const projectId = watch("project");
 
@@ -54,32 +45,24 @@ const AddTask = () => {
   }, []);
 
   const handleProjectChange = async (projectId) => {
-    console.log("Project ID:", projectId);
     try {
       const project = await Service.getProject(projectId);
-      console.log(project)
       setProject(project);
-        console.log(project?.data?.team?.members);
       const assigned =
         project?.data?.team?.members?.reduce((acc, member) => {
-          console.log(member);
-          const exists = acc.find(
-            (item) => item.value === member?.id,
-          );
-        
+          const exists = acc.find((item) => item.value === member?.id);
+
           if (!exists) {
             acc.push({
-              label: `${member?.role} - ${member?.username}`,
+              label: `${member.role} - ${member.f_name} ${member.m_name} ${member.l_name}`,
               value: member?.id,
             });
           }
           return acc;
         }, []) || []; // Fallback to an empty array if reduce fails
-
-      console.log("Assigned users---", assigned);
       setAssignedUser(assigned);
     } catch (error) {
-      console.error("Error fetching project details:", error);
+      toast.error("Error fetching project details:", error);
     }
   };
   const handleParentTasks = async (projectId) => {
@@ -91,7 +74,7 @@ const AddTask = () => {
       }));
       setParentTaskOptions(options);
     } catch (error) {
-      console.error("Error fetching parent tasks:", error);
+      toast.error("Error fetching parent tasks:", error);
     }
   };
 
@@ -103,7 +86,6 @@ const AddTask = () => {
   }, [projectId]);
 
   const onSubmit = async (taskData) => {
-    console.log("Project data:", taskData);
     try {
       const token = sessionStorage.getItem("token");
       if (!token) {
@@ -115,18 +97,14 @@ const AddTask = () => {
         name: TaskName,
         token: token,
       });
-      console.log("Response from task:", taskData);
-      setIsSuccessOpen(true);
+      toast.success("Task Added Successfully");
       dispatch(addTask(data));
     } catch (error) {
-      console.error("Error adding task:", error);
-      console.log("Project data:", taskData);
+      toast.error("Error adding task", error);
     }
   };
 
-  const closeSuccessModal = () => {
-    setIsSuccessOpen(false);
-  };
+
 
   return (
     <div>
@@ -340,7 +318,6 @@ const AddTask = () => {
                 })}
                 onChange={setValue}
               />
-             
             </div>
             <div className="mt-5">
               <Input
@@ -359,19 +336,6 @@ const AddTask = () => {
             </div>
             <div className="w-full mt-5">
               <Button type="submit">Add Task</Button>
-              <Dialog open={isSuccessOpen} handler={setIsSuccessOpen}>
-                <DialogHeader>Task Added</DialogHeader>
-                <DialogBody>The task added successfully!</DialogBody>
-                <DialogFooter>
-                  <Button
-                    variant="gradient"
-                    color="green"
-                    onClick={closeSuccessModal}
-                  >
-                    Close
-                  </Button>
-                </DialogFooter>
-              </Dialog>
             </div>
           </div>
         </div>
