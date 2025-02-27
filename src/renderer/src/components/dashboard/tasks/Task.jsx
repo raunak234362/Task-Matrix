@@ -53,7 +53,7 @@ const Task = ({ taskId, setDisplay }) => {
       console.log("Error in fetching task: ", error);
     }
   }, []);
-  console.log("task----------0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0", tasks  );
+  console.log("task----------0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0", tasks);
 
   useEffect(() => {
     const fetchWorkId = async () => {
@@ -200,11 +200,6 @@ const Task = ({ taskId, setDisplay }) => {
     const taskId = tasks?.id;
     try {
       await Service.pauseTask(taskId, ev?.target?.value);
-      const updatedTasks = myTasks.map((task) =>
-        task.id === taskId ? { ...task, status: "BREAK" } : task,
-      );
-      console.log("Updated Tasks: ", updatedTasks);
-      dispatch(updateMyTask(updatedTasks));
       setTasks((prev) => {
         return {
           ...prev,
@@ -223,10 +218,7 @@ const Task = ({ taskId, setDisplay }) => {
     const taskID = tasks?.id;
     try {
       await Service.resumeTask(taskID, ev?.target?.value);
-      const updatedTasks = myTasks.map((task) =>
-        task.id === taskID ? { ...task, status: "IN PROGRESS" } : task,
-      );
-      dispatch(updateMyTask(updatedTasks));
+
       setTasks((prev) => {
         return {
           ...prev,
@@ -502,7 +494,6 @@ const Task = ({ taskId, setDisplay }) => {
                           </tr>
                         </thead>
                         <tbody className="text-sm font-medium text-gray-600">
-                    
                           {tasks?.taskInAssignedList?.map((task, index) => (
                             <tr
                               key={task.id}
