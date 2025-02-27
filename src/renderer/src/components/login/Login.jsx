@@ -10,6 +10,7 @@ import { useDispatch } from "react-redux";
 import { login as authLogin, setUserData } from "../../store/userSlice";
 import AuthService from "../../api/authAPI";
 import Service from "../../api/configAPI";
+import { toast } from "react-toastify";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -48,10 +49,8 @@ const Login = () => {
         } else if (userData.role === "VENDOR") {
           userType = "vendor";
         }
-
         sessionStorage.setItem("userType", userType);
         dispatch(authLogin(user));
-        // dispatch(setUserData(userData.data))
         console.log(userData.is_firstLogin);
         if (userData?.is_firstLogin) navigate("/admin/home");
         else if (userType === "user" || userType === "project-manager" || userType ==="admin" || userType === "department-mana")  navigate("/admin/home");
@@ -64,15 +63,15 @@ const Login = () => {
         // else if (userType === "vendor") navigate("/vendor");
         else navigate("/");
       } else {
-        alert("Invalid Credentials Check");
+        toast.error("Invalid Credentials");
         navigate("/");
       }
     } catch (error) {
-      console.log(error);
+      toast.error("Invalid Credentials",error);
       if (error.message === "Invalid Credentials") {
-        alert("Invalid Credentials");
+        toast.error("Invalid Credentials",error);
       } else {
-        alert("Could not connect to server");
+        toast.error("Something went wrong with server",error);
       }
     }
   };
