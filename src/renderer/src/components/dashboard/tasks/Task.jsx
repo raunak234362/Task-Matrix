@@ -51,7 +51,8 @@ const Task = ({ taskId, setDisplay }) => {
       error("Error fetching task details.");
       console.log("Error in fetching task: ", error);
     }
-  }, [taskId]);
+  }, []);
+  console.log("task----------0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0", tasks  );
 
   useEffect(() => {
     const fetchWorkId = async () => {
@@ -61,7 +62,7 @@ const Task = ({ taskId, setDisplay }) => {
       setWorkHours(workHour);
     };
     fetchWorkId();
-  }, [taskId]);
+  }, []);
 
   console.log(tasks);
 
@@ -94,7 +95,7 @@ const Task = ({ taskId, setDisplay }) => {
 
   useEffect(() => {
     fetchTask();
-  }, [fetchTask]);
+  }, []);
 
   const updatePriorityColor = (priority) => {
     const colors = {
@@ -144,6 +145,7 @@ const Task = ({ taskId, setDisplay }) => {
   };
 
   function handleClose() {
+    window.location.reload();
     setDisplay(false);
   }
 
@@ -497,6 +499,7 @@ const Task = ({ taskId, setDisplay }) => {
                           </tr>
                         </thead>
                         <tbody className="text-sm font-medium text-gray-600">
+                    
                           {tasks?.taskInAssignedList?.map((task, index) => (
                             <tr
                               key={task.id}

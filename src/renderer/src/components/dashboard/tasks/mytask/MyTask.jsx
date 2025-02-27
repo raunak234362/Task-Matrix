@@ -22,7 +22,7 @@ const MyTask = () => {
       }
     };
     fetchTask();
-  }, [tasks]);
+  }, []);
 
   
 
