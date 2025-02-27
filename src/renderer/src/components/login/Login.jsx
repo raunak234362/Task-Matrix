@@ -49,8 +49,10 @@ const Login = () => {
         } else if (userData.role === "VENDOR") {
           userType = "vendor";
         }
+
         sessionStorage.setItem("userType", userType);
         dispatch(authLogin(user));
+        // dispatch(setUserData(userData.data))
         console.log(userData.is_firstLogin);
         if (userData?.is_firstLogin) navigate("/admin/home");
         else if (userType === "user" || userType === "project-manager" || userType ==="admin" || userType === "department-mana")  navigate("/admin/home");
@@ -67,8 +69,11 @@ const Login = () => {
         navigate("/");
       }
     } catch (error) {
-      toast.error("Error message: ",error);
-      
+      if (error.message === "Invalid Credentials") {
+        toast.error("Invalid Credentials",error);
+      } else {
+        toast.error("Something went wrong with server",error);
+      }
     }
   };
 
