@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
@@ -114,12 +115,8 @@ const Project = ({ projectId, onClose }) => {
                   { label: "Department", value: projectData?.department?.name },
                   { label: "End Date", value: projectData?.approvalDate },
                   {
-                    label: "Department Manager",
-                    value: projectData?.manager?.f_name,
-                  },
-                  {
                     label: "Project Manager",
-                    value: projectData?.manager?.f_name,
+                    value: `${projectData?.manager?.f_name || ""} ${projectData?.manager?.m_name || ""} ${projectData?.manager?.l_name || ""}`,
                   },
                   {
                     label: "Files",

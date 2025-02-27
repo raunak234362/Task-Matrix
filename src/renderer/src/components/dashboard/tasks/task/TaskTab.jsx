@@ -5,7 +5,6 @@ import { NavLink, Outlet } from "react-router-dom";
 
 const TaskTab = () => {
   const tasks = useSelector((state) => state?.taskData.taskData);
-
   // Count the number of active projects
   const activeTaskCount = tasks.filter(
     (task) => task.status === "IN PROGRESS",
@@ -114,7 +113,9 @@ const TaskTab = () => {
                     My Task Record
                   </NavLink>
                 </li>
-                {userType === "manager" || userType === "admin" ? (
+                {userType === "project-manager" ||
+                userType === "admin" ||
+                userType === "department-manager" ? (
                   <li className="px-2">
                     <NavLink
                       to="add-task"
