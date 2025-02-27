@@ -24,6 +24,7 @@ import {
 
 import "./index.css";
 import App from "./App.jsx";
+import { ToastContainer } from "react-toastify";
 
 const router = createHashRouter([
   {
@@ -103,6 +104,7 @@ const router = createHashRouter([
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
+    <ToastContainer />
     <Provider store={store}>
       <RouterProvider router={router} />
     </Provider>

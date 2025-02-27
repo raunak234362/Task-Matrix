@@ -73,7 +73,7 @@ const App = () => {
 
   return (
     <Provider store={store}>
-      <ToastContainer />
+      {/* <ToastContainer /> */}
       <div className="flex flex-col w-screen h-screen overflow-hidden md:flex-row bg-gradient-to-r from-green-300/50 to-teal-300">
         {/* Sidebar */}
 
