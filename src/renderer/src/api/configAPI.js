@@ -242,7 +242,7 @@ class Service {
           "Content-Type": "application/json",
         },
       });
-      const data = await response.json();
+      const data = await response.data?.data;
       return data;
     } catch (error) {
       console.log("Error in getting Parent Task: ", error);
