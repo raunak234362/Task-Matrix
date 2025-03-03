@@ -263,6 +263,7 @@ const Task = ({ taskId, setDisplay }) => {
           assigned_by,
           assigned_on,
           approved_by,
+          task_id: taskId,
         };
         if (handlePause) {
           // console.log("Assigned Task: ", response);
@@ -274,6 +275,7 @@ const Task = ({ taskId, setDisplay }) => {
           assigned_to,
           assigned_by,
           assigned_on,
+          task_id: taskId,
         };
         if (handlePause) {
           const response = await Service.addAssigne(tasks?.id, updatedData);
@@ -452,8 +454,8 @@ const Task = ({ taskId, setDisplay }) => {
                     </div>
                   </div>
                   {/* select Assignee */}
-
-                  {/* <form
+{/* 
+                  <form
                     onSubmit={handleSubmit(handleAddAssign)} // separate handler
                     className="w-full gap-5 p-5 rounded-lg shadow-xl bg-teal-200/30"
                   >
