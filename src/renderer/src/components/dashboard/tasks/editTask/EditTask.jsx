@@ -9,13 +9,15 @@ import { fetchTeam } from "../../../../store/projectSlice";
 import Service from "../../../../api/configAPI";
 import Input from "../../../fields/Input";
 import { CustomSelect, Button } from "../../../index";
+import { toast } from "react-toastify";
 
 /* eslint-disable react/prop-types */
 const EditTask = ({ onClose, task }) => {
   // console.log(task);
+  const taskDetail =task[0]
   const dispatch = useDispatch();
   const [assignedUser, setAssignedUser] = useState([]);
-  console.log("TASK-=-==-=-=-=-=-=", task);
+  console.log("TASK-=-==-=-=-=-=-=", taskDetail);
   const {
     register,
     handleSubmit,
@@ -25,51 +27,56 @@ const EditTask = ({ onClose, task }) => {
     setValue,
   } = useForm({
     defaultValues: {
-      name: task?.name || "",
-      description: task?.description || "",
-      duration: task?.duration || "",
-      start_date: task?.start_date || "",
-      due_date: task?.due_date || "",
-      status: task?.status || "",
+      name: taskDetail?.name || "",
+      description: taskDetail?.description || "",
+      duration: taskDetail?.duration || "",
+      start_date: taskDetail?.start_date || "",
+      due_date: taskDetail?.due_date || "",
+      status: taskDetail?.status || "",
     },
   });
 
+  const teams = useSelector((state) => state?.projectData?.teamData?.filter((team) => team.id === taskDetail?.project?.teamID) || []);
+  console.log("STAFF-=-=-=-=-=-=-=-", teams);
+
+  
+
   const teamData = useSelector((state) =>
     state?.projectData?.teamData.find(
-      (team) => team.id === task?.project?.teamID,
+      (team) => team.id === taskDetail?.project?.teamID,
     ),
   );
   const staffData = useSelector((state) => state?.userData?.staffData) || [];
-  console.log("STAFF-=-=-=-=-=-=-=-", staffData);
-  useEffect(() => {
-    const processTeamMembers = () => {
-      try {
-        if (!teamData) {
-          console.log("No team data available");
-          return;
-        }
+  // const processTeamMembers = () => {
+  //   try {
+  //     if (!teamData) {
+  //       console.log("No team data available");
+  //       return;
+  //     }
 
-        const assigned = teamData?.members?.reduce((acc, member) => {
-          const exists = acc?.find((item) => item?.value === member?.id);
-          console.log("EXISTS-=-=-=-=-=-=-=-", member);
-          if (!exists) {
-            acc.push({
-              label: `${member?.role} - ${staffData.find(staff => staff.id === member.id)?.f_name} ${staffData.find(staff => staff.id === member.id)?.m_name} ${staffData.find(staff => staff.id === member.id)?.l_name}`,
-              value: member?.id,
-            });
-          }
-          return acc;
-        }, []);
+  //     console.log("Team members processed:", assigned);
+  //     setAssignedUser(assigned);
+  //   } catch (error) {
+  //     console.error("Error processing team members:", error);
+  //   }
+  // };
 
-        console.log("Team members processed:", assigned);
-        setAssignedUser(assigned || []);
-      } catch (error) {
-        console.error("Error processing team members:", error);
-      }
-    };
+  const assigned = teamData?.members?.reduce((acc, member) => {
+    const exists = acc?.find((item) => item?.value === member?.id);
+    console.log("EXISTS-=-=-=-=-=-=-=-", member);
+    if (!exists) {
+      acc.push({
+        label: `${member?.role} - ${staffData.find((staff) => staff.id === member.id)?.f_name} ${staffData.find((staff) => staff.id === member.id)?.m_name} ${staffData.find((staff) => staff.id === member.id)?.l_name}`,
+        value: member?.id,
+      });
+    }
+    return acc;
+  }, []);
 
-    processTeamMembers();
-  }, [teamData]);
+  console.log("ASSIGNED-=-=-=-=-=-=-=-", assigned);
+  // useEffect(() => {
+  //   processTeamMembers();
+  // }, [teamData]);
 
   const onSubmit = async (data) => {
     console.log("Data: +++++++++++++++", data);
@@ -78,7 +85,7 @@ const EditTask = ({ onClose, task }) => {
       const taskData = {
         ...data,
         name: data?.type ? `${data?.type} - ${data?.taskname}` : data?.name,
-        user_id: task?.user_id
+        user_id: data?.user,
       };
 
       // Remove type and taskname before sending to backend
@@ -86,11 +93,10 @@ const EditTask = ({ onClose, task }) => {
       delete taskData.taskname;
 
       const updatedTask = await Service.editTask(task?.id, taskData);
-      console.log("Updated Task: ", updatedTask);
+      toast.success("Successfully Updated Task: ", updatedTask);
       dispatch(updateTask(updatedTask));
-      console.log("Successfully Updated Task: ", updatedTask);
     } catch (error) {
-      console.log(error);
+      toast.error(error);
     }
     onClose();
   };
@@ -108,9 +114,13 @@ const EditTask = ({ onClose, task }) => {
           </button>
         </div>
         <div>
+          {console.log(teamData)}
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="my-2">
-              <p className="text-red-700 text-xs">*If you want to update the Task Name you have to select the Task Type</p>
+              <p className="text-red-700 text-xs">
+                *If you want to update the Task Name you have to select the Task
+                Type
+              </p>
               <CustomSelect
                 label="Task Type: "
                 name="type"
@@ -153,7 +163,10 @@ const EditTask = ({ onClose, task }) => {
               <CustomSelect
                 label="Current User:"
                 name="user"
-                options={[{ label: "Select User", value: "" }, ...assignedUser]}
+                options={teams?.members?.map((member) => ({
+                  label: `${member?.role} - ${staffData.find((staff) => staff.id === member.id)?.f_name} ${staffData.find((staff) => staff.id === member.id)?.m_name} ${staffData.find((staff) => staff.id === member.id)?.l_name}`,
+                  value: member?.id,
+                }))}
                 className="w-full"
                 defaultValues={task?.assignedUser}
                 {...register("user")}

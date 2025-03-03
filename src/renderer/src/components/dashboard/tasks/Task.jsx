@@ -12,7 +12,7 @@ import { BASE_URL } from "../../../config/constant";
 const Task = ({ taskId, setDisplay }) => {
   const work_id = sessionStorage.getItem("work_id");
   const myTasks = useSelector((state) => state?.taskData?.myTaskData);
-  const [tasks, setTasks] = useState();
+  const [tasks, setTasks] = useState({});
   const dispatch = useDispatch();
   const [workHours, setWorkHours] = useState(null);
   const userType = sessionStorage.getItem("userType");
@@ -43,17 +43,29 @@ const Task = ({ taskId, setDisplay }) => {
       (project) => project.id === tasks?.project_id,
     ),
   );
-  const fetchTask = useCallback(async () => {
+  const fetchTask = async () => {
     try {
       const taskData = await Service.getTaskById(taskId);
       setTasks(taskData);
+
       updatePriorityColor(taskData?.priority);
     } catch (error) {
       error("Error fetching task details.");
       console.log("Error in fetching task: ", error);
     }
+  };
+  useEffect(() => {
+    fetchTask();
   }, []);
-  console.log("task----------0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0", tasks);
+
+  const teamID = tasks?.project?.teamID;
+
+  let memberData = teamData?.find((team) => team.id === teamID);
+  const members = memberData?.members?.map((member) => ({
+    label: `${member?.role} - ${staffData?.find((staff) => staff.id === member?.id)?.f_name || "Unknown"}`,
+    value: member?.id,
+  })) || [];
+  console.log("Member Data:============ ", members);
 
   useEffect(() => {
     const fetchWorkId = async () => {
@@ -65,18 +77,6 @@ const Task = ({ taskId, setDisplay }) => {
     fetchWorkId();
   }, []);
 
-  useEffect(() => {
-    const teamID = tasks?.project?.teamID;
-    if (teamID) {
-      let memberData = teamData?.find((team) => team.id === teamID);
-      console.log("Member Data: ", memberData);
-      const members = memberData?.members?.map((member) => ({
-        label: `${member?.role} - ${staffData?.find((staff) => staff.id === member?.id)?.f_name || "Unknown"}`,
-        value: member?.id,
-      }));
-      setTeamMember(members);
-    }
-  }, []);
 
   useEffect(() => {
     let interval;
@@ -89,10 +89,6 @@ const Task = ({ taskId, setDisplay }) => {
     }
     return () => clearInterval(interval); // Cleanup on unmount
   }, [isTimerRunning]);
-
-  useEffect(() => {
-    fetchTask();
-  }, []);
 
   const updatePriorityColor = (priority) => {
     const colors = {
@@ -174,8 +170,6 @@ const Task = ({ taskId, setDisplay }) => {
   const toggleFabricatorDetail = () => {
     setShowFabricatorDetail(!showFabricatorDetail);
   };
-
-  console.log(tasks);
 
   async function handleStart() {
     const taskID = tasks?.id;
@@ -324,8 +318,6 @@ const Task = ({ taskId, setDisplay }) => {
     const totalHours = days * 24 + hours; // Convert days to hours and add them
     return `${totalHours}h ${minutes}m`;
   }
-
-  // console.log(tasks);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
@@ -565,8 +557,8 @@ const Task = ({ taskId, setDisplay }) => {
                       <div className="w-full">
                         <CustomSelect
                           label="Select Assignee"
-                          options={teamMember}
                           className="h-10 80"
+                          options={teamData}
                           {...register("assigned_to")}
                           onChange={setValue}
                         />

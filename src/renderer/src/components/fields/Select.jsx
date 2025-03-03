@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/no-unescaped-entities */
 /* eslint-disable react/prop-types */
@@ -17,7 +18,7 @@ function Select({ options = [], label, name, className, onChange, placeholder, .
 
   useEffect(() => {
     setFilteredOptions(options)
-  }, [options])
+  }, [])
 
   useEffect(() => {
     const handleClickOutside = (event) => {

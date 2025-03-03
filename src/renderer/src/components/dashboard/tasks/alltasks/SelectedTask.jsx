@@ -12,34 +12,23 @@ import { toast } from "react-toastify";
 
 const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
   const dispatch = useDispatch();
-  let taskData = useSelector((state) =>
+  const taskData = useSelector((state) =>
     state?.taskData?.taskData.filter((task) => task.id === taskID),
   );
-  const [workHours, setWorkHours] = useState(null);
-  const [workdata, setWorkData] = useState({});
+  const task = taskData[0];
+  console.log("Task Data: ", taskData);
 
   const staffData = useSelector((state) => state?.userData?.staffData);
   const projectData = useSelector((state) =>
     state?.projectData?.projectData.find(
-      (project) => project?.id === taskDetail?.project?.id,
+      (project) => project?.id === task?.project?.id,
     ),
   );
-  taskData = taskData[0];
-
   const [selectedTask, setSelectedTask] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const username = sessionStorage.getItem("username");
   const userType = sessionStorage.getItem("userType");
-  useEffect(() => {
-    const fetchWorkId = async () => {
-      const workHour = await Service.getWorkHours(taskID);
-      console.log("Work Hour: ", workHour);
-      setWorkData(workHour);
-      setWorkHours(workHour);
-    };
-    fetchWorkId();
-  }, [taskID]);
   const {
     register,
     handleSubmit,
@@ -49,11 +38,15 @@ const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
     formState: { errors },
   } = useForm();
 
+  const taskIds = useSelector((state) =>
+    state?.taskData?.taskData?.map((task) => task.id),
+  );
+
   if (!isOpen) return null;
 
   const handleEditClick = () => {
     setIsModalOpen(true);
-    setSelectedTask(taskDetail);
+    setSelectedTask(taskData);
   };
   const handleModalClose = () => {
     setIsModalOpen(false);
@@ -76,22 +69,28 @@ const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
     const totalHours = days * 24 + hours;
     return `${totalHours}h ${minutes}m`;
   };
-  const formatMinutesToHoursAndMinutes = (totalMinutes) => {
-    if (!totalMinutes) return "0h 0m";
+  function formatMinutesToHours(totalMinutes) {
+    console.log("totalMinutes: ", totalMinutes);
+    if (!totalMinutes && totalMinutes !== 0) return "N/A";
 
     const hours = Math.floor(totalMinutes / 60);
     const minutes = totalMinutes % 60;
 
     return `${hours}h ${minutes}m`;
-  };
+  }
   const addComment = async (commentData) => {
     try {
-      const comment = await Service.addComment(taskDetail?.id, commentData);
+      const comment = await Service.addComment(task?.id, commentData);
       console.log("Comment: ", comment.data);
-      dispatch(updateTask({ ...taskData, taskcomment: [...taskData.taskcomment, comment.data] }));
+      dispatch(
+        updateTask({
+          ...task,
+          taskcomment: [...task.taskcomment, comment.data],
+        }),
+      );
       toast.success("Comment Added successfully");
     } catch (error) {
-      toast.error(error)
+      toast.error(error);
       console.error("Error in adding comment: ", error);
     }
   };
@@ -126,8 +125,8 @@ const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
     }
   };
 
-  const start_date = new Date(taskDetail?.start_date);
-  const due_date = new Date(taskDetail?.due_date);
+  const start_date = new Date(task?.start_date);
+  const due_date = new Date(task?.due_date);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
@@ -149,22 +148,24 @@ const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
                 <strong className="w-40 font-bold text-gray-800">
                   Task Name:
                 </strong>
-                <div>{taskData?.name}</div>
+                <div>{task?.name}</div>
               </div>
               <div className="flex items-center my-2">
                 <strong className="w-40 font-bold text-gray-800">
                   Description:
                 </strong>
-                {taskData?.description}
+                {task?.description}
               </div>
               <div className="flex items-center my-2">
                 <strong className="w-40 font-bold text-gray-800">
                   Current User:
                 </strong>{" "}
-                {
-                  staffData?.find((staff) => staff?.id === taskData?.user_id)
-                    ?.f_name
-                }
+                {(() => {
+                  const staff = staffData?.find(
+                    (staff) => staff?.id === task?.user_id,
+                  );
+                  return `${staff?.f_name || ""} ${staff?.m_name || ""} ${staff?.l_name || ""}`.trim();
+                })()}
               </div>
               <div className="flex items-center my-2">
                 <strong className="w-40 font-bold text-gray-800">
@@ -182,21 +183,25 @@ const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
                 <strong className="w-40 font-bold text-gray-800">
                   Duration:
                 </strong>
-                {durToHour(taskData?.duration)}
+                {durToHour(task?.duration)}
               </div>
               <div className="flex items-center my-2">
                 <span className="w-40 font-bold text-gray-800">
                   Work Hours:
                 </span>
                 <span className="text-lg">
-                  {formatMinutesToHoursAndMinutes(workHours?.duration)}
+                  {formatMinutesToHours(
+                    task?.workingHourTask?.find((rec) =>
+                      taskIds.includes(rec.task_id),
+                    )?.duration,
+                  )}
                 </span>
               </div>
               <div className="flex items-center my-2">
                 <strong className="w-40 font-bold text-gray-800">
                   Status:
                 </strong>
-                <span className="text-lg">{taskData?.status}</span>
+                <span className="text-lg">{task?.status}</span>
               </div>
               <div className="flex items-center my-2">
                 <strong className="w-40 font-bold text-gray-800">
@@ -204,10 +209,10 @@ const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
                 </strong>
                 <span
                   className={`text-sm font-semibold px-3 py-0.5 mx-2 rounded-full border ${color(
-                    taskData?.priority,
+                    task?.priority,
                   )}`}
                 >
-                  {setPriorityValue(taskData?.priority)}
+                  {setPriorityValue(task?.priority)}
                 </span>
               </div>
               {userType !== "user" ? (
@@ -354,15 +359,7 @@ const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
                         placeholder="Add Comment"
                         {...register("comment")}
                       />
-                      {/* <Input
-                        label="Upload file/document"
-                        placeholder="Upload file"
-                        name="files"
-                        type="file"
-                        id="file"
-                        accept=".pdf, .zip, .doc, image/*"
-                        {...register("files")}
-                      /> */}
+
                       <Button
                         className="bg-teal-500 py-0.5 hover:bg-teal-800 font-semibold"
                         type="submit"
@@ -375,13 +372,13 @@ const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
               </div>
             </div>
 
-            {taskData?.taskcomment?.length > 0 && (
+            {task?.taskcomment?.length > 0 && (
               <div className="p-5 rounded-lg shadow-xl bg-gray-100/70">
                 <div className="space-y-4">
-                  {taskData?.taskcomment?.map((comment, index) => (
+                  {task?.taskcomment?.map((comment, index) => (
                     <div
-                    className="p-4 bg-white rounded-lg shadow-md"
-                    key={index}
+                      className="p-4 bg-white rounded-lg shadow-md"
+                      key={index}
                     >
                       <div className="flex items-center mb-2">
                         <span className="font-bold text-gray-800">
@@ -404,18 +401,6 @@ const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
                       </div>
                       <div className="text-gray-600">
                         <div>{comment?.data} </div>
-                        {/* {comment?.file && (
-                          <div>
-                            <a
-                              href={comment?.file}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-blue-500 hover:text-blue-700"
-                            >
-                              View File
-                            </a>
-                          </div>
-                        )} */}
                       </div>
                     </div>
                   ))}

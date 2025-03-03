@@ -8,6 +8,7 @@ import { showTask, showTaskByID } from "../../../../store/taskSlice";
 
 const AllTask = () => {
   const dispatch = useDispatch();
+  const userType = sessionStorage.getItem("userType");
   const tasks = useSelector((state) => state?.taskData?.taskData);
   const currentUserId = useSelector((state) => state?.userData?.userData?.id);
   const isSuperUser = useSelector(
@@ -28,17 +29,18 @@ const AllTask = () => {
     fabricator: "",
     status: "",
   });
+    
+  const departmentTask = tasks?.flatMap((task) => task?.tasks) || [];
 
   useEffect(() => {
-    setTaskFilter(tasks);
-  }, [tasks]);
+    setTaskFilter(userType === "department-manager" ? departmentTask : tasks);
+  }, [tasks, userType]);
   const uniqueProject = [
-    ...new Set(tasks?.map((project) => project?.project?.name)),
+    ...new Set((userType === "department-manager" ? departmentTask : tasks)?.map((project) => project?.project?.name)),
   ];
-  console.log("UNIQUE PROJECTS:", uniqueProject);
-
+  // console.log("UNIQUE PROJECTS:", uniqueProject);
   const filterAndSortData = () => {
-    let filtered = tasks?.filter((task) => {
+    let filtered = (userType === "department-manager" ? departmentTask : tasks)?.filter((task) => {
       const searchMatch = task?.name
         ?.toLowerCase()
         .includes(searchQuery.toLowerCase()) || 
@@ -112,7 +114,7 @@ const AllTask = () => {
 
   useEffect(() => {
     if (projectFilter) {
-      const projectTasks = tasks.filter(
+      const projectTasks = (userType === "department-manager" ? departmentTask : tasks).filter(
         (task) => task?.project?.name === projectFilter,
       );
       const completedTasks = projectTasks.filter(
@@ -136,9 +138,6 @@ const AllTask = () => {
         const taskDuration = task?.project?.duration || 0;
         return sum + taskDuration;
       }, 0);
-
-      const hours = Math.floor(totalMinutes / 60);
-      const minutes = totalMinutes % 60;
     }
 
     filterAndSortData();
@@ -233,7 +232,6 @@ const AllTask = () => {
   const taskIds = useSelector((state) =>
     state?.taskData?.taskData?.map((task) => task.id),
   );
-  console.log("TASKS:", tasks);
 
   return (
     <div>
@@ -327,21 +325,21 @@ const AllTask = () => {
                     >
                       <td className="px-1 py-2 border">{index + 1}</td>
                       <td className="px-1 py-2 border">
-                        {
+                        {/* {
                           projectData?.find(
                             (project) => project?.id === task?.project_id,
                           )?.name
-                        }
+                        } */}
                       </td>
                       <td className="px-1 py-2 border">{task?.name}</td>
 
 
                       <td className="px-1 py-2 border">
-                        {
+                        {/* {
                           userData?.find((user) => user?.id === task?.user_id)
                             ? `${userData.find((user) => user.id === task.user_id)?.f_name || ''} ${userData.find((user) => user.id === task.user_id)?.m_name || ''} ${userData.find((user) => user.id === task.user_id)?.l_name || ''}`.trim()
                             : ''
-                        }
+                        } */}
                       </td>
                       <td className="px-1 py-2 border">{task?.status}</td>
                       <td className={`border px-1 py-2`}>
