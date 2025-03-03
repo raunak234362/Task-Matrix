@@ -18,7 +18,7 @@ function Select({ options = [], label, name, className, onChange, placeholder, .
 
   useEffect(() => {
     setFilteredOptions(options)
-  }, [])
+  }, [options])
 
   useEffect(() => {
     const handleClickOutside = (event) => {

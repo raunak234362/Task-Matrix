@@ -454,7 +454,7 @@ const Task = ({ taskId, setDisplay }) => {
                     </div>
                   </div>
                   {/* select Assignee */}
-{/* 
+
                   <form
                     onSubmit={handleSubmit(handleAddAssign)} // separate handler
                     className="w-full gap-5 p-5 rounded-lg shadow-xl bg-teal-200/30"
@@ -563,7 +563,7 @@ const Task = ({ taskId, setDisplay }) => {
                         </tbody>
                       </table>
                     </div>
-                  </div> */}
+                  </div>
 
                   {/* comment */}
                   <br />

@@ -51,7 +51,6 @@ const ApproveAssignee = () => {
         tid: selectedTask.id,
       });
       setIsApproved(true);
-      console.log("Task approved:", updatedTask);
       toast.success("Task successfully approved!");
       setAssigneeTask((prevTasks) =>
         prevTasks.map((task) => {

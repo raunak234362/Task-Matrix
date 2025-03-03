@@ -35,6 +35,7 @@ const AddTask = () => {
             label: `${project.name} - ${project.fabricator.fabName}`,
             value: project.id,
           }));
+          console.log(options);
         setPtojectOptions(options);
         console.log(projects);
       } catch (error) {
@@ -162,9 +163,11 @@ const AddTask = () => {
                       value: "",
                     },
                     { label: "Modeling", value: "MODELING" },
-                    { label: "Checking", value: "CHECKING" },
-                    { label: "Erection", value: "ERECTION" },
+                    { label: "Model Checking", value: "MODEL_CHECKING" },
                     { label: "Detailing", value: "DETAILING" },
+                    { label: "Detailing Checking", value: "DETAIL_CHECKING" },
+                    { label: "Erection", value: "ERECTION" },
+                    { label: "Erection Checking", value: "ERECTION_CHECKING" },
                     { label: "Others", value: "OTHERS" },
                   ]}
                   {...register("type", { required: "Task Type is required" })}

@@ -1,8 +1,6 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
-
-
 import { useSelector } from "react-redux";
 import { Clock, Users, CheckCircle, AlertCircle } from "lucide-react";
 import {
@@ -57,9 +55,11 @@ const ProjectStatus = ({ projectId, onClose }) => {
 
   const taskTypes = {
     MODELING: calculateHours("MODELING"),
+    MODEL_CHECKING: calculateHours("MODELING_CHECKING"),
     DETAILING: calculateHours("DETAILING"),
-    CHECKING: calculateHours("CHECKING"),
+    DETAIL_CHECKING: calculateHours("DETAILING_CHECKING"),
     ERECTION: calculateHours("ERECTION"),
+    ERECTIONCHECKING: calculateHours("ERECTION_CHECKING"),
   };
 
   console.log(taskTypes);
@@ -87,6 +87,7 @@ const ProjectStatus = ({ projectId, onClose }) => {
       const userTasks = projectTasks?.filter(
         (task) => task.user?.id === user.id
       );
+      console.log(userTasks)
       return {
         name: user.f_name,
         taskCount: userTasks.length,
@@ -120,6 +121,13 @@ const ProjectStatus = ({ projectId, onClose }) => {
       progress = 80;
     } else if (task.status === "COMPLETED") {
       progress = 100;
+    } else if (task.status === "IN PROGRESS") {
+      progress = Math.min(progress, 80);
+    }
+
+    // Ensure progress does not exceed 80% when in progress
+    if (task.status === "IN PROGRESS" && progress > 80) {
+      progress = 80;
     }
 
     return {
@@ -206,14 +214,16 @@ const ProjectStatus = ({ projectId, onClose }) => {
 
   const typeColors = {
     MODELING: "bg-blue-500",
+    MODELCHECKING: "bg-blue-700",
     DETAILING: "bg-green-500",
-    CHECKING: "bg-yellow-500",
+    DETAILCHECKING: "bg-green-700",
     ERECTION: "bg-purple-500",
+    ERECTIONCHECKING: "bg-purple-700",
   };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-85 flex justify-center items-center z-50">
-      <div className="bg-white h-[90vh] p-5 rounded-lg shadow-lg w-11/12 md:w-10/12">
+      <div className="bg-white h-[90vh] overflow-y-auto p-5 rounded-lg shadow-lg w-11/12 md:w-10/12">
         <div className="flex flex-col gap-6">
           {/* Header */}
           <div className="flex justify-between items-center">
@@ -227,173 +237,174 @@ const ProjectStatus = ({ projectId, onClose }) => {
               Close
             </button>
           </div>
-          <div className="h-[80vh] overflow-y-auto space-y-4">
-            {/* User Contributions Chart */}
-            <div className="border rounded-lg p-4">
-              <h2 className="flex items-center gap-2 text-lg font-bold mb-4">
-                <Users className="h-5 w-5" /> Team Contributions
-              </h2>
-              <div className="h-[300px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={userContributions}>
-                    <XAxis dataKey="name" />
-                    <YAxis
-                      label={{
-                        value: "Tasks",
-                        angle: -90,
-                        position: "insideLeft",
-                      }}
-                    />
-                    <Tooltip
-                      formatter={(value) => `${value} tasks`}
-                      labelStyle={{ color: "black" }}
-                    />
-                    <Bar dataKey="taskCount" fill="#3b82f6" />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
+
+          {/* User Contributions Chart */}
+          <div className="border rounded-lg p-4">
+            <h2 className="flex items-center gap-2 text-lg font-bold mb-4">
+              <Users className="h-5 w-5" /> Team Contributions
+            </h2>
+            <div className="h-[300px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={userContributions}>
+                  <XAxis dataKey="name" />
+                  <YAxis
+                    label={{
+                      value: "Tasks",
+                      angle: -90,
+                      position: "insideLeft",
+                    }}
+                  />
+                  <Tooltip
+                    formatter={(value) => `${value} tasks`}
+                    labelStyle={{ color: "black" }}
+                  />
+                  <Bar dataKey="taskCount" fill="#3b82f6" />
+                </BarChart>
+              </ResponsiveContainer>
             </div>
+          </div>
 
-            {/* Gantt Chart */}
-            <div className="border rounded-lg p-4 mx-auto">
-              <h2 className="flex items-center gap-2 text-lg font-bold mb-4">
-                <Clock className="h-5 w-5" /> Project Timeline
-              </h2>
-              <div className="overflow-x-auto w-full">
-                <div
-                  style={{ width: `${timelineWidth + 300}px` }}
-                  className="relative"
-                >
-                  {/* Timeline Header */}
-                  <div className="flex border-b">
-                    <div className="w-48 flex-shrink-0 font-bold">
-                      Task Name
-                    </div>
-                    <div className="flex-1 relative">
-                      {/* Date Axis */}
-                      <div className="absolute left-0 right-0 border-b">
-                        {Array.from({ length: totalDays + 1 }).map((_, i) => {
-                          const date = new Date(minDate);
-                          date.setDate(date.getDate() + i);
-                          return (
-                            <div
-                              key={i}
-                              className="absolute border-l border-gray-300 text-xs text-gray-700 text-center"
-                              style={{
-                                left: `${(i * timelineWidth) / totalDays}px`,
-                                width: `${timelineWidth / totalDays}px`,
-                              }}
-                            >
-                              {date.toLocaleDateString("en-US", {
-                                day: "numeric",
-                                month: "short",
-                              })}
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Render grouped tasks */}
-                  {Object.keys(groupedTasks).map((type) => (
-                    <div key={type} className="mt-4 w-full">
-                      <div className="">
-                        <h3 className="text-lg font-bold p-2 bg-gray-200  rounded">
-                          {type}
-                        </h3>
-                      </div>
-                      {groupedTasks[type].map((task, index) => {
-                        const { left, width } = getPositionAndWidth(
-                          task.startDate,
-                          task.endDate
-                        );
-
+          {/* Gantt Chart */}
+          <div className="border rounded-lg p-4 mx-auto">
+            <h2 className="flex items-center gap-2 text-lg font-bold mb-4">
+              <Clock className="h-5 w-5" /> Project Timeline
+            </h2>
+            <div className="overflow-x-auto w-full">
+              <div
+                style={{ width: `${timelineWidth + 300}px` }}
+                className="relative"
+              >
+                {/* Timeline Header */}
+                <div className="flex border-b">
+                  <div className="w-48 flex-shrink-0 font-bold">Task Name</div>
+                  <div className="flex-1 relative">
+                    {/* Date Axis */}
+                    <div className="absolute left-0 right-0 border-b">
+                      {Array.from({ length: totalDays + 1 }).map((_, i) => {
+                        const date = new Date(minDate);
+                        date.setDate(date.getDate() + i);
                         return (
                           <div
-                            key={index}
-                            className="flex w-full items-center border-b"
-                            style={{ height: `${rowHeight}px` }}
+                            key={i}
+                            className="absolute border-l border-gray-300 text-xs text-gray-700 text-center"
+                            style={{
+                              left: `${(i * timelineWidth) / totalDays}px`,
+                              width: `${timelineWidth / totalDays}px`,
+                            }}
                           >
-                            <div className="w-52 flex-shrink-0 truncate px-2">
-                              {task.username || ""}
-                            </div>
-                            <div className="flex-1 relative">
-                              <div
-                                className={`absolute z-0 h-4 w-full rounded ${
-                                  typeColors[task.type] || "bg-gray-500"
-                                } opacity-80 cursor-pointer hover:opacity-100 transition-opacity duration-200`}
-                                style={{
-                                  left: `${left}px`,
-                                  width: `${width}px`,
-                                  top: "0px",
-                                }}
-                                onMouseEnter={() => setHoveredTask(task)}
-                                onMouseLeave={() => setHoveredTask(null)}
-                              >
-                                <div
-                                  className="h-full bg-opacity-50 bg-green-300"
-                                  style={{ width: `${task.progress}%` }}
-                                />
-
-                                {hoveredTask?.id === task.id && (
-                                  <div className="h-fit fixed top-56 inset-0 flex justify-center items-center w-full z-50">
-                                    <div className="h-fit w-fit bg-black bg-opacity-50 flex justify-center items-center">
-                                      <div className="bg-white h-fit p-5 rounded-lg shadow-lg w-fit">
-                                        <p className="font-medium text-xl">
-                                          {task.name}
-                                        </p>
-                                        <p className="text-md text-gray-600">
-                                          {formatDate(task?.startDate)} -{" "}
-                                          {formatDate(task?.endDate)}
-                                        </p>
-                                        <p className="text-md text-gray-600">
-                                          Duration: {task.duration} days
-                                        </p>
-                                        <p className="text-md text-gray-600">
-                                          Progress: {task.progress}%
-                                        </p>
-                                      </div>
-                                    </div>
-                                  </div>
-                                )}
-                              </div>
-                            </div>
+                            {date.toLocaleDateString("en-US", {
+                              day: "numeric",
+                              month: "short",
+                            })}
                           </div>
                         );
                       })}
                     </div>
-                  ))}
+                  </div>
                 </div>
-              </div>
-            </div>
 
-            {/* Other stats */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="border rounded-lg p-4">
-                <h2 className="flex items-center gap-2 text-lg font-bold">
-                  <CheckCircle className="h-5 w-5" /> Task Type Breakdown
-                </h2>
-                {Object.entries(taskTypes).map(([type, hours]) => (
-                  <p key={type}>
-                    {type}: {formatMinutesToHours(hours.taken)} /{" "}
-                    {formatHours(hours.assigned)}
-                  </p>
+                {/* Render grouped tasks */}
+                {Object.keys(groupedTasks).map((type) => (
+                  <div key={type} className="mt-4 w-full">
+                    <div className="text-lg font-bold p-2">
+                      <div className="w-full  rounded">
+                        <h3 className=" ">{type}</h3>
+                        <hr />
+                      </div>
+                    </div>
+                    {groupedTasks[type].map((task, index) => {
+                      const { left, width } = getPositionAndWidth(
+                        task.startDate,
+                        new Date(task.endDate.getTime() + 24 * 60 * 60 * 1000) // Add one day to end date
+                      );
+
+                      return (
+                        <div
+                          key={index}
+                          className="flex w-full items-center border-b"
+                          style={{ height: `${rowHeight}px` }}
+                        >
+                          <div className="w-52 flex-shrink-0 truncate px-2">
+                            {task.username || ""}
+                          </div>
+                          <div className="flex-1 relative">
+                            <div
+                              className={`absolute z-0 h-4 w-full rounded overflow-x-auto ${
+                                typeColors[task.type] || "bg-gray-500"
+                              } opacity-80 cursor-pointer hover:opacity-100 transition-opacity duration-200`}
+                              style={{
+                                left: `${left}px`,
+                                width: `${width}px`,
+                                top: "0px",
+                              }}
+                              onMouseEnter={() => setHoveredTask(task)}
+                              onMouseLeave={() => setHoveredTask(null)}
+                            >
+                              <div
+                                className="h-full bg-opacity-50 bg-green-300"
+                                style={{ width: `${task.progress}%` }}
+                              />
+
+                              {hoveredTask?.id === task.id && (
+                                <div className="h-fit fixed top-56 inset-0 flex justify-center items-center w-full z-50">
+                                  <div className="h-fit w-fit bg-black bg-opacity-50 flex justify-center items-center">
+                                    <div className="bg-white h-fit p-5 rounded-lg shadow-lg w-fit">
+                                      <p className="font-medium text-xl">
+                                        {task.name}
+                                      </p>
+                                      <p className="text-md text-gray-600">
+                                        {formatDate(task?.startDate)} -{" "}
+                                        {formatDate(task?.endDate)}
+                                      </p>
+                                      <p className="text-md text-gray-600">
+                                        Duration: {task.duration} days
+                                      </p>
+                                      <p className="text-md text-gray-600">
+                                        Progress: {task.progress}%
+                                      </p>
+                                      {/* <p className="text-md text-gray-600">
+                                        Hours Taken: {task.progress}
+                                      </p> */}
+                                    </div>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
                 ))}
               </div>
-              <div className="border rounded-lg p-4">
-                <h2 className="flex items-center gap-2 text-lg font-bold">
-                  <AlertCircle className="h-5 w-5" /> Project Status
-                </h2>
-                <p>Total Tasks: {projectTasks.length}</p>
-                <p>
-                  Completed:{" "}
-                  {
-                    projectTasks.filter((task) => task.status === "COMPLETE")
-                      .length
-                  }
+            </div>
+          </div>
+
+          {/* Other stats */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="border rounded-lg p-4">
+              <h2 className="flex items-center gap-2 text-lg font-bold">
+                <CheckCircle className="h-5 w-5" /> Task Type Breakdown
+              </h2>
+              {Object.entries(taskTypes).map(([type, hours]) => (
+                <p key={type} className="space-y-5">
+                  {type}: {formatMinutesToHours(hours.taken)} /{" "}
+                  {formatHours(hours.assigned)}
                 </p>
-              </div>
+              ))}
+            </div>
+            <div className="border rounded-lg p-4">
+              <h2 className="flex items-center gap-2 text-lg font-bold">
+                <AlertCircle className="h-5 w-5" /> Project Status
+              </h2>
+              <p>Total Tasks: {projectTasks.length}</p>
+              <p>
+                Completed:{" "}
+                {
+                  projectTasks.filter((task) => task.status === "COMPLETE")
+                    .length
+                }
+              </p>
             </div>
           </div>
         </div>
