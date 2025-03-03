@@ -39,7 +39,7 @@ const EditTask = ({ onClose, task }) => {
   const teams = useSelector((state) => state?.projectData?.teamData?.filter((team) => team.id === taskDetail?.project?.teamID) || []);
   console.log("STAFF-=-=-=-=-=-=-=-", teams);
 
-  
+  const team=teams[0]
 
   const teamData = useSelector((state) =>
     state?.projectData?.teamData.find(
@@ -92,7 +92,7 @@ const EditTask = ({ onClose, task }) => {
       delete taskData.type;
       delete taskData.taskname;
 
-      const updatedTask = await Service.editTask(task?.id, taskData);
+      const updatedTask = await Service.editTask(taskDetail?.id, taskData);
       toast.success("Successfully Updated Task: ", updatedTask);
       dispatch(updateTask(updatedTask));
     } catch (error) {
@@ -163,7 +163,7 @@ const EditTask = ({ onClose, task }) => {
               <CustomSelect
                 label="Current User:"
                 name="user"
-                options={teams?.members?.map((member) => ({
+                options={team?.members?.map((member) => ({
                   label: `${member?.role} - ${staffData.find((staff) => staff.id === member.id)?.f_name} ${staffData.find((staff) => staff.id === member.id)?.m_name} ${staffData.find((staff) => staff.id === member.id)?.l_name}`,
                   value: member?.id,
                 }))}

@@ -11,7 +11,6 @@ import { BASE_URL } from "../../../config/constant";
 
 const Task = ({ taskId, setDisplay }) => {
   const work_id = sessionStorage.getItem("work_id");
-  const myTasks = useSelector((state) => state?.taskData?.myTaskData);
   const [tasks, setTasks] = useState({});
   const dispatch = useDispatch();
   const [workHours, setWorkHours] = useState(null);
@@ -27,6 +26,7 @@ const Task = ({ taskId, setDisplay }) => {
   const [isTimerRunning, setIsTimerRunning] = useState(false);
   const teamData = useSelector((state) => state?.projectData?.teamData);
   const staffData = useSelector((state) => state?.userData?.staffData);
+  console.log("Staff Data: ", staffData);
   const {
     register,
     handleSubmit,
@@ -34,10 +34,8 @@ const Task = ({ taskId, setDisplay }) => {
     watch,
     formState: { errors },
   } = useForm();
-  const [record, setRecord] = useState({});
 
   const userData = useSelector((state) => state?.userData?.userData);
-  const staffs = useSelector((state) => state?.userData?.staffData);
   const projectData = useSelector((state) =>
     state?.projectData?.projectData?.find(
       (project) => project.id === tasks?.project_id,
@@ -60,12 +58,9 @@ const Task = ({ taskId, setDisplay }) => {
 
   const teamID = tasks?.project?.teamID;
 
-  let memberData = teamData?.find((team) => team.id === teamID);
-  const members = memberData?.members?.map((member) => ({
-    label: `${member?.role} - ${staffData?.find((staff) => staff.id === member?.id)?.f_name || "Unknown"}`,
-    value: member?.id,
-  })) || [];
-  console.log("Member Data:============ ", members);
+  const teams = useSelector((state) => state?.projectData?.teamData?.filter((team) => team.id === tasks?.project?.teamID) || []);
+  const team=teams[0]
+  console.log("Member Data:============ ", team);
 
   useEffect(() => {
     const fetchWorkId = async () => {
@@ -76,7 +71,6 @@ const Task = ({ taskId, setDisplay }) => {
     };
     fetchWorkId();
   }, []);
-
 
   useEffect(() => {
     let interval;
@@ -277,8 +271,8 @@ const Task = ({ taskId, setDisplay }) => {
           approved_by,
         };
         if (handlePause) {
-          const response = await Service.addAssigne(tasks?.id, updatedData);
           // console.log("Assigned Task: ", response);
+          const response = await Service.addAssigne(tasks?.id, updatedData);
           fetchTask();
         }
       } else {
@@ -339,6 +333,7 @@ const Task = ({ taskId, setDisplay }) => {
             {taskId ? (
               <>
                 <div className="space-y-4">
+                  
                   {/* Task Detail */}
                   <div className="w-full p-5 rounded-lg shadow-xl bg-teal-100/50">
                     <div className="flex items-center my-3">
@@ -463,7 +458,38 @@ const Task = ({ taskId, setDisplay }) => {
                       </div>
                     </div>
                   </div>
+ {/* select Assignee */}
 
+ <form
+                    onSubmit={handleSubmit(handleAddAssign)} // separate handler
+                    className="w-full gap-5 p-5 rounded-lg shadow-xl bg-teal-200/30"
+                    >
+                    <div className="mb-4 font-bold text-gray-800">
+                      Assign Other User:
+                    </div>
+                    <div className="flex items-center w-1/2 gap-10 flex-col-2 justify-evenly">
+                      <div className="w-full">
+                        <CustomSelect
+                          label="Select Assignee"
+                          className="h-10 80"
+                          options={team?.members?.map((member) => ({
+                            label: `${member?.role} - ${staffData.find((staff) => staff.id === member.id)?.f_name} ${staffData.find((staff) => staff.id === member.id)?.m_name} ${staffData.find((staff) => staff.id === member.id)?.l_name}`,
+                            value: member?.id,
+                          }))}
+                          {...register("assigned_to")}
+                          onChange={setValue}
+                        />
+                      </div>
+                      <div className="w-full">
+                        <Button
+                          className="py-1 font-bold bg-teal-600 hover:bg-teal-900"
+                          type="submit"
+                        >
+                          Add
+                        </Button>
+                      </div>
+                    </div>
+                  </form>
                   <div className="w-full p-5 rounded-lg shadow-xl bg-teal-200/50">
                     <div className="mb-4 font-bold text-gray-800">
                       People Assigned:
@@ -543,39 +569,7 @@ const Task = ({ taskId, setDisplay }) => {
                     </div>
                   </div>
 
-                  {/* select Assignee */}
-
-                  <form
-                    onSubmit={handleSubmit(handleAddAssign)} // separate handler
-                    className="w-full gap-5 p-5 rounded-lg shadow-xl bg-teal-200/30"
-                  >
-                    <div className="mb-4 font-bold text-gray-800">
-                      Assign Other User:
-                    </div>
-
-                    <div className="flex items-center w-1/2 gap-10 flex-col-2 justify-evenly">
-                      <div className="w-full">
-                        <CustomSelect
-                          label="Select Assignee"
-                          className="h-10 80"
-                          options={teamData}
-                          {...register("assigned_to")}
-                          onChange={setValue}
-                        />
-                      </div>
-                      <div className="w-full">
-                        <Button
-                          className="py-1 font-bold bg-teal-600 hover:bg-teal-900"
-                          type="submit"
-                        >
-                          Add
-                        </Button>
-                      </div>
-                    </div>
-                  </form>
-
                   {/* comment */}
-
                   <br />
 
                   <div className="grid grid-cols-2 gap-5">

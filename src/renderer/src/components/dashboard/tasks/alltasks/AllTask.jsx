@@ -325,21 +325,21 @@ const AllTask = () => {
                     >
                       <td className="px-1 py-2 border">{index + 1}</td>
                       <td className="px-1 py-2 border">
-                        {/* {
+                        {
                           projectData?.find(
                             (project) => project?.id === task?.project_id,
                           )?.name
-                        } */}
+                        }
                       </td>
                       <td className="px-1 py-2 border">{task?.name}</td>
 
 
                       <td className="px-1 py-2 border">
-                        {/* {
+                        {
                           userData?.find((user) => user?.id === task?.user_id)
                             ? `${userData.find((user) => user.id === task.user_id)?.f_name || ''} ${userData.find((user) => user.id === task.user_id)?.m_name || ''} ${userData.find((user) => user.id === task.user_id)?.l_name || ''}`.trim()
                             : ''
-                        } */}
+                        }
                       </td>
                       <td className="px-1 py-2 border">{task?.status}</td>
                       <td className={`border px-1 py-2`}>
