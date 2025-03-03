@@ -58,8 +58,13 @@ const Task = ({ taskId, setDisplay }) => {
 
   const teamID = tasks?.project?.teamID;
 
-  const teams = useSelector((state) => state?.projectData?.teamData?.filter((team) => team.id === tasks?.project?.teamID) || []);
-  const team=teams[0]
+  const teams = useSelector(
+    (state) =>
+      state?.projectData?.teamData?.filter(
+        (team) => team.id === tasks?.project?.teamID,
+      ) || [],
+  );
+  const team = teams[0];
   console.log("Member Data:============ ", team);
 
   useEffect(() => {
@@ -136,22 +141,6 @@ const Task = ({ taskId, setDisplay }) => {
     setDisplay(false);
   }
 
-  useEffect(() => {
-    const handleProjectChange = async () => {
-      try {
-        const assigned = tasks?.project?.team?.members?.map((member) => ({
-          label: `${member?.role} - ${member?.employee?.name}`,
-          value: member?.employee?.id,
-        }));
-        // console.log("Assigned: ", assigned);
-        setTeamMember(assigned);
-      } catch (error) {
-        console.error("Error fetching team details:", error);
-      }
-    };
-
-    handleProjectChange();
-  }, []);
 
   const due_date = new Date(tasks?.due_date);
   const created_on = new Date(tasks?.created_on);
@@ -257,13 +246,18 @@ const Task = ({ taskId, setDisplay }) => {
   };
   // For Assign Form
   const handleAddAssign = async (assigneedata) => {
+    console.log("Assignee Data: ", assigneedata);
     const assigned_to = assigneedata?.assigned_to;
     const assigned_by = userData.id;
     const approved_by = userData.id;
     const assigned_on = new Date().toISOString();
 
     try {
-      if (userType === "admin" || userType === "manager") {
+      if (
+        userType === "admin" ||
+        userType === "project-manager" ||
+        userType === "department-manager"
+      ) {
         const updatedData = {
           assigned_to,
           assigned_by,
@@ -287,9 +281,9 @@ const Task = ({ taskId, setDisplay }) => {
           fetchTask();
         }
       }
-      alert("Task assigned successfully.");
+      toast.success("Task assigned successfully.");
     } catch (error) {
-      console.error("Error in assigning task: ", error);
+      toast.error("Error in assigning task: ", error);
     }
   };
 
@@ -333,7 +327,6 @@ const Task = ({ taskId, setDisplay }) => {
             {taskId ? (
               <>
                 <div className="space-y-4">
-                  
                   {/* Task Detail */}
                   <div className="w-full p-5 rounded-lg shadow-xl bg-teal-100/50">
                     <div className="flex items-center my-3">
@@ -458,27 +451,28 @@ const Task = ({ taskId, setDisplay }) => {
                       </div>
                     </div>
                   </div>
- {/* select Assignee */}
+                  {/* select Assignee */}
 
- <form
+                  {/* <form
                     onSubmit={handleSubmit(handleAddAssign)} // separate handler
                     className="w-full gap-5 p-5 rounded-lg shadow-xl bg-teal-200/30"
-                    >
+                  >
                     <div className="mb-4 font-bold text-gray-800">
                       Assign Other User:
                     </div>
                     <div className="flex items-center w-1/2 gap-10 flex-col-2 justify-evenly">
                       <div className="w-full">
-                        <CustomSelect
+                        <select
                           label="Select Assignee"
                           className="h-10 80"
-                          options={team?.members?.map((member) => ({
-                            label: `${member?.role} - ${staffData.find((staff) => staff.id === member.id)?.f_name} ${staffData.find((staff) => staff.id === member.id)?.m_name} ${staffData.find((staff) => staff.id === member.id)?.l_name}`,
-                            value: member?.id,
-                          }))}
                           {...register("assigned_to")}
-                          onChange={setValue}
-                        />
+                        >
+                          {team?.members?.map((member) => (
+                            <option key={member.id} value={member.id}>
+                              {`${member?.role} - ${staffData.find((staff) => staff.id === member.id)?.f_name} ${staffData.find((staff) => staff.id === member.id)?.m_name} ${staffData.find((staff) => staff.id === member.id)?.l_name}`}
+                            </option>
+                          ))}
+                        </select>
                       </div>
                       <div className="w-full">
                         <Button
@@ -567,7 +561,7 @@ const Task = ({ taskId, setDisplay }) => {
                         </tbody>
                       </table>
                     </div>
-                  </div>
+                  </div> */}
 
                   {/* comment */}
                   <br />
@@ -666,7 +660,7 @@ const Task = ({ taskId, setDisplay }) => {
                             className="text-teal-600 cursor-pointer"
                             onClick={toggleFabricatorDetail}
                           >
-                            {tasks?.project?.fabricator?.fabName}
+                            {projectData?.fabricator?.fabName}
                           </span>
                         </div>
                         {showFabricatorDetail && (
@@ -676,12 +670,12 @@ const Task = ({ taskId, setDisplay }) => {
                                 Website:
                               </span>{" "}
                               <a
-                                href={tasks?.project?.fabricator?.website}
+                                href={projectData?.fabricator?.website}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="overflow-hidden text-blue-500 hover:text-blue-700 overflow-ellipsis whitespace-nowrap"
                               >
-                                {tasks?.project?.fabricator?.website}
+                                {projectData?.fabricator?.website}
                               </a>
                             </div>
                             <div className="flex items-center gap-4">
@@ -728,25 +722,33 @@ const Task = ({ taskId, setDisplay }) => {
                     <div className="p-5 rounded-lg shadow-xl bg-gray-100/70">
                       <div className="space-y-4">
                         {tasks?.taskcomment?.map((comment, index) => (
-                          <div
-                            className="p-4 bg-white rounded-lg shadow-md"
-                            key={index}
-                          >
-                            <div className="flex items-center mb-2">
-                              <span className="font-bold text-gray-800">
-                                {comment?.data}
-                              </span>
-                              <span className="ml-2 text-sm text-gray-500">
-                                {new Date(
-                                  comment?.created_on,
-                                ).toLocaleDateString("en-US", {
-                                  year: "numeric",
-                                  month: "short",
-                                  day: "numeric",
-                                })}
-                              </span>
-                            </div>
-                          </div>
+                         <div
+                         className="p-4 bg-white rounded-lg shadow-md"
+                         key={index}
+                       >
+                         <div className="flex items-center mb-2">
+                           <span className="font-bold text-gray-800">
+                             {
+                               staffData?.find(
+                                 (staff) => staff?.id === comment?.user_id,
+                               )?.f_name
+                             }
+                           </span>
+                           <span className="ml-2 text-sm text-gray-500">
+                             {new Date(comment?.created_on).toLocaleDateString(
+                               "en-US",
+                               {
+                                 year: "numeric",
+                                 month: "short",
+                                 day: "numeric",
+                               },
+                             )}
+                           </span>
+                         </div>
+                         <div className="text-gray-600">
+                           <div>{comment?.data} </div>
+                         </div>
+                       </div>       
                         ))}
                       </div>
                     </div>
