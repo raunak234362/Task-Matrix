@@ -650,7 +650,6 @@ const Task = ({ taskId, setDisplay }) => {
                     </div>
 
                     {/* Fabricator */}
-                    {userType === "admin" || userType === "manager" ? (
                       <div className="w-full p-5 rounded-lg shadow-xl h-fit bg-teal-200/50">
                         <div className="flex items-center gap-2 my-5 text-xl">
                           <span className="font-bold text-gray-800">
@@ -694,7 +693,6 @@ const Task = ({ taskId, setDisplay }) => {
                           </div>
                         )}
                       </div>
-                    ) : null}
                   </div>
                 </div>
 
