@@ -14,7 +14,7 @@ import { toast } from "react-toastify";
 /* eslint-disable react/prop-types */
 const EditTask = ({ onClose, task }) => {
   // console.log(task);
-  const taskDetail =task[0]
+  const taskDetail = task[0];
   const dispatch = useDispatch();
   const [assignedUser, setAssignedUser] = useState([]);
   console.log("TASK-=-==-=-=-=-=-=", taskDetail);
@@ -36,10 +36,15 @@ const EditTask = ({ onClose, task }) => {
     },
   });
 
-  const teams = useSelector((state) => state?.projectData?.teamData?.filter((team) => team.id === taskDetail?.project?.teamID) || []);
+  const teams = useSelector(
+    (state) =>
+      state?.projectData?.teamData?.filter(
+        (team) => team.id === taskDetail?.project?.teamID,
+      ) || [],
+  );
   console.log("STAFF-=-=-=-=-=-=-=-", teams);
 
-  const team=teams[0]
+  const team = teams[0];
 
   const teamData = useSelector((state) =>
     state?.projectData?.teamData.find(
@@ -86,12 +91,13 @@ const EditTask = ({ onClose, task }) => {
         ...data,
         name: data?.type ? `${data?.type} - ${data?.taskname}` : data?.name,
         user_id: data?.user,
+        duration: `${data?.hour}:${data?.min}:00`,
       };
-
       // Remove type and taskname before sending to backend
       delete taskData.type;
       delete taskData.taskname;
-
+      delete taskData.hour;
+      delete taskData.min;
       const updatedTask = await Service.editTask(taskDetail?.id, taskData);
       toast.success("Successfully Updated Task: ", updatedTask);
       dispatch(updateTask(updatedTask));
@@ -103,9 +109,9 @@ const EditTask = ({ onClose, task }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-white h-[65vh] overflow-x-auto p-5 rounded-lg shadow-lg w-full md:w-[40vw] ">
+      <div className="bg-white h-[65vh] overflow-x-auto p-5 rounded-lg shadow-lg w-full md:w-[50vw] ">
         <div className="flex justify-between my-5 bg-teal-200/50 p-2 rounded-lg">
-          <h2 className="text-2xl font-bold">Edit Project</h2>
+          <h2 className="text-2xl font-bold">Edit Task</h2>
           <button
             className="text-xl font-bold bg-teal-500/50 hover:bg-teal-700 text-white px-5 rounded-lg"
             onClick={onClose}
@@ -183,6 +189,43 @@ const EditTask = ({ onClose, task }) => {
                 defaultValues={task?.description}
                 {...register("description")}
               />
+            </div>
+            <div className="mt-1">
+              <div className="text-lg font-bold">Duration:</div>
+              <div className="flex flex-row w-1/5 gap-5">
+                <div className="w-full">
+                  <Input
+                    type="number"
+                    name="hour"
+                    label="HH"
+                    placeholder="HH"
+                    className="w-20"
+                    min={0}
+                    {...register("hour")}
+                    onBlur={(e) => {
+                      if (e.target.value < 0) e.target.value = 0;
+                    }}
+                  />
+                </div>
+                <div className="w-full">
+                  <Input
+                    type="number"
+                    name="min"
+                    placeholder="MM"
+                    label="MM"
+                    className="w-20"
+                    min={0}
+                    max={60}
+                    {...register("min")}
+                    onBlur={(e) => {
+                      if (e.target.value < 0) e.target.value = 0;
+                    }}
+                  />
+                </div>
+                {errors.min && (
+                  <p className="text-red-600">{errors.min.message}</p>
+                )}
+              </div>
             </div>
             <div className="my-2">
               <CustomSelect

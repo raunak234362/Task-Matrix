@@ -41,14 +41,15 @@ function createWindow() {
 }
 
 // Handle notifications from renderer
-ipcMain.on('show-notification', (event, task) => {
+ipcMain.on('show-notification', (event, { title, body }) => {
   const notification = new Notification({
-    title: 'New Task Assigned',
-    body: `You have a new task: ${task.name}`,
-    icon: join(__dirname, '../../resources/icon.png'), // Specify your icon path
+    title,
+    body,
+    icon: join(__dirname, '../../resources/icon.png'), // Adjust icon path if needed
   });
   notification.show();
 });
+
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
