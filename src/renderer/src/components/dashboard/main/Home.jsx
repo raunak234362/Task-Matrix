@@ -76,14 +76,14 @@ const Home = () => {
   const taskCompletionPercentage = tasks?.length ? Math.round((completedTasks / tasks.length) * 100) : 0
 
   return (
-    <div className="w-full h-screen overflow-y-auto bg-gray-50">
+    <div className="w-full h-screen overflow-y-auto bg-gray-50 my-3 rounded-lg">
       {/* Dashboard Header */}
       <div className="relative bg-gradient-to-r from-teal-500 to-teal-700 p-6 shadow-md">
         <div className="max-w-7xl mx-auto">
-          <h1 className="text-3xl font-bold text-white mb-2">Dashboard</h1>
+          <h1 className="text-2xl font-bold text-white mb-2">Dashboard</h1>
           <p className="text-teal-100">
             Welcome back,{" "}
-            {userType === "admin" ? "Administrator" : userType === "manager" ? "Project Manager" : "Team Member"}
+            {userType === "admin" ? "Administrator" : userType === "project-manager" ? "Project Manager" : "Team Member"}
           </p>
 
           {/* Dashboard Tabs */}
