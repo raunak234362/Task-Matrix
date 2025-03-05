@@ -392,7 +392,7 @@ const Home = () => {
                       {console.log(project)}
                       const projectTasks = tasks?.filter((task) => task.project_id === project.id) || []
                       const completedProjectTasks = projectTasks.filter(
-                        (task) => task.status === "COMPLETED" || task.status === "completed",
+                        (task) => task.status === "COMPLETE" || task.status === "complete",
                       ).length
 
                       return (
@@ -406,9 +406,9 @@ const Home = () => {
                           <td className="px-6 py-4 whitespace-nowrap">
                             <span
                               className={`px-2 py-1 text-xs rounded-full ${
-                                project.status === "COMPLETED" || project.status === "completed"
+                                project.status === "COMPLETE" || project.status === "COMPLETE"
                                   ? "bg-green-100 text-green-800"
-                                  : project.status === "IN PROGRESS" || project.status === "in progress"
+                                  : project.status === "IN PROGRESS" || project.status === "IN PROGRESS"
                                     ? "bg-blue-100 text-blue-800"
                                     : "bg-gray-100 text-gray-800"
                               }`}
