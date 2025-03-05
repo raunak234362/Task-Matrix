@@ -52,18 +52,20 @@ const Sidebar = () => {
     <div className="flex flex-col justify-between md:h-[88vh] h-[88vh] w-64 bg-white/70 md:border-4 text-black md:rounded-xl rounded-lg">
       <nav className="p-5">
         <ul className="flex flex-col gap-5">
-          <li>
-            <NavLink
-              to="home"
-              className={({ isActive }) =>
-                isActive
-                  ? "flex justify-center items-center text-white bg-teal-400 rounded-md w-full  delay-150"
-                  : "text-black hover:text-white hover:flex hover:justify-center hover:items-center hover:bg-teal-200  rounded-md"
-              }
-            >
-              <div>Dashboard</div>
-            </NavLink>
-          </li>
+          {userType !== "human-resource" ? (
+            <li>
+              <NavLink
+                to="home"
+                className={({ isActive }) =>
+                  isActive
+                    ? "flex justify-center items-center text-white bg-teal-400 rounded-md w-full  delay-150"
+                    : "text-black hover:text-white hover:flex hover:justify-center hover:items-center hover:bg-teal-200  rounded-md"
+                }
+              >
+                <div>Dashboard</div>
+              </NavLink>
+            </li>
+          ) : null}
           {/* {userType === "admin" ? (
               <li>
                 <NavLink
@@ -79,19 +81,20 @@ const Sidebar = () => {
               </li>
              
           ) : null} */}
-
-          <li>
-            <NavLink
-              to="project/all-project"
-              className={({ isActive }) =>
-                isActive
-                  ? "flex justify-center items-center text-white bg-teal-400 rounded-md w-full  delay-150"
-                  : "text-black hover:text-white hover:flex hover:justify-center hover:items-center hover:bg-teal-200  rounded-md"
-              }
-            >
-              <div>Project</div>
-            </NavLink>
-          </li>
+          {userType !== "human-resource" ? (
+            <li>
+              <NavLink
+                to="project/all-project"
+                className={({ isActive }) =>
+                  isActive
+                    ? "flex justify-center items-center text-white bg-teal-400 rounded-md w-full  delay-150"
+                    : "text-black hover:text-white hover:flex hover:justify-center hover:items-center hover:bg-teal-200  rounded-md"
+                }
+              >
+                <div>Project</div>
+              </NavLink>
+            </li>
+          ) : null}
 
           <li>
             <NavLink

@@ -29,7 +29,7 @@ const Login = () => {
       console.log(user);
       if ("token" in user) {
         const token = user.token;
-        sessionStorage.setItem('token', token)
+        sessionStorage.setItem("token", token);
         const userData = await Service.getCurrentUser(token);
         dispatch(setUserData(userData));
         console.log("UserData :", userData);
@@ -43,6 +43,8 @@ const Login = () => {
             userType = "department-manager";
           } else if (userData.is_manager) {
             userType = "project-manager";
+          } else if (userData.is_hr) {
+            userType = "human-resource";
           }
         } else if (userData.role === "CLIENT") {
           userType = "client";
@@ -55,7 +57,14 @@ const Login = () => {
         // dispatch(setUserData(userData.data))
         console.log(userData.is_firstLogin);
         if (userData?.is_firstLogin) navigate("/change-password/");
-        else if (userType === "user" || userType === "project-manager" || userType ==="admin" || userType === "department-mana")  navigate("/admin/home");
+        else if (
+          userType === "user" ||
+          userType === "project-manager" ||
+          userType === "admin" ||
+          userType === "department-manager"
+        )
+          navigate("/admin/home");
+          else if (userType === "human-resource") navigate("/admin/profile")
         // else if (userType === "client") navigate("/client");
         // else if (userType === "sales") navigate("/sales");
         // else if (userType === "staff") navigate("/staff");
@@ -69,8 +78,7 @@ const Login = () => {
         navigate("/");
       }
     } catch (error) {
-        toast.error("Invalid Credentials",error);
-      
+      toast.error("Invalid Credentials", error);
     }
   };
 
@@ -85,7 +93,6 @@ const Login = () => {
   useEffect(() => {
     fetchUser();
   }, []);
-
 
   return (
     <>

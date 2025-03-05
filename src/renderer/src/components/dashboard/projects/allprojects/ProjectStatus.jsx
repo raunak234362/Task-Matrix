@@ -296,7 +296,7 @@ const ProjectStatus = ({ projectId, onClose }) => {
   const statusColors = {
     "IN PROGRESS": "#fbbf24", // amber-400
     "IN REVIEW": "#60a5fa", // blue-400
-    COMPLETED: "#34d399", // emerald-400
+    "COMPLETE": "#34d399", // emerald-400
     "NOT STARTED": "#d1d5db", // gray-300
   }
 
