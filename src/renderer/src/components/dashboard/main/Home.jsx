@@ -122,7 +122,7 @@ const Home = () => {
           <>
             {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-              <NavLink to="/admin/project" className="transform transition-transform hover:scale-105">
+              <NavLink to="/admin/project/all-project" className="transform transition-transform hover:scale-105">
                 <div className="bg-white rounded-lg shadow-md overflow-hidden border-l-4 border-blue-500">
                   <div className="p-5">
                     <div className="flex items-center justify-between">
@@ -149,7 +149,7 @@ const Home = () => {
                 </div>
               </NavLink>
 
-              <NavLink to="/admin/task" className="transform transition-transform hover:scale-105">
+              <NavLink to="/admin/task/all-task" className="transform transition-transform hover:scale-105">
                 <div className="bg-white rounded-lg shadow-md overflow-hidden border-l-4 border-green-500">
                   <div className="p-5">
                     <div className="flex items-center justify-between">
@@ -177,7 +177,7 @@ const Home = () => {
               </NavLink>
 
               {(userType === "manager" || userType === "admin") && (
-                <NavLink to="/admin/user" className="transform transition-transform hover:scale-105">
+                // <NavLink to="/admin/user/all-user" className="transform transition-transform hover:scale-105">
                   <div className="bg-white rounded-lg shadow-md overflow-hidden border-l-4 border-purple-500">
                     <div className="p-5">
                       <div className="flex items-center justify-between">
@@ -194,11 +194,11 @@ const Home = () => {
                       </div>
                     </div>
                   </div>
-                </NavLink>
+                // </NavLink>
               )}
 
               {(userType === "project-manager" || userType === "admin") && (
-                <NavLink to="/admin/project/manage-team" className="transform transition-transform hover:scale-105">
+                // <NavLink to="/admin/project/manage-team" className="transform transition-transform hover:scale-105">
                   <div className="bg-white rounded-lg shadow-md overflow-hidden border-l-4 border-amber-500">
                     <div className="p-5">
                       <div className="flex items-center justify-between">
@@ -215,7 +215,7 @@ const Home = () => {
                       </div>
                     </div>
                   </div>
-                </NavLink>
+                // </NavLink>
               )}
             </div>
 
@@ -226,7 +226,7 @@ const Home = () => {
                 <div className="p-5 border-b">
                   <div className="flex items-center justify-between">
                     <h3 className="text-lg font-semibold text-gray-800">Recent Projects</h3>
-                    <NavLink to="/admin/project" className="text-sm text-teal-600 hover:text-teal-800">
+                    <NavLink to="/admin/project/all-projects" className="text-sm text-teal-600 hover:text-teal-800">
                       View All
                     </NavLink>
                   </div>
@@ -389,6 +389,7 @@ const Home = () => {
                     </tr>
                   ) : (
                     projects?.map((project) => {
+                      {console.log(project)}
                       const projectTasks = tasks?.filter((task) => task.project_id === project.id) || []
                       const completedProjectTasks = projectTasks.filter(
                         (task) => task.status === "COMPLETED" || task.status === "completed",
@@ -416,10 +417,10 @@ const Home = () => {
                             </span>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {formatDate(project.start_date)}
+                            {formatDate(project.startDate)}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {formatDate(project.end_date)}
+                            {formatDate(project.endDate)}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="flex items-center">

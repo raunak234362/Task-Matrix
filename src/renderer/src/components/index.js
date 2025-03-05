@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import Login from './login/Login'
-
+import ChangePassword from './login/ChangePassword.jsx'
 //Fields  
 import Button from './fields/Button'
 import Input from './fields/Input'
@@ -59,6 +59,7 @@ export {
   ProjectTab,
   BarViews,
   UserTab,
+  ChangePassword,
   Toggle,
   AddCSV,
   BarView,

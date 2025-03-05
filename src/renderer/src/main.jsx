@@ -10,7 +10,7 @@ import {
   AllTask,
   AllUser,
   ApproveAssignee,
-  GaantChart,
+  ChangePassword,
   Home,
   Login,
   MyProfile,
@@ -30,6 +30,10 @@ const router = createHashRouter([
   {
     path: "/",
     element: <Login />,
+  },
+  {
+    path: "/change-password/",
+    element: <ChangePassword />,
   },
   {
     path: "/admin",
@@ -88,10 +92,7 @@ const router = createHashRouter([
             path: "all-user",
             element: <AllUser />,
           },
-          {
-            path: "gaant-chart",
-            element: <GaantChart />,
-          },
+         
         ],
       },
       {

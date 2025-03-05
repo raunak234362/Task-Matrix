@@ -21,6 +21,22 @@ class Service {
     }
   }
 
+  // Change password-updated -- updated
+  static async changePassword(token, data) {
+    try {
+      const response = await api.post(`/api/auth/resetpassword/`, data, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Token ${token}`,
+        },
+      });
+      return response;
+    } catch (error) {
+      console.log("Error changing password:", error);
+      return error;
+    }
+  }
+
   static async allEmployee(token) {
     try {
       const response = await api.get(`/api/employee/employee`, {

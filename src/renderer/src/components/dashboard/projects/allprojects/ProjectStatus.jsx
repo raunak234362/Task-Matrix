@@ -108,15 +108,12 @@ const ProjectStatus = ({ projectId, onClose }) => {
       // Override progress based on status
       if (task.status === "IN REVIEW") {
         progress = 80
-      } else if (task.status === "COMPLETED") {
+      } else if (task.status === "COMPLETE") {
         progress = 100
-      } else if (task.status === "IN PROGRESS") {
-        progress = Math.min(progress, 80)
-      }
-
-      // Ensure progress does not exceed 80% when in progress
-      if (task.status === "IN PROGRESS" && progress > 80) {
-        progress = 80
+      } 
+      // Ensure progress does not exceed 80% when in progress or break
+      if ((task.status === "IN PROGRESS" || task.status === "BREAK") && progress > 80) {
+        progress 
       }
 
       return {
@@ -211,7 +208,7 @@ const ProjectStatus = ({ projectId, onClose }) => {
   const today = new Date()
 
   // Find the earliest and latest dates
-  const { minDate, maxDate, totalDays } = useMemo(() => {
+  const { minDate, maxDate, totalDays, totalMonths } = useMemo(() => {
     if (filteredGanttData.length === 0) {
       const today = new Date()
       const nextMonth = new Date()
@@ -235,10 +232,13 @@ const ProjectStatus = ({ projectId, onClose }) => {
     min.setDate(min.getDate() - 2)
     max.setDate(max.getDate() + 2)
     
+    const totalMonths = (max.getFullYear() - min.getFullYear()) * 12 + (max.getMonth() - min.getMonth()) + 1
+
     return { 
       minDate: min, 
       maxDate: max, 
-      totalDays: Math.ceil((max - min) / (1000 * 60 * 60 * 24))
+      totalDays: Math.ceil((max - min) / (1000 * 60 * 60 * 24)),
+      totalMonths
     }
   }, [filteredGanttData])
 
@@ -646,7 +646,7 @@ const ProjectStatus = ({ projectId, onClose }) => {
                 <h2 className="flex items-center gap-2 text-lg font-bold mb-4">
                   <PieChart className="h-5 w-5" /> Task Status Distribution
                 </h2>
-                <div className="h-[300px]">
+                <div className="h-[300px] text-sm">
                   <ResponsiveContainer width="100%" height="100%">
                     <RechartsPieChart>
                       <Pie
@@ -730,135 +730,120 @@ const ProjectStatus = ({ projectId, onClose }) => {
 
         {/* Timeline Tab */}
         {activeTab === "timeline" && (
-          <div className="bg-white rounded-xl p-5 shadow-sm border mb-6">
-            <h2 className="flex items-center gap-2 text-lg font-bold mb-4">
-              <Calendar className="h-5 w-5" /> Project Timeline
-            </h2>
-
-            {/* Task type legend */}
-            <div className="flex flex-wrap gap-3 mb-4">
-              {Object.entries(typeColors).map(([type, color]) => (
-                <div key={type} className="flex items-center gap-1">
-                  <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: color }}></div>
-                  <span className="text-xs text-gray-600">{type}</span>
-                </div>
-              ))}
-            </div>
-
-            {/* Task count summary */}
-            <div className="mb-4 text-sm text-gray-600">
-              Showing {filteredGanttData.length} of {ganttData.length} tasks
-            </div>
-
-            <div className="overflow-x-auto w-full">
-              <div style={{ width: `${timelineWidth + 300}px` }} className="relative">
-                {/* Timeline Header */}
-                <div className="flex border-b sticky top-0 bg-white z-10">
-                  <div className="w-52 flex-shrink-0 font-bold p-2 bg-gray-50">Task Name</div>
-                  <div className="flex-1 relative">
-                    {/* Month divisions */}                {/* Month divisions */}
-                    <div className="h-8 border-b bg-gray-50">
-                      {monthDivisions.map((month, i) => (
-                        <div
-                          key={i}
-                          className="absolute border-l border-gray-300 h-full flex items-center px-2"
-                          style={{ left: `${month.left}px` }}
-                        >
-                          <span className="text-xs font-medium text-gray-600">{month.label}</span>
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* Date Axis */}
-                    <div className="absolute left-0 right-0 border-b">
-                      {Array.from({ length: Math.min(totalDays + 1, 60) }).map((_, i) => {
-                        const date = new Date(minDate)
-                        date.setDate(date.getDate() + i)
-                        const isToday = date.toDateString() === today.toDateString()
-
-                        return (
-                          <div
-                            key={i}
-                            className={`absolute border-l ${isToday ? "border-red-500" : "border-gray-200"} text-xs text-center`}
-                            style={{
-                              left: `${(i * timelineWidth) / totalDays}px`,
-                              width: `${timelineWidth / totalDays}px`,
-                              height: "20px",
-                            }}
-                          >
-                            {i % 2 === 0 && (
-                              <span className={`text-xs ${isToday ? "text-red-500 font-bold" : "text-gray-500"}`}>
-                                {date.getDate()}
-                              </span>
-                            )}
-                          </div>
-                        )
-                      })}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Today indicator */}
-                {minDate <= today && today <= maxDate && (
-                  <div
-                    className="absolute top-8 bottom-0 border-l-2 border-red-500 z-20"
-                    style={{
-                      left: `${((today - minDate) / (1000 * 60 * 60 * 24)) * (timelineWidth / totalDays) + 52}px`,
-                    }}
-                  >
-                    <div className="bg-red-500 text-white text-xs px-1 py-0.5 rounded-sm whitespace-nowrap transform -translate-x-1/2">
-                      Today
-                    </div>
-                  </div>
-                )}
-
-                {/* Render grouped tasks with collapsible sections */}
-                {Object.keys(filteredGroupedTasks).length > 0 ? (
-                  Object.keys(filteredGroupedTasks).map((type) => (
-                    <div key={type} className="mt-4 w-full">
-                      <div
-                        className="text-lg font-semibold p-2 bg-gray-50 rounded-t-md border-b-2 flex justify-between items-center cursor-pointer"
-                        style={{ borderColor: typeColors[type] || "#ccc" }}
-                        onClick={() => toggleTypeExpansion(type)}
-                      >
-                        <div className="flex items-center gap-2">
-                          <h3>{type}</h3>
-                          <span className="text-sm text-gray-500">({filteredGroupedTasks[type].length} tasks)</span>
-                        </div>
-                        {expandedTypes[type] ? (
-                          <ChevronUp className="h-5 w-5 text-gray-500" />
-                        ) : (
-                          <ChevronDown className="h-5 w-5 text-gray-500" />
-                        )}
-                      </div>
-                      
-                      {expandedTypes[type] && (
-                        <div style={{ height: `${Math.min(filteredGroupedTasks[type].length * rowHeight, 400)}px` }}>
-                          <AutoSizer>
-                            {({ height, width }) => (
-                              <List
-                                height={height}
-                                itemCount={filteredGroupedTasks[type].length}
-                                itemSize={rowHeight}
-                                width={width}
-                                itemData={filteredGroupedTasks[type]}
-                              >
-                                {TaskRow}
-                              </List>
-                            )}
-                          </AutoSizer>
-                        </div>
-                      )}
-                    </div>
-                  ))
-                ) : (
-                  <div className="py-10 text-center text-gray-500">
-                    No tasks match the current filters
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
+       <div className="bg-white rounded-xl p-5 shadow-md border mb-6">
+       <h2 className="flex items-center gap-2 text-lg font-bold mb-4">
+         <Calendar className="h-5 w-5 text-gray-700" /> Project Timeline
+       </h2>
+     
+       {/* Task Legend */}
+       <div className="flex flex-wrap gap-3 mb-4">
+         {Object.entries(typeColors).map(([type, color]) => (
+           <div key={type} className="flex items-center gap-2">
+             <div className="w-4 h-4 rounded-md" style={{ backgroundColor: color }}></div>
+             <span className="text-sm text-gray-700 font-medium">{type}</span>
+           </div>
+         ))}
+       </div>
+     
+       {/* Task Count Summary */}
+       <div className="mb-4 text-sm text-gray-600">
+         Showing <b>{filteredGanttData.length}</b> of <b>{ganttData.length}</b> tasks
+       </div>
+     
+       <div className="overflow-x-auto w-full">
+         <div style={{ width: `${timelineWidth + 300}px` }} className="relative">
+     
+           {/* Timeline Header */}
+           <div className="flex border-b sticky top-0 bg-white shadow-md z-10">
+             <div className="w-60 flex-shrink-0 font-bold p-3 bg-gray-50 text-gray-700">Task Name</div>
+             <div className="flex-1 relative">
+     
+               {/* Month Divisions */}
+               <div className="h-10 border-b bg-gray-50 flex">
+                 {monthDivisions.map((month, i) => (
+                   <div key={i} className="flex items-center justify-center text-gray-600 text-sm font-semibold border-l border-gray-300"
+                        style={{ width: `${timelineWidth / totalMonths}px` }}>
+                     {month.label}
+                   </div>
+                 ))}
+               </div>
+     
+               {/* Date Axis */}
+               <div className="absolute left-0 right-0 border-b">
+                 {Array.from({ length: Math.min(totalDays + 1, 60) }).map((_, i) => {
+                   const date = new Date(minDate);
+                   date.setDate(date.getDate() + i);
+                   const isToday = date.toDateString() === today.toDateString();
+     
+                   return (
+                     <div key={i} className={`absolute border-l text-xs text-center ${isToday ? "border-red-500" : "border-gray-200"}`}
+                          style={{ left: `${(i * timelineWidth) / totalDays}px`, width: `${timelineWidth / totalDays}px`, height: "25px" }}>
+                       {i % 2 === 0 && (
+                         <span className={`text-xs ${isToday ? "text-red-600 font-semibold" : "text-gray-600"}`}>
+                           {date.getDate()}
+                         </span>
+                       )}
+                     </div>
+                   );
+                 })}
+               </div>
+             </div>
+           </div>
+     
+           {/* Today Indicator */}
+           {minDate <= today && today <= maxDate && (
+             <div className="absolute top-10 bottom-0 border-l-2 border-red-500 z-20"
+                  style={{ left: `${((today - minDate) / (1000 * 60 * 60 * 24)) * (timelineWidth / totalDays) + 130}px` }}>
+               <div className="bg-red-600 text-white text-xs px-2 py-1 rounded shadow-lg transform -translate-x-1/2">
+                 Today
+               </div>
+             </div>
+           )}
+     
+           {/* Render Grouped Tasks */}
+           {Object.keys(filteredGroupedTasks).length > 0 ? (
+             Object.keys(filteredGroupedTasks).map((type) => (
+               <div key={type} className="mt-5 w-full">
+                 <div className="text-lg font-semibold p-3 bg-gray-100 rounded-md border-b-2 flex justify-between items-center cursor-pointer"
+                      style={{ borderColor: typeColors[type] || "#ccc" }}
+                      onClick={() => toggleTypeExpansion(type)}>
+                   <div className="flex items-center gap-2">
+                     <h3>{type}</h3>
+                     <span className="text-sm text-gray-600">({filteredGroupedTasks[type].length} tasks)</span>
+                   </div>
+                   {expandedTypes[type] ? (
+                     <ChevronUp className="h-5 w-5 text-gray-500" />
+                   ) : (
+                     <ChevronDown className="h-5 w-5 text-gray-500" />
+                   )}
+                 </div>
+     
+                 {expandedTypes[type] && (
+                   <div style={{ height: `${Math.min(filteredGroupedTasks[type].length * rowHeight, 200)}px` }}>
+                     <AutoSizer>
+                       {({ height, width }) => (
+                         <List
+                           height={height}
+                           itemCount={filteredGroupedTasks[type].length}
+                           itemSize={rowHeight}
+                           width={width}
+                           itemData={filteredGroupedTasks[type]}
+                         >
+                           {TaskRow}
+                         </List>
+                       )}
+                     </AutoSizer>
+                   </div>
+                 )}
+               </div>
+             ))
+           ) : (
+             <div className="py-10 text-center text-gray-500">No tasks match the current filters</div>
+           )}
+         </div>
+       </div>
+     </div>
+     
         )}
 
         {/* Team Tab */}

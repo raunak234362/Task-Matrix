@@ -50,7 +50,7 @@ const MyTask = () => {
   }
 
   function statusColor(status) {
-    return status === "IN-PROGRESS" ? "text-green-700" : "text-red-700";
+    return status === "IN PROGRESS" ? "text-green-700" : "text-red-700";
   }
 
   function color(priority) {

@@ -316,66 +316,71 @@ const AllTask = () => {
                       </td>
                     </tr>
                   ) : (
-                    taskFilter?.map((task, index) => (
-                      <tr
-                      key={task.id}
-                      className={
-                        index % 2 === 0 ? "bg-white" : "bg-gray-200/50"
-                      }
-                    >
-                      <td className="px-1 py-2 border">{index + 1}</td>
-                      <td className="px-1 py-2 border">
-                        {
-                          projectData?.find(
-                            (project) => project?.id === task?.project_id,
-                          )?.name
-                        }
-                      </td>
-                      <td className="px-1 py-2 border">{task?.name}</td>
+                    taskFilter?.map((task, index) => {
+                      const allocatedHours = task?.duration ? parseInt(task?.duration.split(":")[0], 10) : 0;
+                      const takenHours = task?.workingHourTask?.find((rec) => taskIds.includes(rec.task_id))?.duration / 60 || 0;
+                      const isOverAllocated = takenHours > allocatedHours;
 
-
-                      <td className="px-1 py-2 border">
-                        {
-                          userData?.find((user) => user?.id === task?.user_id)
-                            ? `${userData.find((user) => user.id === task.user_id)?.f_name || ''} ${userData.find((user) => user.id === task.user_id)?.m_name || ''} ${userData.find((user) => user.id === task.user_id)?.l_name || ''}`.trim()
-                            : ''
-                        }
-                      </td>
-                      <td className="px-1 py-2 border">{task?.status}</td>
-                      <td className={`border px-1 py-2`}>
-                        <span
-                          className={`text-sm text-center font-semibold px-3 py-0.5 mx-2 rounded-full border ${color(
-                            task?.priority,
-                          )}`}
+                      return (
+                        <tr
+                          key={task.id}
+                          className={`${
+                            isOverAllocated ? "bg-red-200" : index % 2 === 0 ? "bg-white" : "bg-gray-200/50"
+                          }`}
                         >
-                          {setPriorityValue(task?.priority)}
-                        </span>
-                      </td>
-                      <td className="px-1 py-2 border">
-                        {new Date(task?.start_date).toDateString()}
-                      </td>
-                      <td className="px-1 py-2 border">
-                        {durToHour(task?.duration)}
-                      </td>
-                      <td className="px-1 py-2 border">
-                        {formatMinutesToHours(
-                          task?.workingHourTask?.find((rec) =>
-                            taskIds.includes(rec.task_id),
-                          )?.duration,
-                        )}
-                      </td>
+                          <td className="px-1 py-2 border">{index + 1}</td>
+                          <td className="px-1 py-2 border">
+                            {
+                              projectData?.find(
+                                (project) => project?.id === task?.project_id,
+                              )?.name
+                            }
+                          </td>
+                          <td className="px-1 py-2 border">{task?.name}</td>
 
 
-                      <td className="flex justify-center px-1 py-2 border">
-                        <Button onClick={() => handleViewClick(task?.id)}>
-                          View
-                        </Button>
-                      </td>
-                    </tr>
+                          <td className="px-1 py-2 border">
+                            {
+                              userData?.find((user) => user?.id === task?.user_id)
+                                ? `${userData.find((user) => user.id === task.user_id)?.f_name || ''} ${userData.find((user) => user.id === task.user_id)?.m_name || ''} ${userData.find((user) => user.id === task.user_id)?.l_name || ''}`.trim()
+                                : ''
+                            }
+                          </td>
+                          <td className="px-1 py-2 border">{task?.status}</td>
+                          <td className={`border px-1 py-2`}>
+                            <span
+                              className={`text-sm text-center font-semibold px-3 py-0.5 mx-2 rounded-full border ${color(
+                                task?.priority,
+                              )}`}
+                            >
+                              {setPriorityValue(task?.priority)}
+                            </span>
+                          </td>
+                          <td className="px-1 py-2 border">
+                            {new Date(task?.start_date).toDateString()}
+                          </td>
+                          <td className="px-1 py-2 border">
+                            {durToHour(task?.duration)}
+                          </td>
+                          <td className="px-1 py-2 border">
+                            {formatMinutesToHours(
+                              task?.workingHourTask?.find((rec) =>
+                                taskIds.includes(rec.task_id),
+                              )?.duration,
+                            )}
+                          </td>
 
 
+                          <td className="flex justify-center px-1 py-2 border">
+                            <Button onClick={() => handleViewClick(task?.id)}>
+                              View
+                            </Button>
+                          </td>
+                        </tr>
+                      );
+                    })
 
-                    ))
+
                   )}
                 </tbody>
               </table>
