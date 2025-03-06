@@ -170,7 +170,7 @@ const TaskRecord = () => {
             {record?.length === 0 ? (
               <tr className="bg-white">
                 <td colSpan="6" className="text-center">
-                  No Task Available
+                  No Tasks Available
                 </td>
               </tr>
             ) : (
