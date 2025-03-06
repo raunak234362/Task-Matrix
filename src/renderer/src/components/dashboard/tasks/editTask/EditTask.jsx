@@ -18,24 +18,22 @@ const EditTask = ({ onClose, task }) => {
   const dispatch = useDispatch();
   const [assignedUser, setAssignedUser] = useState([]);
   console.log("TASK-=-==-=-=-=-=-=", taskDetail);
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset,
-    watch,
-    setValue,
-  } = useForm({
-    defaultValues: {
-      name: taskDetail?.name || "",
-      description: taskDetail?.description || "",
-      duration: taskDetail?.duration || "",
-      start_date: taskDetail?.start_date || "",
-      due_date: taskDetail?.due_date || "",
-      status: taskDetail?.status || "",
-    },
-  });
+  const [defaultHour, defaultMin] = (taskDetail?.duration ?? "00:00").split(":").slice(0, 2);
 
+const { register, handleSubmit,watch, formState: { errors }, setValue } = useForm({
+  defaultValues: {
+    name: taskDetail?.name || "",
+    description: taskDetail?.description || "",
+    duration: taskDetail?.duration || "",
+    start_date: taskDetail?.start_date || "",
+    due_date: taskDetail?.due_date || "",
+    status: taskDetail?.status || "",
+    hour: defaultHour,  // Ensure hour is set
+    min: defaultMin,    // Ensure minutes are set
+  },
+});
+
+  console.log("TASK-=-=-=-=-=-=-=-", taskDetail);
   const teams = useSelector(
     (state) =>
       state?.projectData?.teamData?.filter(
@@ -86,18 +84,24 @@ const EditTask = ({ onClose, task }) => {
   const onSubmit = async (data) => {
     console.log("Data: +++++++++++++++", data);
     try {
+      // Ensure hour and min have default values if empty
+      const durationHour = data.hour ? data.hour : "00";
+      const durationMin = data.min ? data.min : "00";
+
       // Combine type and taskname into name field
       const taskData = {
         ...data,
         name: data?.type ? `${data?.type} - ${data?.taskname}` : data?.name,
         user_id: data?.user,
-        duration: `${data?.hour}:${data?.min}:00`,
+        duration: `${durationHour}:${durationMin}:00`, // Ensuring default values
       };
-      // Remove type and taskname before sending to backend
+
+      // Remove unnecessary fields before sending to backend
       delete taskData.type;
       delete taskData.taskname;
       delete taskData.hour;
       delete taskData.min;
+
       const updatedTask = await Service.editTask(taskDetail?.id, taskData);
       toast.success("Successfully Updated Task: ", updatedTask);
       dispatch(updateTask(updatedTask));
@@ -198,6 +202,7 @@ const EditTask = ({ onClose, task }) => {
                     type="number"
                     name="hour"
                     label="HH"
+                    defaultValues={task?.duration}
                     placeholder="HH"
                     className="w-20"
                     min={0}

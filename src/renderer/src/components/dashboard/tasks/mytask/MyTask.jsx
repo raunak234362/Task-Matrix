@@ -1,5 +1,5 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable prettier/prettier */
+/* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
 import Task from "../Task";
 import { Button, Header } from "../../../index";
@@ -16,7 +16,6 @@ const MyTask = () => {
       try {
         const task = await Service.getMyTask();
         setTasks(task);
-        // console.log("My Task list: ", task);
       } catch (error) {
         console.log("Error in fetching task: ", error);
       }
@@ -24,11 +23,8 @@ const MyTask = () => {
     fetchTask();
   }, []);
 
-  
-
   const projects = useSelector((state) => state?.projectData?.projectData);
-  // console.log("Projects: ", projects);
-  // Function to convert durations like '2 08:00:00' to total hours (56h for 2 days and 8 hours)
+
   function durToHour(params) {
     if (!params) return "N/A";
 
@@ -36,17 +32,13 @@ const MyTask = () => {
     let days = 0;
     let timePart = params;
 
-    // If duration contains days part, it will have two parts
     if (parts.length === 2) {
-      days = parseInt(parts[0], 10); // extract days
-      timePart = parts[1]; // extract the time part
+      days = parseInt(parts[0], 10);
+      timePart = parts[1];
     }
 
-    // Time part is in format HH:MM:SS
-    const [hours, minutes, seconds] = timePart.split(":").map(Number);
-
-    const totalHours = days * 24 + hours; // Convert days to hours and add them
-    return `${totalHours}h ${minutes}m`;
+    const [hours, minutes] = timePart.split(":").map(Number);
+    return `${days * 24 + hours}h ${minutes}m`;
   }
 
   function statusColor(status) {
@@ -88,6 +80,11 @@ const MyTask = () => {
     setDisplayTask(true);
   }
 
+  // Find the highest-priority task that is still pending
+  const highestPriorityTask = tasks
+    .filter((task) => task.status === "BREAK" || task.status === "ASSINGED")
+    .sort((a, b) => b.priority - a.priority)[0];
+
   return (
     <div className="mx-5 my-3 main-container">
       <div className="mt-5 bg-white h-[60vh] overflow-auto rounded-lg">
@@ -105,56 +102,47 @@ const MyTask = () => {
               <th className="px-2 py-1 uppercase">View</th>
             </tr>
           </thead>
-          <tbody className="bg-white ">
-            {tasks.map((task, index) => (
-              <tr
-                key={task.id}
-                className={index % 2 === 0 ? "bg-white" : "bg-gray-200/50"}
-              >
-                <td className="px-1 py-2 border">
-                  {index + 1}
-                </td>
-                <td className="px-1 py-2 border">
-                  {projects?.find((project) => project.id === task?.project_id)?.name || "N/A"}
-                </td>
-                <td className="px-1 py-2 border">
-                  {task.name}
-                </td>
-                <td className="px-1 py-2 border">
-                  {new Date(task.start_date).toDateString()}
-                </td>
-                <td className="px-1 py-2 border">
-                  {new Date(task.due_date).toDateString()}
-                </td>
-                <td className="px-1 py-2 border">
-                  {durToHour(task.duration)}
-                </td>
-                <td className="px-1 py-2 border">
-                  <span
-                    className={`px-3 py-0.5 rounded-full border ${statusColor(task.status)}`}
-                  >
-                    {task.status}
-                  </span>
-                </td>
-                <td className="px-1 py-2 border">
-                  <span
-                    className={`px-3 py-0.5 rounded-full border ${color(task.priority)}`}
-                  >
-                    {setPriorityValue(task.priority)}
-                  </span>
-                </td>
-                <td className="px-1 py-2 border">
-                  <Button onClick={() => handleTaskView(task.id)}>View</Button>
-                </td>
-              </tr>
-            ))}
+          <tbody className="bg-white">
+            {tasks.map((task, index) => {
+              const isHighestPriority = highestPriorityTask?.id === task.id;
+              const isInProgress = task.status === "IN PROGRESS";
+              const isAssigned = task.status === "IN-PROGRESS";
+
+              return (
+                <tr key={task.id} className={index % 2 === 0 ? "bg-white" : "bg-gray-200/50"}>
+                  <td className="px-1 py-2 border">{index + 1}</td>
+                  <td className="px-1 py-2 border">
+                    {projects?.find((project) => project.id === task?.project_id)?.name || "N/A"}
+                  </td>
+                  <td className="px-1 py-2 border">{task.name}</td>
+                  <td className="px-1 py-2 border">{new Date(task.start_date).toDateString()}</td>
+                  <td className="px-1 py-2 border">{new Date(task.due_date).toDateString()}</td>
+                  <td className="px-1 py-2 border">{durToHour(task.duration)}</td>
+                  <td className="px-1 py-2 border">
+                    <span className={`px-3 py-0.5 rounded-full border ${statusColor(task.status)}`}>
+                      {task.status}
+                    </span>
+                  </td>
+                  <td className="px-1 py-2 border">
+                    <span className={`px-3 py-0.5 rounded-full border ${color(task.priority)}`}>
+                      {setPriorityValue(task.priority)}
+                    </span>
+                  </td>
+                  <td className="px-1 py-2 border">
+                    {isInProgress || isHighestPriority || isAssigned ? (
+                      <Button onClick={() => handleTaskView(task.id)}>View</Button>
+                    ) : (
+                      <Button disabled>View</Button>
+                    )}
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
 
-      {displayTask && (
-        <Task taskId={specificTask} setDisplay={setDisplayTask} />
-      )}
+      {displayTask && <Task taskId={specificTask} setDisplay={setDisplayTask} />}
     </div>
   );
 };

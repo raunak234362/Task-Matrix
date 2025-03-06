@@ -3,17 +3,13 @@
 /* eslint-disable no-unused-vars */
 import { Provider, useDispatch, useSelector } from "react-redux";
 import store from "./store/store";
-import { ToastContainer } from "react-toastify";
 import { useCallback, useEffect, useState } from "react";
 import { Header, Sidebar } from "./components/index";
 import { Outlet, useNavigate } from "react-router-dom";
 import Service from "./api/configAPI";
-// import FrappeService from "./frappeConfig/FrappeService";
 import { setUserData, showStaff } from "./store/userSlice";
-// import { loadFabricator, showClient } from "./store/fabricatorSlice";
 import { showProjects, showTeam } from "./store/projectSlice";
 import { showTask, showTaskRecord } from "./store/taskSlice";
-import { showFabricator } from "./store/fabricatorSlice";
 const App = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const dispatch = useDispatch();
@@ -60,8 +56,8 @@ const App = () => {
   };
   const fetchUser = async () => {
     const user = await Service.getCurrentUser(token);
-    
   };
+
   useEffect(() => {
     fetchUser();
     fetchMyTasks();

@@ -7,13 +7,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { showTask, showTaskByID } from "../../../../store/taskSlice";
 
 const AllTask = () => {
-  const dispatch = useDispatch();
   const userType = sessionStorage.getItem("userType");
   const tasks = useSelector((state) => state?.taskData?.taskData);
-  const currentUserId = useSelector((state) => state?.userData?.userData?.id);
-  const isSuperUser = useSelector(
-    (state) => state?.userData?.userData?.is_superuser,
-  );
+
   const projectData = useSelector((state) => state?.projectData?.projectData);
   const userData = useSelector((state) => state?.userData?.staffData);
   const [selectedTask, setSelectedTask] = useState(null);

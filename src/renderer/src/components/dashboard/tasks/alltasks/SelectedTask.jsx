@@ -53,6 +53,16 @@ const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
     setSelectedTask(null);
   };
 
+  const deleteTaskID = async () => {
+    try {
+      const response = await Service.deleteTask(taskID);
+      onClose();
+      toast.success("Task deleted successfully");
+    } catch (error) {
+      toast.error("Error in deleting task");
+    }
+  };
+
   const durToHour = (params) => {
     if (!params) return "N/A";
 
@@ -216,7 +226,10 @@ const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
                 </span>
               </div>
               {userType !== "user" ? (
-                <Button onClick={handleEditClick}>Update</Button>
+                <div className="flex flex-row justify-between">
+                  <Button onClick={handleEditClick}>Update</Button>
+                  <Button className="bg-red-500 font-semibold text-white" onClick={deleteTaskID}>Delete</Button>
+                </div>
               ) : null}
             </div>
 

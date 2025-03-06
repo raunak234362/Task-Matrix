@@ -10,21 +10,16 @@ import { toast } from "react-toastify";
 import { BASE_URL } from "../../../config/constant";
 
 const Task = ({ taskId, setDisplay }) => {
-  const work_id = sessionStorage.getItem("work_id");
   const [tasks, setTasks] = useState({});
-  const dispatch = useDispatch();
   const [workHours, setWorkHours] = useState(null);
   const userType = sessionStorage.getItem("userType");
   const username = sessionStorage.getItem("username");
   const [workdata, setWorkData] = useState({});
-  const [teamMember, setTeamMember] = useState([]);
   const [color, setColor] = useState("");
   const [showProjectDetail, setShowProjectDetail] = useState(false);
   const [showFabricatorDetail, setShowFabricatorDetail] = useState(false);
-  const [assignedTo, setAssignedTo] = useState("");
   const [timer, setTimer] = useState(0); // Timer in seconds
   const [isTimerRunning, setIsTimerRunning] = useState(false);
-  const teamData = useSelector((state) => state?.projectData?.teamData);
   const staffData = useSelector((state) => state?.userData?.staffData);
   console.log("Staff Data: ", staffData);
   const {
@@ -56,8 +51,6 @@ const Task = ({ taskId, setDisplay }) => {
     fetchTask();
   }, []);
 
-  const teamID = tasks?.project?.teamID;
-
   const teams = useSelector(
     (state) =>
       state?.projectData?.teamData?.filter(
@@ -65,12 +58,10 @@ const Task = ({ taskId, setDisplay }) => {
       ) || [],
   );
   const team = teams[0];
-  console.log("Member Data:============ ", team);
 
   useEffect(() => {
     const fetchWorkId = async () => {
       const workHour = await Service.getWorkHours(taskId);
-      console.log("Work Hour: ", workHour);
       setWorkData(workHour);
       setWorkHours(workHour);
     };
