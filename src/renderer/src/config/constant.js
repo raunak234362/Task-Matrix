@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 // export const BASE_URL='http://192.168.1.152:5152/'
 // export const BASE_URL='http://192.168.1.215:5152/'
 // Development environment
