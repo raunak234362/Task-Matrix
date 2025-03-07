@@ -106,7 +106,6 @@ const MyTask = () => {
             {tasks.map((task, index) => {
               const isHighestPriority = highestPriorityTask?.id === task.id;
               const isInProgress = task.status === "IN PROGRESS";
-              const isAssigned = task.status === "IN-PROGRESS";
 
               return (
                 <tr key={task.id} className={index % 2 === 0 ? "bg-white" : "bg-gray-200/50"}>
@@ -129,7 +128,7 @@ const MyTask = () => {
                     </span>
                   </td>
                   <td className="px-1 py-2 border">
-                    {isInProgress || isHighestPriority || isAssigned ? (
+                    {isInProgress || isHighestPriority ? (
                       <Button onClick={() => handleTaskView(task.id)}>View</Button>
                     ) : (
                       <Button disabled>View</Button>
