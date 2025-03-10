@@ -216,6 +216,7 @@ const Task = ({ taskId, setDisplay }) => {
       const endresponse = await Service.endTask(taskID, ev?.target?.value, end);
       toast.success("Task Ended");
       fetchTask();
+      setDisplay(false);
     } catch (error) {
       toast.error("Error in ending task");
     }
