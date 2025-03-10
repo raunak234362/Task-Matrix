@@ -19,7 +19,7 @@ const TaskTab = () => {
     (task) => task.status === "IN REVIEW",
   ).length;
   const assignedTaskCount = tasks.filter(
-    (task) => task.status === "ASSINGED",
+    (task) => task.status === "ASSIGNED",
   ).length;
   const breakTaskCount = tasks.filter((task) => task.status === "BREAK").length;
 

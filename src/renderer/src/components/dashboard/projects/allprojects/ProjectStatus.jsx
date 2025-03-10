@@ -635,7 +635,7 @@ const ProjectStatus = ({ projectId, onClose }) => {
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600">Not Started:</span>
                     <span className="font-semibold text-lg text-gray-500">
-                      {projectTasks.filter((task) => task.status === "ASSINGED").length}
+                      {projectTasks.filter((task) => task.status === "ASSIGNED").length}
                     </span>
                   </div>
                 </div>
@@ -927,7 +927,7 @@ const ProjectStatus = ({ projectId, onClose }) => {
                     className="inline-block px-2 py-1 rounded-full text-xs"
                     style={{
                       backgroundColor: statusColors[hoveredTask.status] || "#ccc",
-                      color: hoveredTask.status === "ASSINGED" ? "#333" : "#fff",
+                      color: hoveredTask.status === "ASSIGNED" ? "#333" : "#fff",
                     }}
                   >
                     {hoveredTask.status}

@@ -147,7 +147,7 @@ const TaskSelected = ({ assignee, task, isOpen, onClose }) => {
                       Approved
                     </span>
                   )}
-                  {task?.task?.status === "ASSINGED" && (
+                  {task?.task?.status === "ASSIGNED" && (
                     <span className="bg-pink-100 text-pink-400 text-sm text-center font-medium me-2 px-3 py-2 rounded-full border border-pink-400">
                       Assigned
                     </span>

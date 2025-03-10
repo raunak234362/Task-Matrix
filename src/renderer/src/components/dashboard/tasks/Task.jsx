@@ -108,7 +108,7 @@ const Task = ({ taskId, setDisplay }) => {
       "IN-REVIEW": "In-Review",
       Completed: "Completed",
       APPROVED: "Approved",
-      ASSINGED: "Assigned",
+      ASSIGNED: "ASSIGNED",
     };
     return labels[status] || status;
   };
@@ -122,7 +122,7 @@ const Task = ({ taskId, setDisplay }) => {
       "IN REVIEW": "bg-orange-100 text-orange-600 border-orange-600",
       Completed: "bg-green-100 text-green-800 border-green-800",
       APPROVED: "bg-purple-100 text-purple-600 border-purple-600",
-      ASSINGED: "bg-pink-100 text-pink-500 border-pink-500",
+      ASSIGNED: "bg-pink-100 text-pink-500 border-pink-500",
     };
     return statusStyles[status] || "bg-gray-100 text-gray-500 border-gray-500";
   };
@@ -402,7 +402,7 @@ const Task = ({ taskId, setDisplay }) => {
                         Task Actions:
                       </div>
                       <div>
-                        {tasks?.status === "ASSINGED" ||
+                        {tasks?.status === "ASSIGNED" ||
                         tasks?.status === "ON HOLD" ||
                         workdata.id === undefined ? (
                           <>

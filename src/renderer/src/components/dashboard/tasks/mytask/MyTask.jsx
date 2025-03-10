@@ -82,7 +82,7 @@ const MyTask = () => {
 
   // Find the highest-priority task that is still pending
   const highestPriorityTask = tasks
-    .filter((task) => task.status === "BREAK" || task.status === "ASSINGED")
+    .filter((task) => task.status === "BREAK" || task.status === "ASSIGNED")
     .sort((a, b) => b.priority - a.priority)[0];
 
   return (

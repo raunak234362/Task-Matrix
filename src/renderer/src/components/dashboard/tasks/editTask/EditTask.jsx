@@ -237,7 +237,7 @@ const { register, handleSubmit,watch, formState: { errors }, setValue } = useFor
                 label="Status:"
                 name="status"
                 options={[
-                  { label: "ASSIGNED", value: "ASSINGED" },
+                  { label: "ASSIGNED", value: "ASSIGNED" },
                   { label: "IN PROGRESS", value: "IN-PROGRESS" },
                   { label: "ON HOLD", value: "ON-HOLD" },
                   { label: "BREAK", value: "BREAK" },
