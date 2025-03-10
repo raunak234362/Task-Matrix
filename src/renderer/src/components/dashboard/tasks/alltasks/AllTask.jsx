@@ -25,30 +25,38 @@ const AllTask = () => {
     fabricator: "",
     status: "",
   });
-    
+
   const departmentTask = tasks?.flatMap((task) => task?.tasks) || [];
 
   useEffect(() => {
     setTaskFilter(userType === "department-manager" ? departmentTask : tasks);
   }, [tasks, userType]);
   const uniqueProject = [
-    ...new Set((userType === "department-manager" ? departmentTask : tasks)?.map((project) => project?.project?.name)),
+    ...new Set(
+      (userType === "department-manager" ? departmentTask : tasks)?.map(
+        (project) => project?.project?.name,
+      ),
+    ),
   ];
   // console.log("UNIQUE PROJECTS:", uniqueProject);
   const filterAndSortData = () => {
-    let filtered = (userType === "department-manager" ? departmentTask : tasks)?.filter((task) => {
-      const searchMatch = task?.name
-        ?.toLowerCase()
-        .includes(searchQuery.toLowerCase()) || 
-        userData?.find((user) => user?.id === task?.user_id)?.f_name
-        ?.toLowerCase()
-        .includes(searchQuery.toLowerCase()) ||
-        userData?.find((user) => user?.id === task?.user_id)?.m_name
-        ?.toLowerCase()
-        .includes(searchQuery.toLowerCase()) ||
-        userData?.find((user) => user?.id === task?.user_id)?.l_name
-        ?.toLowerCase()
-        .includes(searchQuery.toLowerCase());
+    let filtered = (
+      userType === "department-manager" ? departmentTask : tasks
+    )?.filter((task) => {
+      const searchMatch =
+        task?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        userData
+          ?.find((user) => user?.id === task?.user_id)
+          ?.f_name?.toLowerCase()
+          .includes(searchQuery.toLowerCase()) ||
+        userData
+          ?.find((user) => user?.id === task?.user_id)
+          ?.m_name?.toLowerCase()
+          .includes(searchQuery.toLowerCase()) ||
+        userData
+          ?.find((user) => user?.id === task?.user_id)
+          ?.l_name?.toLowerCase()
+          .includes(searchQuery.toLowerCase());
 
       const filterMatch =
         (!filters?.project || task?.project?.name === filters?.project) &&
@@ -110,9 +118,9 @@ const AllTask = () => {
 
   useEffect(() => {
     if (projectFilter) {
-      const projectTasks = (userType === "department-manager" ? departmentTask : tasks).filter(
-        (task) => task?.project?.name === projectFilter,
-      );
+      const projectTasks = (
+        userType === "department-manager" ? departmentTask : tasks
+      ).filter((task) => task?.project?.name === projectFilter);
       const completedTasks = projectTasks.filter(
         (task) => task?.status === "COMPLETE",
       ).length;
@@ -174,6 +182,7 @@ const AllTask = () => {
   };
 
   const handleCloseModal = () => {
+    window.location.reload();
     setIsModalOpen(false);
     setTaskID(null);
   };
@@ -229,12 +238,15 @@ const AllTask = () => {
     state?.taskData?.taskData?.map((task) => task.id),
   );
 
+  const reloadWnidow = () => {
+    window.location.reload();
+  };
+
   return (
     <div>
       <div className="table-container h-[80vh] w-full rounded-lg">
         <div className="w-full rounded-lg shadow-xl table-container">
           <div className="mx-5 my-3">
-           
             <div className=" py-5 bg-white h-[58vh] overflow-auto rounded-lg">
               <div className="flex flex-col md:flex-row gap-4 mb-4">
                 <input
@@ -276,6 +288,9 @@ const AllTask = () => {
                     <option value="COMPLETE">COMPLETED</option>
                   </select>
                 </div>
+                <div>
+                  <Button onClick={reloadWnidow}>Refresh</Button>
+                </div>
               </div>
               <table className="md:w-full w-[90vw] border-collapse text-center md:text-lg text-xs rounded-xl">
                 <thead>
@@ -313,15 +328,24 @@ const AllTask = () => {
                     </tr>
                   ) : (
                     taskFilter?.map((task, index) => {
-                      const allocatedHours = task?.duration ? parseInt(task?.duration.split(":")[0], 10) : 0;
-                      const takenHours = task?.workingHourTask?.find((rec) => taskIds.includes(rec.task_id))?.duration / 60 || 0;
+                      const allocatedHours = task?.duration
+                        ? parseInt(task?.duration.split(":")[0], 10)
+                        : 0;
+                      const takenHours =
+                        task?.workingHourTask?.find((rec) =>
+                          taskIds.includes(rec.task_id),
+                        )?.duration / 60 || 0;
                       const isOverAllocated = takenHours > allocatedHours;
 
                       return (
                         <tr
                           key={task.id}
                           className={`${
-                            isOverAllocated ? "bg-red-200" : index % 2 === 0 ? "bg-white" : "bg-gray-200/50"
+                            isOverAllocated
+                              ? "bg-red-200"
+                              : index % 2 === 0
+                                ? "bg-white"
+                                : "bg-gray-200/50"
                           }`}
                         >
                           <td className="px-1 py-2 border">{index + 1}</td>
@@ -334,13 +358,12 @@ const AllTask = () => {
                           </td>
                           <td className="px-1 py-2 border">{task?.name}</td>
 
-
                           <td className="px-1 py-2 border">
-                            {
-                              userData?.find((user) => user?.id === task?.user_id)
-                                ? `${userData.find((user) => user.id === task.user_id)?.f_name || ''} ${userData.find((user) => user.id === task.user_id)?.m_name || ''} ${userData.find((user) => user.id === task.user_id)?.l_name || ''}`.trim()
-                                : ''
-                            }
+                            {userData?.find(
+                              (user) => user?.id === task?.user_id,
+                            )
+                              ? `${userData.find((user) => user.id === task.user_id)?.f_name || ""} ${userData.find((user) => user.id === task.user_id)?.m_name || ""} ${userData.find((user) => user.id === task.user_id)?.l_name || ""}`.trim()
+                              : ""}
                           </td>
                           <td className="px-1 py-2 border">{task?.status}</td>
                           <td className={`border px-1 py-2`}>
@@ -366,7 +389,6 @@ const AllTask = () => {
                             )}
                           </td>
 
-
                           <td className="flex justify-center px-1 py-2 border">
                             <Button onClick={() => handleViewClick(task?.id)}>
                               View
@@ -375,8 +397,6 @@ const AllTask = () => {
                         </tr>
                       );
                     })
-
-
                   )}
                 </tbody>
               </table>

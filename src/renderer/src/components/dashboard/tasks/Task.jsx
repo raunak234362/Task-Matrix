@@ -156,7 +156,7 @@ const Task = ({ taskId, setDisplay }) => {
           status: "IN PROGRESS",
         };
       });
-
+      window.location.reload();
       toast.success("Task Started");
       sessionStorage.setItem("work_id", accept.data.id);
     } catch (error) {
@@ -166,6 +166,10 @@ const Task = ({ taskId, setDisplay }) => {
 
   async function handlePause(ev) {
     const taskId = tasks?.id;
+    const pauseTime = new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" });
+    const pauseTimes = JSON.parse(localStorage.getItem("pauseTimes")) || [];
+    pauseTimes.push(pauseTime);
+    localStorage.setItem("pauseTimes", JSON.stringify(pauseTimes));
     try {
       await Service.pauseTask(taskId, ev?.target?.value);
       setTasks((prev) => {
@@ -184,6 +188,10 @@ const Task = ({ taskId, setDisplay }) => {
 
   async function handleResume(ev) {
     const taskID = tasks?.id;
+    const resumeTime = new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" });
+    const resumeTimes = JSON.parse(localStorage.getItem("resumeTimes")) || [];
+    resumeTimes.push(resumeTime);
+    localStorage.setItem("resumeTimes", JSON.stringify(resumeTimes));
     try {
       await Service.resumeTask(taskID, ev?.target?.value);
 
@@ -203,14 +211,13 @@ const Task = ({ taskId, setDisplay }) => {
 
   async function handleEnd(ev) {
     const taskID = tasks?.id;
+    const end = new Date().toISOString();
     try {
-      const end = await Service.endTask(taskID, ev?.target?.value);
-      console.log("End Task: ", end);
+      const endresponse = await Service.endTask(taskID, ev?.target?.value, end);
       toast.success("Task Ended");
       fetchTask();
     } catch (error) {
       toast.error("Error in ending task");
-      console.log("Error in ending task: ", error);
     }
   }
 
