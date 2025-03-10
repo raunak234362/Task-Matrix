@@ -9,7 +9,6 @@ import { showTask, showTaskByID } from "../../../../store/taskSlice";
 const AllTask = () => {
   const userType = sessionStorage.getItem("userType");
   const tasks = useSelector((state) => state?.taskData?.taskData);
-
   const projectData = useSelector((state) => state?.projectData?.projectData);
   const userData = useSelector((state) => state?.userData?.staffData);
   const [selectedTask, setSelectedTask] = useState(null);
@@ -302,7 +301,7 @@ const AllTask = () => {
                       "Assigned user",
                       "status",
                       "priority",
-                      "Task Due Date",
+                      "due_date",
                       "Allocated Hours",
                       "Hours taken",
                     ].map((key) => (
@@ -376,7 +375,7 @@ const AllTask = () => {
                             </span>
                           </td>
                           <td className="px-1 py-2 border">
-                            {new Date(task?.start_date).toDateString()}
+                            {new Date(task?.due_date).toDateString()}
                           </td>
                           <td className="px-1 py-2 border">
                             {durToHour(task?.duration)}

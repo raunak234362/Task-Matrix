@@ -7,7 +7,7 @@ const TaskTab = () => {
   const tasks = useSelector((state) => state?.taskData.taskData);
   // Count the number of active projects
   const activeTaskCount = tasks.filter(
-    (task) => task.status === "IN PROGRESS",
+    (task) => task.status === "IN_PROGRESS",
   ).length;
 
   // Count the number of completed projects
@@ -16,7 +16,7 @@ const TaskTab = () => {
   ).length;
 
   const inReviewTaskCount = tasks.filter(
-    (task) => task.status === "IN REVIEW",
+    (task) => task.status === "IN_REVIEW",
   ).length;
   const assignedTaskCount = tasks.filter(
     (task) => task.status === "ASSIGNED",

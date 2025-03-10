@@ -62,6 +62,7 @@ const ProjectStatus = ({ projectId, onClose }) => {
     DC: calculateHours("DC"),
     ERECTION: calculateHours("ERECTION"),
     EC: calculateHours("EC"),
+    OTHERS: calculateHours("OTHERS"),
   }
 
   const totalAssignedHours = Object.values(taskTypes).reduce((sum, type) => sum + type?.assigned, 0)
@@ -106,13 +107,13 @@ const ProjectStatus = ({ projectId, onClose }) => {
       let progress = assignedHours ? Math.min((takenHours / assignedHours) * 100, 100) : 0
 
       // Override progress based on status
-      if (task.status === "IN REVIEW") {
+      if (task.status === "IN_REVIEW") {
         progress = 80
       } else if (task.status === "COMPLETE") {
         progress = 100
       } 
       // Ensure progress does not exceed 80% when in progress or break
-      if ((task.status === "IN PROGRESS" || task.status === "BREAK") && progress > 80) {
+      if ((task.status === "IN_PROGRESS" || task.status === "BREAK") && progress > 80) {
         progress 
       }
 
@@ -290,14 +291,15 @@ const ProjectStatus = ({ projectId, onClose }) => {
     DC: "#15803d", // green-700
     ERECTION: "#a855f7", // purple-500
     EC: "#7e22ce", // purple-700
+    OTHERS: "#f59e0b", // amber-500
   }
 
   // Status colors
   const statusColors = {
-    "IN PROGRESS": "#fbbf24", // amber-400
-    "IN REVIEW": "#60a5fa", // blue-400
+    "IN_PROGRESS": "#fbbf24", // amber-400
+    "IN_REVIEW": "#60a5fa", // blue-400
     "COMPLETE": "#34d399", // emerald-400
-    "NOT STARTED": "#d1d5db", // gray-300
+    "ASSIGNED": "#d1d5db", // gray-300
   }
 
   // Prepare data for pie chart
@@ -573,13 +575,13 @@ const ProjectStatus = ({ projectId, onClose }) => {
               <div className="bg-white rounded-xl p-4 shadow-sm border">
                 <h3 className="text-sm font-medium text-gray-500 mb-1">Completed</h3>
                 <p className="text-3xl font-bold text-green-600">
-                  {projectTasks.filter((task) => task.status === "COMPLETED").length}
+                  {projectTasks.filter((task) => task.status === "COMPLETE").length}
                 </p>
                 <div className="w-full bg-gray-200 rounded-full h-1.5 mt-2">
                   <div 
                     className="bg-green-600 h-1.5 rounded-full" 
                     style={{ 
-                      width: `${(projectTasks.filter((task) => task.status === "COMPLETED").length / projectTasks.length) * 100}%` 
+                      width: `${(projectTasks.filter((task) => task.status === "COMPLETE").length / projectTasks.length) * 100}%` 
                     }}
                   ></div>
                 </div>
@@ -610,13 +612,13 @@ const ProjectStatus = ({ projectId, onClose }) => {
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600">Completed:</span>
                     <span className="font-semibold text-lg text-green-600">
-                      {projectTasks.filter((task) => task.status === "COMPLETED").length}
+                      {projectTasks.filter((task) => task.status === "COMPLETE").length}
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600">In Review:</span>
                     <span className="font-semibold text-lg text-blue-500">
-                      {projectTasks.filter((task) => task.status === "IN REVIEW").length}
+                      {projectTasks.filter((task) => task.status === "IN_REVIEW").length}
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
@@ -628,7 +630,7 @@ const ProjectStatus = ({ projectId, onClose }) => {
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600">In Progress:</span>
                     <span className="font-semibold text-lg text-amber-500">
-                      {projectTasks.filter((task) => task.status === "IN PROGRESS").length}
+                      {projectTasks.filter((task) => task.status === "IN_PROGRESS").length}
                     </span>
                   </div>
                   
