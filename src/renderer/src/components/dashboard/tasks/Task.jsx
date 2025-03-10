@@ -217,6 +217,7 @@ const Task = ({ taskId, setDisplay }) => {
       toast.success("Task Ended");
       fetchTask();
       setDisplay(false);
+      window.location.reload();
     } catch (error) {
       toast.error("Error in ending task");
     }
