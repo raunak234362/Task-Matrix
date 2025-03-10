@@ -45,7 +45,7 @@ const TaskTab = () => {
           </div>
           <div className="flex flex-col items-center justify-center p-3 rounded-lg shadow-lg bg-white/50">
             <div className="text-xl font-bold text-gray-800">
-              No. of In-Progress Tasks
+              No. of IN_PROGRESS Tasks
             </div>
             <div className="text-3xl font-bold">{activeTaskCount}</div>
           </div>
@@ -64,7 +64,7 @@ const TaskTab = () => {
 
           <div className="flex flex-col items-center justify-center p-3 rounded-lg shadow-lg bg-white/50">
             <div className="text-xl font-bold text-gray-800">
-              No. of In-Review Tasks
+              No. of IN_REVIEW Tasks
             </div>
             <div className="text-3xl font-bold">{inReviewTaskCount}</div>
           </div>

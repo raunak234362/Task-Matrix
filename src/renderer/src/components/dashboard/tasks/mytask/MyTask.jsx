@@ -42,7 +42,7 @@ const MyTask = () => {
   }
 
   function statusColor(status) {
-    return status === "IN PROGRESS" ? "text-green-700" : "text-red-700";
+    return status === "IN_PROGRESS" ? "text-green-700" : "text-red-700";
   }
 
   function color(priority) {
@@ -105,7 +105,7 @@ const MyTask = () => {
           <tbody className="bg-white">
             {tasks.map((task, index) => {
               const isHighestPriority = highestPriorityTask?.id === task.id;
-              const isInProgress = task.status === "IN PROGRESS";
+              const isInProgress = task.status === "IN_PROGRESS";
 
               return (
                 <tr key={task.id} className={index % 2 === 0 ? "bg-white" : "bg-gray-200/50"}>

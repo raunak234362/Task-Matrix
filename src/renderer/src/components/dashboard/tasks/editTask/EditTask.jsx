@@ -238,10 +238,10 @@ const { register, handleSubmit,watch, formState: { errors }, setValue } = useFor
                 name="status"
                 options={[
                   { label: "ASSIGNED", value: "ASSIGNED" },
-                  { label: "IN PROGRESS", value: "IN-PROGRESS" },
-                  { label: "ON HOLD", value: "ON-HOLD" },
+                  { label: "IN PROGRESS", value: "IN_PROGRESS" },
+                  { label: "ON HOLD", value: "ONHOLD" },
                   { label: "BREAK", value: "BREAK" },
-                  { label: "IN REVIEW", value: "IN-REVIEW" },
+                  { label: "IN REVIEW", value: "IN_REVIEW" },
                   { label: "COMPLETED", value: "COMPLETE" },
                   { label: "APPROVED", value: "APPROVED" },
                 ]}

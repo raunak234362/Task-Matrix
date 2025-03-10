@@ -127,7 +127,7 @@ const AllTask = () => {
       const totalTasks = projectTasks.length;
 
       const inReviewTasks = projectTasks.filter(
-        (task) => task?.status === "IN-REVIEW",
+        (task) => task?.status === "IN_REVIEW",
       ).length;
 
       const inReviewPercentage =
@@ -151,8 +151,8 @@ const AllTask = () => {
     switch (status) {
       case "COMPLETE":
         return "bg-green-500"; // Green for completed
-      case "IN-REVIEW":
-        return "bg-yellow-500"; // Yellow for in-review
+      case "IN_REVIEW":
+        return "bg-yellow-500"; // Yellow for IN_REVIEW
       default:
         return "bg-green-500"; // Default or no status
     }
@@ -161,8 +161,8 @@ const AllTask = () => {
     switch (status) {
       case "COMPLETE":
         return "bg-green-500"; // Green for completed
-      case "IN-REVIEW":
-        return "bg-yellow-500"; // Yellow for in-review
+      case "IN_REVIEW":
+        return "bg-yellow-500"; // Yellow for IN_REVIEW
       default:
         return "bg-yellow-500"; // Default or no status
     }
@@ -244,10 +244,10 @@ const AllTask = () => {
 
   return (
     <div>
-      <div className="table-container h-[80vh] w-full rounded-lg">
+      <div className="table-container w-full rounded-lg">
         <div className="w-full rounded-lg shadow-xl table-container">
           <div className="mx-5 my-3">
-            <div className=" py-5 bg-white h-[58vh] overflow-auto rounded-lg">
+            <div className=" py-5 bg-white h-full my-5 overflow-auto rounded-lg">
               <div className="flex flex-col md:flex-row gap-4 mb-4">
                 <input
                   type="text"
@@ -281,10 +281,10 @@ const AllTask = () => {
                   >
                     <option value="">All Status</option>
                     <option value="ASSIGNED">ASSIGNED</option>
-                    <option value="IN PROGRESS">IN PROGRESS</option>
-                    <option value="ON-HOLD">ON HOLD</option>
+                    <option value="IN_PROGRESS">IN PROGRESS</option>
+                    <option value="ONHOLD">ON HOLD</option>
                     <option value="BREAK">BREAK</option>
-                    <option value="IN REVIEW">IN REVIEW</option>
+                    <option value="IN_REVIEW">IN REVIEW</option>
                     <option value="COMPLETE">COMPLETED</option>
                   </select>
                 </div>

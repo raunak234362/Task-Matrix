@@ -224,10 +224,10 @@ const AddTask = () => {
                 name="status"
                 options={[
                   { label: "ASSIGNED", value: "ASSIGNED" },
-                  { label: "IN PROGRESS", value: "IN_PROGRESS" },
-                  { label: "ON HOLD", value: "ON_HOLD" },
+                  { label: "IN_PROGRESS", value: "IN_PROGRESS" },
+                  { label: "ONHOLD", value: "ONHOLD" },
                   { label: "BREAK", value: "BREAK" },
-                  { label: "IN REVIEW", value: "IN_REVIEW" },
+                  { label: "IN_REVIEW", value: "IN_REVIEW" },
                   { label: "COMPLETED", value: "COMPLETE" },
                   { label: "APPROVED", value: "APPROVED" },
                 ]}

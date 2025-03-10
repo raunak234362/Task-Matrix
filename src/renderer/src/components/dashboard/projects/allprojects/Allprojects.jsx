@@ -95,7 +95,7 @@ const AllProjects = () => {
           <option value="">All Status</option>
           <option value="ASSIGNED">ASSIGNED</option>
           <option value="ACTIVE">ACTIVE</option>
-          <option value="ON-HOLD">ON-HOLD</option>
+          <option value="ONHOLD">ONHOLD</option>
           <option value="INACTIVE">INACTIVE</option>
           <option value="DELAY">DELAY</option>
           <option value="COMPLETE">COMPLETED</option>

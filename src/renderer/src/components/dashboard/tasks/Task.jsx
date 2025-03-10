@@ -102,13 +102,13 @@ const Task = ({ taskId, setDisplay }) => {
 
   const getStatusLabel = (status) => {
     const labels = {
-      "IN-PROGRESS": "IN PROGRESS",
-      "ON-HOLD": "On-Hold",
-      BREAK: "Break",
-      "IN-REVIEW": "In-Review",
-      Completed: "Completed",
-      APPROVED: "Approved",
-      ASSIGNED: "ASSIGNED",
+      "IN_PROGRESS": "IN PROGRESS",
+      "ONHOLD": "ONHOLD",
+      "BREAK": "Break",
+      "IN_REVIEW": "IN_REVIEW",
+      "Completed": "Completed",
+      "APPROVED": "Approved",
+      "ASSIGNED": "ASSIGNED",
     };
     return labels[status] || status;
   };
@@ -116,13 +116,13 @@ const Task = ({ taskId, setDisplay }) => {
   // Status styles mapping
   const getStatusBadge = (status) => {
     const statusStyles = {
-      "IN PROGRESS": "bg-green-100 text-green-400 border-green-400",
-      "ON HOLD": "bg-yellow-100 text-yellow-700 border-yellow-700",
-      BREAK: "bg-red-100 text-red-600 border-red-600",
-      "IN REVIEW": "bg-orange-100 text-orange-600 border-orange-600",
-      Completed: "bg-green-100 text-green-800 border-green-800",
-      APPROVED: "bg-purple-100 text-purple-600 border-purple-600",
-      ASSIGNED: "bg-pink-100 text-pink-500 border-pink-500",
+      "IN_PROGRESS": "bg-green-100 text-green-400 border-green-400",
+      "ONHOLD": "bg-yellow-100 text-yellow-700 border-yellow-700",
+      "BREAK": "bg-red-100 text-red-600 border-red-600",
+      "IN_REVIEW": "bg-orange-100 text-orange-600 border-orange-600",
+      "COMPLETE": "bg-green-100 text-green-800 border-green-800",
+      "APPROVED": "bg-purple-100 text-purple-600 border-purple-600",
+      "ASSIGNED": "bg-pink-100 text-pink-500 border-pink-500",
     };
     return statusStyles[status] || "bg-gray-100 text-gray-500 border-gray-500";
   };
@@ -153,7 +153,7 @@ const Task = ({ taskId, setDisplay }) => {
       setTasks((prev) => {
         return {
           ...prev,
-          status: "IN PROGRESS",
+          status: "IN_PROGRESS",
         };
       });
       window.location.reload();
@@ -198,7 +198,7 @@ const Task = ({ taskId, setDisplay }) => {
       setTasks((prev) => {
         return {
           ...prev,
-          status: "IN PROGRESS",
+          status: "IN_PROGRESS",
         };
       });
       toast.success("Task Resumed");
@@ -403,7 +403,7 @@ const Task = ({ taskId, setDisplay }) => {
                       </div>
                       <div>
                         {tasks?.status === "ASSIGNED" ||
-                        tasks?.status === "ON HOLD" ||
+                        tasks?.status === "ONHOLD" ||
                         workdata.id === undefined ? (
                           <>
                             <Button
@@ -417,7 +417,7 @@ const Task = ({ taskId, setDisplay }) => {
                           <>
                             <div className="flex flex-row items-center justify-center gap-x-5">
                               {/* Show Pause button if the task is running */}
-                              {tasks?.status === "IN PROGRESS" && (
+                              {tasks?.status === "IN_PROGRESS" && (
                                 <Button
                                   className="flex items-center justify-center font-semibold bg-yellow-500 rounded-full w-28 hover:bg-yellow-700"
                                   value={workdata?.id}
