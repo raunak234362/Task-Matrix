@@ -84,14 +84,24 @@ const MyTask = () => {
   const highestPriorityTask = tasks
     .filter((task) => task.status === "BREAK" || task.status === "ASSIGNED")
     .sort((a, b) => {
-      if (b.priority === a.priority) {
-        return new Date(a.created_at) - new Date(b.created_at);
+      const dateDiff = new Date(a.due_date).getTime() - new Date(b.due_date).getTime();
+      if (dateDiff !== 0) {
+        return dateDiff;
       }
       return b.priority - a.priority;
     })[0];
 
+
+    
+  const reloadWnidow = () => {
+    window.location.reload();
+  };
+
   return (
     <div className="mx-5 my-3 main-container">
+      <div>
+                        <Button onClick={reloadWnidow}>Refresh</Button>
+                      </div>
       <div className="mt-5 bg-white h-[60vh] overflow-auto rounded-lg">
         <table className="h-fit md:w-full w-[90vw] border-collapse text-center md:text-lg text-xs rounded-xl">
           <thead>

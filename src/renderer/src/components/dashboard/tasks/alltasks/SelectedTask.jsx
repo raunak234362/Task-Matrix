@@ -50,6 +50,7 @@ const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
   };
   const handleModalClose = () => {
     setIsModalOpen(false);
+    // window.location.reload();
     setSelectedTask(null);
   };
 

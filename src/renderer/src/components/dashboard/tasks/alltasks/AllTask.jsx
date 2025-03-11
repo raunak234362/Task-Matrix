@@ -181,7 +181,6 @@ const AllTask = () => {
   };
 
   const handleCloseModal = () => {
-    window.location.reload();
     setIsModalOpen(false);
     setTaskID(null);
   };
