@@ -315,7 +315,7 @@ const AllTask = () => {
                           (sortOrder.order === "asc" ? "" : "")}
                       </th>
                     ))}
-                    <th className="px-2 py-1">Actions</th>
+                    <th className="px-2 py-1">Action</th>
                   </tr>
                 </thead>
                 <tbody>
