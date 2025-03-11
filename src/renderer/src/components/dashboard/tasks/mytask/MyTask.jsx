@@ -91,8 +91,6 @@ const MyTask = () => {
       return b.priority - a.priority;
     })[0];
 
-
-    
   const reloadWnidow = () => {
     window.location.reload();
   };
