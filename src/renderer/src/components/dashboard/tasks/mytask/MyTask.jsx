@@ -144,7 +144,7 @@ const MyTask = () => {
                     {isInProgress || isHighestPriority ? (
                       <Button onClick={() => handleTaskView(task.id)}>View</Button>
                     ) : (
-                      <Button disabled>View</Button>
+                      <Button className="bg-red-500 text-white font-semibold" disabled>View</Button>
                     )}
                   </td>
                 </tr>
