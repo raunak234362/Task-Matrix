@@ -140,9 +140,12 @@ const { register, handleSubmit,watch, formState: { errors }, setValue } = useFor
                 options={[
                   { label: "Select Task", value: "" },
                   { label: "Modeling", value: "MODELING" },
-                  { label: "Checking", value: "CHECKING" },
+{ label: "Model checking", value: "MODEL_CHECKING" },
+                  
                   { label: "Erection", value: "ERECTION" },
+{ label: "Erection checking", value: "ERECTION_CHECKING" },
                   { label: "Detailing", value: "DETAILING" },
+{ label: "Detail checking", value: "DETAIL_CHECKING" },
                   { label: "Others", value: "OTHERS" },
                 ]}
                 {...register("type")}
