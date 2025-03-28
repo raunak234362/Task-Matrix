@@ -134,7 +134,7 @@ const Task = ({ taskId, setDisplay }) => {
 
 
   const due_date = new Date(tasks?.due_date);
-  const created_on = new Date(tasks?.created_on);
+  const start_date = new Date(tasks?.start_date);
   const endDate = new Date(tasks?.project?.endDate);
 
   const toggleProjectDetail = () => {
@@ -345,7 +345,7 @@ const Task = ({ taskId, setDisplay }) => {
                         Assigned Date:
                       </span>{" "}
                       <span className="text-lg">
-                        {created_on?.toDateString()}
+                        {start_date?.toDateString()}
                       </span>
                     </div>
 
@@ -735,15 +735,18 @@ const Task = ({ taskId, setDisplay }) => {
                              }
                            </span>
                            <span className="ml-2 text-sm text-gray-500">
-                             {new Date(comment?.created_on).toLocaleDateString(
-                               "en-US",
-                               {
-                                 year: "numeric",
-                                 month: "short",
-                                 day: "numeric",
-                               },
-                             )}
-                           </span>
+                          {new Date(comment?.created_on).toLocaleString(
+                            "en-US",
+                            {
+                              year: "numeric",
+                              month: "short",
+                              day: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              second: "2-digit",
+                            },
+                          )}
+                        </span>
                          </div>
                          <div className="text-gray-600">
                            <div>{comment?.data} </div>

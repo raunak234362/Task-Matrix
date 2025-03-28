@@ -109,9 +109,9 @@ const AddTask = () => {
 
   return (
     <div>
-      <form onSubmit={handleSubmit(onSubmit)} className="w-full p-5">
+      <form onSubmit={handleSubmit(onSubmit)} className="w-full h-full overflow-y-auto p-5">
         <div className="flex flex-col justify-between gap-5 ">
-          <div className="flex flex-col p-8 rounded-lg shadow-lg shadow-black/15">
+          <div className="flex flex-col p-5 rounded-lg shadow-lg shadow-black/15">
             <div className="mt-5">
               <CustomSelect
                 label="Project:"

@@ -72,7 +72,7 @@ const TaskTab = () => {
 
         {/* Conditional rendering of menu */}
         <div
-          className={`overflow-y-auto h-[75vh] rounded-lg bg-white md:text-lg text-sm`}
+          className={`overflow-y-auto h-[60vh] rounded-lg bg-white md:text-lg text-sm`}
         >
           <div className=" bg-teal-100 rounded-lg md:w-full w-[90vw]">
             <nav className="px-5 text-center drop-shadow-md">

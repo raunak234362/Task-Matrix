@@ -16,7 +16,7 @@ const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
     state?.taskData?.taskData.filter((task) => task.id === taskID),
   );
   const task = taskData[0];
-  console.log("Task Data: ", taskData);
+  console.log("Task Data: ", task);
 
   const staffData = useSelector((state) => state?.userData?.staffData);
   const projectData = useSelector((state) =>
@@ -403,12 +403,15 @@ const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
                           }
                         </span>
                         <span className="ml-2 text-sm text-gray-500">
-                          {new Date(comment?.created_on).toLocaleDateString(
+                          {new Date(comment?.created_on).toLocaleString(
                             "en-US",
                             {
                               year: "numeric",
                               month: "short",
                               day: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              second: "2-digit",
                             },
                           )}
                         </span>
