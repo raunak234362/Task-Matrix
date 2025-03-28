@@ -34,15 +34,15 @@ const Home = () => {
 
   // Calculate project statistics
   const completedProjects =
-    projects?.filter((project) => project.status === "COMPLETED" || project.status === "completed").length || 0
+    projects?.filter((project) => project.status === "COMPLETE" || project.status === "complete").length || 0
 
   const inProgressProjects =
-    projects?.filter((project) => project.status === "IN PROGRESS" || project.status === "in progress").length || 0
+    projects?.filter((project) => project.status === "IN_PROGRESS" || project.status === "in_progress").length || 0
 
-  const completedTasks = tasks?.filter((task) => task.status === "COMPLETED" || task.status === "completed").length || 0
+  const completedTasks = tasks?.filter((task) => task.status === "COMPLETE" || task.status === "complete").length || 0
 
   const inProgressTasks =
-    tasks?.filter((task) => task.status === "IN PROGRESS" || task.status === "in progress").length || 0
+    tasks?.filter((task) => task.status === "IN_PROGRESS" || task.status === "in_progress").length || 0
 
   // Get recent projects (last 5)
   const recentProjects = [...(projects || [])]
