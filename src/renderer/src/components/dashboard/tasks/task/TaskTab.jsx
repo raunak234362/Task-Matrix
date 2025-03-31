@@ -25,7 +25,7 @@ const TaskTab = () => {
 
   const userType = sessionStorage.getItem("userType");
   return (
-    <div className="w-full h-full mx-5 overflow-y-hidden">
+    <div className="w-full h-fit mx-5">
       <div className="flex items-center justify-center w-full">
         <div className="px-5 py-1 mt-2 text-3xl font-bold text-white rounded-lg shadow-xl bg-green-500/70">
           Task
@@ -72,7 +72,7 @@ const TaskTab = () => {
 
         {/* Conditional rendering of menu */}
         <div
-          className={`overflow-y-auto h-[60vh] rounded-lg bg-white md:text-lg text-sm`}
+          className={`h-full rounded-lg bg-white md:text-lg text-sm`}
         >
           <div className=" bg-teal-100 rounded-lg md:w-full w-[90vw]">
             <nav className="px-5 text-center drop-shadow-md">

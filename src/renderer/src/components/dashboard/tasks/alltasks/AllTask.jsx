@@ -25,6 +25,11 @@ const AllTask = () => {
     status: "",
   });
 
+
+    // Pagination state
+    const [currentPage, setCurrentPage] = useState(1);
+    const tasksPerPage = 50;
+
   const departmentTask = tasks?.flatMap((task) => task?.tasks) || [];
 
   useEffect(() => {
@@ -86,6 +91,18 @@ const AllTask = () => {
     });
     setTaskFilter(filtered);
   };
+
+    // Pagination logic
+    const indexOfLastTask = currentPage * tasksPerPage;
+    const indexOfFirstTask = indexOfLastTask - tasksPerPage;
+    const currentTasks = taskFilter.slice(indexOfFirstTask, indexOfLastTask);
+  
+    const handlePageChange = (pageNumber) => {
+      setCurrentPage(pageNumber);
+    };
+  
+    const totalPages = Math.ceil(taskFilter.length / tasksPerPage);
+  
 
   // Search handler
   const handleSearch = (e) => {
@@ -241,7 +258,7 @@ const AllTask = () => {
   };
 
   return (
-    <div>
+    <div className="h-[65vh] overflow-y-auto">
       <div className="table-container w-full rounded-lg">
         <div className="w-full rounded-lg shadow-xl table-container">
           <div className="mx-5 my-3">
@@ -290,114 +307,132 @@ const AllTask = () => {
                   <Button onClick={reloadWnidow}>Refresh</Button>
                 </div>
               </div>
-              <table className="md:w-full w-[90vw] border-collapse text-center md:text-lg text-xs rounded-xl">
-                <thead>
-                  <tr className="bg-teal-200/70">
-                    {[
-                      "s.no",
-                      "project",
-                      "task name",
-                      "Assigned user",
-                      "status",
-                      "priority",
-                      "due_date",
-                      "Allocated Hours",
-                      "Hours taken",
-                    ].map((key) => (
-                      <th
-                        key={key}
-                        className="px-2 py-1 cursor-pointer"
-                        onClick={() => handleSort(key)}
-                      >
-                        {key.charAt(0)?.toUpperCase() + key.slice(1)}
-                        {sortOrder.key === key &&
-                          (sortOrder.order === "asc" ? "" : "")}
-                      </th>
-                    ))}
-                    <th className="px-2 py-1">Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {taskFilter?.length === 0 ? (
-                    <tr className="bg-white">
-                      <td colSpan="7" className="text-center">
-                        No Task Found
-                      </td>
-                    </tr>
-                  ) : (
-                    taskFilter?.map((task, index) => {
-                      const allocatedHours = task?.duration
-                        ? parseInt(task?.duration.split(":")[0], 10)
-                        : 0;
-                      const takenHours =
-                        task?.workingHourTask?.find((rec) =>
-                          taskIds.includes(rec.task_id),
-                        )?.duration / 60 || 0;
-                      const isOverAllocated = takenHours > allocatedHours;
+              <div className=" bg-white rounded-lg">
 
-                      return (
-                        <tr
-                          key={task.id}
-                          className={`${
-                            isOverAllocated
-                              ? "bg-red-200"
-                              : index % 2 === 0
-                                ? "bg-white"
-                                : "bg-gray-200/50"
-                          }`}
+                <table className="md:w-full w-[90vw] border-collapse text-center md:text-lg text-xs rounded-xl">
+                  <thead>
+                    <tr className="bg-teal-200/70">
+                      {[
+                        "s.no",
+                        "project",
+                        "task name",
+                        "Assigned user",
+                        "status",
+                        "priority",
+                        "due_date",
+                        "Allocated Hours",
+                        "Hours taken",
+                      ].map((key) => (
+                        <th
+                          key={key}
+                          className="px-2 py-1 cursor-pointer"
+                          onClick={() => handleSort(key)}
                         >
-                          <td className="px-1 py-2 border">{index + 1}</td>
-                          <td className="px-1 py-2 border">
-                            {
-                              projectData?.find(
-                                (project) => project?.id === task?.project_id,
-                              )?.name
-                            }
-                          </td>
-                          <td className="px-1 py-2 border">{task?.name}</td>
+                          {key.charAt(0)?.toUpperCase() + key.slice(1)}
+                          {sortOrder.key === key &&
+                            (sortOrder.order === "asc" ? "" : "")}
+                        </th>
+                      ))}
+                      <th className="px-2 py-1">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  {currentTasks?.length === 0 ? (
+                      <tr className="bg-white">
+                        <td colSpan="7" className="text-center">
+                          No Task Found
+                        </td>
+                      </tr>
+                    ) : (
+                      currentTasks?.map((task, index) => {
+                        const allocatedHours = task?.duration
+                          ? parseInt(task?.duration.split(":")[0], 10)
+                          : 0;
+                        const takenHours =
+                          task?.workingHourTask?.find((rec) =>
+                            taskIds.includes(rec.task_id),
+                          )?.duration / 60 || 0;
+                        const isOverAllocated = takenHours > allocatedHours;
 
-                          <td className="px-1 py-2 border">
-                            {userData?.find(
-                              (user) => user?.id === task?.user_id,
-                            )
-                              ? `${userData.find((user) => user.id === task.user_id)?.f_name || ""} ${userData.find((user) => user.id === task.user_id)?.m_name || ""} ${userData.find((user) => user.id === task.user_id)?.l_name || ""}`.trim()
-                              : ""}
-                          </td>
-                          <td className="px-1 py-2 border">{task?.status}</td>
-                          <td className={`border px-1 py-2`}>
-                            <span
-                              className={`text-sm text-center font-semibold px-3 py-0.5 mx-2 rounded-full border ${color(
-                                task?.priority,
-                              )}`}
-                            >
-                              {setPriorityValue(task?.priority)}
-                            </span>
-                          </td>
-                          <td className="px-1 py-2 border">
-                            {new Date(task?.due_date).toDateString()}
-                          </td>
-                          <td className="px-1 py-2 border">
-                            {durToHour(task?.duration)}
-                          </td>
-                          <td className="px-1 py-2 border">
-                            {formatMinutesToHours(
-                              task?.workingHourTask?.find((rec) =>
-                                taskIds.includes(rec.task_id),
-                              )?.duration,
-                            )}
-                          </td>
+                        return (
+                          <tr
+                            key={task.id}
+                            className={`${isOverAllocated
+                                ? "bg-red-200"
+                                : index % 2 === 0
+                                  ? "bg-white"
+                                  : "bg-gray-200/50"
+                              }`}
+                          >
+                            <td className="px-1 py-2 border">{index + 1}</td>
+                            <td className="px-1 py-2 border">
+                              {
+                                projectData?.find(
+                                  (project) => project?.id === task?.project_id,
+                                )?.name
+                              }
+                            </td>
+                            <td className="px-1 py-2 border">{task?.name}</td>
 
-                          <td className="flex justify-center px-1 py-2 border">
-                            <Button onClick={() => handleViewClick(task?.id)}>
-                              View
-                            </Button>
-                          </td>
-                        </tr>
-                      );
-                    })
-                  )}
-                </tbody>
-              </table>
+                            <td className="px-1 py-2 border">
+                              {userData?.find(
+                                (user) => user?.id === task?.user_id,
+                              )
+                                ? `${userData.find((user) => user.id === task.user_id)?.f_name || ""} ${userData.find((user) => user.id === task.user_id)?.m_name || ""} ${userData.find((user) => user.id === task.user_id)?.l_name || ""}`.trim()
+                                : ""}
+                            </td>
+                            <td className="px-1 py-2 border">{task?.status}</td>
+                            <td className={`border px-1 py-2`}>
+                              <span
+                                className={`text-sm text-center font-semibold px-3 py-0.5 mx-2 rounded-full border ${color(
+                                  task?.priority,
+                                )}`}
+                              >
+                                {setPriorityValue(task?.priority)}
+                              </span>
+                            </td>
+                            <td className="px-1 py-2 border">
+                              {new Date(task?.due_date).toDateString()}
+                            </td>
+                            <td className="px-1 py-2 border">
+                              {durToHour(task?.duration)}
+                            </td>
+                            <td className="px-1 py-2 border">
+                              {formatMinutesToHours(
+                                task?.workingHourTask?.find((rec) =>
+                                  taskIds.includes(rec.task_id),
+                                )?.duration,
+                              )}
+                            </td>
+
+                            <td className="flex justify-center px-1 py-2 border">
+                              <Button onClick={() => handleViewClick(task?.id)}>
+                                View
+                              </Button>
+                            </td>
+                          </tr>
+                        );
+                      })
+                    )}
+                  </tbody>
+                </table>
+              </div>
+               {/* Pagination Controls */}
+               <div className="flex justify-center mt-4">
+                {Array.from({ length: totalPages }, (_, index) => (
+                  <button
+                    key={index}
+                    className={`px-3 py-1 mx-1 border rounded ${
+                      currentPage === index + 1
+                        ? "bg-teal-500 text-white"
+                        : "bg-white text-teal-500"
+                    }`}
+                    onClick={() => handlePageChange(index + 1)}
+                  >
+                    {index + 1}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         </div>
