@@ -17,7 +17,6 @@ const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
   );
   const task = taskData[0];
   console.log("Task Data: ", task);
-
   const staffData = useSelector((state) => state?.userData?.staffData);
   const projectData = useSelector((state) =>
     state?.projectData?.projectData.find(
@@ -289,7 +288,7 @@ const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
               </div>
             </div>
           </div>
-          {/* <div className="w-full p-5 my-5 rounded-lg shadow-xl bg-teal-200/60">
+          <div className="w-full p-5 my-5 rounded-lg shadow-xl bg-teal-200/60">
             <div className="mb-4 font-bold text-gray-800">People Assigned:</div>
             <div className="flex items-center">
               <table className="min-w-full bg-white">
@@ -302,26 +301,37 @@ const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
                     <th className="px-6 py-3 text-left">Approved By</th>
                     <th className="px-6 py-3 text-left">Approved On</th>
                     {(userType === "admin" ||
-                      username === taskDetail?.project?.manager?.username) && (
-                      <th className="px-6 py-3 text-left">Action</th>
-                    )}
+                      username === task?.project?.manager?.username) && (
+                        <th className="px-6 py-3 text-left">Action</th>
+                      )}
                   </tr>
                 </thead>
                 <tbody className="text-sm font-medium text-gray-600">
-                  {taskDetail?.assigned?.map((tasks, index) => (
+                  {task?.taskInAssignedList?.map((tasks, index) => (
                     <tr
                       key={tasks.id}
                       className="border-b border-gray-200 hover:bg-gray-100"
                     >
+                      {console.log(tasks)}
                       <td className="px-6 py-3 text-left whitespace-nowrap">
                         {index + 1}
                       </td>
 
                       <td className="px-6 py-3 text-left">
-                        {tasks?.assigned_by?.name}
+                        {(() => {
+                          const staff = staffData?.find(
+                            (staff) => staff?.id === tasks?.assigned_by,
+                          );
+                          return `${staff?.f_name || ""} ${staff?.m_name || ""} ${staff?.l_name || ""}`.trim();
+                        })()}
                       </td>
                       <td className="px-6 py-3 text-left">
-                        {tasks?.assigned_to?.name}
+                        {(() => {
+                          const staff = staffData?.find(
+                            (staff) => staff?.id === tasks?.assigned_to,
+                          );
+                          return `${staff?.f_name || ""} ${staff?.m_name || ""} ${staff?.l_name || ""}`.trim();
+                        })()}
                       </td>
                       <td className="px-6 py-3 text-left">
                         {new Date(tasks?.assigned_on).toDateString()}
@@ -340,25 +350,24 @@ const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
                       </td>
                       {(userType === "admin" ||
                         username === tasks.project?.manager?.username) && (
-                        <td className="px-6 py-3 text-left">
-                          <Button
-                            className={`${
-                              tasks?.approved_on
-                                ? "bg-gray-300 text-gray-700"
-                                : "bg-green-300 text-green-900"
-                            } px-2 py-0.5 rounded-full`}
-                            disabled={tasks?.approved_on}
-                          >
-                            {tasks?.approved_on ? "Approved" : "Approve"}
-                          </Button>
-                        </td>
-                      )}
+                          <td className="px-6 py-3 text-left">
+                            <Button
+                              className={`${tasks?.approved_on
+                                  ? "bg-gray-300 text-gray-700"
+                                  : "bg-green-300 text-green-900"
+                                } px-2 py-0.5 rounded-full`}
+                              disabled={tasks?.approved_on}
+                            >
+                              {tasks?.approved_on ? "Approved" : "Approve"}
+                            </Button>
+                          </td>
+                        )}
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
-          </div> */}
+          </div>
           <div className="flex flex-col w-full gap-5 p-5 mt-5 bg-teal-100 rounded-lg shadow-xl">
             <div className="text-2xl font-bold text-gray-800">Comments:</div>
             <div className="flex flex-row w-full">

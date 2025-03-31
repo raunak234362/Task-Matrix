@@ -364,7 +364,7 @@ const AllTask = () => {
                                   : "bg-gray-200/50"
                               }`}
                           >
-                            <td className="px-1 py-2 border">{index + 1}</td>
+                            <td className="px-1 py-2 border">{indexOfFirstTask + index + 1}</td>
                             <td className="px-1 py-2 border">
                               {
                                 projectData?.find(

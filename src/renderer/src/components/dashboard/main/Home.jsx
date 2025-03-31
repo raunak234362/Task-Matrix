@@ -53,11 +53,11 @@ const Home = () => {
 
   // Get upcoming deadlines (next 5 tasks)
   const upcomingDeadlines = [...(tasks || [])]
-    .filter((task) => task.status !== "COMPLETED" && task.status !== "completed")
+    .filter((task) => task.status !== "COMPLETE" && task.status !== "complete" && task.status !== "IN_REVIEW" && task.status !== "in_review" && task.status !== "ONHOLD")
     .sort((a, b) => {
       return new Date(a.due_date) - new Date(b.due_date)
     })
-    .slice(0, 5)
+    .slice(0, 15)
 
   const formatDate = (dateString) => {
     if (!dateString) return "N/A"
@@ -76,7 +76,7 @@ const Home = () => {
   const taskCompletionPercentage = tasks?.length ? Math.round((completedTasks / tasks.length) * 100) : 0
 
   return (
-    <div className="w-full h-screen overflow-y-auto bg-gray-50 my-3 rounded-lg">
+    <div className="w-full h-fit overflow-y-auto bg-gray-50 my-3 rounded-lg">
       {/* Dashboard Header */}
       <div className="relative bg-gradient-to-r from-teal-500 to-teal-700 p-6 shadow-md">
         <div className="max-w-7xl mx-auto">
@@ -226,7 +226,7 @@ const Home = () => {
                 <div className="p-5 border-b">
                   <div className="flex items-center justify-between">
                     <h3 className="text-lg font-semibold text-gray-800">Recent Projects</h3>
-                    <NavLink to="/admin/project/all-projects" className="text-sm text-teal-600 hover:text-teal-800">
+                    <NavLink to="/admin/project/all-project" className="text-sm text-teal-600 hover:text-teal-800">
                       View All
                     </NavLink>
                   </div>
@@ -278,7 +278,7 @@ const Home = () => {
                   {upcomingDeadlines.length === 0 ? (
                     <p className="text-gray-500 text-center py-4">No upcoming deadlines</p>
                   ) : (
-                    <div className="overflow-x-auto">
+                    <div className="overflow-x-auto h-[33vh] overflow-y-auto">
                       <table className="min-w-full divide-y divide-gray-200">
                         <thead>
                           <tr>

@@ -109,6 +109,14 @@ const Project = ({ projectId, onClose }) => {
                     label: "Estimated Hours",
                     value: projectData?.estimatedHours,
                   },
+                  {
+                    label: "Assigned Hours",
+                    value: projectData?.estimatedHours * 0.7,
+                  },
+                  {
+                    label: "Fabrication Hours",
+                    value: projectData?.estimatedHours * 0.3,
+                  },
                   { label: "Stage", value: projectData?.stage },
                   { label: "Tool", value: projectData?.tools },
                   { label: "Start Date", value: projectData?.startDate },

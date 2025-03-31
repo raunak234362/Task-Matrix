@@ -44,7 +44,7 @@ const ProjectStatus = ({ projectId, onClose }) => {
   }
 
   const calculateHours = (type) => {
-    const tasks = projectTasks.filter((task) => task.name.startsWith(type))
+    const tasks = projectTasks.filter((task) => task.name.split(" ")[0] === type)
     return {
       assigned: tasks.reduce((sum, task) => sum + parseDuration(task.duration), 0),
       taken: tasks.reduce(

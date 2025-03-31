@@ -50,7 +50,7 @@ const Task = ({ taskId, setDisplay }) => {
   useEffect(() => {
     fetchTask();
   }, []);
-
+console.log(tasks)
   const teams = useSelector(
     (state) =>
       state?.projectData?.teamData?.filter(
