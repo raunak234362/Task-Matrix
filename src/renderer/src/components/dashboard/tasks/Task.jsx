@@ -50,7 +50,7 @@ const Task = ({ taskId, setDisplay }) => {
   useEffect(() => {
     fetchTask();
   }, []);
-console.log(tasks)
+  console.log(tasks)
   const teams = useSelector(
     (state) =>
       state?.projectData?.teamData?.filter(
@@ -404,8 +404,8 @@ console.log(tasks)
                       </div>
                       <div>
                         {tasks?.status === "ASSIGNED" ||
-                        tasks?.status === "ONHOLD" ||
-                        workdata.id === undefined ? (
+                          tasks?.status === "ONHOLD" ||
+                          workdata.id === undefined ? (
                           <>
                             <Button
                               className="flex items-center justify-center font-semibold bg-green-500 rounded-full w-28 hover:bg-green-800"
@@ -486,7 +486,7 @@ console.log(tasks)
                       </div>
                     </div>
                   </form>
-                  <div className="w-full p-5 rounded-lg shadow-xl bg-teal-200/50">
+                  {/* <div className="w-full p-5 rounded-lg shadow-xl bg-teal-200/50">
                     <div className="mb-4 font-bold text-gray-800">
                       People Assigned:
                     </div>
@@ -502,68 +502,73 @@ console.log(tasks)
                             <th className="px-6 py-3 text-left">Approved On</th>
                             {(userType === "admin" ||
                               username ===
-                                tasks?.project?.manager?.username) && (
-                              <th className="px-6 py-3 text-left">Action</th>
-                            )}
+                              tasks?.project?.manager?.username) && (
+                                <th className="px-6 py-3 text-left">Action</th>
+                              )}
                           </tr>
                         </thead>
                         <tbody className="text-sm font-medium text-gray-600">
-                          {tasks?.taskInAssignedList?.map((task, index) => (
+                          {tasks?.taskInAssignedList?.map((tasks, index) => (
                             <tr
-                              key={task.id}
+                              key={tasks.id}
                               className="border-b border-gray-200 hover:bg-gray-100"
                             >
+                              {console.log(tasks)}
                               <td className="px-6 py-3 text-left whitespace-nowrap">
                                 {index + 1}
                               </td>
 
                               <td className="px-6 py-3 text-left">
-                                {task?.assigned_by?.name}
+                                {(() => {
+                                  const staff = staffData?.find(
+                                    (staff) => staff?.id === tasks?.assigned_by,
+                                  );
+                                  return `${staff?.f_name || ""} ${staff?.m_name || ""} ${staff?.l_name || ""}`.trim();
+                                })()}
                               </td>
                               <td className="px-6 py-3 text-left">
-                                {task?.assigned_to?.name}
+                                {(() => {
+                                  const staff = staffData?.find(
+                                    (staff) => staff?.id === tasks?.assigned_to,
+                                  );
+                                  return `${staff?.f_name || ""} ${staff?.m_name || ""} ${staff?.l_name || ""}`.trim();
+                                })()}
                               </td>
                               <td className="px-6 py-3 text-left">
-                                {new Date(task?.assigned_on).toDateString()}
+                                {new Date(tasks?.assigned_on).toDateString()}
                               </td>
                               <td className="px-6 py-3 text-left">
-                                {task?.approved_by?.name || (
-                                  <span className="text-red-500">
-                                    Yet Not Approved
-                                  </span>
+                                {tasks?.approved_by?.name || (
+                                  <span className="text-red-500">Yet Not Approved</span>
                                 )}
                               </td>
                               <td className="px-6 py-3 text-left">
-                                {task?.approved_on ? (
-                                  new Date(task?.approved_on).toDateString()
+                                {tasks?.approved_on ? (
+                                  new Date(tasks?.approved_on).toDateString()
                                 ) : (
-                                  <span className="text-red-500">
-                                    Yet Not Approved
-                                  </span>
+                                  <span className="text-red-500">Yet Not Approved</span>
                                 )}
                               </td>
                               {(userType === "admin" ||
-                                username ===
-                                  tasks?.project?.manager?.username) && (
-                                <td className="px-6 py-3 text-left">
-                                  <Button
-                                    className={`${
-                                      task?.approved_on
+                                username === tasks.project?.manager?.username) && (
+                                  <td className="px-6 py-3 text-left">
+                                    <Button
+                                      className={`${tasks?.approved_on
                                         ? "bg-gray-300 text-gray-700"
                                         : "bg-green-300 text-green-900"
-                                    } px-2 py-0.5 rounded-full cursor-default`}
-                                    disabled={task?.approved_on}
-                                  >
-                                    {task?.approved_on ? "Approved" : "Approve"}
-                                  </Button>
-                                </td>
-                              )}
+                                        } px-2 py-0.5 rounded-full`}
+                                      disabled={tasks?.approved_on}
+                                    >
+                                      {tasks?.approved_on ? "Approved" : "Approve"}
+                                    </Button>
+                                  </td>
+                                )}
                             </tr>
                           ))}
                         </tbody>
                       </table>
                     </div>
-                  </div>
+                  </div> */}
 
                   {/* comment */}
                   <br />
@@ -625,16 +630,16 @@ console.log(tasks)
                               label: "Files",
                               value: Array.isArray(projectData?.files)
                                 ? projectData?.files?.map((file, index) => (
-                                    <a
-                                      key={index}
-                                      href={`${BASE_URL}/project/projects/viewfile/${projectData?.id}/${file.id}`} // Use the file path with baseURL
-                                      target="_blank" // Open in a new tab
-                                      rel="noopener noreferrer"
-                                      className="px-5 py-2 text-teal-500 hover:underline"
-                                    >
-                                      {file.originalName || `File ${index + 1}`}
-                                    </a>
-                                  ))
+                                  <a
+                                    key={index}
+                                    href={`${BASE_URL}/project/projects/viewfile/${projectData?.id}/${file.id}`} // Use the file path with baseURL
+                                    target="_blank" // Open in a new tab
+                                    rel="noopener noreferrer"
+                                    className="px-5 py-2 text-teal-500 hover:underline"
+                                  >
+                                    {file.originalName || `File ${index + 1}`}
+                                  </a>
+                                ))
                                 : "Not available",
                             },
                           ]?.map(({ label, value }) => (
@@ -652,49 +657,49 @@ console.log(tasks)
                     </div>
 
                     {/* Fabricator */}
-                      <div className="w-full p-5 rounded-lg shadow-xl h-fit bg-teal-200/50">
-                        <div className="flex items-center gap-2 my-5 text-xl">
-                          <span className="font-bold text-gray-800">
-                            Fabricator Detail:
-                          </span>{" "}
-                          <span
-                            className="text-teal-600 cursor-pointer"
-                            onClick={toggleFabricatorDetail}
-                          >
-                            {projectData?.fabricator?.fabName}
-                          </span>
-                        </div>
-                        {showFabricatorDetail && (
-                          <div className="ml-8 space-y-4">
-                            <div className="flex items-center gap-4">
-                              <span className="w-40 font-bold text-gray-800">
-                                Website:
-                              </span>{" "}
-                              <a
-                                href={projectData?.fabricator?.website}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="overflow-hidden text-blue-500 hover:text-blue-700 overflow-ellipsis whitespace-nowrap"
-                              >
-                                {projectData?.fabricator?.website}
-                              </a>
-                            </div>
-                            <div className="flex items-center gap-4">
-                              <span className="w-32 font-bold text-gray-800">
-                                Drive:
-                              </span>{" "}
-                              <a
-                                href={tasks?.project?.fabricator?.drive}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="overflow-hidden text-blue-500 hover:text-blue-700 overflow-ellipsis whitespace-nowrap"
-                              >
-                                {tasks?.project?.fabricator?.drive}
-                              </a>
-                            </div>
-                          </div>
-                        )}
+                    <div className="w-full p-5 rounded-lg shadow-xl h-fit bg-teal-200/50">
+                      <div className="flex items-center gap-2 my-5 text-xl">
+                        <span className="font-bold text-gray-800">
+                          Fabricator Detail:
+                        </span>{" "}
+                        <span
+                          className="text-teal-600 cursor-pointer"
+                          onClick={toggleFabricatorDetail}
+                        >
+                          {projectData?.fabricator?.fabName}
+                        </span>
                       </div>
+                      {showFabricatorDetail && (
+                        <div className="ml-8 space-y-4">
+                          <div className="flex items-center gap-4">
+                            <span className="w-40 font-bold text-gray-800">
+                              Website:
+                            </span>{" "}
+                            <a
+                              href={projectData?.fabricator?.website}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="overflow-hidden text-blue-500 hover:text-blue-700 overflow-ellipsis whitespace-nowrap"
+                            >
+                              {projectData?.fabricator?.website}
+                            </a>
+                          </div>
+                          <div className="flex items-center gap-4">
+                            <span className="w-32 font-bold text-gray-800">
+                              Drive:
+                            </span>{" "}
+                            <a
+                              href={tasks?.project?.fabricator?.drive}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="overflow-hidden text-blue-500 hover:text-blue-700 overflow-ellipsis whitespace-nowrap"
+                            >
+                              {tasks?.project?.fabricator?.drive}
+                            </a>
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
 
@@ -722,36 +727,36 @@ console.log(tasks)
                     <div className="p-5 rounded-lg shadow-xl bg-gray-100/70">
                       <div className="space-y-4">
                         {tasks?.taskcomment?.map((comment, index) => (
-                         <div
-                         className="p-4 bg-white rounded-lg shadow-md"
-                         key={index}
-                       >
-                         <div className="flex items-center mb-2">
-                           <span className="font-bold text-gray-800">
-                             {
-                               staffData?.find(
-                                 (staff) => staff?.id === comment?.user_id,
-                               )?.f_name
-                             }
-                           </span>
-                           <span className="ml-2 text-sm text-gray-500">
-                          {new Date(comment?.created_on).toLocaleString(
-                            "en-US",
-                            {
-                              year: "numeric",
-                              month: "short",
-                              day: "numeric",
-                              hour: "2-digit",
-                              minute: "2-digit",
-                              second: "2-digit",
-                            },
-                          )}
-                        </span>
-                         </div>
-                         <div className="text-gray-600">
-                           <div>{comment?.data} </div>
-                         </div>
-                       </div>       
+                          <div
+                            className="p-4 bg-white rounded-lg shadow-md"
+                            key={index}
+                          >
+                            <div className="flex items-center mb-2">
+                              <span className="font-bold text-gray-800">
+                                {
+                                  staffData?.find(
+                                    (staff) => staff?.id === comment?.user_id,
+                                  )?.f_name
+                                }
+                              </span>
+                              <span className="ml-2 text-sm text-gray-500">
+                                {new Date(comment?.created_on).toLocaleString(
+                                  "en-US",
+                                  {
+                                    year: "numeric",
+                                    month: "short",
+                                    day: "numeric",
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                    second: "2-digit",
+                                  },
+                                )}
+                              </span>
+                            </div>
+                            <div className="text-gray-600">
+                              <div>{comment?.data} </div>
+                            </div>
+                          </div>
                         ))}
                       </div>
                     </div>

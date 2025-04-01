@@ -288,7 +288,7 @@ const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
               </div>
             </div>
           </div>
-          <div className="w-full p-5 my-5 rounded-lg shadow-xl bg-teal-200/60">
+          {/* <div className="w-full p-5 my-5 rounded-lg shadow-xl bg-teal-200/60">
             <div className="mb-4 font-bold text-gray-800">People Assigned:</div>
             <div className="flex items-center">
               <table className="min-w-full bg-white">
@@ -367,7 +367,7 @@ const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
                 </tbody>
               </table>
             </div>
-          </div>
+          </div> */}
           <div className="flex flex-col w-full gap-5 p-5 mt-5 bg-teal-100 rounded-lg shadow-xl">
             <div className="text-2xl font-bold text-gray-800">Comments:</div>
             <div className="flex flex-row w-full">
