@@ -13,18 +13,7 @@ import { showTask, showTaskRecord } from "./store/taskSlice";
 const App = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const token = sessionStorage.getItem("token");
-
-  const [segregateProject, setSegregateProject] = useState({});
-
-  const projects = useSelector((state) => state?.projectData?.projectData);
-  const tasks = useSelector((state) => state?.taskData?.taskData);
-  const users = useSelector((state) => state?.userData?.staffData);
-  const fabricators = useSelector(
-    (state) => state?.fabricatorData?.fabricatorData,
-  );
-  const teams = useSelector((state) => state?.projectData?.teamData);
 
   const userType = sessionStorage.getItem("userType");
 
