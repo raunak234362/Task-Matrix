@@ -7,6 +7,7 @@ import Service from "../../../../api/configAPI";
 import { useSelector } from "react-redux";
 import { io } from "socket.io-client";
 import socket from "../../../../socket";
+import { toast } from "react-toastify";
 const MyTask = () => {
   const [tasks, setTasks] = useState([]);
   const [specificTask, setSpecificTask] = useState("");
@@ -17,20 +18,41 @@ const MyTask = () => {
     const fetchTask = async () => {
       try {
         const task = await Service.getMyTask();
-        socket.on("customNotification", (task) => {
-          console.log("Notification received:", task);
-        
-          new Notification(task?.title || "Notification", {
-            body: task?.message,
-          }).show();
-        });
         setTasks(task);
       } catch (error) {
         console.log("Error in fetching task: ", error);
       }
     };
+
+    // Initial fetch
     fetchTask();
-  }, []);
+
+    // Socket listener for new tasks
+    socket.on("customNotification", (data) => {
+      // Show notification
+      if (Notification.permission !== "granted") {
+        Notification.requestPermission().then(() => {
+          console.log("Permission granted for notifications.");
+          new Notification(data.title || "New Task", {
+            body: data.message,
+          });
+        });
+      } else {
+        new Notification(data.title || "New Task", {
+          body: data.message,
+        });
+      }
+      // Optional UI toast
+      toast.success(data.message || "You have a new task!");
+
+      fetchTask();
+    });
+
+    // Cleanup socket listener
+    return () => {
+      socket.off("customNotification");
+    };
+  }, [tasks.length]); 
   // if(tasks.length + 1){
   //   window.electron.ipcRenderer.send('show-notification', {
   //     title: 'New Data Added',

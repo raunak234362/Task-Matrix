@@ -33,6 +33,7 @@ const Login = () => {
         const userData = await Service.getCurrentUser(token);
         dispatch(setUserData(userData));
         console.log("UserData :", userData);
+        sessionStorage.setItem("userId", userData.id);
         let userType = "user";
         if (userData.role === "STAFF") {
           if (userData.is_superuser) {

@@ -10,13 +10,15 @@ import Service from "./api/configAPI";
 import { setUserData, showStaff } from "./store/userSlice";
 import { showProjects, showTeam } from "./store/projectSlice";
 import { showTask, showTaskRecord } from "./store/taskSlice";
+import socket from "./socket";
 const App = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const dispatch = useDispatch();
   const token = sessionStorage.getItem("token");
 
   const userType = sessionStorage.getItem("userType");
-
+  const userId = sessionStorage.getItem("userId");
+console.log("User Type from sessionStorage:", userId);
   const toggleSidebar = useCallback(() => {
     setSidebarOpen((prev) => !prev);
   }, [setSidebarOpen]);
@@ -54,7 +56,10 @@ const App = () => {
     fetchProjects();
     fetchUserData();
     fetchTeam();
+    console.log("🔌 Socket listener initialized in App");
   }, [token,dispatch]);
+
+  
 
   return (
     <Provider store={store}>
