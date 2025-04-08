@@ -7,6 +7,8 @@ import { useDispatch } from "react-redux";
 import { useForm } from "react-hook-form";
 import { addTask } from "../../../../store/taskSlice";
 import { toast } from "react-toastify";
+import socket from "../../../../socket";
+
 
 const AddTask = () => {
   const [projectOptions, setPtojectOptions] = useState([]);
@@ -86,24 +88,39 @@ const AddTask = () => {
     }
   }, [projectId]);
 
-  const onSubmit = async (taskData) => {
-    try {
-      const token = sessionStorage.getItem("token");
-      if (!token) {
-        throw new Error("Token not found");
-      }
-      const TaskName = `${taskData.type} - ${taskData.taskname}`;
-      const data = await Service.addTask({
-        ...taskData,
-        name: TaskName,
-        token: token,
-      });
-      toast.success("Task Added Successfully");
-      dispatch(addTask(data));
-    } catch (error) {
-      toast.error("Error adding task", error);
+
+const onSubmit = async (taskData) => {
+  try {
+    const token = sessionStorage.getItem("token");
+    if (!token) {
+      throw new Error("Token not found");
     }
-  };
+
+    const TaskName = `${taskData.type} - ${taskData.taskname}`;
+
+    const data = await Service.addTask({
+      ...taskData,
+      name: TaskName,
+      token: token,
+    });
+console.log(data)
+    toast.success("✅ Task Added Successfully");
+    dispatch(addTask(data));
+
+    // 🧠 Notify the assigned user via socket
+    if (taskData.user) {
+      socket.emit("sendNotification", {
+        userId: taskData.user_id,
+        message: `📌 New Task Assigned: ${TaskName}`,
+        title: "New Task",
+      });
+    }
+
+  } catch (error) {
+    console.error("Error adding task:", error);
+    toast.error("❌ Error adding task");
+  }
+};
 
 
 

@@ -42,9 +42,11 @@ const MyTask = () => {
           body: data.message,
         });
       }
+
       // Optional UI toast
       toast.success(data.message || "You have a new task!");
 
+      // Re-fetch tasks
       fetchTask();
     });
 
