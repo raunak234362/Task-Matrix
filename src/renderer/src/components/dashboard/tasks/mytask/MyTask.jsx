@@ -5,16 +5,25 @@ import Task from "../Task";
 import { Button, Header } from "../../../index";
 import Service from "../../../../api/configAPI";
 import { useSelector } from "react-redux";
-
+import { io } from "socket.io-client";
+import socket from "../../../../socket";
 const MyTask = () => {
   const [tasks, setTasks] = useState([]);
   const [specificTask, setSpecificTask] = useState("");
   const [displayTask, setDisplayTask] = useState(false);
 
+
   useEffect(() => {
     const fetchTask = async () => {
       try {
         const task = await Service.getMyTask();
+        socket.on("customNotification", (task) => {
+          console.log("Notification received:", task);
+        
+          new Notification(task?.title || "Notification", {
+            body: task?.message,
+          }).show();
+        });
         setTasks(task);
       } catch (error) {
         console.log("Error in fetching task: ", error);
@@ -22,7 +31,13 @@ const MyTask = () => {
     };
     fetchTask();
   }, []);
-
+  // if(tasks.length + 1){
+  //   window.electron.ipcRenderer.send('show-notification', {
+  //     title: 'New Data Added',
+  //     body: 'A new record has been added successfully!',
+  //   })
+  // }
+  
   const projects = useSelector((state) => state?.projectData?.projectData);
 
   function durToHour(params) {

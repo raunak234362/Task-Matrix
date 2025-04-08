@@ -610,6 +610,8 @@ class Service {
     }
   }
 
+
+
   //Calendar API
   // static async fetchCalendar(date, user) {
   //   const token = sessionStorage.getItem("token");
@@ -663,5 +665,6 @@ class Service {
   //   }
   // }
 }
+
 
 export default Service;

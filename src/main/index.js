@@ -1,12 +1,12 @@
 /* eslint-disable prettier/prettier */
-import { app, shell, BrowserWindow, Notification } from 'electron'
-import { join } from 'path'
-import { electronApp, optimizer, is } from '@electron-toolkit/utils'
-import icon from '../../resources/icon.png?asset'
-import { updateElectronApp } from 'update-electron-app'
+import { app, shell, BrowserWindow, Notification, ipcMain } from "electron";
+import { join } from "path";
+import { electronApp, optimizer, is } from "@electron-toolkit/utils";
+import icon from "../../resources/icon.png?asset";
+import { updateElectronApp } from "update-electron-app";
 
 // Disable SSL certificate errors
-app.commandLine.appendSwitch('ignore-certificate-errors');
+app.commandLine.appendSwitch("ignore-certificate-errors");
 
 function createWindow() {
   // Create the browser window.
@@ -15,88 +15,92 @@ function createWindow() {
     height: 980,
     show: false,
     autoHideMenuBar: true,
-    ...(process.platform === 'linux' ? { icon } : {}),
+    ...(process.platform === "linux" ? { icon } : {}),
     webPreferences: {
-      preload: join(__dirname, '../preload/index.js'),
-      sandbox: false
-    }
-  })
+      preload: join(__dirname, "../preload/index.js"),
+      sandbox: false,
+    },
+  });
 
-  mainWindow.on('ready-to-show', () => {
-    mainWindow.show()
-  })
+  mainWindow.on("ready-to-show", () => {
+    mainWindow.show();
+  });
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
-    shell.openExternal(details.url)
-    return { action: 'deny' }
-  })
+    shell.openExternal(details.url);
+    return { action: "deny" };
+  });
 
   // HMR for renderer based on electron-vite cli.
   // Load the remote URL for development or the local HTML file for production.
-  if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-    mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
+  if (is.dev && process.env["ELECTRON_RENDERER_URL"]) {
+    mainWindow.loadURL(process.env["ELECTRON_RENDERER_URL"]);
   } else {
-    mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
+    mainWindow.loadFile(join(__dirname, "../renderer/index.html"));
   }
 }
 
+// const NOTIFICATION_TITLE = 'Basic Notification'
+// const NOTIFICATION_BODY = 'Notification from the Main process'
 
-const NOTIFICATION_TITLE = 'Basic Notification'
-const NOTIFICATION_BODY = 'Notification from the Main process'
+// function showNotification () {
+//   new Notification({ title: NOTIFICATION_TITLE, body: NOTIFICATION_BODY }).show()
+// }
 
-function showNotification () {
-  new Notification({ title: NOTIFICATION_TITLE, body: NOTIFICATION_BODY }).show()
-}
-
-app.whenReady().then(createWindow).then(showNotification)
+// app.whenReady().then(createWindow).then(showNotification)
 
 // Handle notifications from renderer
-// ipcMain.on('show-notification', (event, { title, body }) => {
-//   const notification = new Notification({
-//     title,
-//     body,
-//     icon: join(__dirname, '../../resources/icon.png'), // Adjust icon path if needed
-//   });
-//   notification.show();
-// });
-
+ipcMain.on("show-notification", (event, { title, body }) => {
+  const notification = new Notification({
+    title,
+    body,
+    icon: join(__dirname, "../../resources/icon.png"), // Adjust icon path if needed
+  });
+  notification.show();
+});
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
   // Set app user model id for Windows
-  electronApp.setAppUserModelId('com.electron')
+  electronApp.setAppUserModelId("electron");
 
+  // showNotification()
   // Default open or close DevTools by F12 in development
   // and ignore CommandOrControl + R in production.
   // see https://github.com/alex8088/electron-toolkit/tree/master/packages/utils
-  app.on('browser-window-created', (_, window) => {
-    optimizer.watchWindowShortcuts(window)
-  })
+  app.on("browser-window-created", (_, window) => {
+    optimizer.watchWindowShortcuts(window);
+  });
+  app.on("ready", () => {
+    if (Notification.isSupported()) {
+      console.log("Notifications are supported");
+    }
+  });
 
   // IPC test
   // ipcMain.on('ping', () => console.log('pong'))
 
-  createWindow()
+  createWindow();
 
-  app.on('activate', function () {
+  app.on("activate", function () {
     // On macOS it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
-    if (BrowserWindow.getAllWindows().length === 0) createWindow()
-  })
-})
+    if (BrowserWindow.getAllWindows().length === 0) createWindow();
+  });
+});
 
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits
 // explicitly with Cmd + Q.
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit()
+app.on("window-all-closed", () => {
+  if (process.platform !== "darwin") {
+    app.quit();
   }
-})
+});
 
-updateElectronApp()
+updateElectronApp();
 
 // In this file you can include the rest of your app"s specific main process
 // code. You can also put them in separate files and require them here.
