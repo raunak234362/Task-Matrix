@@ -11,7 +11,7 @@ const socket = io("http://192.168.1.198:5155", {
 });
 
 socket.on("connect", () => {
-  console.log("Connected:", socket.id);
+  console.log("Connected with socket:", socket.id);
   socket.emit("joinRoom", "room1"); // Join a room or channel if needed
 //   if (decoded?.id) {
 //     socket.emit("joinRoom", decoded.id);
