@@ -1,231 +1,256 @@
+/* eslint-disable prettier/prettier */
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
-/* eslint-disable prettier/prettier */
-import { useEffect, useState } from "react";
-import { Button, GhantChart } from "../../../index"; // Ensure GanttChart is imported correctly
-import Service from "../../../../api/configAPI";
-import SegregateTeam from "../../../../util/SegragateTeam";
-import { useSelector } from "react-redux";
-import { BASE_URL } from "../../../../config/constant";
-const Project = ({ projectId, isOpen, onClose }) => {
-  const project = useSelector((state) =>
-    state?.projectData?.projectData?.find(
-      (project) => project.id === projectId,
-    ),
-  );
-  console.log(project);
-  const teams = useSelector((state) => state?.projectData?.teamData);
-  const staffData = useSelector((state)=> state?.userData?.staffData)
-  const [members, setMembers] = useState({});
-  const [teamTask, setTeamTask] = useState([]);
-  const [teamData, setTeamData] = useState();
-  const [taskDetail, setTaskDetail] = useState();
-  const [loading, setLoading] = useState(true);
-  const userType = sessionStorage.getItem("userType");
+import React, { useEffect, useState } from "react";
+import Service from "../../../../api/authAPI";
+import { Provider, useDispatch, useSelector } from "react-redux";
+import { Button } from "../../../index";
+import ProjectStatus from "./ProjectStatus";
+
+const Project = ({ projectId, onClose }) => {
+  const [project, setProject] = useState([]);
   const [selectedProject, setSelectedProject] = useState(null);
+  const [selectedEditProject, setSelectedEditProject] = useState(null);
+  const [selectedProjectWB, setSelectedProjectWB] = useState(null);
+  const [addWorkBreakdown, setAddWorkBreakdown] = useState(false);
+  const [allWorkBreakdown, setAllWorkBreakdown] = useState(false);
+  const [selectedProjectStatus, setSelectedProjectStatus] = useState(null);
+  const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
+
+  const [editWorkBreakdown, setEditWorkBreakdown] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  // Fetch team data once when the project is loaded
-  useEffect(() => {
-    const fetchTask = async () => {
-      try {
-        const data = await Service.getTeam(project.team);
-        setTeamData(data);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching team data:", error);
-        setLoading(false);
-      }
-    };
 
-    if (project?.team) {
-      setLoading(true);
-      fetchTask();
-    }
-  }, []);
+  const projectData = useSelector((state) =>
+    state?.projectData.projectData.find((project) => project.id === projectId),
+  );
+  console.log("Project Data", projectData);
 
-  useEffect(() => {
-    if (teamData) {
-      const segregateTeam = () => {
-        let teamMembers = {};
-        let memb = [];
-        teamData?.members?.forEach((member) => {
-          memb.push({
-            employee: member?.employee,
-            date: project?.endDate,
-            role: member?.role,
-          });
-          if (member?.role !== "MANAGER" && member?.role !== "LEADER") {
-            if (member?.role in teamMembers) {
-              teamMembers[member?.role].push(member);
-            } else {
-              teamMembers[member?.role] = [member];
-            }
-          }
-        });
-        setMembers(teamMembers);
-        setTeamTask(memb);
-      };
+  // const fetchFiles = async (data) => {
+  //   console.log("Fetching files", data);
+  //   try {
+  //     const files = await Service.allProjectFile(projectId,data);
 
-      segregateTeam();
-    }
-  }, [teamData, project?.endDate]);
+  //     console.log("Files", files);
+  //   } catch (error) {
+  //     console.log("Error fetching files:", error);
+  //   }
+  // };
+
+  // const fetchFileAndOpen = async (fileId) => {
+  //   try {
+  //     const response = await Service.allProjectFile(projectId, fileId, { responseType: 'blob' }); // API call to fetch the file as blob
+  //     console.log("File response", response);
+  //     // const fileUrl = URL.createObjectURL(response.data); // Create object URL from blob
+  //     // console.log("File URL", fileUrl);
+  //     window.open(response, "_blank"); // Open file in a new tab
+  //   } catch (error) {
+  //     console.error("Error opening file:", error);
+  //   }
+  // };
+
+  const handleClose = async () => {
+    onClose(true);
+  };
 
   const handleEditClick = () => {
     setIsModalOpen(true);
-    setSelectedProject(project);
+    setSelectedEditProject(projectData);
   };
   const handleModalClose = () => {
-    setSelectedProject(null);
     setIsModalOpen(false);
+    setSelectedEditProject(null);
   };
 
-  useEffect(() => {
-    async function fetchTasks() {
-      if (teamTask.length) {
-        const data1 = await SegregateTeam(teamTask); // For Seggregation
-        setTaskDetail(data1);
-      }
-    }
-    fetchTasks();
-  }, [teamTask]); // Only re-run when teamTask changes
+  const handleStatusView = (projectID) => {
+    setSelectedProjectStatus(projectID);
+    setIsStatusModalOpen(true);
+  };
 
-  if (!isOpen) return null;
+  const handleStatusClose = () => {
+    setSelectedProjectStatus(null);
+    setIsStatusModalOpen(false);
+  };
 
-  const startDate = new Date(project?.startDate);
-  const endDate = new Date(project?.endDate);
-
-  console.log(project);
+  const projectDetails = {
+    projectData: projectData, // Ensure correct property assignment
+    // Add other properties as needed
+  };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white h-[92%] fixed top-[8%] overflow-x-auto p-5 rounded-lg shadow-lg w-screen ">
-        <div className="flex justify-between px-5 py-1 my-5 text-3xl font-bold text-white rounded-lg shadow-xl bg-teal-200/50">
-          <h2 className="text-3xl font-bold text-gray-800">Project Details</h2>
-          <button
-            className="px-5 text-xl font-bold text-white rounded-lg bg-teal-500/50 hover:bg-teal-700"
-            onClick={onClose}
-          >
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-85">
+      <div className="bg-white h-[80vh] p-5 md:p-5 rounded-lg shadow-lg md:w-3/4 ">
+        <div className="flex flex-row justify-between">
+          <Button className="bg-red-500" onClick={handleClose}>
             Close
-          </button>
+          </Button>
         </div>
-        <div className=" h-[80vh] overflow-y-auto">
-          <div className="overflow-y-auto rounded-lg h-fit">
-            <div className="grid grid-cols-2 gap-5">
-              <div className="p-5 rounded-lg bg-teal-100/70">
-                <div className="my-3">
-                  <strong className="text-gray-700">Project Name:</strong>
-                  <div>{project?.name}</div>
-                </div>
-                <div className="my-3">
-                  <strong className="text-gray-700">Description: </strong>
-                  {project?.description}
-                </div>
-                <div className="my-3">
-                  <strong className="text-gray-700">Start Date: </strong>
-                  {startDate?.toDateString()}
-                </div>
-                <div className="my-3">
-                  <strong className="text-gray-700">Approval Date: </strong>
-                  {endDate?.toDateString()}
-                </div>
-                <p className="my-3">
-                  <strong className="text-gray-700">Tools:</strong>{" "}
-                  {project?.tools}
-                </p>
-                <p className="my-3">
-                  <strong className="text-gray-700">Connection Design:</strong>{" "}
-                  {project?.connectionDesign ? "REQUIRED" : "Not Required"}
-                </p>
-                <p className="my-3">
-                  <strong className="text-gray-700">Misc Design:</strong>{" "}
-                  {project?.miscDesign ? "REQUIRED" : "Not Required"}
-                </p>
-                <p className="my-3">
-                  <strong className="text-gray-700">Customer:</strong>{" "}
-                  {project?.customer ? "REQUIRED" : "Not Required"}
-                </p>
+        <div className="h-[70vh] overflow-y-auto">
+          <div className="z-10 flex justify-center w-full overflow-y-auto top-2">
+            <div className="mt-2">
+              <div className="px-3 py-2 font-bold text-white bg-teal-400 rounded-lg shadow-md md:px-4 md:text-2xl">
+                Project: {projectData?.name || "Unknown"}
+              </div>
+            </div>
+          </div>
+
+          <div className="overflow-y-auto rounded-lg shadow-lg h-fit">
+            <div className="p-5 rounded-lg shadow-md bg-gray-100/50">
+              <h2 className="mb-4 text-lg font-semibold">Project Details</h2>
+
+              <div className="grid grid-cols-1 gap-6 overflow-x-hidden overflow-y-hidden md:grid-cols-2">
+                {[
+                  { label: "Description", value: projectData?.description },
+                  {
+                    label: "Fabricator",
+                    value: projectData?.fabricator?.fabName,
+                  },
+                  { label: "Status", value: projectData?.status },
+                  {
+                    label: "Estimated Hours",
+                    value: projectData?.estimatedHours,
+                  },
+                  {
+                    label: "Assigned Hours",
+                    value: projectData?.estimatedHours * 0.7,
+                  },
+                  {
+                    label: "Fabrication Hours",
+                    value: projectData?.estimatedHours * 0.3,
+                  },
+                  { label: "Stage", value: projectData?.stage },
+                  { label: "Tool", value: projectData?.tools },
+                  { label: "Start Date", value: projectData?.startDate },
+                  { label: "Department", value: projectData?.department?.name },
+                  { label: "End Date", value: projectData?.approvalDate },
+                  {
+                    label: "Project Manager",
+                    value: `${projectData?.manager?.f_name || ""} ${projectData?.manager?.m_name || ""} ${projectData?.manager?.l_name || ""}`,
+                  },
+                  {
+                    label: "Files",
+                    value: Array.isArray(projectData?.files)
+                      ? projectData?.files?.map((file, index) => (
+                          <a
+                            key={index}
+                            href={`${import.meta.env.VITE_BASE_URL}/project/projects/viewfile/${projectId}/${file.id}`} // Use the file path with baseURL
+                            target="_blank" // Open in a new tab
+                            rel="noopener noreferrer"
+                            className="px-5 py-2 text-teal-500 hover:underline"
+                          >
+                            {file.originalName || `File ${index + 1}`}
+                          </a>
+                        ))
+                      : "Not available",
+                  },
+                ]?.map(({ label, value }) => (
+                  <div key={label} className="flex flex-col">
+                    <span className="font-medium text-gray-700">{label}:</span>
+                    <span className="text-gray-600">
+                      {value || "Not available"}
+                    </span>
+                  </div>
+                ))}
+              </div>
+              <div className="flex flex-row items-center mt-3 space-x-5">
                 <div>
-                  <strong className="text-gray-700">Team: </strong>
-                  {project?.team?.name}
-                </div>
-                <div className="my-3">
-                  <strong className="text-gray-700">Status: </strong>
-                  {project?.status}
+                  <p className="font-bold text-gray-700">Project Status: </p>
                 </div>
                 <div>
-                  <strong className="text-gray-700">Stage: </strong>
-                  {project?.stage}
+                  <Button onClick={() => handleStatusView(projectId)}>
+                    View
+                  </Button>
                 </div>
               </div>
+            </div>
+            <div className="p-5 rounded-lg shadow-md bg-gray-100/50">
+              <h2 className="mb-4 text-lg font-semibold">Fabricator Details</h2>
 
-              <div className="">
-                <div className="p-5 my-3 rounded-lg bg-teal-100/50 h-fit">
-                  <div className="text-xl font-bold text-gray-800">
-                    Fabricator Detail:
-                  </div>
-                  <div>
-                    <div className="my-3">
-                      <strong className="text-gray-700">
-                        Fabricator Name:
-                      </strong>
-                      <div>{project?.fabricator?.fabName}</div>
-                    </div>
-                    <div className="my-3">
-                      <strong className="text-gray-700">
-                        Standard Design:
-                      </strong>
-                      <div>
-                        <a
-                          href={`${BASE_URL}${project?.fabricator?.design}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-blue-500 cursor-pointer hover:text-blue-700"
-                        >
-                          View standard
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="bg-teal-100/60 p-5 h-[40vh] overflow-y-auto rounded-lg my-1">
-                  <div className="my-2 text-2xl tex-gray-800 fon2t-bold">
-                    Team Members:
-                  </div>
-                  <div className="my-4">
-                    {" "}
-                    <h3 className="text-gray-800 font-lgbold text-">Manager</h3>
-                    <li>{project?.team?.manager?.username}</li>
-                  </div>
+              <div className="grid grid-cols-1 gap-6 overflow-x-hidden overflow-y-hidden md:grid-cols-2">
+                {[
+                  {
+                    label: "Fabricator",
+                    value: projectData?.fabricator?.fabName,
+                  },
+                  {
+                    label: "Website",
+                    value: projectData?.fabricator?.website ? (
+                      <a
+                        href={projectData?.fabricator?.website}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-500 text-wrap hover:underline"
+                      >
+                        {projectData?.fabricator?.website}
+                      </a>
+                    ) : (
+                      "Not available"
+                    ),
+                  },
+                  {
+                    label: "Drive",
+                    value: projectData?.fabricator?.drive ? (
+                      <a
+                        href={projectData?.fabricator.drive}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-500 hover:underline"
+                      >
+                        {projectData?.fabricator.drive}
+                      </a>
+                    ) : (
+                      "Not available"
+                    ),
+                  },
 
-                  <h3 className="text-lg font-bold text-gray-800">Members</h3>
-                  {project?.team?.members.map((user) => {
-                    return (
-                      <li key={user.id}>
-                        {`${staffData.find((staff) => staff.id === user.id)?.f_name} ${staffData.find((staff) => staff.id === user.id)?.m_name} ${staffData.find((staff) => staff.id === user.id)?.l_name}`} - {user.role}
-                      </li>
-                    );
-                  })}
-
-                  {Object.keys(members).map((role) => (
-                    <div key={role}>
-                      <h3 className="text-sm font-bold text-gray-800">
-                        {role}
-                      </h3>
-                      <ol className="ml-4 list-decimal list-inside">
-                        {members[role]?.map((member) => (
-                          <li key={member?.id} className="mt-1">
-                            {member?.employee?.name}
-                          </li>
-                        ))}
-                      </ol>
-                    </div>
-                  ))}
-                </div>
+                  // {
+                  //   label: "Files",
+                  //   value: Array.isArray(projectData?.files)
+                  //     ? projectData?.files.map((file, index) => (
+                  //         <Button
+                  //           key={index}
+                  //           onClick={() => fetchFileAndOpen(file.id)} // Open file in a new tab
+                  //         >
+                  //           {file.originalName || `File ${index + 1}`}
+                  //         </Button>
+                  //       ))
+                  //     : "Not available",
+                  // },
+                  {
+                    label: "Files",
+                    value: Array.isArray(projectData?.fabricator?.files)
+                      ? projectData?.fabricator?.files?.map((file, index) => (
+                          <a
+                            key={index}
+                            href={`${import.meta.env.VITE_BASE_URL}/fabricator/fabricator/viewfile/${projectData?.fabricatorID}/${file.id}`} // Use the file path with baseURL
+                            target="_blank" // Open in a new tab
+                            rel="noopener noreferrer"
+                            className="px-5 py-2 text-teal-500 hover:underline"
+                          >
+                            {file.originalName || `File ${index + 1}`}
+                          </a>
+                        ))
+                      : "Not available",
+                  },
+                ]?.map(({ label, value }) => (
+                  <div key={label} className="flex flex-col">
+                    <span className="font-medium text-gray-700">{label}:</span>
+                    <span className="text-gray-600">
+                      {value || "Not available"}
+                    </span>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
         </div>
       </div>
+
+      {selectedProjectStatus && (
+        <ProjectStatus
+          projectId={selectedProjectStatus}
+          onClose={handleStatusClose}
+        />
+      )}
     </div>
   );
 };

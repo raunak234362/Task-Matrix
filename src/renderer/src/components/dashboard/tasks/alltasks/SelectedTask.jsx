@@ -8,39 +8,26 @@ import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { updateTask } from "../../../../store/taskSlice";
 import { BASE_URL } from "../../../../config/constant";
+import { toast } from "react-toastify";
 
 const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
-  let taskData = useSelector((state) =>
+  const dispatch = useDispatch();
+  const taskData = useSelector((state) =>
     state?.taskData?.taskData.filter((task) => task.id === taskID),
   );
-  const [workHours, setWorkHours] = useState(null);
-  const [workdata, setWorkData] = useState({});
-
+  const task = taskData[0];
+  console.log("Task Data: ", task);
   const staffData = useSelector((state) => state?.userData?.staffData);
   const projectData = useSelector((state) =>
     state?.projectData?.projectData.find(
-      (project) => project?.id === taskDetail?.project?.id,
+      (project) => project?.id === task?.project?.id,
     ),
   );
-  console.log("Project Data------------", projectData);
-  taskData = taskData[0];
-
-  console.log("taskData------------", taskData);
-
   const [selectedTask, setSelectedTask] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const username = sessionStorage.getItem("username");
   const userType = sessionStorage.getItem("userType");
-  useEffect(() => {
-    const fetchWorkId = async () => {
-      const workHour = await Service.getWorkHours(taskID);
-      console.log("Work Hour: ", workHour);
-      setWorkData(workHour);
-      setWorkHours(workHour);
-    };
-    fetchWorkId();
-  }, [taskID]);
   const {
     register,
     handleSubmit,
@@ -50,15 +37,30 @@ const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
     formState: { errors },
   } = useForm();
 
+  const taskIds = useSelector((state) =>
+    state?.taskData?.taskData?.map((task) => task.id),
+  );
+
   if (!isOpen) return null;
 
   const handleEditClick = () => {
     setIsModalOpen(true);
-    setSelectedTask(taskDetail);
+    setSelectedTask(taskData);
   };
   const handleModalClose = () => {
     setIsModalOpen(false);
+    // window.location.reload();
     setSelectedTask(null);
+  };
+
+  const deleteTaskID = async () => {
+    try {
+      const response = await Service.deleteTask(taskID);
+      onClose();
+      toast.success("Task deleted successfully");
+    } catch (error) {
+      toast.error("Error in deleting task");
+    }
   };
 
   const durToHour = (params) => {
@@ -77,20 +79,28 @@ const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
     const totalHours = days * 24 + hours;
     return `${totalHours}h ${minutes}m`;
   };
-  const formatMinutesToHoursAndMinutes = (totalMinutes) => {
-    if (!totalMinutes) return "0h 0m";
+  function formatMinutesToHours(totalMinutes) {
+    console.log("totalMinutes: ", totalMinutes);
+    if (!totalMinutes && totalMinutes !== 0) return "N/A";
 
     const hours = Math.floor(totalMinutes / 60);
     const minutes = totalMinutes % 60;
 
     return `${hours}h ${minutes}m`;
-  };
+  }
   const addComment = async (commentData) => {
     try {
-      const response = await Service.addComment(taskDetail?.id, commentData);
-      console.log("Comment Response: ", response);
-      alert("Comment Added Successfully");
+      const comment = await Service.addComment(task?.id, commentData);
+      console.log("Comment: ", comment.data);
+      dispatch(
+        updateTask({
+          ...task,
+          taskcomment: [...task.taskcomment, comment.data],
+        }),
+      );
+      toast.success("Comment Added successfully");
     } catch (error) {
+      toast.error(error);
       console.error("Error in adding comment: ", error);
     }
   };
@@ -125,8 +135,8 @@ const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
     }
   };
 
-  const start_date = new Date(taskDetail?.start_date);
-  const due_date = new Date(taskDetail?.due_date);
+  const start_date = new Date(task?.start_date);
+  const due_date = new Date(task?.due_date);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
@@ -148,22 +158,24 @@ const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
                 <strong className="w-40 font-bold text-gray-800">
                   Task Name:
                 </strong>
-                <div>{taskData?.name}</div>
+                <div>{task?.name}</div>
               </div>
               <div className="flex items-center my-2">
                 <strong className="w-40 font-bold text-gray-800">
                   Description:
                 </strong>
-                {taskData?.description}
+                {task?.description}
               </div>
               <div className="flex items-center my-2">
                 <strong className="w-40 font-bold text-gray-800">
                   Current User:
                 </strong>{" "}
-                {
-                  staffData?.find((staff) => staff?.id === taskData?.user_id)
-                    ?.f_name
-                }
+                {(() => {
+                  const staff = staffData?.find(
+                    (staff) => staff?.id === task?.user_id,
+                  );
+                  return `${staff?.f_name || ""} ${staff?.m_name || ""} ${staff?.l_name || ""}`.trim();
+                })()}
               </div>
               <div className="flex items-center my-2">
                 <strong className="w-40 font-bold text-gray-800">
@@ -181,21 +193,25 @@ const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
                 <strong className="w-40 font-bold text-gray-800">
                   Duration:
                 </strong>
-                {durToHour(taskData?.duration)}
+                {durToHour(task?.duration)}
               </div>
               <div className="flex items-center my-2">
                 <span className="w-40 font-bold text-gray-800">
                   Work Hours:
                 </span>
                 <span className="text-lg">
-                  {formatMinutesToHoursAndMinutes(workHours?.duration)}
+                  {formatMinutesToHours(
+                    task?.workingHourTask?.find((rec) =>
+                      taskIds.includes(rec.task_id),
+                    )?.duration,
+                  )}
                 </span>
               </div>
               <div className="flex items-center my-2">
                 <strong className="w-40 font-bold text-gray-800">
                   Status:
                 </strong>
-                <span className="text-lg">{taskData?.status}</span>
+                <span className="text-lg">{task?.status}</span>
               </div>
               <div className="flex items-center my-2">
                 <strong className="w-40 font-bold text-gray-800">
@@ -203,14 +219,17 @@ const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
                 </strong>
                 <span
                   className={`text-sm font-semibold px-3 py-0.5 mx-2 rounded-full border ${color(
-                    taskData?.priority,
+                    task?.priority,
                   )}`}
                 >
-                  {setPriorityValue(taskData?.priority)}
+                  {setPriorityValue(task?.priority)}
                 </span>
               </div>
               {userType !== "user" ? (
-                <Button onClick={handleEditClick}>Update</Button>
+                <div className="flex flex-row justify-between">
+                  <Button onClick={handleEditClick}>Update</Button>
+                  <Button className="bg-red-500 font-semibold text-white" onClick={deleteTaskID}>Delete</Button>
+                </div>
               ) : null}
             </div>
 
@@ -252,7 +271,7 @@ const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
                 </div>
                 <div className="flex items-center mb-2">
                   <strong className="w-40 font-bold text-gray-800">
-                    Project Status:
+                    Project Files:
                   </strong>{" "}
                   {projectData?.files?.map((file, index) => (
                     <a
@@ -269,7 +288,7 @@ const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
               </div>
             </div>
           </div>
-          <div className="w-full p-5 my-5 rounded-lg shadow-xl bg-teal-200/60">
+          {/* <div className="w-full p-5 my-5 rounded-lg shadow-xl bg-teal-200/60">
             <div className="mb-4 font-bold text-gray-800">People Assigned:</div>
             <div className="flex items-center">
               <table className="min-w-full bg-white">
@@ -282,26 +301,37 @@ const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
                     <th className="px-6 py-3 text-left">Approved By</th>
                     <th className="px-6 py-3 text-left">Approved On</th>
                     {(userType === "admin" ||
-                      username === taskDetail?.project?.manager?.username) && (
-                      <th className="px-6 py-3 text-left">Action</th>
-                    )}
+                      username === task?.project?.manager?.username) && (
+                        <th className="px-6 py-3 text-left">Action</th>
+                      )}
                   </tr>
                 </thead>
                 <tbody className="text-sm font-medium text-gray-600">
-                  {taskDetail?.assigned?.map((tasks, index) => (
+                  {task?.taskInAssignedList?.map((tasks, index) => (
                     <tr
                       key={tasks.id}
                       className="border-b border-gray-200 hover:bg-gray-100"
                     >
+                      {console.log(tasks)}
                       <td className="px-6 py-3 text-left whitespace-nowrap">
                         {index + 1}
                       </td>
 
                       <td className="px-6 py-3 text-left">
-                        {tasks?.assigned_by?.name}
+                        {(() => {
+                          const staff = staffData?.find(
+                            (staff) => staff?.id === tasks?.assigned_by,
+                          );
+                          return `${staff?.f_name || ""} ${staff?.m_name || ""} ${staff?.l_name || ""}`.trim();
+                        })()}
                       </td>
                       <td className="px-6 py-3 text-left">
-                        {tasks?.assigned_to?.name}
+                        {(() => {
+                          const staff = staffData?.find(
+                            (staff) => staff?.id === tasks?.assigned_to,
+                          );
+                          return `${staff?.f_name || ""} ${staff?.m_name || ""} ${staff?.l_name || ""}`.trim();
+                        })()}
                       </td>
                       <td className="px-6 py-3 text-left">
                         {new Date(tasks?.assigned_on).toDateString()}
@@ -320,25 +350,24 @@ const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
                       </td>
                       {(userType === "admin" ||
                         username === tasks.project?.manager?.username) && (
-                        <td className="px-6 py-3 text-left">
-                          <Button
-                            className={`${
-                              tasks?.approved_on
-                                ? "bg-gray-300 text-gray-700"
-                                : "bg-green-300 text-green-900"
-                            } px-2 py-0.5 rounded-full`}
-                            disabled={tasks?.approved_on}
-                          >
-                            {tasks?.approved_on ? "Approved" : "Approve"}
-                          </Button>
-                        </td>
-                      )}
+                          <td className="px-6 py-3 text-left">
+                            <Button
+                              className={`${tasks?.approved_on
+                                  ? "bg-gray-300 text-gray-700"
+                                  : "bg-green-300 text-green-900"
+                                } px-2 py-0.5 rounded-full`}
+                              disabled={tasks?.approved_on}
+                            >
+                              {tasks?.approved_on ? "Approved" : "Approve"}
+                            </Button>
+                          </td>
+                        )}
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
-          </div>
+          </div> */}
           <div className="flex flex-col w-full gap-5 p-5 mt-5 bg-teal-100 rounded-lg shadow-xl">
             <div className="text-2xl font-bold text-gray-800">Comments:</div>
             <div className="flex flex-row w-full">
@@ -353,15 +382,7 @@ const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
                         placeholder="Add Comment"
                         {...register("comment")}
                       />
-                      {/* <Input
-                        label="Upload file/document"
-                        placeholder="Upload file"
-                        name="files"
-                        type="file"
-                        id="file"
-                        accept=".pdf, .zip, .doc, image/*"
-                        {...register("files")}
-                      /> */}
+
                       <Button
                         className="bg-teal-500 py-0.5 hover:bg-teal-800 font-semibold"
                         type="submit"
@@ -374,10 +395,10 @@ const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
               </div>
             </div>
 
-            {taskData?.taskcomment?.length > 0 && (
+            {task?.taskcomment?.length > 0 && (
               <div className="p-5 rounded-lg shadow-xl bg-gray-100/70">
                 <div className="space-y-4">
-                  {taskData?.taskcomment?.map((comment, index) => (
+                  {task?.taskcomment?.map((comment, index) => (
                     <div
                       className="p-4 bg-white rounded-lg shadow-md"
                       key={index}
@@ -391,30 +412,21 @@ const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
                           }
                         </span>
                         <span className="ml-2 text-sm text-gray-500">
-                          {new Date(comment?.created_on).toLocaleDateString(
+                          {new Date(comment?.created_on).toLocaleString(
                             "en-US",
                             {
                               year: "numeric",
                               month: "short",
                               day: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              second: "2-digit",
                             },
                           )}
                         </span>
                       </div>
                       <div className="text-gray-600">
                         <div>{comment?.data} </div>
-                        {/* {comment?.file && (
-                          <div>
-                            <a
-                              href={comment?.file}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-blue-500 hover:text-blue-700"
-                            >
-                              View File
-                            </a>
-                          </div>
-                        )} */}
                       </div>
                     </div>
                   ))}

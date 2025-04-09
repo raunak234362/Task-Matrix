@@ -51,7 +51,6 @@ const ApproveAssignee = () => {
         tid: selectedTask.id,
       });
       setIsApproved(true);
-      console.log("Task approved:", updatedTask);
       toast.success("Task successfully approved!");
       setAssigneeTask((prevTasks) =>
         prevTasks.map((task) => {
@@ -147,9 +146,9 @@ const ApproveAssignee = () => {
   }
 
   return (
-    <div className="h-[70vh]">
+    <div className="">
       <div className="w-full p-5 rounded-lg shadow-xl bg-gray-50">
-        <div className="h-[75vh] overflow-y-auto">
+        <div className="h-[70vh] overflow-y-auto">
           <table className="w-full text-center border-collapse table-auto rounded-xl">
             <thead className="sticky top-0 bg-gray-200">
               <tr>
@@ -222,7 +221,7 @@ const ApproveAssignee = () => {
                         } px-2 py-0.5 rounded-full`}
                         disabled={task?.approved}
                       >
-                        {task?.approved_on ? "Approved" : "Approve"}
+                        {task?.approved ? "Approved" : "Approve"}
                       </button>
                     </td>
                   )}

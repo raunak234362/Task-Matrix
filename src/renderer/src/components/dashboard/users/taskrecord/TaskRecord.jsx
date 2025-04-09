@@ -170,7 +170,7 @@ const TaskRecord = () => {
             {record?.length === 0 ? (
               <tr className="bg-white">
                 <td colSpan="6" className="text-center">
-                  No Task Available
+                  No Tasks Available
                 </td>
               </tr>
             ) : (
@@ -192,7 +192,7 @@ const TaskRecord = () => {
                     {durToHour(rec?.duration)}
                   </td>
                   <td className={`border px-1 py-2 `}>
-                    {formatMinutesToHours(rec.workingHourTask.map((task) => task.duration).reduce((a, b) => a + b, 0))}
+                    {formatMinutesToHours(rec.workingHourTask[0]?.duration)}
                     {console.log(rec.workingHourTask)}
                   </td>
                   <td className="px-1 py-2 border">{rec?.status}</td>

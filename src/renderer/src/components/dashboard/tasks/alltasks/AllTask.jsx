@@ -7,76 +7,119 @@ import { useDispatch, useSelector } from "react-redux";
 import { showTask, showTaskByID } from "../../../../store/taskSlice";
 
 const AllTask = () => {
-  const dispatch = useDispatch();
+  const userType = sessionStorage.getItem("userType");
   const tasks = useSelector((state) => state?.taskData?.taskData);
-  const currentUserId = useSelector((state) => state?.userData?.userData?.id);
-  const isSuperUser = useSelector(
-    (state) => state?.userData?.userData?.is_superuser,
-  );
   const projectData = useSelector((state) => state?.projectData?.projectData);
   const userData = useSelector((state) => state?.userData?.staffData);
   const [selectedTask, setSelectedTask] = useState(null);
   const [taskID, setTaskID] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState("");
-  const [projectCompletion, setProjectCompletion] = useState({});
   const [completionPercentage, setCompletionPercentage] = useState(0);
   const [inReviewPercentage, setInReviewPercentage] = useState(0);
-  const [totalDuration, setTotalDuration] = useState(0);
-
-  const [projectFilter, setProjectFilter] = useState("");
-  const [toolFilter, setToolsFilter] = useState();
-  const [sortConfig, setSortConfig] = useState({
-    key: "",
-    direction: "ascending",
+  const [searchQuery, setSearchQuery] = useState("");
+  const [taskFilter, setTaskFilter] = useState([]);
+  const [projectFilter, setProjectFilter] = useState([]);
+  const [sortOrder, setSortOrder] = useState({ key: "name", order: "asc" });
+  const [filters, setFilters] = useState({
+    fabricator: "",
+    status: "",
   });
 
-  const calculateCompletionPercentage = () => {
-    const completionMap = {};
 
-    tasks.forEach((task) => {
-      if (!completionMap[task.project.name]) {
-        completionMap[task.project.name] = {
-          completed: 0,
-          inReview: 0,
-          total: 0,
-        };
-      }
-      completionMap[task.project.name].total += 1;
+    // Pagination state
+    const [currentPage, setCurrentPage] = useState(1);
+    const tasksPerPage = 50;
 
-      if (task.status === "COMPLETE") {
-        completionMap[task.project.name].completed += 1;
-      } else if (task.status === "IN-REVIEW") {
-        completionMap[task.project.name].inReview += 1;
-      }
+  const departmentTask = tasks?.flatMap((task) => task?.tasks) || [];
+
+  useEffect(() => {
+    setTaskFilter(userType === "department-manager" ? departmentTask : tasks);
+  }, [tasks, userType]);
+  const uniqueProject = [
+    ...new Set(
+      (userType === "department-manager" ? departmentTask : tasks)?.map(
+        (project) => project?.project?.name,
+      ),
+    ),
+  ];
+  // console.log("UNIQUE PROJECTS:", uniqueProject);
+  const filterAndSortData = () => {
+    let filtered = (
+      userType === "department-manager" ? departmentTask : tasks
+    )?.filter((task) => {
+      const searchMatch =
+        task?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        userData
+          ?.find((user) => user?.id === task?.user_id)
+          ?.f_name?.toLowerCase()
+          .includes(searchQuery.toLowerCase()) ||
+        userData
+          ?.find((user) => user?.id === task?.user_id)
+          ?.m_name?.toLowerCase()
+          .includes(searchQuery.toLowerCase()) ||
+        userData
+          ?.find((user) => user?.id === task?.user_id)
+          ?.l_name?.toLowerCase()
+          .includes(searchQuery.toLowerCase());
+
+      const filterMatch =
+        (!filters?.project || task?.project?.name === filters?.project) &&
+        (!filters?.status || task?.status === filters?.status);
+
+      return searchMatch && filterMatch;
     });
 
-    // Calculate percentages
-    Object.keys(completionMap).forEach((projectName) => {
-      const { completed, inReview, total } = completionMap[projectName];
-      completionMap[projectName].completionPercentage =
-        ((completed + inReview) / total) * 100;
-    });
+    // Sorting
+    filtered.sort((a, b) => {
+      let aKey = a[sortOrder?.key];
+      let bKey = b[sortOrder?.key];
 
-    setProjectCompletion(completionMap);
+      // Handle fabricator sorting separately
+      if (sortOrder?.key === "project") {
+        aKey = a.project?.name || "";
+        bKey = b.project?.name || "";
+      }
+
+      // Convert only if it's a string
+      const aValue =
+        typeof aKey === "string" ? aKey.toLowerCase() : (aKey ?? "");
+      const bValue =
+        typeof bKey === "string" ? bKey.toLowerCase() : (bKey ?? "");
+
+      if (sortOrder?.order === "asc") return aValue > bValue ? 1 : -1;
+      return aValue < bValue ? 1 : -1;
+    });
+    setTaskFilter(filtered);
   };
 
-  const calculateTotalDuration = () => {
-    if (!tasks || tasks.length === 0) {
-      setTotalDuration({ hours: 0, minutes: 0 });
-      return;
-    }
+    // Pagination logic
+    const indexOfLastTask = currentPage * tasksPerPage;
+    const indexOfFirstTask = indexOfLastTask - tasksPerPage;
+    const currentTasks = taskFilter.slice(indexOfFirstTask, indexOfLastTask);
+  
+    const handlePageChange = (pageNumber) => {
+      setCurrentPage(pageNumber);
+    };
+  
+    const totalPages = Math.ceil(taskFilter.length / tasksPerPage);
+  
 
-    const totalMinutes = tasks.reduce((sum, task) => {
-      const taskDuration = task?.project?.duration || 0;
-      return sum + taskDuration;
-    }, 0);
+  // Search handler
+  const handleSearch = (e) => {
+    setSearchQuery(e.target.value);
+  };
 
-    const hours = Math.floor(totalMinutes / 60); // Calculate total hours
-    const minutes = totalMinutes % 60; // Calculate remaining minutes
+  // Filter change handler
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilters((prevFilters) => ({ ...prevFilters, [name]: value }));
+  };
 
-    setTotalDuration({ hours, minutes }); // Store as an object
+  // Sort handler
+  const handleSort = (key) => {
+    const order =
+      sortOrder.key === key && sortOrder.order === "asc" ? "desc" : "asc";
+    setSortOrder({ key, order });
   };
 
   function formatMinutesToHours(totalMinutes) {
@@ -91,16 +134,16 @@ const AllTask = () => {
 
   useEffect(() => {
     if (projectFilter) {
-      const projectTasks = tasks.filter(
-        (task) => task.project.name === projectFilter,
-      );
+      const projectTasks = (
+        userType === "department-manager" ? departmentTask : tasks
+      ).filter((task) => task?.project?.name === projectFilter);
       const completedTasks = projectTasks.filter(
-        (task) => task.status === "COMPLETE",
+        (task) => task?.status === "COMPLETE",
       ).length;
       const totalTasks = projectTasks.length;
 
       const inReviewTasks = projectTasks.filter(
-        (task) => task.status === "IN-REVIEW",
+        (task) => task?.status === "IN_REVIEW",
       ).length;
 
       const inReviewPercentage =
@@ -115,22 +158,17 @@ const AllTask = () => {
         const taskDuration = task?.project?.duration || 0;
         return sum + taskDuration;
       }, 0);
-
-      const hours = Math.floor(totalMinutes / 60);
-      const minutes = totalMinutes % 60;
-
-      setTotalDuration({ hours, minutes });
     }
 
-    calculateTotalDuration();
-  }, [projectFilter, tasks]);
+    filterAndSortData();
+  }, [tasks, searchQuery, filters, sortOrder]);
 
   const getCompletionBarColor = (status) => {
     switch (status) {
       case "COMPLETE":
         return "bg-green-500"; // Green for completed
-      case "IN-REVIEW":
-        return "bg-yellow-500"; // Yellow for in-review
+      case "IN_REVIEW":
+        return "bg-yellow-500"; // Yellow for IN_REVIEW
       default:
         return "bg-green-500"; // Default or no status
     }
@@ -139,72 +177,12 @@ const AllTask = () => {
     switch (status) {
       case "COMPLETE":
         return "bg-green-500"; // Green for completed
-      case "IN-REVIEW":
-        return "bg-yellow-500"; // Yellow for in-review
+      case "IN_REVIEW":
+        return "bg-yellow-500"; // Yellow for IN_REVIEW
       default:
         return "bg-yellow-500"; // Default or no status
     }
   };
-
-  // console.log(tasks);
-  const handleSearch = (e) => {
-    setSearchTerm(e.target.value);
-  };
-
-  const handleStatusFilter = (e) => {
-    setStatusFilter(e.target.value);
-  };
-
-  const handleProjectFilter = (e) => {
-    setProjectFilter(e.target.value);
-  };
-
-  const handleToolsFilter = (e) => {
-    setToolsFilter(e.target.value);
-  };
-
-  const handleSort = (key) => {
-    let direction = "ascending";
-    if (sortConfig.key === key && sortConfig?.direction === "ascending") {
-      direction = "descending";
-    }
-    setSortConfig({ key, direction });
-  };
-
-  const sortedTasks = [...tasks].sort((a, b) => {
-    if (sortConfig.key) {
-      if (a[sortConfig.key] < b[sortConfig.key]) {
-        return sortConfig.direction === "ascending" ? -1 : 1;
-      }
-      if (a[sortConfig.key] > b[sortConfig.key]) {
-        return sortConfig.direction === "ascending" ? 1 : -1;
-      }
-    }
-    return 0;
-  });
-
-  const filteredTasks = sortedTasks.filter((task) => {
-    if (task.user_id === currentUserId) {
-      return (
-        (task.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          task.user?.name.toLowerCase().includes(searchTerm.toLowerCase())) &&
-        (statusFilter === "" || task.status === statusFilter) &&
-        (projectFilter === "" || task.project?.name === projectFilter) &&
-        (toolFilter === "" || task.project?.tool === toolFilter)
-      );
-    } else if (isSuperUser) {
-      return (
-        (task.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          task.user?.name.toLowerCase().includes(searchTerm.toLowerCase())) &&
-        (statusFilter === "" || task.status === statusFilter) &&
-        (projectFilter === "" || task.project?.name === projectFilter) &&
-        (toolFilter === "" || task.project?.tool === toolFilter)
-      );
-    }
-  });
-  const uniqueProject = [
-    ...new Set(tasks?.map((project) => project?.project?.name)),
-  ];
 
   const handleViewClick = async (taskId) => {
     try {
@@ -272,224 +250,189 @@ const AllTask = () => {
   };
 
   const taskIds = useSelector((state) =>
-    state?.taskData?.taskData.map((task) => task.id),
+    state?.taskData?.taskData?.map((task) => task.id),
   );
-  console.log("TASKS:", tasks);
+
+  const reloadWnidow = () => {
+    window.location.reload();
+  };
 
   return (
-    <div>
-      <div className="table-container h-[80vh] w-full rounded-lg">
+    <div className="h-[65vh] overflow-y-auto">
+      <div className="table-container w-full rounded-lg">
         <div className="w-full rounded-lg shadow-xl table-container">
           <div className="mx-5 my-3">
-            <div className="flex flex-col gap-4 mb-4 md:flex-row">
-              <input
-                type="text"
-                placeholder="Search by Task name & User name..."
-                value={searchTerm}
-                onChange={handleSearch}
-                className="w-full px-4 py-2 border rounded-md md:w-1/4"
-              />
-              <select
-                value={statusFilter}
-                onChange={handleStatusFilter}
-                className="w-full px-4 py-2 border rounded-md md:w-1/4"
-              >
-                <option value="">All Status</option>
-                <option value="ASSINGED">ASSIGNED</option>
-                <option value="IN-PROGRESS">IN PROGRESS</option>
-                <option value="ON-HOLD">ON-HOLD</option>
-                <option value="sBREAK">BREAK</option>
-                <option value="IN-REVIEW">IN REVIEW</option>
-                <option value="COMPLETE">COMPLETED</option>
-              </select>
-              <select
-                value={projectFilter}
-                onChange={handleProjectFilter}
-                className="w-full px-4 py-2 border rounded-md md:w-1/4"
-              >
-                <option value="">All Projects</option>
-                {uniqueProject?.map((project) => (
-                  <option key={project} value={project}>
-                    {project}
-                  </option>
-                ))}
-              </select>
-              <select
-                value={toolFilter}
-                onChange={handleToolsFilter}
-                className="w-full px-4 py-2 border rounded-md md:w-1/4"
-              >
-                <option value="">All Tools</option>
-                <option value="TEKLA">Tekla</option>
-                <option value="SDS-2">SDS-2</option>
-              </select>
-            </div>
+            <div className=" py-5 bg-white h-full my-5 overflow-auto rounded-lg">
+              <div className="flex flex-col md:flex-row gap-4 mb-4">
+                <input
+                  type="text"
+                  placeholder="Search by Task name & User Name"
+                  className="border p-2 rounded w-full mb-4"
+                  value={searchQuery}
+                  onChange={handleSearch}
+                />
+                <div className="mb-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {/* Fabricator Filter */}
+                  <select
+                    name="project"
+                    value={filters.project}
+                    onChange={handleFilterChange}
+                    className="border p-2 rounded"
+                  >
+                    <option value="">All Projects</option>
+                    {uniqueProject?.map((project) => (
+                      <option key={project} value={project}>
+                        {project}
+                      </option>
+                    ))}
+                  </select>
 
-            {projectFilter && (
-              <div className="mt-4">
-                <div className="mb-2">
-                  Project Completion %: {completionPercentage.toFixed(2)}%
+                  {/* Status Filter */}
+                  <select
+                    name="status"
+                    value={filters.status}
+                    onChange={handleFilterChange}
+                    className="border p-2 rounded"
+                  >
+                    <option value="">All Status</option>
+                    <option value="ASSIGNED">ASSIGNED</option>
+                    <option value="IN_PROGRESS">IN PROGRESS</option>
+                    <option value="ONHOLD">ON HOLD</option>
+                    <option value="BREAK">BREAK</option>
+                    <option value="IN_REVIEW">IN REVIEW</option>
+                    <option value="COMPLETE">COMPLETED</option>
+                  </select>
                 </div>
-                <div className="w-full h-4 bg-gray-200 rounded-full">
-                  <div
-                    className={`h-4 rounded-full ${getCompletionBarColor(tasks?.project?.status)}`} // Use the getCompletionBarColor function
-                    style={{ width: `${completionPercentage}%` }}
-                  />
+                <div>
+                  <Button onClick={reloadWnidow}>Refresh</Button>
                 </div>
-                <div className="mb-2">
-                  Project InReview %: {inReviewPercentage.toFixed(2)}%
-                </div>
-                <div className="w-full h-4 bg-gray-200 rounded-full">
-                  <div
-                    className={`h-4 rounded-full ${getInReviewBarColor(tasks?.project?.status)}`} // Use the getCompletionBarColor function
-                    style={{ width: `${inReviewPercentage}%` }}
-                  />
-                </div>
-                {/* <div className="mt-2 text-lg font-semibold">
-                  Total Project Duration: {totalDuration.hours} hours{" "}
-                  {totalDuration.minutes} minutes
-                </div> */}
               </div>
-            )}
-            <div className=" py-5 bg-white h-[58vh] overflow-auto rounded-lg">
-              <table className="md:w-full w-[90vw] border-collapse text-center md:text-lg text-xs rounded-xl">
-                <thead>
-                  <tr className="bg-teal-200/70">
-                    <th
-                      className="px-2 py-1 text-left cursor-pointer"
-                      onClick={() => handleSort("id")}
-                    >
-                      S.no{" "}
-                      {sortConfig.key === "id" &&
-                        (sortConfig.direction === "ascending" ? "" : "")}
-                    </th>
-                    <th
-                      className="px-2 py-1 text-left cursor-pointer"
-                      onClick={() => handleSort("name")}
-                    >
-                      Project Name{" "}
-                      {sortConfig.key === "name" &&
-                        (sortConfig.direction === "ascending" ? "" : "")}
-                    </th>
-                    <th
-                      className="px-2 py-1 cursor-pointer"
-                      onClick={() => handleSort("name")}
-                    >
-                      Task Name{" "}
-                      {sortConfig.key === "name " &&
-                        (sortConfig.direction === "ascending" ? "" : "")}
-                    </th>
+              <div className=" bg-white rounded-lg">
 
-                    <th className="px-2 py-1 cursor-default">Assigned User </th>
-                    <th
-                      className="px-2 py-1 cursor-pointer"
-                      onClick={() => handleSort("status")}
-                    >
-                      Status{" "}
-                      {sortConfig.key === "status" &&
-                        (sortConfig.direction === "ascending" ? "" : "")}
-                    </th>
-                    <th
-                      className="px-2 py-1 cursor-pointer"
-                      onClick={() => handleSort("priority")}
-                    >
-                      Priority{" "}
-                      {sortConfig.key === "priority" &&
-                        (sortConfig.direction === "ascending" ? "" : "")}
-                    </th>
-
-                    <th
-                      className="px-2 py-1 cursor-pointer"
-                      onClick={() => handleSort("due_date")}
-                    >
-                      Task Due Date{" "}
-                      {sortConfig.key === "due_date" &&
-                        (sortConfig.direction === "ascending" ? "" : "")}
-                    </th>
-                    <th
-                      className="px-2 py-1 cursor-pointer"
-                      onClick={() => handleSort("duration")}
-                    >
-                      Allocated Hours{" "}
-                      {sortConfig.key === "duration" &&
-                        (sortConfig.direction === "ascending" ? "" : "")}
-                    </th>
-                    <th
-                      className="px-2 py-1 cursor-pointer"
-                      onClick={() => handleSort("duration")}
-                    >
-                      Hours Taken{" "}
-                      {sortConfig.key === "duration" &&
-                        (sortConfig.direction === "ascending" ? "" : "")}
-                    </th>
-                    <th className="px-2 py-1">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredTasks.length === 0 ? (
-                    <tr className="bg-white">
-                      <td colSpan="8" className="text-center">
-                        No Task Found
-                      </td>
+                <table className="md:w-full w-[90vw] border-collapse text-center md:text-lg text-xs rounded-xl">
+                  <thead>
+                    <tr className="bg-teal-200/70">
+                      {[
+                        "s.no",
+                        "project",
+                        "task name",
+                        "Assigned user",
+                        "status",
+                        "priority",
+                        "due_date",
+                        "Allocated Hours",
+                        "Hours taken",
+                      ].map((key) => (
+                        <th
+                          key={key}
+                          className="px-2 py-1 cursor-pointer"
+                          onClick={() => handleSort(key)}
+                        >
+                          {key.charAt(0)?.toUpperCase() + key.slice(1)}
+                          {sortOrder.key === key &&
+                            (sortOrder.order === "asc" ? "" : "")}
+                        </th>
+                      ))}
+                      <th className="px-2 py-1">Action</th>
                     </tr>
-                  ) : (
-                    filteredTasks.map((task, index) => (
-                      <tr
-                        key={task.id}
-                        className={
-                          index % 2 === 0 ? "bg-white" : "bg-gray-200/50"
-                        }
-                      >
-                        <td className="px-1 py-2 border">{index + 1}</td>
-                        <td className="px-1 py-2 border">
-                          {
-                            projectData?.find(
-                              (project) => project?.id === task?.project_id,
-                            )?.name
-                          }
-                        </td>
-                        <td className="px-1 py-2 border">{task?.name}</td>
-
-                        <td className="px-1 py-2 border">
-                          {
-                            userData?.find((user) => user?.id === task?.user_id)
-                              ?.f_name
-                          }
-                        </td>
-                        <td className="px-1 py-2 border">{task?.status}</td>
-                        <td className={`border px-1 py-2`}>
-                          <span
-                            className={`text-sm text-center font-semibold px-3 py-0.5 mx-2 rounded-full border ${color(
-                              task?.priority,
-                            )}`}
-                          >
-                            {setPriorityValue(task?.priority)}
-                          </span>
-                        </td>
-                        <td className="px-1 py-2 border">
-                          {new Date(task?.start_date).toDateString()}
-                        </td>
-                        <td className="px-1 py-2 border">
-                          {durToHour(task?.duration)}
-                        </td>
-                        <td className="px-1 py-2 border">
-                          {formatMinutesToHours(
-                            task?.workingHourTask?.find((rec) =>
-                              taskIds.includes(rec.task_id),
-                            )?.duration,
-                          )}
-                        </td>
-
-                        <td className="flex justify-center px-1 py-2 border">
-                          <Button onClick={() => handleViewClick(task?.id)}>
-                            View
-                          </Button>
+                  </thead>
+                  <tbody>
+                  {currentTasks?.length === 0 ? (
+                      <tr className="bg-white">
+                        <td colSpan="7" className="text-center">
+                          No Task Found
                         </td>
                       </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
+                    ) : (
+                      currentTasks?.map((task, index) => {
+                        const allocatedHours = task?.duration
+                          ? parseInt(task?.duration.split(":")[0], 10)
+                          : 0;
+                        const takenHours =
+                          task?.workingHourTask?.find((rec) =>
+                            taskIds.includes(rec.task_id),
+                          )?.duration / 60 || 0;
+                        const isOverAllocated = takenHours > allocatedHours;
+
+                        return (
+                          <tr
+                            key={task.id}
+                            className={`${isOverAllocated
+                                ? "bg-red-200"
+                                : index % 2 === 0
+                                  ? "bg-white"
+                                  : "bg-gray-200/50"
+                              }`}
+                          >
+                            <td className="px-1 py-2 border">{indexOfFirstTask + index + 1}</td>
+                            <td className="px-1 py-2 border">
+                              {
+                                projectData?.find(
+                                  (project) => project?.id === task?.project_id,
+                                )?.name
+                              }
+                            </td>
+                            <td className="px-1 py-2 border">{task?.name}</td>
+
+                            <td className="px-1 py-2 border">
+                              {userData?.find(
+                                (user) => user?.id === task?.user_id,
+                              )
+                                ? `${userData.find((user) => user.id === task.user_id)?.f_name || ""} ${userData.find((user) => user.id === task.user_id)?.m_name || ""} ${userData.find((user) => user.id === task.user_id)?.l_name || ""}`.trim()
+                                : ""}
+                            </td>
+                            <td className="px-1 py-2 border">{task?.status}</td>
+                            <td className={`border px-1 py-2`}>
+                              <span
+                                className={`text-sm text-center font-semibold px-3 py-0.5 mx-2 rounded-full border ${color(
+                                  task?.priority,
+                                )}`}
+                              >
+                                {setPriorityValue(task?.priority)}
+                              </span>
+                            </td>
+                            <td className="px-1 py-2 border">
+                              {new Date(task?.due_date).toDateString()}
+                            </td>
+                            <td className="px-1 py-2 border">
+                              {durToHour(task?.duration)}
+                            </td>
+                            <td className="px-1 py-2 border">
+                              {formatMinutesToHours(
+                                task?.workingHourTask?.find((rec) =>
+                                  taskIds.includes(rec.task_id),
+                                )?.duration,
+                              )}
+                            </td>
+
+                            <td className="flex justify-center px-1 py-2 border">
+                              <Button onClick={() => handleViewClick(task?.id)}>
+                                View
+                              </Button>
+                            </td>
+                          </tr>
+                        );
+                      })
+                    )}
+                  </tbody>
+                </table>
+              </div>
+               {/* Pagination Controls */}
+               <div className="flex justify-center mt-4">
+                {Array.from({ length: totalPages }, (_, index) => (
+                  <button
+                    key={index}
+                    className={`px-3 py-1 mx-1 border rounded ${
+                      currentPage === index + 1
+                        ? "bg-teal-500 text-white"
+                        : "bg-white text-teal-500"
+                    }`}
+                    onClick={() => handlePageChange(index + 1)}
+                  >
+                    {index + 1}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         </div>

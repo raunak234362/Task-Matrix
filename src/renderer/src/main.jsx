@@ -10,8 +10,7 @@ import {
   AllTask,
   AllUser,
   ApproveAssignee,
-  Calendar,
-  GaantChart,
+  ChangePassword,
   Home,
   Login,
   MyProfile,
@@ -20,17 +19,21 @@ import {
   ProjectTab,
   TaskRecord,
   TaskTab,
-  UsersTaskRecord,
   UserTab,
 } from "./components/index.js";
 
 import "./index.css";
 import App from "./App.jsx";
+import { ToastContainer } from "react-toastify";
 
 const router = createHashRouter([
   {
     path: "/",
     element: <Login />,
+  },
+  {
+    path: "/change-password/",
+    element: <ChangePassword />,
   },
   {
     path: "/admin",
@@ -89,18 +92,7 @@ const router = createHashRouter([
             path: "all-user",
             element: <AllUser />,
           },
-          {
-            path: "user-task-record",
-            element: <UsersTaskRecord />,
-          },
-          {
-            path: "calendar",
-            element: <Calendar />,
-          },
-          {
-            path: "gaant-chart",
-            element: <GaantChart />,
-          },
+         
         ],
       },
       {
@@ -113,6 +105,7 @@ const router = createHashRouter([
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
+    <ToastContainer />
     <Provider store={store}>
       <RouterProvider router={router} />
     </Provider>

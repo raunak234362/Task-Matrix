@@ -1,5 +1,5 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable prettier/prettier */
+/* eslint-disable no-unused-vars */
 
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -9,96 +9,113 @@ import { fetchTeam } from "../../../../store/projectSlice";
 import Service from "../../../../api/configAPI";
 import Input from "../../../fields/Input";
 import { CustomSelect, Button } from "../../../index";
+import { toast } from "react-toastify";
 
 /* eslint-disable react/prop-types */
 const EditTask = ({ onClose, task }) => {
   // console.log(task);
+  const taskDetail = task[0];
   const dispatch = useDispatch();
   const [assignedUser, setAssignedUser] = useState([]);
-  console.log("TASK-=-==-=-=-=-=-=", task);
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset,
-    watch,
-    setValue,
-  } = useForm({
-    defaultValues: {
-      name: task?.name || "",
-      description: task?.description || "",
-      duration: task?.duration || "",
-      start_date: task?.start_date || "",
-      due_date: task?.due_date || "",
-      status: task?.status || "",
-    },
-  });
+  console.log("TASK-=-==-=-=-=-=-=", taskDetail);
+  const [defaultHour, defaultMin] = (taskDetail?.duration ?? "00:00").split(":").slice(0, 2);
+
+const { register, handleSubmit,watch, formState: { errors }, setValue } = useForm({
+  defaultValues: {
+    name: taskDetail?.name || "",
+    description: taskDetail?.description || "",
+    duration: taskDetail?.duration || "",
+    start_date: taskDetail?.start_date || "",
+    due_date: taskDetail?.due_date || "",
+    status: taskDetail?.status || "",
+    hour: defaultHour,  // Ensure hour is set
+    min: defaultMin,    // Ensure minutes are set
+  },
+});
+
+  console.log("TASK-=-=-=-=-=-=-=-", taskDetail);
+  const teams = useSelector(
+    (state) =>
+      state?.projectData?.teamData?.filter(
+        (team) => team.id === taskDetail?.project?.teamID,
+      ) || [],
+  );
+  console.log("STAFF-=-=-=-=-=-=-=-", teams);
+
+  const team = teams[0];
 
   const teamData = useSelector((state) =>
     state?.projectData?.teamData.find(
-      (team) => team.id === task?.project?.teamID,
+      (team) => team.id === taskDetail?.project?.teamID,
     ),
   );
-  const staffData = useSelector((state) => state?.projectData?.staffData);
-  console.log("STAFF-=-=-=-=-=-=-=-", staffData);
-  useEffect(() => {
-    const processTeamMembers = () => {
-      try {
-        if (!teamData) {
-          console.log("No team data available");
-          return;
-        }
+  const staffData = useSelector((state) => state?.userData?.staffData) || [];
+  // const processTeamMembers = () => {
+  //   try {
+  //     if (!teamData) {
+  //       console.log("No team data available");
+  //       return;
+  //     }
 
-        const assigned = teamData?.members?.reduce((acc, member) => {
-          const exists = acc?.find((item) => item?.value === member?.id);
-          console.log("EXISTS-=-=-=-=-=-=-=-", exists);
-          if (!exists) {
-            acc.push({
-              label: `${member?.role} - ${member?.id}`,
-              value: member?.id,
-            });
-          }
-          return acc;
-        }, []);
+  //     console.log("Team members processed:", assigned);
+  //     setAssignedUser(assigned);
+  //   } catch (error) {
+  //     console.error("Error processing team members:", error);
+  //   }
+  // };
 
-        console.log("Team members processed:", assigned);
-        setAssignedUser(assigned || []);
-      } catch (error) {
-        console.error("Error processing team members:", error);
-      }
-    };
+  const assigned = teamData?.members?.reduce((acc, member) => {
+    const exists = acc?.find((item) => item?.value === member?.id);
+    console.log("EXISTS-=-=-=-=-=-=-=-", member);
+    if (!exists) {
+      acc.push({
+        label: `${member?.role} - ${staffData.find((staff) => staff.id === member.id)?.f_name} ${staffData.find((staff) => staff.id === member.id)?.m_name} ${staffData.find((staff) => staff.id === member.id)?.l_name}`,
+        value: member?.id,
+      });
+    }
+    return acc;
+  }, []);
 
-    processTeamMembers();
-  }, [teamData]);
+  console.log("ASSIGNED-=-=-=-=-=-=-=-", assigned);
+  // useEffect(() => {
+  //   processTeamMembers();
+  // }, [teamData]);
 
   const onSubmit = async (data) => {
     console.log("Data: +++++++++++++++", data);
     try {
+      // Ensure hour and min have default values if empty
+      const durationHour = data.hour ? data.hour : "00";
+      const durationMin = data.min ? data.min : "00";
+
       // Combine type and taskname into name field
       const taskData = {
         ...data,
         name: data?.type ? `${data?.type} - ${data?.taskname}` : data?.name,
-        user_id: task?.user_id
+        user_id: data?.user,
+        duration: `${durationHour}:${durationMin}:00`, // Ensuring default values
       };
 
-      // Remove type and taskname before sending to backend
+      // Remove unnecessary fields before sending to backend
       delete taskData.type;
       delete taskData.taskname;
+      delete taskData.hour;
+      delete taskData.min;
 
-      const updatedTask = await Service.editTask(task?.id, taskData);
+      const updatedTask = await Service.editTask(taskDetail?.id, taskData);
+      toast.success("Successfully Updated Task: ", updatedTask);
       dispatch(updateTask(updatedTask));
-      console.log("Successfully Updated Task: ", updatedTask);
     } catch (error) {
-      console.log(error);
+      toast.error(error);
     }
     onClose();
   };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-white h-[65vh] overflow-x-auto p-5 rounded-lg shadow-lg w-[40vw] ">
+      <div className="bg-white h-[65vh] overflow-x-auto p-5 rounded-lg shadow-lg w-full md:w-[50vw] ">
         <div className="flex justify-between my-5 bg-teal-200/50 p-2 rounded-lg">
-          <h2 className="text-2xl font-bold">Edit Project</h2>
+          <h2 className="text-2xl font-bold">Edit Task</h2>
           <button
             className="text-xl font-bold bg-teal-500/50 hover:bg-teal-700 text-white px-5 rounded-lg"
             onClick={onClose}
@@ -107,8 +124,13 @@ const EditTask = ({ onClose, task }) => {
           </button>
         </div>
         <div>
+          {console.log(teamData)}
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="my-2">
+              <p className="text-red-700 text-xs">
+                *If you want to update the Task Name you have to select the Task
+                Type
+              </p>
               <CustomSelect
                 label="Task Type: "
                 name="type"
@@ -118,9 +140,12 @@ const EditTask = ({ onClose, task }) => {
                 options={[
                   { label: "Select Task", value: "" },
                   { label: "Modeling", value: "MODELING" },
-                  { label: "Checking", value: "CHECKING" },
+{ label: "Model checking", value: "MODEL_CHECKING" },
+                  
                   { label: "Erection", value: "ERECTION" },
+{ label: "Erection checking", value: "ERECTION_CHECKING" },
                   { label: "Detailing", value: "DETAILING" },
+{ label: "Detail checking", value: "DETAIL_CHECKING" },
                   { label: "Others", value: "OTHERS" },
                 ]}
                 {...register("type")}
@@ -151,7 +176,10 @@ const EditTask = ({ onClose, task }) => {
               <CustomSelect
                 label="Current User:"
                 name="user"
-                options={[{ label: "Select User", value: "" }, ...assignedUser]}
+                options={team?.members?.map((member) => ({
+                  label: `${member?.role} - ${staffData.find((staff) => staff.id === member.id)?.f_name} ${staffData.find((staff) => staff.id === member.id)?.m_name} ${staffData.find((staff) => staff.id === member.id)?.l_name}`,
+                  value: member?.id,
+                }))}
                 className="w-full"
                 defaultValues={task?.assignedUser}
                 {...register("user")}
@@ -169,16 +197,54 @@ const EditTask = ({ onClose, task }) => {
                 {...register("description")}
               />
             </div>
+            <div className="mt-1">
+              <div className="text-lg font-bold">Duration:</div>
+              <div className="flex flex-row w-1/5 gap-5">
+                <div className="w-full">
+                  <Input
+                    type="number"
+                    name="hour"
+                    label="HH"
+                    defaultValues={task?.duration}
+                    placeholder="HH"
+                    className="w-20"
+                    min={0}
+                    {...register("hour")}
+                    onBlur={(e) => {
+                      if (e.target.value < 0) e.target.value = 0;
+                    }}
+                  />
+                </div>
+                <div className="w-full">
+                  <Input
+                    type="number"
+                    name="min"
+                    placeholder="MM"
+                    label="MM"
+                    className="w-20"
+                    min={0}
+                    max={60}
+                    {...register("min")}
+                    onBlur={(e) => {
+                      if (e.target.value < 0) e.target.value = 0;
+                    }}
+                  />
+                </div>
+                {errors.min && (
+                  <p className="text-red-600">{errors.min.message}</p>
+                )}
+              </div>
+            </div>
             <div className="my-2">
               <CustomSelect
                 label="Status:"
                 name="status"
                 options={[
-                  { label: "ASSIGNED", value: "ASSINGED" },
-                  { label: "IN PROGRESS", value: "IN-PROGRESS" },
-                  { label: "ON HOLD", value: "ON-HOLD" },
+                  { label: "ASSIGNED", value: "ASSIGNED" },
+                  { label: "IN PROGRESS", value: "IN_PROGRESS" },
+                  { label: "ON HOLD", value: "ONHOLD" },
                   { label: "BREAK", value: "BREAK" },
-                  { label: "IN REVIEW", value: "IN-REVIEW" },
+                  { label: "IN REVIEW", value: "IN_REVIEW" },
                   { label: "COMPLETED", value: "COMPLETE" },
                   { label: "APPROVED", value: "APPROVED" },
                 ]}

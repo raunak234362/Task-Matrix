@@ -22,8 +22,6 @@ useEffect(() => {
   };
   fetchUsers();
 }, []);
-
-console.log(userData);
   return (
     <div className="w-full h-[89vh] overflow-y-hidden mx-5">
       <div className="flex items-center justify-center w-full">
@@ -41,9 +39,6 @@ console.log(userData);
         </p>
         <p>
           <strong>Email:</strong> {userData?.email}
-        </p>
-        <p>
-          <strong>Phone Number:</strong> {userData?.phone}
         </p>
       </div>
     </div>

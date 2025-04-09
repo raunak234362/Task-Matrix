@@ -1,25 +1,20 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable no-unused-vars */
-import React, { useCallback, useEffect, useState } from "react";
-import { Button, Header, Input, CustomSelect } from "../../../index";
+import { useEffect, useState } from "react";
+import { Button, Input, CustomSelect } from "../../../index";
 import Service from "../../../../api/configAPI";
 import { useDispatch } from "react-redux";
 import { useForm } from "react-hook-form";
-import {
-  Dialog,
-  DialogHeader,
-  DialogBody,
-  DialogFooter,
-} from "@material-tailwind/react";
 import { addTask } from "../../../../store/taskSlice";
+import { toast } from "react-toastify";
+import socket from "../../../../socket";
+
 
 const AddTask = () => {
   const [projectOptions, setPtojectOptions] = useState([]);
   const [project, setProject] = useState({});
-  const [isSuccessOpen, setIsSuccessOpen] = useState(false);
   const [parentTaskOptions, setParentTaskOptions] = useState([]);
   const [assignedUser, setAssignedUser] = useState([]);
-  const token = sessionStorage.getItem("token");
   const dispatch = useDispatch();
   const {
     register,
@@ -29,8 +24,6 @@ const AddTask = () => {
     formState: { errors },
   } = useForm();
 
-  // FETCH task related to project
-  // Fetch project details
 
   const projectId = watch("project");
 
@@ -44,6 +37,7 @@ const AddTask = () => {
             label: `${project.name} - ${project.fabricator.fabName}`,
             value: project.id,
           }));
+        console.log(options);
         setPtojectOptions(options);
         console.log(projects);
       } catch (error) {
@@ -54,32 +48,24 @@ const AddTask = () => {
   }, []);
 
   const handleProjectChange = async (projectId) => {
-    console.log("Project ID:", projectId);
     try {
       const project = await Service.getProject(projectId);
-      console.log(project)
       setProject(project);
-        console.log(project?.data?.team?.members);
       const assigned =
         project?.data?.team?.members?.reduce((acc, member) => {
-          console.log(member);
-          const exists = acc.find(
-            (item) => item.value === member?.id,
-          );
-        
+          const exists = acc.find((item) => item.value === member?.id);
+
           if (!exists) {
             acc.push({
-              label: `${member?.role} - ${member?.username}`,
+              label: `${member.role} - ${member.f_name} ${member.m_name} ${member.l_name}`,
               value: member?.id,
             });
           }
           return acc;
         }, []) || []; // Fallback to an empty array if reduce fails
-
-      console.log("Assigned users---", assigned);
       setAssignedUser(assigned);
     } catch (error) {
-      console.error("Error fetching project details:", error);
+      toast.error("Error fetching project details:", error);
     }
   };
   const handleParentTasks = async (projectId) => {
@@ -91,7 +77,7 @@ const AddTask = () => {
       }));
       setParentTaskOptions(options);
     } catch (error) {
-      console.error("Error fetching parent tasks:", error);
+      toast.error("Error fetching parent tasks:", error);
     }
   };
 
@@ -102,37 +88,45 @@ const AddTask = () => {
     }
   }, [projectId]);
 
+
   const onSubmit = async (taskData) => {
-    console.log("Project data:", taskData);
     try {
       const token = sessionStorage.getItem("token");
-      if (!token) {
-        throw new Error("Token not found");
-      }
+      if (!token) throw new Error("Token not found");
+
       const TaskName = `${taskData.type} - ${taskData.taskname}`;
+
       const data = await Service.addTask({
         ...taskData,
         name: TaskName,
         token: token,
       });
-      console.log("Response from task:", taskData);
-      setIsSuccessOpen(true);
+
+      toast.success("✅ Task Added Successfully");
       dispatch(addTask(data));
+
+      // ✅ Notify assigned user via socket
+      // if (taskData.user) {
+      //   console.log("User ID:", taskData.user);
+      //   socket.emit("customNotification", {
+      //     userId: taskData.user, // should be the assigned user's ID
+      //   });
+      // }
+
     } catch (error) {
       console.error("Error adding task:", error);
-      console.log("Project data:", taskData);
+      toast.error("❌ Error adding task");
     }
   };
 
-  const closeSuccessModal = () => {
-    setIsSuccessOpen(false);
-  };
+
+
 
   return (
     <div>
-      <form onSubmit={handleSubmit(onSubmit)} className="w-full p-5">
+      <form onSubmit={handleSubmit(onSubmit)} className="w-full p-1">
         <div className="flex flex-col justify-between gap-5 ">
-          <div className="flex flex-col p-8 rounded-lg shadow-lg shadow-black/15">
+          <div className="flex flex-col p-5 rounded-lg shadow-lg shadow-black/15">
             <div className="mt-5">
               <CustomSelect
                 label="Project:"
@@ -184,9 +178,11 @@ const AddTask = () => {
                       value: "",
                     },
                     { label: "Modeling", value: "MODELING" },
-                    { label: "Checking", value: "CHECKING" },
-                    { label: "Erection", value: "ERECTION" },
+                    { label: "Model Checking", value: "MODEL_CHECKING" },
                     { label: "Detailing", value: "DETAILING" },
+                    { label: "Detailing Checking", value: "DETAIL_CHECKING" },
+                    { label: "Erection", value: "ERECTION" },
+                    { label: "Erection Checking", value: "ERECTION_CHECKING" },
                     { label: "Others", value: "OTHERS" },
                   ]}
                   {...register("type", { required: "Task Type is required" })}
@@ -242,11 +238,11 @@ const AddTask = () => {
                 label="Status:"
                 name="status"
                 options={[
-                  { label: "ASSIGNED", value: "ASSINGED" },
-                  { label: "IN PROGRESS", value: "IN-PROGRESS" },
-                  { label: "ON HOLD", value: "ON-HOLD" },
+                  { label: "ASSIGNED", value: "ASSIGNED" },
+                  { label: "IN_PROGRESS", value: "IN_PROGRESS" },
+                  { label: "ONHOLD", value: "ONHOLD" },
                   { label: "BREAK", value: "BREAK" },
-                  { label: "IN REVIEW", value: "IN-REVIEW" },
+                  { label: "IN_REVIEW", value: "IN_REVIEW" },
                   { label: "COMPLETED", value: "COMPLETE" },
                   { label: "APPROVED", value: "APPROVED" },
                 ]}
@@ -340,7 +336,6 @@ const AddTask = () => {
                 })}
                 onChange={setValue}
               />
-             
             </div>
             <div className="mt-5">
               <Input
@@ -359,19 +354,6 @@ const AddTask = () => {
             </div>
             <div className="w-full mt-5">
               <Button type="submit">Add Task</Button>
-              <Dialog open={isSuccessOpen} handler={setIsSuccessOpen}>
-                <DialogHeader>Task Added</DialogHeader>
-                <DialogBody>The task added successfully!</DialogBody>
-                <DialogFooter>
-                  <Button
-                    variant="gradient"
-                    color="green"
-                    onClick={closeSuccessModal}
-                  >
-                    Close
-                  </Button>
-                </DialogFooter>
-              </Dialog>
             </div>
           </div>
         </div>

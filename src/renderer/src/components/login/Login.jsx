@@ -10,6 +10,8 @@ import { useDispatch } from "react-redux";
 import { login as authLogin, setUserData } from "../../store/userSlice";
 import AuthService from "../../api/authAPI";
 import Service from "../../api/configAPI";
+import { toast } from "react-toastify";
+import socket from "../../socket";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -28,10 +30,11 @@ const Login = () => {
       console.log(user);
       if ("token" in user) {
         const token = user.token;
-        sessionStorage.setItem('token', token)
+        sessionStorage.setItem("token", token);
         const userData = await Service.getCurrentUser(token);
         dispatch(setUserData(userData));
         console.log("UserData :", userData);
+        sessionStorage.setItem("userId", userData.id);
         let userType = "user";
         if (userData.role === "STAFF") {
           if (userData.is_superuser) {
@@ -42,6 +45,8 @@ const Login = () => {
             userType = "department-manager";
           } else if (userData.is_manager) {
             userType = "project-manager";
+          } else if (userData.is_hr) {
+            userType = "human-resource";
           }
         } else if (userData.role === "CLIENT") {
           userType = "client";
@@ -53,8 +58,15 @@ const Login = () => {
         dispatch(authLogin(user));
         // dispatch(setUserData(userData.data))
         console.log(userData.is_firstLogin);
-        if (userData?.is_firstLogin) navigate("/admin/home");
-        else if (userType === "user" || userType === "project-manager" || userType ==="admin") navigate("/admin/home");
+        if (userData?.is_firstLogin) navigate("/change-password/");
+        else if (
+          userType === "user" ||
+          userType === "project-manager" ||
+          userType === "admin" ||
+          userType === "department-manager"
+        )
+          navigate("/admin/home");
+          else if (userType === "human-resource") navigate("/admin/profile")
         // else if (userType === "client") navigate("/client");
         // else if (userType === "sales") navigate("/sales");
         // else if (userType === "staff") navigate("/staff");
@@ -64,16 +76,11 @@ const Login = () => {
         // else if (userType === "vendor") navigate("/vendor");
         else navigate("/");
       } else {
-        alert("Invalid Credentials Check");
+        toast.error("Invalid Credentials---------");
         navigate("/");
       }
     } catch (error) {
-      console.log(error);
-      if (error.message === "Invalid Credentials") {
-        alert("Invalid Credentials");
-      } else {
-        alert("Could not connect to server");
-      }
+      toast.error("Invalid Credentials----------", error);
     }
   };
 
@@ -89,25 +96,24 @@ const Login = () => {
     fetchUser();
   }, []);
 
-
   return (
     <>
-      <div className="w-screen grid md:grid-cols-2 grid-cols-1 z-10 fixed">
+      <div className="fixed z-10 grid w-screen grid-cols-1 md:grid-cols-2">
         <div
           className={`md:flex md:my-0 mt-10 md:h-screen justify-center items-center`}
         >
-          <div className="fixed bg-white md:w-auto bg-opacity-70 border-4 rounded-2xl md:py-14 md:px-20 px-2 mx-20 flex justify-center items-center z-10">
+          <div className="fixed z-10 flex items-center justify-center px-2 mx-20 bg-white border-4 md:w-auto bg-opacity-70 rounded-2xl md:py-14 md:px-20">
             <img src={Logo} alt="Logo" />
           </div>
         </div>
-        <div className="md:bg-green-400 h-screen flex justify-center items-center">
+        <div className="flex items-center justify-center h-screen md:bg-green-400">
           <div className="bg-white md:bg-opacity-100 bg-opacity-60 h-fit w-[80%] md:w-2/3 rounded-2xl shadow-lg shadow-gray-600 border-4 border-white md:border-green-500 p-5">
-            <h1 className="text-4xl font-bold text-center text-gray-600 mb-10">
+            <h1 className="mb-10 text-4xl font-bold text-center text-gray-600">
               Login to <span className="text-teal-500">TASK MATRIX</span>
             </h1>
             <form
               onSubmit={handleSubmit(login)}
-              className="flex w-full flex-col gap-5"
+              className="flex flex-col w-full gap-5"
             >
               <div className="my-2">
                 <Input
@@ -139,12 +145,12 @@ const Login = () => {
               {errors.password && (
                 <p className="text-red-500">{errors.password.message}</p>
               )}
-              <div className="w-full flex my-5 justify-center">
+              <div className="flex justify-center w-full my-5">
                 <Button type="submit">Login</Button>
               </div>
             </form>
 
-            {error && <p className="text-red-500 mt-2">{error}</p>}
+            {error && <p className="mt-2 text-red-500">{error}</p>}
           </div>
         </div>
         <div></div>

@@ -117,14 +117,14 @@ const TaskSelected = ({ assignee, task, isOpen, onClose }) => {
               <div className="flex items-center py-2">
                 <span className="font-bold text-gray-800 w-40">Status:</span>{" "}
                 <span className="text-lg">
-                  {task?.task?.status === "IN-PROGRESS" && (
+                  {task?.task?.status === "IN_PROGRESS" && (
                     <span className="bg-green-100 text-green-400 text-sm text-center font-medium me-2 px-3 py-2 rounded-full border border-green-400">
-                      In-Progress
+                      IN_PROGRESS
                     </span>
                   )}
-                  {task?.task?.status === "ON-HOLD" && (
+                  {task?.task?.status === "ONHOLD" && (
                     <span className="bg-yellow-100 text-yellow-400 text-sm text-center font-medium me-2 px-3 py-2 rounded-full border border-yellow-400">
-                      On-Hold
+                      ONHOLD
                     </span>
                   )}
                   {task?.task?.status === "BREAK" && (
@@ -132,9 +132,9 @@ const TaskSelected = ({ assignee, task, isOpen, onClose }) => {
                       Break
                     </span>
                   )}
-                  {task?.task?.status === "IN-REVIEW" && (
+                  {task?.task?.status === "IN_REVIEW" && (
                     <span className="bg-orange-100 text-orange-400 text-sm text-center font-medium me-2 px-3 py-2 rounded-full border border-orange-400">
-                      In-Review
+                      IN_REVIEW
                     </span>
                   )}
                   {task?.task?.status === "Completed" && (
@@ -147,7 +147,7 @@ const TaskSelected = ({ assignee, task, isOpen, onClose }) => {
                       Approved
                     </span>
                   )}
-                  {task?.task?.status === "ASSINGED" && (
+                  {task?.task?.status === "ASSIGNED" && (
                     <span className="bg-pink-100 text-pink-400 text-sm text-center font-medium me-2 px-3 py-2 rounded-full border border-pink-400">
                       Assigned
                     </span>

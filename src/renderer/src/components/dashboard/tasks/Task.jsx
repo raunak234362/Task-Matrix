@@ -5,27 +5,23 @@ import React, { useCallback, useEffect, useState } from "react";
 import Service from "../../../api/configAPI";
 import { Button, Input, CustomSelect } from "../../index";
 import { useForm } from "react-hook-form";
-import { useSelector } from "react-redux";
-  import { toast } from "react-toastify";
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
 import { BASE_URL } from "../../../config/constant";
 
 const Task = ({ taskId, setDisplay }) => {
-  const work_id = sessionStorage.getItem("work_id");
-  const [tasks, setTasks] = useState();
-
+  const [tasks, setTasks] = useState({});
   const [workHours, setWorkHours] = useState(null);
   const userType = sessionStorage.getItem("userType");
   const username = sessionStorage.getItem("username");
   const [workdata, setWorkData] = useState({});
-  const [teamMember, setTeamMember] = useState([]);
   const [color, setColor] = useState("");
   const [showProjectDetail, setShowProjectDetail] = useState(false);
   const [showFabricatorDetail, setShowFabricatorDetail] = useState(false);
-  const [assignedTo, setAssignedTo] = useState("");
   const [timer, setTimer] = useState(0); // Timer in seconds
   const [isTimerRunning, setIsTimerRunning] = useState(false);
-  const teamData = useSelector((state) => state?.projectData?.teamData);
   const staffData = useSelector((state) => state?.userData?.staffData);
+  console.log("Staff Data: ", staffData);
   const {
     register,
     handleSubmit,
@@ -33,52 +29,44 @@ const Task = ({ taskId, setDisplay }) => {
     watch,
     formState: { errors },
   } = useForm();
-  const [record, setRecord] = useState({});
 
   const userData = useSelector((state) => state?.userData?.userData);
-  const staffs = useSelector((state) => state?.userData?.staffData);
   const projectData = useSelector((state) =>
     state?.projectData?.projectData?.find(
       (project) => project.id === tasks?.project_id,
     ),
   );
-  const fetchTask = useCallback(async () => {
+  const fetchTask = async () => {
     try {
       const taskData = await Service.getTaskById(taskId);
       setTasks(taskData);
+
       updatePriorityColor(taskData?.priority);
     } catch (error) {
       error("Error fetching task details.");
       console.log("Error in fetching task: ", error);
     }
-  }, [taskId]);
+  };
+  useEffect(() => {
+    fetchTask();
+  }, []);
+  console.log(tasks)
+  const teams = useSelector(
+    (state) =>
+      state?.projectData?.teamData?.filter(
+        (team) => team.id === tasks?.project?.teamID,
+      ) || [],
+  );
+  const team = teams[0];
 
   useEffect(() => {
     const fetchWorkId = async () => {
       const workHour = await Service.getWorkHours(taskId);
-      console.log("Work Hour: ", workHour);
       setWorkData(workHour);
       setWorkHours(workHour);
     };
     fetchWorkId();
-  }, [taskId]);
-
-  console.log(tasks);
-
-  console.log("Work Hours: ", workHours);
-
-  useEffect(() => {
-    const teamID = tasks?.project?.teamID;
-    if (teamID) {
-      let memberData = teamData?.find((team) => team.id === teamID);
-      console.log("Member Data: ", memberData);
-      const members = memberData?.members?.map((member) => ({
-        label: `${member?.role} - ${staffData?.find((staff) => staff.id === member?.id)?.f_name || "Unknown"}`,
-        value: member?.id,
-      }));
-      setTeamMember(members);
-    }
-  }, [tasks]);
+  }, []);
 
   useEffect(() => {
     let interval;
@@ -92,18 +80,14 @@ const Task = ({ taskId, setDisplay }) => {
     return () => clearInterval(interval); // Cleanup on unmount
   }, [isTimerRunning]);
 
-  useEffect(() => {
-    fetchTask();
-  }, [fetchTask]);
-
   const updatePriorityColor = (priority) => {
     const colors = {
       0: "bg-green-200 border-green-800 text-green-800",
       1: "bg-yellow-200 border-yellow-800 text-yellow-800",
       2: "bg-purple-200 border-purple-800 text-purple-800",
-      3: "bg-red-200 border-red-700 text-red-700",
+      3: "bg-red-200 border-red-700m text-red-700",
     };
-    setColor(colors[priority] || "")
+    setColor(colors[priority] || "");
   };
 
   const getPriorityLabel = (value) => {
@@ -118,13 +102,13 @@ const Task = ({ taskId, setDisplay }) => {
 
   const getStatusLabel = (status) => {
     const labels = {
-      "IN-PROGRESS": "IN PROGRESS",
-      "ON-HOLD": "On-Hold",
-      BREAK: "Break",
-      "IN-REVIEW": "In-Review",
-      Completed: "Completed",
-      APPROVED: "Approved",
-      ASSINGED: "Assigned",
+      "IN_PROGRESS": "IN PROGRESS",
+      "ONHOLD": "ONHOLD",
+      "BREAK": "Break",
+      "IN_REVIEW": "IN_REVIEW",
+      "Completed": "Completed",
+      "APPROVED": "Approved",
+      "ASSIGNED": "ASSIGNED",
     };
     return labels[status] || status;
   };
@@ -132,40 +116,25 @@ const Task = ({ taskId, setDisplay }) => {
   // Status styles mapping
   const getStatusBadge = (status) => {
     const statusStyles = {
-      "IN PROGRESS": "bg-green-100 text-green-400 border-green-400",
-      "ON HOLD": "bg-yellow-100 text-yellow-700 border-yellow-700",
-      BREAK: "bg-red-100 text-red-600 border-red-600",
-      "IN REVIEW": "bg-orange-100 text-orange-600 border-orange-600",
-      Completed: "bg-green-100 text-green-800 border-green-800",
-      APPROVED: "bg-purple-100 text-purple-600 border-purple-600",
-      ASSINGED: "bg-pink-100 text-pink-500 border-pink-500",
+      "IN_PROGRESS": "bg-green-100 text-green-400 border-green-400",
+      "ONHOLD": "bg-yellow-100 text-yellow-700 border-yellow-700",
+      "BREAK": "bg-red-100 text-red-600 border-red-600",
+      "IN_REVIEW": "bg-orange-100 text-orange-600 border-orange-600",
+      "COMPLETE": "bg-green-100 text-green-800 border-green-800",
+      "APPROVED": "bg-purple-100 text-purple-600 border-purple-600",
+      "ASSIGNED": "bg-pink-100 text-pink-500 border-pink-500",
     };
     return statusStyles[status] || "bg-gray-100 text-gray-500 border-gray-500";
   };
 
   function handleClose() {
+    window.location.reload();
     setDisplay(false);
   }
 
-  useEffect(() => {
-    const handleProjectChange = async () => {
-      try {
-        const assigned = tasks?.project?.team?.members?.map((member) => ({
-          label: `${member?.role} - ${member?.employee?.name}`,
-          value: member?.employee?.id,
-        }));
-        // console.log("Assigned: ", assigned);
-        setTeamMember(assigned);
-      } catch (error) {
-        console.error("Error fetching team details:", error);
-      }
-    };
-
-    handleProjectChange();
-  }, []);
 
   const due_date = new Date(tasks?.due_date);
-  const created_on = new Date(tasks?.created_on);
+  const start_date = new Date(tasks?.start_date);
   const endDate = new Date(tasks?.project?.endDate);
 
   const toggleProjectDetail = () => {
@@ -176,41 +145,39 @@ const Task = ({ taskId, setDisplay }) => {
     setShowFabricatorDetail(!showFabricatorDetail);
   };
 
-  console.log(tasks);
-
   async function handleStart() {
     const taskID = tasks?.id;
     try {
       const accept = await Service.startTask(taskID);
+
       setTasks((prev) => {
         return {
           ...prev,
-          status: "IN PROGRESS",
+          status: "IN_PROGRESS",
         };
       });
-      console.log( {
-          ...tasks,
-          status: "IN PROGRESS",
-        })
+      window.location.reload();
       toast.success("Task Started");
       sessionStorage.setItem("work_id", accept.data.id);
     } catch (error) {
       toast.error("Error in accepting task");
-      console.log("Error in accepting task: ", error);
     }
   }
 
   async function handlePause(ev) {
     const taskId = tasks?.id;
+    const pauseTime = new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" });
+    const pauseTimes = JSON.parse(localStorage.getItem("pauseTimes")) || [];
+    pauseTimes.push(pauseTime);
+    localStorage.setItem("pauseTimes", JSON.stringify(pauseTimes));
     try {
-      const pause = await Service.pauseTask(taskId, ev?.target?.value);
-      // console.log("Paused Task: ", pause);
-       setTasks((prev) => {
-         return {
-           ...prev,
-           status: "BREAK",
-         };
-       });
+      await Service.pauseTask(taskId, ev?.target?.value);
+      setTasks((prev) => {
+        return {
+          ...prev,
+          status: "BREAK",
+        };
+      });
       toast.success("Task Paused");
       fetchTask();
     } catch (error) {
@@ -221,15 +188,19 @@ const Task = ({ taskId, setDisplay }) => {
 
   async function handleResume(ev) {
     const taskID = tasks?.id;
+    const resumeTime = new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" });
+    const resumeTimes = JSON.parse(localStorage.getItem("resumeTimes")) || [];
+    resumeTimes.push(resumeTime);
+    localStorage.setItem("resumeTimes", JSON.stringify(resumeTimes));
     try {
-      const resume = await Service.resumeTask(taskID, ev?.target?.value);
-      // console.log("Resumed Task: ", resume);
-       setTasks((prev) => {
-         return {
-           ...prev,
-           status: "IN PROGRESS",
-         };
-       });
+      await Service.resumeTask(taskID, ev?.target?.value);
+
+      setTasks((prev) => {
+        return {
+          ...prev,
+          status: "IN_PROGRESS",
+        };
+      });
       toast.success("Task Resumed");
       fetchTask();
     } catch (error) {
@@ -240,14 +211,15 @@ const Task = ({ taskId, setDisplay }) => {
 
   async function handleEnd(ev) {
     const taskID = tasks?.id;
+    const end = new Date().toISOString();
     try {
-      const end = await Service.endTask(taskID, ev?.target?.value);
-      console.log("End Task: ", end);
+      const endresponse = await Service.endTask(taskID, ev?.target?.value, end);
       toast.success("Task Ended");
-      fetchTask();  
+      fetchTask();
+      setDisplay(false);
+      window.location.reload();
     } catch (error) {
       toast.error("Error in ending task");
-      console.log("Error in ending task: ", error);
     }
   }
 
@@ -265,30 +237,37 @@ const Task = ({ taskId, setDisplay }) => {
     // console.log(data);
     try {
       const response = await Service.addComment(tasks.id, data);
-      alert("Comment Added Successfully", response);
+      toast.success("Comment Added Successfully");
       await fetchTask();
     } catch (error) {
+      toast.error(error);
       console.error("Error in adding comment:", error);
     }
   };
   // For Assign Form
   const handleAddAssign = async (assigneedata) => {
+    console.log("Assignee Data: ", assigneedata);
     const assigned_to = assigneedata?.assigned_to;
     const assigned_by = userData.id;
     const approved_by = userData.id;
     const assigned_on = new Date().toISOString();
 
     try {
-      if (userType === "admin" || userType === "manager") {
+      if (
+        userType === "admin" ||
+        userType === "project-manager" ||
+        userType === "department-manager"
+      ) {
         const updatedData = {
           assigned_to,
           assigned_by,
           assigned_on,
           approved_by,
+          task_id: taskId,
         };
         if (handlePause) {
-          const response = await Service.addAssigne(tasks?.id, updatedData);
           // console.log("Assigned Task: ", response);
+          const response = await Service.addAssigne(tasks?.id, updatedData);
           fetchTask();
         }
       } else {
@@ -296,6 +275,7 @@ const Task = ({ taskId, setDisplay }) => {
           assigned_to,
           assigned_by,
           assigned_on,
+          task_id: taskId,
         };
         if (handlePause) {
           const response = await Service.addAssigne(tasks?.id, updatedData);
@@ -303,9 +283,9 @@ const Task = ({ taskId, setDisplay }) => {
           fetchTask();
         }
       }
-      alert("Task assigned successfully.");
+      toast.success("Task assigned successfully.");
     } catch (error) {
-      console.error("Error in assigning task: ", error);
+      toast.error("Error in assigning task: ", error);
     }
   };
 
@@ -328,8 +308,6 @@ const Task = ({ taskId, setDisplay }) => {
     const totalHours = days * 24 + hours; // Convert days to hours and add them
     return `${totalHours}h ${minutes}m`;
   }
-
-  // console.log(tasks);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
@@ -367,7 +345,7 @@ const Task = ({ taskId, setDisplay }) => {
                         Assigned Date:
                       </span>{" "}
                       <span className="text-lg">
-                        {created_on?.toDateString()}
+                        {start_date?.toDateString()}
                       </span>
                     </div>
 
@@ -425,9 +403,9 @@ const Task = ({ taskId, setDisplay }) => {
                         Task Actions:
                       </div>
                       <div>
-                        {tasks?.status === "ASSINGED" ||
-                        tasks?.status === "ON HOLD" ||
-                        workdata.id === undefined ? (
+                        {tasks?.status === "ASSIGNED" ||
+                          tasks?.status === "ONHOLD" ||
+                          workdata.id === undefined ? (
                           <>
                             <Button
                               className="flex items-center justify-center font-semibold bg-green-500 rounded-full w-28 hover:bg-green-800"
@@ -440,7 +418,7 @@ const Task = ({ taskId, setDisplay }) => {
                           <>
                             <div className="flex flex-row items-center justify-center gap-x-5">
                               {/* Show Pause button if the task is running */}
-                              {tasks?.status === "IN PROGRESS" && (
+                              {tasks?.status === "IN_PROGRESS" && (
                                 <Button
                                   className="flex items-center justify-center font-semibold bg-yellow-500 rounded-full w-28 hover:bg-yellow-700"
                                   value={workdata?.id}
@@ -475,8 +453,40 @@ const Task = ({ taskId, setDisplay }) => {
                       </div>
                     </div>
                   </div>
+                  {/* select Assignee */}
 
-                  <div className="w-full p-5 rounded-lg shadow-xl bg-teal-200/50">
+                  <form
+                    onSubmit={handleSubmit(handleAddAssign)} // separate handler
+                    className="w-full gap-5 p-5 rounded-lg shadow-xl bg-teal-200/30"
+                  >
+                    <div className="mb-4 font-bold text-gray-800">
+                      Assign Other User:
+                    </div>
+                    <div className="flex items-center w-1/2 gap-10 flex-col-2 justify-evenly">
+                      <div className="w-full">
+                        <select
+                          label="Select Assignee"
+                          className="h-10 80"
+                          {...register("assigned_to")}
+                        >
+                          {team?.members?.map((member) => (
+                            <option key={member.id} value={member.id}>
+                              {`${member?.role} - ${staffData.find((staff) => staff.id === member.id)?.f_name} ${staffData.find((staff) => staff.id === member.id)?.m_name} ${staffData.find((staff) => staff.id === member.id)?.l_name}`}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="w-full">
+                        <Button
+                          className="py-1 font-bold bg-teal-600 hover:bg-teal-900"
+                          type="submit"
+                        >
+                          Add
+                        </Button>
+                      </div>
+                    </div>
+                  </form>
+                  {/* <div className="w-full p-5 rounded-lg shadow-xl bg-teal-200/50">
                     <div className="mb-4 font-bold text-gray-800">
                       People Assigned:
                     </div>
@@ -492,102 +502,75 @@ const Task = ({ taskId, setDisplay }) => {
                             <th className="px-6 py-3 text-left">Approved On</th>
                             {(userType === "admin" ||
                               username ===
-                                tasks?.project?.manager?.username) && (
-                              <th className="px-6 py-3 text-left">Action</th>
-                            )}
+                              tasks?.project?.manager?.username) && (
+                                <th className="px-6 py-3 text-left">Action</th>
+                              )}
                           </tr>
                         </thead>
                         <tbody className="text-sm font-medium text-gray-600">
-                          {tasks?.taskInAssignedList?.map((task, index) => (
+                          {tasks?.taskInAssignedList?.map((tasks, index) => (
                             <tr
-                              key={task.id}
+                              key={tasks.id}
                               className="border-b border-gray-200 hover:bg-gray-100"
                             >
+                              {console.log(tasks)}
                               <td className="px-6 py-3 text-left whitespace-nowrap">
                                 {index + 1}
                               </td>
 
                               <td className="px-6 py-3 text-left">
-                                {task?.assigned_by?.name}
+                                {(() => {
+                                  const staff = staffData?.find(
+                                    (staff) => staff?.id === tasks?.assigned_by,
+                                  );
+                                  return `${staff?.f_name || ""} ${staff?.m_name || ""} ${staff?.l_name || ""}`.trim();
+                                })()}
                               </td>
                               <td className="px-6 py-3 text-left">
-                                {task?.assigned_to?.name}
+                                {(() => {
+                                  const staff = staffData?.find(
+                                    (staff) => staff?.id === tasks?.assigned_to,
+                                  );
+                                  return `${staff?.f_name || ""} ${staff?.m_name || ""} ${staff?.l_name || ""}`.trim();
+                                })()}
                               </td>
                               <td className="px-6 py-3 text-left">
-                                {new Date(task?.assigned_on).toDateString()}
+                                {new Date(tasks?.assigned_on).toDateString()}
                               </td>
                               <td className="px-6 py-3 text-left">
-                                {task?.approved_by?.name || (
-                                  <span className="text-red-500">
-                                    Yet Not Approved
-                                  </span>
+                                {tasks?.approved_by?.name || (
+                                  <span className="text-red-500">Yet Not Approved</span>
                                 )}
                               </td>
                               <td className="px-6 py-3 text-left">
-                                {task?.approved_on ? (
-                                  new Date(task?.approved_on).toDateString()
+                                {tasks?.approved_on ? (
+                                  new Date(tasks?.approved_on).toDateString()
                                 ) : (
-                                  <span className="text-red-500">
-                                    Yet Not Approved
-                                  </span>
+                                  <span className="text-red-500">Yet Not Approved</span>
                                 )}
                               </td>
                               {(userType === "admin" ||
-                                username ===
-                                  tasks?.project?.manager?.username) && (
-                                <td className="px-6 py-3 text-left">
-                                  <Button
-                                    className={`${
-                                      task?.approved_on
+                                username === tasks.project?.manager?.username) && (
+                                  <td className="px-6 py-3 text-left">
+                                    <Button
+                                      className={`${tasks?.approved_on
                                         ? "bg-gray-300 text-gray-700"
                                         : "bg-green-300 text-green-900"
-                                    } px-2 py-0.5 rounded-full cursor-default`}
-                                    disabled={task?.approved_on}
-                                  >
-                                    {task?.approved_on ? "Approved" : "Approve"}
-                                  </Button>
-                                </td>
-                              )}
+                                        } px-2 py-0.5 rounded-full`}
+                                      disabled={tasks?.approved_on}
+                                    >
+                                      {tasks?.approved_on ? "Approved" : "Approve"}
+                                    </Button>
+                                  </td>
+                                )}
                             </tr>
                           ))}
                         </tbody>
                       </table>
                     </div>
-                  </div>
-
-                  {/* select Assignee */}
-
-                  <form
-                    onSubmit={handleSubmit(handleAddAssign)} // separate handler
-                    className="w-full gap-5 p-5 rounded-lg shadow-xl bg-teal-200/30"
-                  >
-                    <div className="mb-4 font-bold text-gray-800">
-                      Assign Other User:
-                    </div>
-
-                    <div className="flex items-center w-1/2 gap-10 flex-col-2 justify-evenly">
-                      <div className="w-full">
-                        <CustomSelect
-                          label="Select Assignee"
-                          options={teamMember}
-                          className="h-10 80"
-                          {...register("assigned_to")}
-                          onChange={setValue}
-                        />
-                      </div>
-                      <div className="w-full">
-                        <Button
-                          className="py-1 font-bold bg-teal-600 hover:bg-teal-900"
-                          type="submit"
-                        >
-                          Add
-                        </Button>
-                      </div>
-                    </div>
-                  </form>
+                  </div> */}
 
                   {/* comment */}
-
                   <br />
 
                   <div className="grid grid-cols-2 gap-5">
@@ -605,7 +588,6 @@ const Task = ({ taskId, setDisplay }) => {
                         </span>
                       </div>
                       {showProjectDetail && (
-                       
                         <div className="grid grid-cols-1 gap-6 overflow-x-hidden overflow-y-hidden md:grid-cols-2">
                           {[
                             {
@@ -643,21 +625,21 @@ const Task = ({ taskId, setDisplay }) => {
                               label: "Project Manager",
                               value: projectData?.manager?.f_name,
                             },
-                            
+
                             {
                               label: "Files",
                               value: Array.isArray(projectData?.files)
                                 ? projectData?.files?.map((file, index) => (
-                                    <a
-                                      key={index}
-                                      href={`${BASE_URL}/project/projects/viewfile/${projectData?.id}/${file.id}`} // Use the file path with baseURL
-                                      target="_blank" // Open in a new tab
-                                      rel="noopener noreferrer"
-                                      className="px-5 py-2 text-teal-500 hover:underline"
-                                    >
-                                      {file.originalName || `File ${index + 1}`}
-                                    </a>
-                                  ))
+                                  <a
+                                    key={index}
+                                    href={`${BASE_URL}/project/projects/viewfile/${projectData?.id}/${file.id}`} // Use the file path with baseURL
+                                    target="_blank" // Open in a new tab
+                                    rel="noopener noreferrer"
+                                    className="px-5 py-2 text-teal-500 hover:underline"
+                                  >
+                                    {file.originalName || `File ${index + 1}`}
+                                  </a>
+                                ))
                                 : "Not available",
                             },
                           ]?.map(({ label, value }) => (
@@ -675,51 +657,49 @@ const Task = ({ taskId, setDisplay }) => {
                     </div>
 
                     {/* Fabricator */}
-                    {userType === "admin" || userType === "manager" ? (
-                      <div className="w-full p-5 rounded-lg shadow-xl h-fit bg-teal-200/50">
-                        <div className="flex items-center gap-2 my-5 text-xl">
-                          <span className="font-bold text-gray-800">
-                            Fabricator Detail:
-                          </span>{" "}
-                          <span
-                            className="text-teal-600 cursor-pointer"
-                            onClick={toggleFabricatorDetail}
-                          >
-                            {tasks?.project?.fabricator?.fabName}
-                          </span>
-                        </div>
-                        {showFabricatorDetail && (
-                          <div className="ml-8 space-y-4">
-                            <div className="flex items-center gap-4">
-                              <span className="w-40 font-bold text-gray-800">
-                                Website:
-                              </span>{" "}
-                              <a
-                                href={tasks?.project?.fabricator?.website}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="overflow-hidden text-blue-500 hover:text-blue-700 overflow-ellipsis whitespace-nowrap"
-                              >
-                                {tasks?.project?.fabricator?.website}
-                              </a>
-                            </div>
-                            <div className="flex items-center gap-4">
-                              <span className="w-32 font-bold text-gray-800">
-                                Drive:
-                              </span>{" "}
-                              <a
-                                href={tasks?.project?.fabricator?.drive}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="overflow-hidden text-blue-500 hover:text-blue-700 overflow-ellipsis whitespace-nowrap"
-                              >
-                                {tasks?.project?.fabricator?.drive}
-                              </a>
-                            </div>
-                          </div>
-                        )}
+                    <div className="w-full p-5 rounded-lg shadow-xl h-fit bg-teal-200/50">
+                      <div className="flex items-center gap-2 my-5 text-xl">
+                        <span className="font-bold text-gray-800">
+                          Fabricator Detail:
+                        </span>{" "}
+                        <span
+                          className="text-teal-600 cursor-pointer"
+                          onClick={toggleFabricatorDetail}
+                        >
+                          {projectData?.fabricator?.fabName}
+                        </span>
                       </div>
-                    ) : null}
+                      {showFabricatorDetail && (
+                        <div className="ml-8 space-y-4">
+                          <div className="flex items-center gap-4">
+                            <span className="w-40 font-bold text-gray-800">
+                              Website:
+                            </span>{" "}
+                            <a
+                              href={projectData?.fabricator?.website}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="overflow-hidden text-blue-500 hover:text-blue-700 overflow-ellipsis whitespace-nowrap"
+                            >
+                              {projectData?.fabricator?.website}
+                            </a>
+                          </div>
+                          <div className="flex items-center gap-4">
+                            <span className="w-32 font-bold text-gray-800">
+                              Drive:
+                            </span>{" "}
+                            <a
+                              href={tasks?.project?.fabricator?.drive}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="overflow-hidden text-blue-500 hover:text-blue-700 overflow-ellipsis whitespace-nowrap"
+                            >
+                              {tasks?.project?.fabricator?.drive}
+                            </a>
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
 
@@ -753,17 +733,28 @@ const Task = ({ taskId, setDisplay }) => {
                           >
                             <div className="flex items-center mb-2">
                               <span className="font-bold text-gray-800">
-                                {comment?.data}
+                                {
+                                  staffData?.find(
+                                    (staff) => staff?.id === comment?.user_id,
+                                  )?.f_name
+                                }
                               </span>
                               <span className="ml-2 text-sm text-gray-500">
-                                {new Date(
-                                  comment?.created_on,
-                                ).toLocaleDateString("en-US", {
-                                  year: "numeric",
-                                  month: "short",
-                                  day: "numeric",
-                                })}
+                                {new Date(comment?.created_on).toLocaleString(
+                                  "en-US",
+                                  {
+                                    year: "numeric",
+                                    month: "short",
+                                    day: "numeric",
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                    second: "2-digit",
+                                  },
+                                )}
                               </span>
+                            </div>
+                            <div className="text-gray-600">
+                              <div>{comment?.data} </div>
                             </div>
                           </div>
                         ))}

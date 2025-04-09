@@ -5,10 +5,9 @@ import { NavLink, Outlet } from "react-router-dom";
 
 const TaskTab = () => {
   const tasks = useSelector((state) => state?.taskData.taskData);
-
   // Count the number of active projects
   const activeTaskCount = tasks.filter(
-    (task) => task.status === "IN PROGRESS",
+    (task) => task.status === "IN_PROGRESS",
   ).length;
 
   // Count the number of completed projects
@@ -17,16 +16,16 @@ const TaskTab = () => {
   ).length;
 
   const inReviewTaskCount = tasks.filter(
-    (task) => task.status === "IN REVIEW",
+    (task) => task.status === "IN_REVIEW",
   ).length;
   const assignedTaskCount = tasks.filter(
-    (task) => task.status === "ASSINGED",
+    (task) => task.status === "ASSIGNED",
   ).length;
   const breakTaskCount = tasks.filter((task) => task.status === "BREAK").length;
 
   const userType = sessionStorage.getItem("userType");
   return (
-    <div className="w-full h-full mx-5 overflow-y-hidden">
+    <div className="w-full h-fit mx-5">
       <div className="flex items-center justify-center w-full">
         <div className="px-5 py-1 mt-2 text-3xl font-bold text-white rounded-lg shadow-xl bg-green-500/70">
           Task
@@ -46,7 +45,7 @@ const TaskTab = () => {
           </div>
           <div className="flex flex-col items-center justify-center p-3 rounded-lg shadow-lg bg-white/50">
             <div className="text-xl font-bold text-gray-800">
-              No. of In-Progress Tasks
+              No. of IN_PROGRESS Tasks
             </div>
             <div className="text-3xl font-bold">{activeTaskCount}</div>
           </div>
@@ -65,7 +64,7 @@ const TaskTab = () => {
 
           <div className="flex flex-col items-center justify-center p-3 rounded-lg shadow-lg bg-white/50">
             <div className="text-xl font-bold text-gray-800">
-              No. of In-Review Tasks
+              No. of IN_REVIEW Tasks
             </div>
             <div className="text-3xl font-bold">{inReviewTaskCount}</div>
           </div>
@@ -73,7 +72,7 @@ const TaskTab = () => {
 
         {/* Conditional rendering of menu */}
         <div
-          className={`overflow-y-auto h-[75vh] rounded-lg bg-white md:text-lg text-sm`}
+          className={`h-full rounded-lg bg-white md:text-lg text-sm`}
         >
           <div className=" bg-teal-100 rounded-lg md:w-full w-[90vw]">
             <nav className="px-5 text-center drop-shadow-md">
@@ -114,7 +113,9 @@ const TaskTab = () => {
                     My Task Record
                   </NavLink>
                 </li>
-                {userType === "manager" || userType === "admin" ? (
+                {userType === "project-manager" ||
+                userType === "admin" ||
+                userType === "department-manager" ? (
                   <li className="px-2">
                     <NavLink
                       to="add-task"

@@ -3,70 +3,71 @@
 /* eslint-disable no-unused-vars */
 import { Provider, useDispatch, useSelector } from "react-redux";
 import store from "./store/store";
-import { ToastContainer } from "react-toastify";
 import { useCallback, useEffect, useState } from "react";
 import { Header, Sidebar } from "./components/index";
 import { Outlet, useNavigate } from "react-router-dom";
 import Service from "./api/configAPI";
-// import FrappeService from "./frappeConfig/FrappeService";
 import { setUserData, showStaff } from "./store/userSlice";
-// import { loadFabricator, showClient } from "./store/fabricatorSlice";
 import { showProjects, showTeam } from "./store/projectSlice";
 import { showTask, showTaskRecord } from "./store/taskSlice";
-import { showFabricator } from "./store/fabricatorSlice";
+import socket from "./socket";
+import NotificationReceiver from "./util/NotificationReceiver";
 const App = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const token = sessionStorage.getItem("token");
 
-  const [segregateProject, setSegregateProject] = useState({});
-
-  const projects = useSelector((state) => state?.projectData?.projectData);
-  const tasks = useSelector((state) => state?.taskData?.taskData);
-  const users = useSelector((state) => state?.userData?.staffData);
-  const fabricators = useSelector(
-    (state) => state?.fabricatorData?.fabricatorData,
-  );
-  const teams = useSelector((state) => state?.projectData?.teamData);
-
   const userType = sessionStorage.getItem("userType");
-
+  const userId = sessionStorage.getItem("userId");
+console.log("User Type from sessionStorage:", userId);
   const toggleSidebar = useCallback(() => {
     setSidebarOpen((prev) => !prev);
   }, [setSidebarOpen]);
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      const user = await Service.getCurrentUser(token);
-      dispatch(setUserData(user));
-      try {
-        const projectsData = await Service.getAllProject(token);
-        console.log(projectsData);
-        dispatch(showProjects(projectsData));
-        const tasksData = await Service.getAllTask(token);
-        dispatch(showTask(tasksData));
-        const allMyTaskData = await Service.getAllMyTask(token);
-        dispatch(showTaskRecord(allMyTaskData));
-        const usersData = await Service.allEmployee(token);
-        dispatch(showStaff(usersData));
-        const teamData = await Service.getAllTeam(token);
-        dispatch(showTeam(teamData));
-      } catch (error) {
-        console.error("Error fetching user:", error);
-        navigate("/");
-      }
-    };
+  const fetchProjects = async () => {
+    const projectsData = await Service.getAllProject(token);
+    dispatch(showProjects(projectsData));
+  };
 
+  const fetchTasks = async () => {
+    const tasksData = await Service.getAllTask(token);
+    dispatch(showTask(tasksData));
+  };
+  const fetchMyTasks = async () => {
+    const allMyTaskData = await Service.getAllMyTask(token);
+    dispatch(showTaskRecord(allMyTaskData));
+  };
+
+  const fetchUserData = async () => {
+    const usersData = await Service.allEmployee(token);
+    dispatch(showStaff(usersData));
+  };
+  const fetchTeam = async () => {
+    const teamData = await Service.getAllTeam(token);
+    dispatch(showTeam(teamData));
+  };
+  const fetchUser = async () => {
+    const user = await Service.getCurrentUser(token);
+  };
+
+  useEffect(() => {
     fetchUser();
-  }, [dispatch]);
+    fetchMyTasks();
+    fetchTasks();
+    fetchProjects();
+    fetchUserData();
+    fetchTeam();
+    console.log("🔌 Socket listener initialized in App");
+  }, [token,dispatch]);
+
+  
 
   return (
     <Provider store={store}>
-      <ToastContainer />
+      {/* <ToastContainer /> */}
       <div className="flex flex-col w-screen h-screen overflow-hidden md:flex-row bg-gradient-to-r from-green-300/50 to-teal-300">
         {/* Sidebar */}
-
+      <NotificationReceiver/>
         <div className="flex flex-col w-full">
           <div className="mx-5 my-2 shadow-2xl drop-shadow-lg">
             <Header sidebarOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
