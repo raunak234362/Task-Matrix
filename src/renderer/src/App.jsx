@@ -16,7 +16,7 @@ const App = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const dispatch = useDispatch();
   const token = sessionStorage.getItem("token");
-
+  const [userDetail,setUserDetail]=useState()
   const userType = sessionStorage.getItem("userType");
   const toggleSidebar = useCallback(() => {
     setSidebarOpen((prev) => !prev);
@@ -44,9 +44,19 @@ const App = () => {
     const teamData = await Service.getAllTeam(token);
     dispatch(showTeam(teamData));
   };
-  const fetchUser = async () => {
-    const user = await Service.getCurrentUser(token);
+ const fetchUser = async () => {
+    try {
+      const User = await Service.getCurrentUser(token);
+      setUserDetail(User);
+      sessionStorage.setItem("userId", User.id);
+      dispatch(setUserData(User));
+    } catch (error) {
+      console.log(error);
+    }
   };
+  useEffect(() => {
+    fetchUser();
+  }, []);
 
   useEffect(() => {
     fetchUser();

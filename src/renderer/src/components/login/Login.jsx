@@ -11,7 +11,7 @@ import { login as authLogin, setUserData } from "../../store/userSlice";
 import AuthService from "../../api/authAPI";
 import Service from "../../api/configAPI";
 import { toast } from "react-toastify";
-
+import socket from "../../socket";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -33,7 +33,8 @@ const Login = () => {
         sessionStorage.setItem("token", token);
         const userData = await Service.getCurrentUser();
         dispatch(setUserData(userData));
-        sessionStorage.setItem("userId", userData.id);
+        socket.emit("joinRoom", userData.id);
+        console.log(`🔐 Joined room: ${userData.id}`);
         console.log("UserData :", userData.id);
         let userType = "user";
         if (userData.role === "STAFF") {
@@ -84,17 +85,7 @@ const Login = () => {
     }
   };
 
-  const fetchUser = async () => {
-    try {
-      const User = await Service.getCurrentUser(token);
-      dispatch(setUserData(User));
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  useEffect(() => {
-    fetchUser();
-  }, []);
+ 
 
   return (
     <>
