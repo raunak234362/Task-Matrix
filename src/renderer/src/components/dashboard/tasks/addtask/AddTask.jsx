@@ -89,38 +89,37 @@ const AddTask = () => {
   }, [projectId]);
 
 
-const onSubmit = async (taskData) => {
-  try {
-    const token = sessionStorage.getItem("token");
-    if (!token) {
-      throw new Error("Token not found");
-    }
-
-    const TaskName = `${taskData.type} - ${taskData.taskname}`;
-
-    const data = await Service.addTask({
-      ...taskData,
-      name: TaskName,
-      token: token,
-    });
-console.log(data)
-    toast.success("✅ Task Added Successfully");
-    dispatch(addTask(data));
-
-    // 🧠 Notify the assigned user via socket
-    if (taskData.user) {
-      socket.emit("sendNotification", {
-        userId: taskData.user_id,
-        message: `📌 New Task Assigned: ${TaskName}`,
-        title: "New Task",
+  const onSubmit = async (taskData) => {
+    try {
+      const token = sessionStorage.getItem("token");
+      if (!token) throw new Error("Token not found");
+  
+      const TaskName = `${taskData.type} - ${taskData.taskname}`;
+  
+      const data = await Service.addTask({
+        ...taskData,
+        name: TaskName,
+        token: token,
       });
+  
+      toast.success("✅ Task Added Successfully");
+      dispatch(addTask(data));
+  
+      // ✅ Notify assigned user via socket
+      if (taskData.user) {
+        socket.emit("sendNotification", {
+          userId: taskData.user, // should be the assigned user's ID
+          message: `📌 New Task Assigned: ${TaskName}`,
+          title: "New Task",
+        });
+      }
+  
+    } catch (error) {
+      console.error("Error adding task:", error);
+      toast.error("❌ Error adding task");
     }
-
-  } catch (error) {
-    console.error("Error adding task:", error);
-    toast.error("❌ Error adding task");
-  }
-};
+  };
+  
 
 
 

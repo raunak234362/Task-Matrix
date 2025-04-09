@@ -20,41 +20,43 @@ const MyTask = () => {
         const task = await Service.getMyTask();
         setTasks(task);
       } catch (error) {
-        console.log("Error in fetching task: ", error);
+        console.error("Error in fetching task:", error);
       }
     };
-
     // Initial fetch
-    fetchTask();
-
-    // Socket listener for new tasks
-    socket.on("customNotification", (data) => {
-      // Show notification
+    fetchTask(tasks);
+  
+    // Listen for new task notifications
+    const handleNewTaskNotification = (data) => {
+      const { title = "New Task", message = "You have a new task!" } = data;
+  
+      // Show desktop notification
       if (Notification.permission !== "granted") {
-        Notification.requestPermission().then(() => {
-          console.log("Permission granted for notifications.");
-          new Notification(data.title || "New Task", {
-            body: data.message,
-          });
+        Notification.requestPermission().then((permission) => {
+          if (permission === "granted") {
+            new Notification(title, { body: message });
+          }
         });
       } else {
-        new Notification(data.title || "New Task", {
-          body: data.message,
-        });
+        new Notification(title, { body: message });
       }
-
-      // Optional UI toast
-      toast.success(data.message || "You have a new task!");
-
+  
+      // UI toast
+      toast.success(message);
+  
       // Re-fetch tasks
       fetchTask();
-    });
-
-    // Cleanup socket listener
-    return () => {
-      socket.off("customNotification");
     };
-  }, [tasks.length]); 
+  
+    // Attach socket listener
+    socket.on("customNotification", handleNewTaskNotification);
+  
+    // Cleanup on unmount
+    return () => {
+      socket.off("customNotification", handleNewTaskNotification);
+    };
+  }, []);
+  
   // if(tasks.length + 1){
   //   window.electron.ipcRenderer.send('show-notification', {
   //     title: 'New Data Added',
