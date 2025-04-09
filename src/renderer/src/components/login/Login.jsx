@@ -11,6 +11,7 @@ import { login as authLogin, setUserData } from "../../store/userSlice";
 import AuthService from "../../api/authAPI";
 import Service from "../../api/configAPI";
 import { toast } from "react-toastify";
+import socket from "../../socket";
 
 const Login = () => {
   const navigate = useNavigate();
