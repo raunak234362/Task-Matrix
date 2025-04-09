@@ -76,11 +76,11 @@ const Login = () => {
         // else if (userType === "vendor") navigate("/vendor");
         else navigate("/");
       } else {
-        toast.error("Invalid Credentials");
+        toast.error("Invalid Credentials---------");
         navigate("/");
       }
     } catch (error) {
-      toast.error("Invalid Credentials", error);
+      toast.error("Invalid Credentials----------", error);
     }
   };
 
