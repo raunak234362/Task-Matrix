@@ -18,8 +18,6 @@ const App = () => {
   const token = sessionStorage.getItem("token");
 
   const userType = sessionStorage.getItem("userType");
-  const userId = sessionStorage.getItem("userId");
-console.log("User Type from sessionStorage:", userId);
   const toggleSidebar = useCallback(() => {
     setSidebarOpen((prev) => !prev);
   }, [setSidebarOpen]);

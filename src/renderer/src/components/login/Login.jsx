@@ -11,7 +11,7 @@ import { login as authLogin, setUserData } from "../../store/userSlice";
 import AuthService from "../../api/authAPI";
 import Service from "../../api/configAPI";
 import { toast } from "react-toastify";
-import socket from "../../socket";
+
 
 const Login = () => {
   const navigate = useNavigate();
@@ -31,10 +31,10 @@ const Login = () => {
       if ("token" in user) {
         const token = user.token;
         sessionStorage.setItem("token", token);
-        const userData = await Service.getCurrentUser(token);
+        const userData = await Service.getCurrentUser();
         dispatch(setUserData(userData));
-        console.log("UserData :", userData);
         sessionStorage.setItem("userId", userData.id);
+        console.log("UserData :", userData.id);
         let userType = "user";
         if (userData.role === "STAFF") {
           if (userData.is_superuser) {

@@ -11,6 +11,7 @@ const socket = io("http://192.168.1.198:5155", {
 
 socket.on("connect", () => {
   console.log("✅ Connected with socket:", socket.id);
+  console.log("✅ Connected with userID:", userId);
   if (userId) {
     socket.emit("joinRoom", userId);
     console.log(`🔐 Joined room: ${userId}`);

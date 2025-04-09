@@ -1,7 +1,7 @@
 // components/NotificationReceiver.jsx
 import { useEffect } from "react";
 import { toast } from "react-toastify";
-import socket from "../socket"; // adjust if the path is different
+import socket from "../socket";
 
 const NotificationReceiver = () => {
   useEffect(() => {

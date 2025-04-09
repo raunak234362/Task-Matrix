@@ -13,7 +13,7 @@ const Header = ({title}) => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const usersData = await Service.getCurrentUser(token);
+        const usersData = await Service.getCurrentUser(token); 
         setUserData(usersData);
         console.log(usersData);
       } catch (error) {
