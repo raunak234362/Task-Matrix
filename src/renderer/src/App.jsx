@@ -11,6 +11,7 @@ import { setUserData, showStaff } from "./store/userSlice";
 import { showProjects, showTeam } from "./store/projectSlice";
 import { showTask, showTaskRecord } from "./store/taskSlice";
 import socket from "./socket";
+import NotificationReceiver from "./util/NotificationReceiver";
 const App = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const dispatch = useDispatch();
@@ -66,7 +67,7 @@ console.log("User Type from sessionStorage:", userId);
       {/* <ToastContainer /> */}
       <div className="flex flex-col w-screen h-screen overflow-hidden md:flex-row bg-gradient-to-r from-green-300/50 to-teal-300">
         {/* Sidebar */}
-
+      <NotificationReceiver/>
         <div className="flex flex-col w-full">
           <div className="mx-5 my-2 shadow-2xl drop-shadow-lg">
             <Header sidebarOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
