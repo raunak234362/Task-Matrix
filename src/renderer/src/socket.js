@@ -17,6 +17,7 @@ socket.on("connect", () => {
   //   socket.emit("joinRoom", userId);
   //   console.log(`🔐 Joined room: ${userId}`);
   // }
+  //not required
 });
 
 socket.on("customNotification", (data) => {
