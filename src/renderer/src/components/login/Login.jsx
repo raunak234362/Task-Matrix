@@ -34,6 +34,12 @@ const Login = () => {
         const userData = await Service.getCurrentUser();
         dispatch(setUserData(userData));
         socket.emit("joinRoom", userData.id);
+        if(socket) {
+          socket.on("connect", () => {
+            console.log("✅ Connected with socket:", socket.id);
+            console.log("✅ Connected with userID:", userData.id);
+          });
+        }
         console.log(`🔐 Joined room: ${userData.id}`);
         console.log("UserData :", userData.id);
         let userType = "user";

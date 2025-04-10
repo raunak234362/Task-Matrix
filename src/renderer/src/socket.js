@@ -1,6 +1,7 @@
 /* eslint-disable prettier/prettier */
 // frontend/socket.js
 import { io } from "socket.io-client";
+// import { BASE_URL } from "./config/constant";
 
 const userId= sessionStorage.getItem("userId" );
 console.log("User ID from sessionStorage:", userId);
