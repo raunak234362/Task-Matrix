@@ -33,11 +33,13 @@ const Login = () => {
         sessionStorage.setItem("token", token);
         const userData = await Service.getCurrentUser();
         dispatch(setUserData(userData));
-        socket.emit("joinRoom", userData.id);
-        if(socket) {
+        sessionStorage.setItem("userId", userData.id);
+        const userId = sessionStorage.getItem("userId");
+        socket.emit("joinRoom", userId);
+        if (socket) {
           socket.on("connect", () => {
             console.log("✅ Connected with socket:", socket.id);
-            console.log("✅ Connected with userID:", userData.id);
+            console.log("✅ Connected with userID:", userId);
           });
         }
         console.log(`🔐 Joined room: ${userData.id}`);
@@ -73,7 +75,7 @@ const Login = () => {
           userType === "department-manager"
         )
           navigate("/admin/home");
-          else if (userType === "human-resource") navigate("/admin/profile")
+        else if (userType === "human-resource") navigate("/admin/profile")
         // else if (userType === "client") navigate("/client");
         // else if (userType === "sales") navigate("/sales");
         // else if (userType === "staff") navigate("/staff");
@@ -91,7 +93,7 @@ const Login = () => {
     }
   };
 
- 
+
 
   return (
     <>

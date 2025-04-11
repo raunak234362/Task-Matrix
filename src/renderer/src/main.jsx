@@ -25,6 +25,7 @@ import {
 import "./index.css";
 import App from "./App.jsx";
 import { ToastContainer } from "react-toastify";
+import ProtectedRoute from "./util/ProtectedRoute.jsx";
 
 const router = createHashRouter([
   {
@@ -37,7 +38,11 @@ const router = createHashRouter([
   },
   {
     path: "/admin",
-    element: <App />,
+    element: (
+      <ProtectedRoute>
+        <App />
+      </ProtectedRoute>
+    ),
     children: [
       {
         path: "home",

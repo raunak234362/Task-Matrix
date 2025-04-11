@@ -48,7 +48,7 @@ const App = () => {
     try {
       const User = await Service.getCurrentUser(token);
       setUserDetail(User);
-      sessionStorage.setItem("userId", User.id);
+      // sessionStorage.setItem("userId", User.id);
       dispatch(setUserData(User));
     } catch (error) {
       console.log(error);
