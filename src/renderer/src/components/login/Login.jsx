@@ -37,13 +37,12 @@ const Login = () => {
         const userId = sessionStorage.getItem("userId");
         socket.emit("joinRoom", userId);
         if (socket) {
+          sessionStorage.setItem("socketId", socket.id) ;
           socket.on("connect", () => {
             console.log("✅ Connected with socket:", socket.id);
-            console.log("✅ Connected with userID:", userId);
+            console.log("✅ Connected with userID:", userData.id);
           });
         }
-        console.log(`🔐 Joined room: ${userData.id}`);
-        console.log("UserData :", userData.id);
         let userType = "user";
         if (userData.role === "STAFF") {
           if (userData.is_superuser) {
@@ -85,7 +84,7 @@ const Login = () => {
         // else if (userType === "vendor") navigate("/vendor");
         else navigate("/");
       } else {
-        toast.error("Invalid Credentials---------");
+        toast.error("Invalid Credentials");
         navigate("/");
       }
     } catch (error) {

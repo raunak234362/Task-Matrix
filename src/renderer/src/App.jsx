@@ -12,6 +12,7 @@ import { showProjects, showTeam } from "./store/projectSlice";
 import { showTask, showTaskRecord } from "./store/taskSlice";
 import socket from "./socket";
 import NotificationReceiver from "./util/NotificationReceiver";
+
 const App = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const dispatch = useDispatch();
@@ -65,7 +66,6 @@ const App = () => {
     fetchProjects();
     fetchUserData();
     fetchTeam();
-    console.log("🔌 Socket listener initialized in App");
   }, [token,dispatch]);
 
   
