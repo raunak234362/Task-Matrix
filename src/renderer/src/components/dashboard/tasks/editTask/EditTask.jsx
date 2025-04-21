@@ -145,6 +145,8 @@ const EditTask = ({ onClose, task }) => {
                   { label: "Erection checking", value: "ERECTION_CHECKING" },
                   { label: "Detailing", value: "DETAILING" },
                   { label: "Detail checking", value: "DETAIL_CHECKING" },
+                  { label: "Designing", value: "DESIGNING" },
+                  { label: "Design Checking", value: "DESIGN_CHECKING" },
                   { label: "Others", value: "OTHERS" },
                 ]}
                 {...register("type")}
