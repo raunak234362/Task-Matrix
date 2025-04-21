@@ -183,6 +183,8 @@ const AddTask = () => {
                     { label: "Detailing Checking", value: "DETAIL_CHECKING" },
                     { label: "Erection", value: "ERECTION" },
                     { label: "Erection Checking", value: "ERECTION_CHECKING" },
+                    { label: "Designing", value: "DESIGNING" },
+                    { label: "Design Checking", value: "DESIGN_CHECKING" },
                     { label: "Others", value: "OTHERS" },
                   ]}
                   {...register("type", { required: "Task Type is required" })}

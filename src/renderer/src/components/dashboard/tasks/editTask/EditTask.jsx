@@ -20,18 +20,18 @@ const EditTask = ({ onClose, task }) => {
   console.log("TASK-=-==-=-=-=-=-=", taskDetail);
   const [defaultHour, defaultMin] = (taskDetail?.duration ?? "00:00").split(":").slice(0, 2);
 
-const { register, handleSubmit,watch, formState: { errors }, setValue } = useForm({
-  defaultValues: {
-    name: taskDetail?.name || "",
-    description: taskDetail?.description || "",
-    duration: taskDetail?.duration || "",
-    start_date: taskDetail?.start_date || "",
-    due_date: taskDetail?.due_date || "",
-    status: taskDetail?.status || "",
-    hour: defaultHour,  // Ensure hour is set
-    min: defaultMin,    // Ensure minutes are set
-  },
-});
+  const { register, handleSubmit, watch, formState: { errors }, setValue } = useForm({
+    defaultValues: {
+      name: taskDetail?.name || "",
+      description: taskDetail?.description || "",
+      duration: taskDetail?.duration || "",
+      start_date: taskDetail?.start_date || "",
+      due_date: taskDetail?.due_date || "",
+      status: taskDetail?.status || "",
+      hour: defaultHour,  // Ensure hour is set
+      min: defaultMin,    // Ensure minutes are set
+    },
+  });
 
   console.log("TASK-=-=-=-=-=-=-=-", taskDetail);
   const teams = useSelector(
@@ -140,12 +140,11 @@ const { register, handleSubmit,watch, formState: { errors }, setValue } = useFor
                 options={[
                   { label: "Select Task", value: "" },
                   { label: "Modeling", value: "MODELING" },
-{ label: "Model checking", value: "MODEL_CHECKING" },
-                  
+                  { label: "Model checking", value: "MODEL_CHECKING" },
                   { label: "Erection", value: "ERECTION" },
-{ label: "Erection checking", value: "ERECTION_CHECKING" },
+                  { label: "Erection checking", value: "ERECTION_CHECKING" },
                   { label: "Detailing", value: "DETAILING" },
-{ label: "Detail checking", value: "DETAIL_CHECKING" },
+                  { label: "Detail checking", value: "DETAIL_CHECKING" },
                   { label: "Others", value: "OTHERS" },
                 ]}
                 {...register("type")}
