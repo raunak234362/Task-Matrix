@@ -26,18 +26,18 @@ const AllTask = () => {
   });
 
 
-    // Pagination state
-    const [currentPage, setCurrentPage] = useState(1);
-    const tasksPerPage = 50;
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const tasksPerPage = 50;
 
-  const departmentTask = tasks?.flatMap((task) => task?.tasks) || [];
+  // const departmentTask = tasks?.flatMap((task) => task?.tasks) || [];
 
   useEffect(() => {
-    setTaskFilter(userType === "department-manager" ? departmentTask : tasks);
+    setTaskFilter(tasks);
   }, [tasks, userType]);
   const uniqueProject = [
     ...new Set(
-      (userType === "department-manager" ? departmentTask : tasks)?.map(
+      (userType === "department-manager" ? tasks : tasks)?.map(
         (project) => project?.project?.name,
       ),
     ),
@@ -45,7 +45,7 @@ const AllTask = () => {
   // console.log("UNIQUE PROJECTS:", uniqueProject);
   const filterAndSortData = () => {
     let filtered = (
-      userType === "department-manager" ? departmentTask : tasks
+      tasks
     )?.filter((task) => {
       const searchMatch =
         task?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -92,17 +92,17 @@ const AllTask = () => {
     setTaskFilter(filtered);
   };
 
-    // Pagination logic
-    const indexOfLastTask = currentPage * tasksPerPage;
-    const indexOfFirstTask = indexOfLastTask - tasksPerPage;
-    const currentTasks = taskFilter.slice(indexOfFirstTask, indexOfLastTask);
-  
-    const handlePageChange = (pageNumber) => {
-      setCurrentPage(pageNumber);
-    };
-  
-    const totalPages = Math.ceil(taskFilter.length / tasksPerPage);
-  
+  // Pagination logic
+  const indexOfLastTask = currentPage * tasksPerPage;
+  const indexOfFirstTask = indexOfLastTask - tasksPerPage;
+  const currentTasks = taskFilter.slice(indexOfFirstTask, indexOfLastTask);
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const totalPages = Math.ceil(taskFilter.length / tasksPerPage);
+
 
   // Search handler
   const handleSearch = (e) => {
@@ -135,7 +135,7 @@ const AllTask = () => {
   useEffect(() => {
     if (projectFilter) {
       const projectTasks = (
-        userType === "department-manager" ? departmentTask : tasks
+        tasks
       ).filter((task) => task?.project?.name === projectFilter);
       const completedTasks = projectTasks.filter(
         (task) => task?.status === "COMPLETE",
@@ -185,6 +185,7 @@ const AllTask = () => {
   };
 
   const handleViewClick = async (taskId) => {
+    console.log("Task ID:", taskId);
     try {
       const task = await Service.getTaskById(taskId);
       // console.log("Task Details:", task);
@@ -337,7 +338,7 @@ const AllTask = () => {
                     </tr>
                   </thead>
                   <tbody>
-                  {currentTasks?.length === 0 ? (
+                    {currentTasks?.length === 0 ? (
                       <tr className="bg-white">
                         <td colSpan="7" className="text-center">
                           No Task Found
@@ -358,10 +359,10 @@ const AllTask = () => {
                           <tr
                             key={task.id}
                             className={`${isOverAllocated
-                                ? "bg-red-200"
-                                : index % 2 === 0
-                                  ? "bg-white"
-                                  : "bg-gray-200/50"
+                              ? "bg-red-200"
+                              : index % 2 === 0
+                                ? "bg-white"
+                                : "bg-gray-200/50"
                               }`}
                           >
                             <td className="px-1 py-2 border">{indexOfFirstTask + index + 1}</td>
@@ -417,16 +418,15 @@ const AllTask = () => {
                   </tbody>
                 </table>
               </div>
-               {/* Pagination Controls */}
-               <div className="flex justify-center mt-4">
+              {/* Pagination Controls */}
+              <div className="flex justify-center mt-4">
                 {Array.from({ length: totalPages }, (_, index) => (
                   <button
                     key={index}
-                    className={`px-3 py-1 mx-1 border rounded ${
-                      currentPage === index + 1
-                        ? "bg-teal-500 text-white"
-                        : "bg-white text-teal-500"
-                    }`}
+                    className={`px-3 py-1 mx-1 border rounded ${currentPage === index + 1
+                      ? "bg-teal-500 text-white"
+                      : "bg-white text-teal-500"
+                      }`}
                     onClick={() => handlePageChange(index + 1)}
                   >
                     {index + 1}

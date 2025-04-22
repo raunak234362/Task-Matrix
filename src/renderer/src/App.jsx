@@ -29,8 +29,15 @@ const App = () => {
   };
 
   const fetchTasks = async () => {
-    const tasksData = await Service.getAllTask(token);
-    dispatch(showTask(tasksData));
+    const tasks = await Service.getAllTask(token);
+
+    const departmentTasks = tasks?.flatMap((task) => task?.tasks) || [];
+
+    if (userType === "department-manager") {
+      dispatch(showTask(departmentTasks));
+    } else {
+      dispatch(showTask(tasks));
+    }
   };
   const fetchMyTasks = async () => {
     const allMyTaskData = await Service.getAllMyTask(token);

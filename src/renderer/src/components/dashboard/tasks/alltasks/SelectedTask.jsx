@@ -11,6 +11,7 @@ import { BASE_URL } from "../../../../config/constant";
 import { toast } from "react-toastify";
 
 const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
+  
   const dispatch = useDispatch();
   const taskData = useSelector((state) =>
     state?.taskData?.taskData.filter((task) => task.id === taskID),
@@ -20,7 +21,7 @@ const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
   const staffData = useSelector((state) => state?.userData?.staffData);
   const projectData = useSelector((state) =>
     state?.projectData?.projectData.find(
-      (project) => project?.id === task?.project?.id,
+      (project) => project?.id === task?.project_id,
     ),
   );
   const [selectedTask, setSelectedTask] = useState(null);

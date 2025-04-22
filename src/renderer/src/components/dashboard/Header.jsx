@@ -32,7 +32,7 @@ const Header = ({title}) => {
       <h1 className="mx-auto text-2xl">{title}</h1>
       <div className="flex flex-col text-lg">
         <div className="font-bold">
-          {role.toLocaleUpperCase()} - {userData?.f_name}{userData?.m_name} {userData?.l_name}
+          {role.toLocaleUpperCase()} - {userData?.f_name} {userData?.m_name} {userData?.l_name}
           {}
         </div>
       </div>
