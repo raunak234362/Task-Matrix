@@ -14,6 +14,9 @@ import Home from './dashboard/main/Home'
 import Layout from './Layout'
 import Header from './dashboard/Header'
 
+//chats
+import Chats from './dashboard/chats/Chats'
+
 //Users
 import AllUser from './dashboard/users/alluser/AllUser';
 import MyProfile from './dashboard/users/myprofile/MyProfile';
@@ -80,6 +83,7 @@ export {
   // UsersTaskRecord,
   CustomSelect,
   Input,
+  Chats,
   ProjectPie,
   MultiSelectCheckbox,
   MyTask,

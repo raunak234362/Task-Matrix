@@ -7,8 +7,8 @@ const userId= sessionStorage.getItem("userId" );
 const socketID = sessionStorage.getItem("socketId");
 console.log("User ID from sessionStorage:", userId);
 
-const socket = io("https://192.168.1.157:5154", {
-// const socket = io("http://192.168.1.26:5155", {
+// const socket = io("https://192.168.1.157:5154", {
+const socket = io("http://192.168.1.26:5155", {
   transports: ["websocket"],
 });
 

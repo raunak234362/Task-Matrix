@@ -611,6 +611,80 @@ class Service {
   }
 
 
+  
+  //add Group for groupchatting
+  static async addGroup(groupData) {
+    const token = sessionStorage.getItem("token");
+    try {
+      const response = await api.post(`/api/chat/createGroup`, groupData, {
+        headers: {
+          "Content-Type": "Application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data.data;
+    } catch (error) {
+      console.log("Error in adding Group: ", error);
+      throw error;
+    }
+  }
+
+  //add Group Member
+  static async addGroupMember(groupId, memberIds) {
+    const formData = [ ...memberIds ];
+    try {
+      const response = await api.post(
+        `/api/chat/group/addmember/${groupId}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "Application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.log("Error in adding Group Member: ", error);
+      throw error;
+    }
+  }
+
+  // Fetch the Chat by GroupID
+  static async getChatByGroupId(groupId) {
+    console.log("Service:---", groupId);
+    const token = sessionStorage.getItem("token");
+    try {
+      const response = await api.get(`/api/chat/groupMessages/${groupId}`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data.data;
+    } catch (error) {
+      console.log("Error in getting Group Chat: ", error);
+      throw error;
+    }
+  }
+
+  // Fetch all chats
+  static async getAllChats() {
+    try {
+      const response = await api.get(`/api/chat/recent-chats`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data.data;
+    } catch (error) {
+      console.log("Error in getting all chats: ", error);
+      throw error;
+    }
+  }
+
+
 
   //Calendar API
   // static async fetchCalendar(date, user) {

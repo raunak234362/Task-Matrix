@@ -11,6 +11,7 @@ import {
   AllUser,
   ApproveAssignee,
   ChangePassword,
+  Chats,
   Home,
   Login,
   MyProfile,
@@ -64,6 +65,10 @@ const router = createHashRouter([
         ],
       },
       {
+        path: "chats",
+        element: <Chats />,
+      },
+      {
         path: "task",
         element: <TaskTab />,
         children: [
@@ -97,7 +102,7 @@ const router = createHashRouter([
             path: "all-user",
             element: <AllUser />,
           },
-         
+
         ],
       },
       {
