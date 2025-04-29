@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
@@ -11,7 +12,7 @@ import Input from "../../fields/Input"
 import socket from "../../../socket"
 import Service from "../../../api/configAPI"
 
-const ChatMain = ({ contacts, conversations, handleSendMessage, setMessage, activeChat, setActiveChat }) => {
+const ChatMain = ({ activeChat, setActiveChat }) => {
   const [recentChats, setRecentChats] = useState([])
   const activeContact = recentChats?.find(c => c.id === activeChat)
   const userInfo = useSelector((state) => state?.userData?.userData);
@@ -166,19 +167,23 @@ const ChatMain = ({ contacts, conversations, handleSendMessage, setMessage, acti
   }
 
   return (
-    <div className="flex flex-col w-full h-full bg-gray-50">
-      <ChatHead contact={activeChat} onBack={() => setActiveChat?.(null)} />
+    <div className="flex flex-col w-full h-full bg-gray-50 overflow-hidden">
 
-      {/* Messages area */}
-      <div className="flex-1 p-4 overflow-y-auto bg-gray-50">
+      {/* Sticky Header */}
+      <div className="sticky top-0 z-10 bg-white border-b border-gray-200">
+        <ChatHead contact={activeChat} onBack={() => setActiveChat?.(null)} />
+      </div>
+
+      {/* Scrollable Messages */}
+      <div className="flex-1 overflow-y-auto p-4 bg-gray-50">
         <div className="space-y-4">
           {[...(currentConversation?.messages || [])]
             .sort((a, b) => new Date(a.time) - new Date(b.time))
             .map((msg) => (
               <div key={msg.id} className={`flex ${msg.sender === "me" ? "justify-end" : "justify-start"}`}>
-                {/* {console.log(msg)} */}
                 <div
-                  className={`max-w-xs md:max-w-md p-3 rounded-lg ${msg.sender === "me" ? "bg-green-100 rounded-tr-none" : "bg-orange-200 rounded-tl-none"}`}
+                  className={`max-w-xs md:max-w-md p-3 rounded-lg ${msg.sender === "me" ? "bg-green-100 rounded-tr-none" : "bg-orange-200 rounded-tl-none"
+                    }`}
                 >
                   {msg.sender !== "me" && msg.senderName && (
                     <p className="text-xs text-gray-600 font-semibold mb-1">{msg.senderName}</p>
@@ -194,20 +199,22 @@ const ChatMain = ({ contacts, conversations, handleSendMessage, setMessage, acti
         </div>
       </div>
 
-      {/* Message input */}
-      <div className="p-3 bg-white border-t border-gray-200">
+      {/* Sticky Input */}
+      <div className="sticky bottom-0 z-0 bg-white border-t border-gray-200 p-3">
         <form onSubmit={handleSubmit(handleMessage)} className="flex items-center space-x-2">
           <Input
             type="text"
+            label="Type a message"
             {...register("content")}
             placeholder="Type a message"
-            className="flex-1 py-2 px-4 bg-gray-100 rounded-full focus:outline-none focus:ring-1 focus:ring-green-500"
+            className="flex-1 "
           />
           <Button size="icon" type="submit" className="text-green-500">
             <Send size={24} />
           </Button>
         </form>
       </div>
+
     </div>
   )
 }

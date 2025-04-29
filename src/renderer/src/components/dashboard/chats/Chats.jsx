@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 /* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react"
 import { toast } from "react-toastify"
@@ -64,18 +65,9 @@ const Chats = () => {
     }
   }, [])
 
-  const handleAddGroupMembers = async (groupId, members) => {
-    try {
-      const response = await Service.addGroupMembers(groupId, members)
-      console.log("Group members added:", response)
-      toast.success("Group members added successfully!")
-    } catch (error) {
-      toast.error("Failed to add group members.")
-    }
-  }
 
   return (
-    <div className="w-full h-screen md:h-[87vh] flex overflow-hidden bg-white rounded-lg shadow-lg relative">
+    <div className="w-full h-[89vh] md:h-[87vh] flex overflow-hidden bg-white rounded-lg shadow-lg relative">
 
       {/* Desktop View: Sidebar + Chat */}
       <div className="hidden md:flex w-full h-full">
@@ -84,7 +76,6 @@ const Chats = () => {
             activeChat={activeChat}
             recentChats={recentChats}
             setActiveChat={setActiveChat}
-            handleAddGroupMembers={handleAddGroupMembers}
           />
         </div>
         <div className="w-2/3 lg:w-3/4">
@@ -103,7 +94,6 @@ const Chats = () => {
           <ChatSidebar
             recentChats={recentChats}
             setActiveChat={setActiveChat}
-            handleAddGroupMembers={handleAddGroupMembers}
           />
         ) : (
           <ChatMain

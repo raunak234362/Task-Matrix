@@ -10,14 +10,14 @@ import Service from "./api/configAPI";
 import { setUserData, showStaff } from "./store/userSlice";
 import { showProjects, showTeam } from "./store/projectSlice";
 import { showTask, showTaskRecord } from "./store/taskSlice";
-import socket from "./socket";
+import socket, { connectSocket } from "./socket";
 import NotificationReceiver from "./util/NotificationReceiver";
 
 const App = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const dispatch = useDispatch();
   const token = sessionStorage.getItem("token");
-  const [userDetail,setUserDetail]=useState()
+  const [userDetail, setUserDetail] = useState()
   const userType = sessionStorage.getItem("userType");
   const toggleSidebar = useCallback(() => {
     setSidebarOpen((prev) => !prev);
@@ -52,11 +52,24 @@ const App = () => {
     const teamData = await Service.getAllTeam(token);
     dispatch(showTeam(teamData));
   };
- const fetchUser = async () => {
+  const fetchUser = async () => {
     try {
       const User = await Service.getCurrentUser(token);
       setUserDetail(User);
-      // sessionStorage.setItem("userId", User.id);
+      sessionStorage.setItem("userId", User.id);
+      const userId = sessionStorage.getItem("userId");
+      // socket.emit("joinRoom",userId);
+      connectSocket(userId);
+      if (socket) {
+        console.log("Socket is already connected:", socket);
+        sessionStorage.setItem("socketId", socket.id) ;
+        const socketId = sessionStorage.getItem("socketId");
+        socket.on("connect", () => {
+          console.log("✅ Connected with socket:", socketId);
+          console.log("✅ Connected with userID:", userId);
+          // socket.emit("joinRoom", userId);
+        });
+      }
       dispatch(setUserData(User));
     } catch (error) {
       console.log(error);
@@ -73,16 +86,16 @@ const App = () => {
     fetchProjects();
     fetchUserData();
     fetchTeam();
-  }, [token,dispatch]);
+  }, [token, dispatch]);
 
-  
+
 
   return (
     <Provider store={store}>
       {/* <ToastContainer /> */}
       <div className="flex flex-col w-screen h-screen overflow-hidden md:flex-row bg-gradient-to-r from-green-300/50 to-teal-300">
         {/* Sidebar */}
-      <NotificationReceiver/>
+        <NotificationReceiver />
         <div className="flex flex-col w-full">
           <div className="mx-5 my-2 shadow-2xl drop-shadow-lg">
             <Header sidebarOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
@@ -90,9 +103,8 @@ const App = () => {
           {/* Header */}
           <div className="flex flex-row">
             <div
-              className={`fixed md:static flex flex-col md:bg-opacity-0 bg-white w-64 z-20 transition-transform duration-300 ${
-                sidebarOpen ? "translate-x-0" : "-translate-x-full"
-              } md:translate-x-0 md:w-64`}
+              className={`fixed md:static flex flex-col md:bg-opacity-0 bg-white w-64 z-20 transition-transform duration-300 ${sidebarOpen ? "translate-x-0" : "-translate-x-full"
+                } md:translate-x-0 md:w-64`}
             >
               <div className="flex items-center justify-between p-4">
                 <Sidebar />
@@ -100,9 +112,8 @@ const App = () => {
             </div>
             {/* Main Content */}
             <div
-              className={`flex h-[89vh] overflow-y-auto flex-grow transition-all duration-300 ${
-                sidebarOpen ? "md:ml-64 ml-0 bg-black/50" : "md:ml-0 ml-0"
-              }`}
+              className={`flex h-[89vh] overflow-y-auto flex-grow transition-all duration-300 ${sidebarOpen ? "md:ml-64 ml-0 bg-black/50" : "md:ml-0 ml-0"
+                }`}
             >
               <Outlet />
             </div>

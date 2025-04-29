@@ -35,14 +35,14 @@ const Login = () => {
         dispatch(setUserData(userData));
         sessionStorage.setItem("userId", userData.id);
         const userId = sessionStorage.getItem("userId");
-        socket.emit("joinRoom", userId);
-        if (socket) {
-          sessionStorage.setItem("socketId", socket.id) ;
-          socket.on("connect", () => {
-            console.log("✅ Connected with socket:", socket.id);
-            console.log("✅ Connected with userID:", userData.id);
-          });
-        }
+        // socket.emit("joinRoom", userId);
+        // if (socket) {
+        //   sessionStorage.setItem("socketId", socket.id) ;
+        //   socket.on("connect", () => {
+        //     console.log("✅ Connected with socket:", socket.id);
+        //     console.log("✅ Connected with userID:", userData.id);
+        //   });
+        // }
         let userType = "user";
         if (userData.role === "STAFF") {
           if (userData.is_superuser) {

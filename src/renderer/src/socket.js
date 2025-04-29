@@ -3,23 +3,11 @@
 import { io } from "socket.io-client";
 // import { BASE_URL } from "./config/constant";
 
-const userId= sessionStorage.getItem("userId" );
-const socketID = sessionStorage.getItem("socketId");
-console.log("User ID from sessionStorage:", userId);
 
-// const socket = io("https://192.168.1.157:5154", {
-const socket = io("http://192.168.1.26:5155", {
+const socket = io("https://backend.whiteboardtec.com:5154", {
+// const socket = io("http://192.168.1.26:5155", {
   transports: ["websocket"],
-});
-
-socket.on("connect", () => {
-  console.log("✅ Connected with socket:", socketID);
-  console.log("✅ Connected with userID:", userId);
-  if (userId) {
-    socket.emit("joinRoom", userId);
-    console.log(`🔐 Joined room: ${userId}`);
-  }
-  //not required
+  autoConnect:false,
 });
 
 socket.on("customNotification", (data) => {
@@ -36,6 +24,12 @@ socket.on("customNotification", (data) => {
       });
     }
   });
+
+  export function connectSocket(userId) {
+    if (!userId) return;
+    socket.auth = { userId };
+    socket.connect();
+  }
   
 
 export default socket;

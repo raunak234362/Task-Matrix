@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable prettier/prettier */
 /* eslint-disable react/prop-types */
 import { Search, MoreVertical } from "lucide-react"
 import { useState } from "react"
@@ -7,50 +9,10 @@ import { TiUserAdd } from "react-icons/ti";
 import Button from "../../fields/Button";
 const ChatSidebar = ({ activeChat, recentChats, setActiveChat }) => {
   // const [activeChat, setActiveChat] = useState(0)
+  const userType = sessionStorage.getItem("userType");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isPrivateChatOpen, setIsPrivateChatOpen] = useState(false);
-  // const contacts = [
-  //   {
-  //     id: 1,
-  //     name: "John Doe",
-  //     avatar: "/placeholder.svg?height=40&width=40",
-  //     lastMessage: "Hey, how are you doing?",
-  //     time: "10:30 AM",
-  //     unread: 2,
-  //   },
-  //   {
-  //     id: 2,
-  //     name: "Jane Smith",
-  //     avatar: "/placeholder.svg?height=40&width=40",
-  //     lastMessage: "Can we meet tomorrow?",
-  //     time: "Yesterday",
-  //     unread: 0,
-  //   },
-  //   {
-  //     id: 3,
-  //     name: "Team Project",
-  //     avatar: "/placeholder.svg?height=40&width=40",
-  //     lastMessage: "Alice: I finished the design",
-  //     time: "Yesterday",
-  //     unread: 5,
-  //   },
-  //   {
-  //     id: 4,
-  //     name: "Mom",
-  //     avatar: "/placeholder.svg?height=40&width=40",
-  //     lastMessage: "Call me when you get home",
-  //     time: "Tuesday",
-  //     unread: 0,
-  //   },
-  //   {
-  //     id: 5,
-  //     name: "Work Group",
-  //     avatar: "/placeholder.svg?height=40&width=40",
-  //     lastMessage: "Meeting at 3pm tomorrow",
-  //     time: "Monday",
-  //     unread: 0,
-  //   },
-  // ]
+  
   const handleAddGroupView = () => {
     setIsModalOpen(true);
   }
@@ -126,14 +88,17 @@ const ChatSidebar = ({ activeChat, recentChats, setActiveChat }) => {
       {/* Add group button */}
       <div className="p-4 sticky flex bottom-0 justify-between border-t border-gray-200 bg-white items-center">
 
-
+{/* 
         <Button variant="outline" size="xs" onClick={handlePrivateChat}>
           <TiUserAdd />
 
-        </Button>
+        </Button> */}
+        {userType !== "user" ? (
+
         <Button variant="outline" size="sm" onClick={handleAddGroupView}>
           <MdGroupAdd />
         </Button>
+        ) : null}
       </div>
       {/* Modal for adding group */}
       {isModalOpen && (
@@ -153,3 +118,4 @@ const ChatSidebar = ({ activeChat, recentChats, setActiveChat }) => {
 }
 
 export default ChatSidebar
+

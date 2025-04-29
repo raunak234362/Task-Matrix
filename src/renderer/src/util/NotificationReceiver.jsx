@@ -1,42 +1,67 @@
-// components/NotificationReceiver.jsx
+/* eslint-disable prettier/prettier */
+/* eslint-disable no-unused-vars */
+// src/util/NotificationReceiver.jsx
 import { useEffect } from "react";
 import { toast } from "react-toastify";
 import socket from "../socket";
+import { useSelector } from "react-redux";
 
 const NotificationReceiver = () => {
+  const staffData = useSelector((state) => state?.userData?.staffData);
+
+  const showBrowserNotification = (title, message) => {
+    if (Notification.permission !== "granted") {
+      Notification.requestPermission().then((permission) => {
+        if (permission === "granted") {
+          new Notification(title, { body: message });
+        }
+      });
+    } else {
+      new Notification(title, { body: message });
+    }
+  };
+
   useEffect(() => {
-    const handleNotification = (data) => {
-      console.log("📥 Notification received:", data);
+    socket.on("customNotification", (payload) => {
+      console.log("📥 Notification received:", payload);
 
-      // Show browser notification
-      if (Notification.permission !== "granted") {
-        Notification.requestPermission().then((permission) => {
-          if (permission === "granted") {
-            new Notification(data.title || "🔔 New Alert", {
-              body: data.message || "You have a new notification.",
-            });
-          }
-        });
-      } else {
-        new Notification(data.title || "🔔 New Alert", {
-          body: data.message || "You have a new notification.",
-        });
-      }
+      const title = payload.title || "🔔 New Alert";
+      const message = payload.message || "You have a new notification.";
 
-      // Toast for UI feedback
-      toast.success(data.message || "📩 You have a new message!");
-    };
+      showBrowserNotification(title, message);
+      toast.info(message, { position: "top-right" });
+    });
 
-    // Listen for notification from server
-    socket.on("customNotification", handleNotification);
+    socket.on("receivePrivateMessage", (msg) => {
+      console.log("📩 Private message received:", msg);
 
-    // Cleanup on unmount
+      const title = "📩 Private Message";
+      const message = typeof msg === "string" ? msg : msg?.content || "New private message.";
+
+      showBrowserNotification(title, message);
+      toast.info(message, { position: "top-right" });
+      // update your chat UI with this message
+    });
+
+    socket.on("receiveGroupMessage", (msg) => {
+      console.log("👥 Group message received:", msg);
+
+      const title = "👥 Group Message";
+      const message = msg?.content || "New group message.";
+
+      showBrowserNotification(title, message);
+      toast.info(message, { position: "top-right" });
+      // update your group chat UI
+    });
+
     return () => {
-      socket.off("customNotification", handleNotification);
+      socket.off("customNotification");
+      socket.off("receivePrivateMessage");
+      socket.off("receiveGroupMessage");
     };
   }, []);
 
-  return null; // No UI needed, this just listens
+  return null;
 };
 
 export default NotificationReceiver;
