@@ -25,11 +25,11 @@ const MyTask = () => {
     };
     // Initial fetch
     fetchTask(tasks);
-  
+
     // Listen for new task notifications
     const handleNewTaskNotification = (data) => {
       const { title = "New Task", message = "You have a new task!" } = data;
-  
+
       // Show desktop notification
       if (Notification.permission !== "granted") {
         Notification.requestPermission().then((permission) => {
@@ -40,30 +40,30 @@ const MyTask = () => {
       } else {
         new Notification(title, { body: message });
       }
-  
+
       // UI toast
       toast.success(message);
-  
+
       // Re-fetch tasks
       fetchTask();
     };
-  
+
     // Attach socket listener
     socket.on("customNotification", handleNewTaskNotification);
-  
+
     // Cleanup on unmount
     return () => {
       socket.off("customNotification", handleNewTaskNotification);
     };
   }, []);
-  
+
   // if(tasks.length + 1){
   //   window.electron.ipcRenderer.send('show-notification', {
   //     title: 'New Data Added',
   //     body: 'A new record has been added successfully!',
   //   })
   // }
-  
+
   const projects = useSelector((state) => state?.projectData?.projectData);
 
   function durToHour(params) {
@@ -123,14 +123,14 @@ const MyTask = () => {
 
   // Find the highest-priority task that is still pending
   const highestPriorityTask = tasks
-    .filter((task) => task.status === "BREAK" || task.status === "ASSIGNED")
     .sort((a, b) => {
-      const dateDiff = new Date(a.due_date).getTime() - new Date(b.due_date).getTime();
-      if (dateDiff !== 0) {
-        return dateDiff;
+      if (b.priority !== a.priority) {
+        return b.priority - a.priority; // higher priority wins
       }
-      return b.priority - a.priority;
+      return new Date(a.due_date) - new Date(b.due_date); // earlier due date wins
     })[0];
+
+  const unlockableTaskId = highestPriorityTask?.id;
 
   const reloadWnidow = () => {
     window.location.reload();
@@ -139,8 +139,8 @@ const MyTask = () => {
   return (
     <div className="mx-5 my-3 main-container">
       <div>
-                        <Button onClick={reloadWnidow}>Refresh</Button>
-                      </div>
+        <Button onClick={reloadWnidow}>Refresh</Button>
+      </div>
       <div className="mt-5 bg-white h-[60vh] overflow-auto rounded-lg">
         <table className="h-fit md:w-full w-[90vw] border-collapse text-center md:text-lg text-xs rounded-xl">
           <thead>
@@ -158,8 +158,7 @@ const MyTask = () => {
           </thead>
           <tbody className="bg-white">
             {tasks.map((task, index) => {
-              const isHighestPriority = highestPriorityTask?.id === task.id;
-              const isInProgress = task.status === "IN_PROGRESS";
+              const canView = unlockableTaskId === task.id;
 
               return (
                 <tr key={task.id} className={index % 2 === 0 ? "bg-white" : "bg-gray-200/50"}>
@@ -182,11 +181,15 @@ const MyTask = () => {
                     </span>
                   </td>
                   <td className="px-1 py-2 border">
-                    {isInProgress || isHighestPriority ? (
+                    {canView ? (
                       <Button onClick={() => handleTaskView(task.id)}>View</Button>
                     ) : (
-                      <Button className="bg-red-500 text-white font-semibold" disabled>View</Button>
+                      <Button className="bg-red-500 text-white font-semibold" disabled>
+                        View
+                      </Button>
                     )}
+
+
                   </td>
                 </tr>
               );
