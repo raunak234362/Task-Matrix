@@ -9,7 +9,7 @@ import Service from "../../../api/configAPI";
 import Button from "../../fields/Button";
 
 const GroupDetail = ({ group, onClose }) => {
-    console.log("Group in GroupDetail:", group)
+    const userType = sessionStorage.getItem("userType");
     const {
         register,
         handleSubmit,
@@ -105,11 +105,14 @@ const GroupDetail = ({ group, onClose }) => {
                         ))}
                     </ul>
                 </div>
-                <div>
-                    <Button className="mt-4" onClick={() => handleAddGroupMemberClick(groupId)}>
-                        Add Group Member
-                    </Button>
-                </div>
+                {userType === "admin" && (
+
+                    <div>
+                        <Button className="mt-4" onClick={() => handleAddGroupMemberClick(groupId)}>
+                            Add Group Member
+                        </Button>
+                    </div>
+                )}
             </div>
             {isAddGroupMemberModalOpen && (
                 <div className="fixed inset-0 bg-black bg-opacity-85 flex justify-center items-center z-50">
