@@ -1,5 +1,4 @@
 /* eslint-disable prettier/prettier */
-
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import { Smile, Paperclip, Mic, Send } from "lucide-react"
@@ -20,6 +19,11 @@ const ChatMain = ({ activeChat, setActiveChat }) => {
   const [currentConversation, setCurrentConversation] = useState()
   const groupID = activeChat?.group?.id
   const bottomRef = useRef(null)
+  const scrollContainerRef = useRef(null)
+  const [oldestMessageId, setOldestMessageId] = useState(null)
+  const [hasMore, setHasMore] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
+
   const {
     register,
     handleSubmit,
@@ -28,7 +32,7 @@ const ChatMain = ({ activeChat, setActiveChat }) => {
     setError,
     getValues,
     formState: { errors },
-  } = useForm();
+  } = useForm()
 
   const handleMessage = async (data) => {
     const content = data.content
@@ -49,104 +53,106 @@ const ChatMain = ({ activeChat, setActiveChat }) => {
     }))
   }
 
-  const fetchChatsByGroupID = async (groupID) => {
+  const fetchChatsByGroupID = async (groupID, lastMsgId = null) => {
     try {
-      const response = await Service.getChatByGroupId(groupID);
-      if (response && response.length > 0) {
+      const container = scrollContainerRef.current
+      const prevScrollHeight = container?.scrollHeight
+
+      setIsLoading(true)
+      const response = await Service.getChatByGroupId(groupID, lastMsgId)
+      if (response) {
         const chatData = response.map((chat) => ({
           id: chat.id,
           text: chat.content,
           time: chat.createdAt,
           sender: chat.senderId === userInfo?.id ? "me" : "other",
           senderName: chat.senderId !== userInfo?.id ? `${chat.sender?.f_name} ${chat.sender?.l_name}` : null,
-        }));
-        setCurrentConversation({ messages: chatData });
-        console.log("Fetched chats:", currentConversation);
+        }))
+
+        if (chatData.length > 0) {
+          setCurrentConversation((prev) => ({
+            messages: [...chatData, ...(prev?.messages || [])],
+          }))
+          setOldestMessageId(chatData[0].id)
+        }
+
+        if (chatData.length < 20) {
+          setHasMore(false)
+        }
+
+        setTimeout(() => {
+          if (container) {
+            const newScrollHeight = container.scrollHeight
+            container.scrollTop = newScrollHeight - prevScrollHeight
+          }
+        }, 100)
       }
     } catch (error) {
-      console.error("Error fetching chats by group ID:", error);
+      console.error("Error fetching chats by group ID:", error)
+    } finally {
+      setIsLoading(false)
     }
+  }
 
-  };
+  const handleScroll = () => {
+    const container = scrollContainerRef.current
+    if (container && container.scrollTop === 0 && hasMore && !isLoading) {
+      fetchChatsByGroupID(groupID, oldestMessageId)
+    }
+  }
 
   useEffect(() => {
     if (activeChat) {
-      fetchChatsByGroupID(groupID);
+      setOldestMessageId(null) // reset
+      setHasMore(true) // reset
+      setCurrentConversation({ messages: [] }) // clear current messages
+      fetchChatsByGroupID(groupID, null)
     }
-  }, [activeChat]);
+  }, [activeChat])
+
+  useEffect(() => {
+    const container = scrollContainerRef.current
+    if (container) {
+      container.addEventListener("scroll", handleScroll)
+    }
+    return () => {
+      if (container) {
+        container.removeEventListener("scroll", handleScroll)
+      }
+    }
+  }, [oldestMessageId, hasMore, isLoading])
 
   useEffect(() => {
     const handleIncomingMessage = (msg) => {
-      console.log("👥 Group message received:", msg);
       if (msg.groupId === activeChat?.group?.id) {
-        const isSenderMe = msg.senderId === userInfo?.id;
+        const isSenderMe = msg.senderId === userInfo?.id
         const newMessage = {
           id: msg.id,
           text: msg.content,
           time: msg.createdAt || new Date().toISOString(),
           sender: isSenderMe ? "me" : "other",
           senderName: (() => {
-            const sender = staffData?.find(staff => staff.id === msg.senderId);
-            return sender ? `${sender.f_name} ${sender.l_name}` : "Unknown Sender";
+            const sender = staffData?.find(staff => staff.id === msg.senderId)
+            return sender ? `${sender.f_name} ${sender.l_name}` : "Unknown Sender"
           })()
-        };
+        }
 
         setCurrentConversation(prev => ({
           messages: [...(prev?.messages || []), newMessage]
-        }));
-      }
-
-      if (msg.isTagged) {
-        console.log("🏷️ You were tagged!");
-      }
-    };
-
-    socket.on("receiveGroupMessage", handleIncomingMessage);
-
-    return () => {
-      socket.off("receiveGroupMessage", handleIncomingMessage);
-    };
-  }, [activeChat?.group?.id, userInfo?.id]);
-  useEffect(() => {
-    const handleGroupMessage = (msg) => {
-      if (!socket || !socket.connected) {
-        console.log("Socket not connected")
-        return;
-      };
-
-      console.log("👥 Group message received:", msg)
-
-      // Update last message in recent chat list
-      setRecentChats((prevChats) => {
-        return prevChats.map((chat) => {
-          if (chat.group.id === msg.groupId) {
-            return {
-              ...chat,
-              lastMessage: msg.content,
-              updatedAt: msg.createdAt,
-            }
-          }
-          return chat
-        })
-      })
-
-      if (msg.isTagged) {
-        console.log("🏷️ You were tagged!")
-        // Optionally: toast.info("You were tagged in a message.")
+        }))
       }
     }
 
-    socket.on("receiveGroupMessage", handleGroupMessage)
+    socket.on("receiveGroupMessage", handleIncomingMessage)
 
     return () => {
-      socket.off("receiveGroupMessage", handleGroupMessage)
+      socket.off("receiveGroupMessage", handleIncomingMessage)
     }
-  }, [socket])
-  console.log("RecentChats:", recentChats)
+  }, [activeChat?.group?.id, userInfo?.id])
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [currentConversation?.messages]);
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" })
+  }, [currentConversation?.messages])
 
   if (!activeChat) {
     return (
@@ -175,8 +181,9 @@ const ChatMain = ({ activeChat, setActiveChat }) => {
       </div>
 
       {/* Scrollable Messages */}
-      <div className="flex-1 overflow-y-auto p-4 bg-gray-50">
+      <div className="flex-1 overflow-y-auto p-4 bg-gray-50" ref={scrollContainerRef}>
         <div className="space-y-4">
+          {isLoading && <div className="text-center text-gray-500 text-sm">Loading more...</div>}
           {[...(currentConversation?.messages || [])]
             .sort((a, b) => new Date(a.time) - new Date(b.time))
             .map((msg) => (

@@ -144,7 +144,6 @@ class Service {
           "Content-Type": "application/json",
         },
       });
-      console.log(response?.data)
       return response?.data?.data;
     } catch (error) {
       console.log("Error in getting Project List: ", error);
@@ -651,16 +650,22 @@ class Service {
   }
 
   // Fetch the Chat by GroupID
-  static async getChatByGroupId(groupId) {
-    console.log("Service:---", groupId);
+  static async getChatByGroupId(groupId, lastMsgId) {
+    const params =new URLSearchParams();
+
+    if(lastMsgId) {
+      params.append("lastMsgId", lastMsgId);
+    }
+
     const token = sessionStorage.getItem("token");
     try {
-      const response = await api.get(`/api/chat/groupMessages/${groupId}`, {
+      const response = await api.get(`/api/chat/groupMessages/${groupId}?${params.toString()}`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
       });
+      console.log("Chat by Group ID: ", response.data.data);
       return response.data.data;
     } catch (error) {
       console.log("Error in getting Group Chat: ", error);

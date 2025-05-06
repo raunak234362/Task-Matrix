@@ -214,10 +214,14 @@ const Task = ({ taskId, setDisplay }) => {
     const end = new Date().toISOString();
     try {
       const endresponse = await Service.endTask(taskID, ev?.target?.value, end);
-      toast.success("Task Ended");
-      fetchTask();
-      setDisplay(false);
-      window.location.reload();
+      console.log("End Response: ", endresponse.success);
+      if (endresponse?.success === true) {
+
+        toast.success("Task Ended");
+        fetchTask();
+        setDisplay(false);
+        window.location.reload();
+      }
     } catch (error) {
       toast.error("Error in ending task");
     }
