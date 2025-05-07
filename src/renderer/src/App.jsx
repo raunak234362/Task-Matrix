@@ -88,7 +88,10 @@ const App = () => {
     fetchTeam();
   }, [token, dispatch]);
 
-
+  document.documentElement.style.height = '100%';
+  document.body.style.height = '100%';
+  document.getElementById('root').style.height = '100%';
+  
 
   return (
     <Provider store={store}>

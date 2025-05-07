@@ -7,12 +7,17 @@ import AddGroupModal from "./AddGroupModal"
 import { MdGroupAdd } from "react-icons/md"
 import { TiUserAdd } from "react-icons/ti";
 import Button from "../../fields/Button";
-const ChatSidebar = ({ activeChat, recentChats, setActiveChat }) => {
+const ChatSidebar = ({ activeChat, recentChats, setActiveChat, unreadChatIds, setUnreadChatIds }) => {
   // const [activeChat, setActiveChat] = useState(0)
-  const userType = sessionStorage.getItem("userType");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isPrivateChatOpen, setIsPrivateChatOpen] = useState(false);
-  
+
+  const handleSelectChat = (chat) => {
+    setActiveChat(chat);
+    setUnreadChatIds(prev => prev.filter(id => id !== chat.group.id));
+  };
+
+
   const handleAddGroupView = () => {
     setIsModalOpen(true);
   }
@@ -65,18 +70,20 @@ const ChatSidebar = ({ activeChat, recentChats, setActiveChat }) => {
             <div
               key={chats.id}
               className={`flex items-center p-3 border-b border-gray-100 cursor-pointer hover:bg-gray-50 ${activeChat === chats?.group?.id ? "bg-gray-100" : ""}`}
-              onClick={() => setActiveChat(chats)}  // <-- This triggers ChatMain to open
+              onClick={() => handleSelectChat(chats)}  // <-- updated to use the handler
             >
               <div className="ml-3 flex-1">
                 <div className="flex justify-between items-center">
                   <h3 className="font-medium">{chats?.group?.name}</h3>
-                  <span className="text-xs text-gray-500">{chats.timestamp}</span>
+                  <span className="text-xs text-gray-500">
+                    {chats.updatedAt ? new Date(chats.updatedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
+                  </span>
                 </div>
                 <div className="flex justify-between items-center mt-1">
                   <p className="text-sm text-gray-500 truncate w-40">{chats.lastMessage}</p>
-                  {chats.unread > 0 && (
+                  {(unreadChatIds.includes(chats.group.id) || chats.unread > 0) && activeChat?.group?.id !== chats.group.id && (
                     <span className="bg-green-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                      {chats.unread}
+                      ●
                     </span>
                   )}
                 </div>
@@ -92,13 +99,10 @@ const ChatSidebar = ({ activeChat, recentChats, setActiveChat }) => {
         <Button variant="outline" size="xs" onClick={handlePrivateChat}>
           <TiUserAdd />
 
-        </Button> */}
-        {userType !== "user" ? (
-
+        </Button>
         <Button variant="outline" size="sm" onClick={handleAddGroupView}>
           <MdGroupAdd />
-        </Button>
-        ) : null}
+        </Button> */}
       </div>
       {/* Modal for adding group */}
       {isModalOpen && (
@@ -118,4 +122,3 @@ const ChatSidebar = ({ activeChat, recentChats, setActiveChat }) => {
 }
 
 export default ChatSidebar
-

@@ -654,7 +654,7 @@ class Service {
     const params =new URLSearchParams();
 
     if(lastMsgId) {
-      params.append("lastMsgId", lastMsgId);
+      params.append("lastMessageId", lastMsgId);
     }
 
     const token = sessionStorage.getItem("token");

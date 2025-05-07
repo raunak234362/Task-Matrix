@@ -12,12 +12,12 @@ const Chats = () => {
   const [message, setMessage] = useState("")
   const [activeChat, setActiveChat] = useState(null)
   const [recentChats, setRecentChats] = useState([])
-
+  const [unreadChatIds, setUnreadChatIds] = useState([]);
   const fetchAllRecentConversations = async () => {
     try {
       const response = await Service.getAllChats()
       console.log("Conversations:", response)
-      setRecentChats(response)
+      setRecentChats(response.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)))
     } catch (error) {
       console.error("Error fetching conversations:", error)
     }
@@ -40,7 +40,7 @@ const Chats = () => {
 
       // Update last message in recent chat list
       setRecentChats((prevChats) => {
-        return prevChats.map((chat) => {
+        let updatedChats = prevChats.map((chat) => {
           if (chat.group.id === msg.groupId) {
             return {
               ...chat,
@@ -50,6 +50,17 @@ const Chats = () => {
           }
           return chat
         })
+
+        // Find the updated chat
+        const updatedChat = updatedChats.find((chat) => chat.group.id === msg.groupId)
+
+        // Filter out the updated chat from list and unshift it to the top
+        updatedChats = [
+          updatedChat,
+          ...updatedChats.filter((chat) => chat.group.id !== msg.groupId),
+        ]
+
+        return updatedChats
       })
 
       if (msg.isTagged) {
@@ -57,6 +68,12 @@ const Chats = () => {
         // Optionally: toast.info("You were tagged in a message.")
       }
     }
+
+    socket.on("receiveGroupMessage", (msg) => {
+      if (msg.groupId !== activeChat?.group?.id) {
+        setUnreadChatIds(prev => prev.includes(msg.groupId) ? prev : [...prev, msg.groupId]);
+      }
+    });
 
     socket.on("receiveGroupMessage", handleGroupMessage)
 
@@ -75,6 +92,8 @@ const Chats = () => {
           <ChatSidebar
             activeChat={activeChat}
             recentChats={recentChats}
+            unreadChatIds={unreadChatIds}
+            setUnreadChatIds={setUnreadChatIds}
             setActiveChat={setActiveChat}
           />
         </div>
@@ -92,7 +111,10 @@ const Chats = () => {
       <div className="md:hidden w-full h-full">
         {!activeChat ? (
           <ChatSidebar
+            activeChat={activeChat}
             recentChats={recentChats}
+            unreadChatIds={unreadChatIds}
+            setUnreadChatIds={setUnreadChatIds}
             setActiveChat={setActiveChat}
           />
         ) : (

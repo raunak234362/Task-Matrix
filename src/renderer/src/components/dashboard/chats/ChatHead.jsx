@@ -36,9 +36,9 @@ console.log("Selected group in ChatHead:", selectedGroup)
         </div>
       </div>
       <div className="flex items-center space-x-2">
-        <Button variant="ghost" size="icon" className="rounded-full">
+        {/* <Button variant="ghost" size="icon" className="rounded-full">
           <Search size={20} />
-        </Button>
+        </Button> */}
         <Button onClick={()=> handleViewGroupDetails(contact.group)} variant="ghost" size="icon" className="rounded-full">
           <MoreVertical size={20} />
         </Button>

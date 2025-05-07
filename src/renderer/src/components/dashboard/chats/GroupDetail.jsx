@@ -108,7 +108,7 @@ const GroupDetail = ({ group, onClose }) => {
                 {userType === "admin" && (
 
                     <div>
-                        <Button className="mt-4" onClick={() => handleAddGroupMemberClick(groupId)}>
+                        <Button onClick={() => handleAddGroupMemberClick(groupId)}>
                             Add Group Member
                         </Button>
                     </div>
