@@ -55,7 +55,7 @@ const MyTask = () => {
     return () => {
       socket.off("customNotification", handleNewTaskNotification);
     };
-  }, []);
+  }, [tasks.length]);
 
   // if(tasks.length + 1){
   //   window.electron.ipcRenderer.send('show-notification', {

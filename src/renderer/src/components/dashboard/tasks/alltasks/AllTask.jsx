@@ -123,7 +123,6 @@ const AllTask = () => {
   };
 
   function formatMinutesToHours(totalMinutes) {
-    console.log("totalMinutes: ", totalMinutes);
     if (!totalMinutes && totalMinutes !== 0) return "N/A";
 
     const hours = Math.floor(totalMinutes / 60);

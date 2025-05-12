@@ -16,6 +16,7 @@ import NotificationReceiver from "./util/NotificationReceiver";
 const App = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const dispatch = useDispatch();
+  const [tasks, setTasks] = useState([]);
   const token = sessionStorage.getItem("token");
   const [userDetail, setUserDetail] = useState()
   const userType = sessionStorage.getItem("userType");
@@ -30,7 +31,7 @@ const App = () => {
 
   const fetchTasks = async () => {
     const tasks = await Service.getAllTask(token);
-
+    setTasks(tasks);
     const departmentTasks = tasks?.flatMap((task) => task?.tasks) || [];
 
     if (userType === "department-manager") {
@@ -62,7 +63,7 @@ const App = () => {
       connectSocket(userId);
       if (socket) {
         console.log("Socket is already connected:", socket);
-        sessionStorage.setItem("socketId", socket.id) ;
+        sessionStorage.setItem("socketId", socket.id);
         const socketId = sessionStorage.getItem("socketId");
         socket.on("connect", () => {
           console.log("✅ Connected with socket:", socketId);
@@ -82,16 +83,18 @@ const App = () => {
   useEffect(() => {
     fetchUser();
     fetchMyTasks();
-    fetchTasks();
+
     fetchProjects();
     fetchUserData();
     fetchTeam();
   }, [token, dispatch]);
 
+  useEffect(() => { fetchTasks(); }, [token])
+
   document.documentElement.style.height = '100%';
   document.body.style.height = '100%';
   document.getElementById('root').style.height = '100%';
-  
+
 
   return (
     <Provider store={store}>

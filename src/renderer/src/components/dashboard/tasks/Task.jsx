@@ -21,7 +21,6 @@ const Task = ({ taskId, setDisplay }) => {
   const [timer, setTimer] = useState(0); // Timer in seconds
   const [isTimerRunning, setIsTimerRunning] = useState(false);
   const staffData = useSelector((state) => state?.userData?.staffData);
-  console.log("Staff Data: ", staffData);
   const {
     register,
     handleSubmit,
@@ -123,6 +122,7 @@ const Task = ({ taskId, setDisplay }) => {
       "COMPLETE": "bg-green-100 text-green-800 border-green-800",
       "APPROVED": "bg-purple-100 text-purple-600 border-purple-600",
       "ASSIGNED": "bg-pink-100 text-pink-500 border-pink-500",
+      "RE_ASSIGNED": " bg-cyan-100 text-cyan-500 border-cyan-500",
     };
     return statusStyles[status] || "bg-gray-100 text-gray-500 border-gray-500";
   };
@@ -156,7 +156,7 @@ const Task = ({ taskId, setDisplay }) => {
           status: "IN_PROGRESS",
         };
       });
-      window.location.reload();
+      // window.location.reload();
       toast.success("Task Started");
       sessionStorage.setItem("work_id", accept.data.id);
     } catch (error) {
@@ -214,13 +214,12 @@ const Task = ({ taskId, setDisplay }) => {
     const end = new Date().toISOString();
     try {
       const endresponse = await Service.endTask(taskID, ev?.target?.value, end);
-      console.log("End Response: ", endresponse.success);
-      if (endresponse?.success === true) {
-
+      console.log("End Response: ", endresponse.status);
+      if (endresponse?.status === "END") {
         toast.success("Task Ended");
         fetchTask();
         setDisplay(false);
-        window.location.reload();
+        // window.location.reload();
       }
     } catch (error) {
       toast.error("Error in ending task");
@@ -433,7 +432,7 @@ const Task = ({ taskId, setDisplay }) => {
                               )}
 
                               {/* Show Resume button if the task is paused */}
-                              {tasks?.status === "BREAK" && (
+                              {tasks?.status === "BREAK" || tasks?.status === "RE_ASSIGNED" ? (
                                 <Button
                                   className="flex items-center justify-center font-semibold bg-green-500 rounded-full w-28 hover:bg-green-700"
                                   value={workdata?.id}
@@ -441,7 +440,7 @@ const Task = ({ taskId, setDisplay }) => {
                                 >
                                   Resume
                                 </Button>
-                              )}
+                              ) : null}
 
                               {/* Always show End button */}
                               {tasks?.status === "IN_PROGRESS" && (

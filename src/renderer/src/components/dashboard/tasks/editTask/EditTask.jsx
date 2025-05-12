@@ -246,8 +246,8 @@ const EditTask = ({ onClose, task }) => {
                   { label: "ON HOLD", value: "ONHOLD" },
                   { label: "BREAK", value: "BREAK" },
                   { label: "IN REVIEW", value: "IN_REVIEW" },
+                  { label: "RE-ASSIGNED", value: "RE_ASSIGNED" },
                   { label: "COMPLETED", value: "COMPLETE" },
-                  { label: "APPROVED", value: "APPROVED" },
                 ]}
                 className="w-full"
                 defaultValues={task?.status}

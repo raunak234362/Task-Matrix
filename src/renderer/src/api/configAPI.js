@@ -452,9 +452,9 @@ class Service {
     }
   }
 
-  static async endTask(task_id, work_id) {
-    console.log("end-=-=-=-==-=-=-", task_id, work_id);
-    const formData = { task_id, work_id };
+  static async endTask(task_id, work_id, end) {
+    console.log("end-=-=-=-==-=-=-", task_id, work_id, end);
+    const formData = { task_id, work_id, end };
     const token = sessionStorage.getItem("token");
     try {
       const response = await api.patch(`/api/wh/wh/end/`, formData, {
@@ -463,7 +463,7 @@ class Service {
           "Content-Type": "application/json",
         },
       });
-      const data = await response.data;
+      const data = await response.data.data;
       console.log("End Task: ", data);
       return data;
     } catch (error) {
