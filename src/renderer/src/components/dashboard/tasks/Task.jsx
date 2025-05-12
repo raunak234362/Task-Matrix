@@ -444,13 +444,15 @@ const Task = ({ taskId, setDisplay }) => {
                               )}
 
                               {/* Always show End button */}
-                              <Button
-                                className="flex items-center justify-center font-semibold bg-red-500 rounded-full w-28 hover:bg-red-800"
-                                value={workdata?.id}
-                                onClick={handleEnd}
-                              >
-                                End
-                              </Button>
+                              {tasks?.status === "IN_PROGRESS" && (
+                                <Button
+                                  className="flex items-center justify-center font-semibold bg-red-500 rounded-full w-28 hover:bg-red-800"
+                                  value={workdata?.id}
+                                  onClick={handleEnd}
+                                >
+                                  End
+                                </Button>
+                              )}
                             </div>
                           </>
                         )}
@@ -459,7 +461,7 @@ const Task = ({ taskId, setDisplay }) => {
                   </div>
                   {/* select Assignee */}
 
-                  <form
+                  {/* <form
                     onSubmit={handleSubmit(handleAddAssign)} // separate handler
                     className="w-full gap-5 p-5 rounded-lg shadow-xl bg-teal-200/30"
                   >
@@ -489,7 +491,7 @@ const Task = ({ taskId, setDisplay }) => {
                         </Button>
                       </div>
                     </div>
-                  </form>
+                  </form> */}
                   {/* <div className="w-full p-5 rounded-lg shadow-xl bg-teal-200/50">
                     <div className="mb-4 font-bold text-gray-800">
                       People Assigned:
@@ -777,7 +779,7 @@ const Task = ({ taskId, setDisplay }) => {
           </div>
         </div>
       </div>
-    </div>
+    </div >
   );
 };
 

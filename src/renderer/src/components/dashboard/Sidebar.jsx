@@ -79,7 +79,6 @@ const Sidebar = () => {
                   <div>Fabricator</div>
                 </NavLink>
               </li>
-             
           ) : null} */}
           {userType !== "human-resource" ? (
             <li>
@@ -108,20 +107,6 @@ const Sidebar = () => {
               <div>Task</div>
             </NavLink>
           </li>
-          {/* {(userType === "manager" || userType === "admin") ? (
-            <li>
-              <NavLink
-                to="user"
-                className={({ isActive }) =>
-                  isActive
-                    ? "flex justify-center items-center text-white bg-teal-400 rounded-md w-full delay-150"
-                    : "text-black hover:text-white hover:flex hover:justify-center hover:items-center hover:bg-teal-200  rounded-md"
-                }
-              >
-                <div>Ghant Chart</div>
-              </NavLink>
-            </li>
-          ) : null} */}
 
           <li className="w-full">
             <NavLink

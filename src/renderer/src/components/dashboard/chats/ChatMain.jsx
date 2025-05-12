@@ -10,6 +10,7 @@ import Button from "../../fields/Button"
 import Input from "../../fields/Input"
 import socket from "../../../socket"
 import Service from "../../../api/configAPI"
+import ChatBG from "../../../assets/CHATBG.webp"
 
 const ChatMain = ({ activeChat, setActiveChat }) => {
   const [recentChats, setRecentChats] = useState([])
@@ -63,7 +64,7 @@ const ChatMain = ({ activeChat, setActiveChat }) => {
     }
   }
 
-  const formatMessage = (text) => {
+ const formatMessage = (text) => {
     const words = text.split(" ")
     let lines = []
     let currentLine = []
@@ -81,7 +82,18 @@ const ChatMain = ({ activeChat, setActiveChat }) => {
       if (line.trim().startsWith("- ") || line.trim().startsWith("* ")) {
         return <li key={idx} className="list-disc ml-4">{line.trim().slice(2)}</li>
       }
-      return <p key={idx}>{line}</p>
+      return (<p key={idx}>
+        {line.split(" ").map((word, wIdx) => {
+          if (word.startsWith("@") && word.length > 1) {
+            return (
+              <span key={wIdx} className="text-blue-500 font-semibold">
+                {word}{" "}
+              </span>
+            )
+          }
+          return word + " "
+        })}
+      </p>)
     })
   }
 
@@ -201,12 +213,12 @@ const ChatMain = ({ activeChat, setActiveChat }) => {
   }, [groupID, oldestMessageId, hasMore, isLoading])
 
   return (
-    <div className="flex flex-col w-full h-full bg-gray-50 overflow-hidden">
+    <div className="flex flex-col w-full h-full overflow-hidden" style={{ backgroundImage: `url(${ChatBG})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
       <div className="sticky top-0 z-10 bg-white border-b border-gray-200">
         <ChatHead contact={activeChat} onBack={() => setActiveChat?.(null)} />
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4 bg-gray-50" ref={scrollContainerRef}>
+      <div className="flex-1 overflow-y-auto p-4 bg-green-50/60" ref={scrollContainerRef}>
         <div className="space-y-4">
           {isLoading && <div className="text-center text-gray-500 text-sm">Loading more...</div>}
           {(() => {
@@ -248,8 +260,8 @@ const ChatMain = ({ activeChat, setActiveChat }) => {
                     <div className={`flex ${msg.sender === "me" ? "justify-end" : "justify-start"} mb-1`}>
                       <div
                         className={`max-w-xs md:max-w-md p-3 rounded-lg ${msg.sender === "me"
-                          ? "bg-green-100 rounded-tr-none"
-                          : "bg-orange-200 rounded-tl-none"
+                          ? "bg-white/70 rounded-tr-none"
+                          : "bg-teal-100/80 rounded-tl-none"
                           }`}
                       >
                         {msg.sender !== "me" && msg.senderName && (
@@ -260,7 +272,7 @@ const ChatMain = ({ activeChat, setActiveChat }) => {
                         <div className="text-sm whitespace-pre-wrap break-words">
                           {formatMessage(msg.text)}
                         </div>
-                        <p className="text-right text-xs text-gray-500 mt-1">
+                        <p className="text-right text-xs text-gray-800 mt-1">
                           {new Date(msg.time).toLocaleTimeString([], {
                             hour: "2-digit",
                             minute: "2-digit",
