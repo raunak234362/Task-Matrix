@@ -140,13 +140,13 @@ const EditTask = ({ onClose, task }) => {
                 options={[
                   { label: "Select Task", value: "" },
                   { label: "Modeling", value: "MODELING" },
-                  { label: "Model checking", value: "MODEL_CHECKING" },
+                  { label: "Model checking", value: "MC" },
                   { label: "Erection", value: "ERECTION" },
-                  { label: "Erection checking", value: "ERECTION_CHECKING" },
+                  { label: "Erection checking", value: "EC" },
                   { label: "Detailing", value: "DETAILING" },
-                  { label: "Detail checking", value: "DETAIL_CHECKING" },
+                  { label: "Detail checking", value: "DC" },
                   { label: "Designing", value: "DESIGNING" },
-                  { label: "Design Checking", value: "DESIGN_CHECKING" },
+                  { label: "Design Checking", value: "DWG_CHECKING" },
                   { label: "Others", value: "OTHERS" },
                 ]}
                 {...register("type")}

@@ -178,13 +178,13 @@ const AddTask = () => {
                       value: "",
                     },
                     { label: "Modeling", value: "MODELING" },
-                    { label: "Model Checking", value: "MODEL_CHECKING" },
+                    { label: "Model Checking", value: "MC" },
                     { label: "Detailing", value: "DETAILING" },
-                    { label: "Detailing Checking", value: "DETAIL_CHECKING" },
+                    { label: "Detailing Checking", value: "DC" },
                     { label: "Erection", value: "ERECTION" },
-                    { label: "Erection Checking", value: "ERECTION_CHECKING" },
+                    { label: "Erection Checking", value: "EC" },
                     { label: "Designing", value: "DESIGNING" },
-                    { label: "Design Checking", value: "DESIGN_CHECKING" },
+                    { label: "Design Checking", value: "DWG_CHECKING" },
                     { label: "Others", value: "OTHERS" },
                   ]}
                   {...register("type", { required: "Task Type is required" })}
