@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react";
 import Service from "../../../../api/configAPI";
 import { Button, Header, SelectedTask } from "../../../index";
 import { useDispatch, useSelector } from "react-redux";
-import { showTask, showTaskByID } from "../../../../store/taskSlice";
 
 const AllTask = () => {
   const userType = sessionStorage.getItem("userType");
@@ -162,26 +161,6 @@ const AllTask = () => {
     filterAndSortData();
   }, [tasks, searchQuery, filters, sortOrder]);
 
-  const getCompletionBarColor = (status) => {
-    switch (status) {
-      case "COMPLETE":
-        return "bg-green-500"; // Green for completed
-      case "IN_REVIEW":
-        return "bg-yellow-500"; // Yellow for IN_REVIEW
-      default:
-        return "bg-green-500"; // Default or no status
-    }
-  };
-  const getInReviewBarColor = (status) => {
-    switch (status) {
-      case "COMPLETE":
-        return "bg-green-500"; // Green for completed
-      case "IN_REVIEW":
-        return "bg-yellow-500"; // Yellow for IN_REVIEW
-      default:
-        return "bg-yellow-500"; // Default or no status
-    }
-  };
 
   const handleViewClick = async (taskId) => {
     console.log("Task ID:", taskId);
