@@ -10,11 +10,11 @@ import { updateTask } from "../../../../store/taskSlice";
 import { BASE_URL } from "../../../../config/constant";
 import { toast } from "react-toastify";
 
-const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
-  
+const SelectedTask = ({ taskDetail, taskId, isOpen, onClose, setTasks }) => {
+  console.log("Task Detail: ", taskId);
   const dispatch = useDispatch();
   const taskData = useSelector((state) =>
-    state?.taskData?.taskData.filter((task) => task.id === taskID),
+    state?.taskData?.taskData.filter((task) => task.id === taskId),
   );
   const task = taskData[0];
   console.log("Task Data: ", task);
@@ -56,7 +56,7 @@ const SelectedTask = ({ taskDetail, taskID, isOpen, onClose, setTasks }) => {
 
   const deleteTaskID = async () => {
     try {
-      const response = await Service.deleteTask(taskID);
+      const response = await Service.deleteTask(taskId);
       onClose();
       toast.success("Task deleted successfully");
     } catch (error) {

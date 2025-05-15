@@ -1,167 +1,153 @@
-/* eslint-disable prettier/prettier */
 /* eslint-disable no-unused-vars */
-import React, { useEffect, useState } from "react";
+/* eslint-disable react/prop-types */
+/* eslint-disable prettier/prettier */
+/* eslint-disable react/jsx-key */
+import React, { useMemo, useEffect, useState } from "react";
+import { useTable, useSortBy, usePagination } from "react-table";
+import { useSelector, useDispatch } from "react-redux";
+import SelectedTask from "./SelectedTask";
+import DateFilter from "../../projects/projectStatus/DateFilter";
+import Button from "../../../fields/Button";
 import Service from "../../../../api/configAPI";
-import { Button, Header, SelectedTask } from "../../../index";
-import { useDispatch, useSelector } from "react-redux";
 
 const AllTask = () => {
-  const userType = sessionStorage.getItem("userType");
-  const tasks = useSelector((state) => state?.taskData?.taskData);
-  const projectData = useSelector((state) => state?.projectData?.projectData);
-  const userData = useSelector((state) => state?.userData?.staffData);
-  const [selectedTask, setSelectedTask] = useState(null);
+  const dispatch = useDispatch();
+  const tasks = useSelector((state) => state.taskData.taskData);
+  const projects = useSelector((state) => state.projectData.projectData);
+  const userData = useSelector((state) => state.userData.staffData);
   const [taskID, setTaskID] = useState(null);
+  console.log("projects", tasks);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [completionPercentage, setCompletionPercentage] = useState(0);
-  const [inReviewPercentage, setInReviewPercentage] = useState(0);
+  const [selectedTask, setSelectedTask] = useState();
+  const [taskFilter, setTaskFilter] = useState(tasks);
+  const [dateFilter, setDateFilter] = useState({ type: "all" });
   const [searchQuery, setSearchQuery] = useState("");
-  const [taskFilter, setTaskFilter] = useState([]);
-  const [projectFilter, setProjectFilter] = useState([]);
-  const [sortOrder, setSortOrder] = useState({ key: "name", order: "asc" });
   const [filters, setFilters] = useState({
-    fabricator: "",
+    project: "",
     status: "",
   });
-
-
-  // Pagination state
-  const [currentPage, setCurrentPage] = useState(1);
-  const tasksPerPage = 50;
-
-  // const departmentTask = tasks?.flatMap((task) => task?.tasks) || [];
+  const handleSearch = (e) => setSearchQuery(e.target.value);
 
   useEffect(() => {
-    setTaskFilter(tasks);
-  }, [tasks, userType]);
-  const uniqueProject = [
-    ...new Set(
-      (userType === "department-manager" ? tasks : tasks)?.map(
-        (project) => project?.project?.name,
-      ),
-    ),
-  ];
-  // console.log("UNIQUE PROJECTS:", uniqueProject);
-  const filterAndSortData = () => {
-    let filtered = (
-      tasks
-    )?.filter((task) => {
-      const searchMatch =
-        task?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        userData
-          ?.find((user) => user?.id === task?.user_id)
-          ?.f_name?.toLowerCase()
-          .includes(searchQuery.toLowerCase()) ||
-        userData
-          ?.find((user) => user?.id === task?.user_id)
-          ?.m_name?.toLowerCase()
-          .includes(searchQuery.toLowerCase()) ||
-        userData
-          ?.find((user) => user?.id === task?.user_id)
-          ?.l_name?.toLowerCase()
-          .includes(searchQuery.toLowerCase());
+    let filtered = [...tasks];
 
-      const filterMatch =
-        (!filters?.project || task?.project?.name === filters?.project) &&
-        (!filters?.status || task?.status === filters?.status);
-
-      return searchMatch && filterMatch;
-    });
-
-    // Sorting
-    filtered.sort((a, b) => {
-      let aKey = a[sortOrder?.key];
-      let bKey = b[sortOrder?.key];
-
-      // Handle fabricator sorting separately
-      if (sortOrder?.key === "project") {
-        aKey = a.project?.name || "";
-        bKey = b.project?.name || "";
-      }
-
-      // Convert only if it's a string
-      const aValue =
-        typeof aKey === "string" ? aKey.toLowerCase() : (aKey ?? "");
-      const bValue =
-        typeof bKey === "string" ? bKey.toLowerCase() : (bKey ?? "");
-
-      if (sortOrder?.order === "asc") return aValue > bValue ? 1 : -1;
-      return aValue < bValue ? 1 : -1;
-    });
-    setTaskFilter(filtered);
-  };
-
-  // Pagination logic
-  const indexOfLastTask = currentPage * tasksPerPage;
-  const indexOfFirstTask = indexOfLastTask - tasksPerPage;
-  const currentTasks = taskFilter.slice(indexOfFirstTask, indexOfLastTask);
-
-  const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
-  };
-
-  const totalPages = Math.ceil(taskFilter.length / tasksPerPage);
-
-
-  // Search handler
-  const handleSearch = (e) => {
-    setSearchQuery(e.target.value);
-  };
-
-  // Filter change handler
-  const handleFilterChange = (e) => {
-    const { name, value } = e.target;
-    setFilters((prevFilters) => ({ ...prevFilters, [name]: value }));
-  };
-
-  // Sort handler
-  const handleSort = (key) => {
-    const order =
-      sortOrder.key === key && sortOrder.order === "asc" ? "desc" : "asc";
-    setSortOrder({ key, order });
-  };
-
-  function formatMinutesToHours(totalMinutes) {
-    if (!totalMinutes && totalMinutes !== 0) return "N/A";
-
-    const hours = Math.floor(totalMinutes / 60);
-    const minutes = totalMinutes % 60;
-
-    return `${hours}h ${minutes}m`;
-  }
-
-  useEffect(() => {
-    if (projectFilter) {
-      const projectTasks = (
-        tasks
-      ).filter((task) => task?.project?.name === projectFilter);
-      const completedTasks = projectTasks.filter(
-        (task) => task?.status === "COMPLETE",
-      ).length;
-      const totalTasks = projectTasks.length;
-
-      const inReviewTasks = projectTasks.filter(
-        (task) => task?.status === "IN_REVIEW",
-      ).length;
-
-      const inReviewPercentage =
-        totalTasks > 0 ? (inReviewTasks / totalTasks) * 100 : 0;
-      // console.log("In Review Percentage:", inReviewPercentage);
-      setInReviewPercentage(inReviewPercentage);
-      const percentage =
-        totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
-      setCompletionPercentage(percentage);
-
-      const totalMinutes = projectTasks.reduce((sum, task) => {
-        const taskDuration = task?.project?.duration || 0;
-        return sum + taskDuration;
-      }, 0);
+    // Apply project filter
+    if (filters.project) {
+      filtered = filtered.filter((task) => {
+        const project = projects.find((p) => p.id === task.project_id);
+        return project?.name === filters.project;
+      });
     }
 
-    filterAndSortData();
-  }, [tasks, searchQuery, filters, sortOrder]);
+    // Apply date filter
+    if (dateFilter.type !== "all") {
+      filtered = filtered.filter((task) => {
+        const dueDate = new Date(task.due_date);
+
+        if (dateFilter.type === "month") {
+          return (
+            dueDate.getFullYear() === dateFilter.year &&
+            dueDate.getMonth() === dateFilter.month
+          );
+        }
+
+        if (dateFilter.type === "year") {
+          return dueDate.getFullYear() === dateFilter.year;
+        }
+
+        if (dateFilter.type === "week") {
+          return (
+            dueDate.getTime() >= dateFilter.weekStart &&
+            dueDate.getTime() <= dateFilter.weekEnd
+          );
+        }
+
+        if (dateFilter.type === "range") {
+          return (
+            dueDate.getFullYear() === dateFilter.year &&
+            dueDate.getMonth() >= dateFilter.startMonth &&
+            dueDate.getMonth() <= dateFilter.endMonth
+          );
+        }
+
+        return true;
+      });
+    }
+
+    // Apply search filter
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter((task) => {
+        const taskName = task.name?.toLowerCase() || "";
+
+        const user = userData?.find((u) => u.id === task.user_id);
+        const fullName = user
+          ? [user.f_name, user.m_name, user.l_name].filter(Boolean).join(" ").toLowerCase()
+          : "";
+
+        return taskName.includes(query) || fullName.includes(query);
+      });
+    }
+
+    setTaskFilter(filtered);
+  }, [tasks, dateFilter, searchQuery, filters.project, userData, projects]);
 
 
+
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilters((prev) => ({ ...prev, [name]: value }));
+  };
+
+
+  function statusColor(status) {
+    switch (status) {
+      case "IN_PROGRESS":
+        return "bg-yellow-200 border-yellow-800 text-yellow-800";
+      case "ASSIGNED":
+        return "bg-orange-200 border-orange-800 text-orange-800";
+      case "BREAK":
+        return "bg-red-200 border-red-500 text-red-500";
+      case "IN_REVIEW":
+        return "bg-blue-200 border-blue-600 text-blue-500";
+      case "COMPLETE":
+        return "bg-green-200 border-green-500 text-green-800";
+      default:
+        return "text-gray-700";
+    }
+  }
+
+  function color(priority) {
+    switch (priority) {
+      case 0:
+        return "bg-green-200 border-green-800 text-green-800";
+      case 1:
+        return "bg-yellow-200 border-yellow-800 text-yellow-800";
+      case 2:
+        return "bg-purple-200 border-purple-800 text-purple-800";
+      case 3:
+        return "bg-red-200 border-red-700 text-red-700";
+      default:
+        return "";
+    }
+  }
+
+  function setPriorityValue(value) {
+    switch (value) {
+      case 0:
+        return "LOW";
+      case 1:
+        return "MEDIUM";
+      case 2:
+        return "HIGH";
+      case 3:
+        return "CRITICAL";
+      default:
+        return "";
+    }
+  }
+
+  const taskIds = useSelector((state) => state.taskData.taskData?.map((task) => task.id));
   const handleViewClick = async (taskId) => {
     console.log("Task ID:", taskId);
     try {
@@ -181,248 +167,302 @@ const AllTask = () => {
     setTaskID(null);
   };
 
-  const durToHour = (params) => {
-    if (!params) return "N/A";
+  const data = useMemo(() => taskFilter, [taskFilter]);
 
-    const parts = params.split(" ");
-    let days = 0;
-    let timePart = params;
+  const columns = useMemo(
+    () => [
+      {
+        Header: "S.No",
+        accessor: (row, i) => i + 1,
+        id: "sno",
+      },
+      {
+        Header: "Project",
+        accessor: "project_id",
+        id: "project",
+        Cell: ({ value }) => {
+          const project = projects?.find((p) => p.id === value);
+          return project ? project.name : "N/A";
+        },
+      },
+      {
+        Header: "Task Name",
+        accessor: "name",
+      },
+      {
+        Header: "Assigned To",
+        accessor: "user_id",
+        id: "assignedTo",
+        Cell: ({ value }) => {
+          const user = userData?.find((u) => u.id === value);
+          return user
+            ? [user.f_name, user.m_name, user.l_name].filter(Boolean).join(" ")
+            : "N/A";
+        },
+      },
+      {
+        Header: "Due Date",
+        accessor: "due_date",
+        Cell: ({ value }) => new Date(value).toLocaleDateString(),
+      },
 
-    if (parts.length === 2) {
-      days = parseInt(parts[0], 10);
-      timePart = parts[1];
-    }
-
-    const [hours, minutes, seconds] = timePart.split(":").map(Number);
-    const totalHours = days * 24 + hours;
-    return `${totalHours}h ${minutes}m`;
-  };
-
-  const color = (priority) => {
-    switch (priority) {
-      case 0:
-        return "bg-green-200 border-green-800 text-green-800";
-      case 1:
-        return "bg-yellow-200 border-yellow-800 text-yellow-800";
-      case 2:
-        return "bg-purple-200 border-purple-800 text-purple-800";
-      case 3:
-        return "bg-red-200 border-red-700 text-red-700";
-      default:
-        break;
-    }
-  };
-
-  const setPriorityValue = (value) => {
-    switch (value) {
-      case 0:
-        return "LOW";
-      case 1:
-        return "MEDIUM";
-      case 2:
-        return "HIGH";
-      case 3:
-        return "CRITICAL";
-      default:
-        break;
-    }
-  };
-
-  const taskIds = useSelector((state) =>
-    state?.taskData?.taskData?.map((task) => task.id),
+      {
+        Header: "Status",
+        accessor: "status",
+        Cell: ({ value }) => (
+          <span className={`px-2 py-1 rounded-full border ${statusColor(value)}`}>
+            {value}
+          </span>
+        ),
+      },
+      {
+        Header: "Priority",
+        accessor: "priority",
+        Cell: ({ value }) => (
+          <span className={`px-2 py-1 rounded-full border ${color(value)}`}>
+            {setPriorityValue(value)}
+          </span>
+        ),
+      },
+      {
+        Header: "Allocated Hours",
+        accessor: "duration",
+        Cell: ({ value }) => {
+          if (!value) return "N/A";
+          // Expecting value in "hh:mm:ss" format
+          const [h = "0", m = "0"] = value.split(":");
+          const hours = parseInt(h, 10);
+          const mins = parseInt(m, 10);
+          return `${hours} h ${mins} min`;
+        },
+      },
+      {
+        Header: "Taken Hours",
+        accessor: "taken_hours",
+        Cell: ({ row }) => {
+          const task = row.original;
+          // Find the working hour record for the current task's id
+          const takenDuration = task?.workingHourTask?.find((rec) => rec.task_id === task.id)?.duration;
+          if (!takenDuration || isNaN(Number(takenDuration))) return "N/A";
+          const totalMinutes = parseInt(takenDuration, 10);
+          const hours = Math.floor(totalMinutes / 60);
+          const mins = totalMinutes % 60;
+          return `${hours} h ${mins} min`;
+        },
+      },
+      {
+        Header: "Actions",
+        accessor: "actions",
+        disableSortBy: true,
+        Cell: ({ row }) => (
+          <Button
+            onClick={() => handleViewClick(row.original.id)}
+          >
+            View
+          </Button>
+        ),
+      },
+    ],
+    [dispatch]
   );
 
-  const reloadWnidow = () => {
-    window.location.reload();
-  };
+
+  const {
+    getTableProps,
+    getTableBodyProps,
+    headerGroups,
+    page, // instead of rows
+    prepareRow,
+    canPreviousPage,
+    canNextPage,
+    pageOptions,
+    pageCount,
+    gotoPage,
+    nextPage,
+    previousPage,
+    setPageSize,
+    state: { pageIndex, pageSize },
+  } = useTable(
+    {
+      columns,
+      data,
+      initialState: { pageIndex: 0, pageSize: 15 },
+    },
+    useSortBy,
+    usePagination
+  );
 
   return (
-    <div className="h-[65vh] overflow-y-auto">
-      <div className="table-container w-full rounded-lg">
-        <div className="w-full rounded-lg shadow-xl table-container">
-          <div className="mx-5 my-3">
-            <div className=" py-5 bg-white h-full my-5 overflow-auto rounded-lg">
-              <div className="flex flex-col md:flex-row gap-4 mb-4">
-                <input
-                  type="text"
-                  placeholder="Search by Task name & User Name"
-                  className="border p-2 rounded w-full mb-4"
-                  value={searchQuery}
-                  onChange={handleSearch}
-                />
-                <div className="mb-4 grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {/* Fabricator Filter */}
-                  <select
-                    name="project"
-                    value={filters.project}
-                    onChange={handleFilterChange}
-                    className="border p-2 rounded"
-                  >
-                    <option value="">All Projects</option>
-                    {uniqueProject?.map((project) => (
-                      <option key={project} value={project}>
-                        {project}
-                      </option>
-                    ))}
-                  </select>
+    <div className="p-4 ">
+      <div className=" mb-4">
+        <div className="flex flex-col items-center md:flex-row gap-4 mb-4">
+          <div className="flex gap-5">
 
-                  {/* Status Filter */}
-                  <select
-                    name="status"
-                    value={filters.status}
-                    onChange={handleFilterChange}
-                    className="border p-2 rounded"
-                  >
-                    <option value="">All Status</option>
-                    <option value="ASSIGNED">ASSIGNED</option>
-                    <option value="IN_PROGRESS">IN PROGRESS</option>
-                    <option value="ONHOLD">ON HOLD</option>
-                    <option value="BREAK">BREAK</option>
-                    <option value="IN_REVIEW">IN REVIEW</option>
-                    <option value="COMPLETE">COMPLETED</option>
-                  </select>
-                </div>
-                <div>
-                  <Button onClick={reloadWnidow}>Refresh</Button>
-                </div>
-              </div>
-              <div className=" bg-white rounded-lg">
+            <input
+              type="text"
+              placeholder="Search by task name or user name"
+              className="border p-2 rounded w-full"
+              value={searchQuery}
+              onChange={handleSearch}
+            />
 
-                <table className="md:w-full w-[90vw] border-collapse text-center md:text-lg text-xs rounded-xl">
-                  <thead>
-                    <tr className="bg-teal-200/70">
-                      {[
-                        "s.no",
-                        "project",
-                        "task name",
-                        "Assigned user",
-                        "status",
-                        "priority",
-                        "due_date",
-                        "Allocated Hours",
-                        "Hours taken",
-                      ].map((key) => (
-                        <th
-                          key={key}
-                          className="px-2 py-1 cursor-pointer"
-                          onClick={() => handleSort(key)}
-                        >
-                          {key.charAt(0)?.toUpperCase() + key.slice(1)}
-                          {sortOrder.key === key &&
-                            (sortOrder.order === "asc" ? "" : "")}
-                        </th>
-                      ))}
-                      <th className="px-2 py-1">Action</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {currentTasks?.length === 0 ? (
-                      <tr className="bg-white">
-                        <td colSpan="7" className="text-center">
-                          No Task Found
-                        </td>
-                      </tr>
-                    ) : (
-                      currentTasks?.map((task, index) => {
-                        const allocatedHours = task?.duration
-                          ? parseInt(task?.duration.split(":")[0], 10)
-                          : 0;
-                        const takenHours =
-                          task?.workingHourTask?.find((rec) =>
-                            taskIds.includes(rec.task_id),
-                          )?.duration / 60 || 0;
-                        const isOverAllocated = takenHours > allocatedHours;
-
-                        return (
-                          <tr
-                            key={task.id}
-                            className={`${isOverAllocated
-                              ? "bg-red-200"
-                              : index % 2 === 0
-                                ? "bg-white"
-                                : "bg-gray-200/50"
-                              }`}
-                          >
-                            <td className="px-1 py-2 border">{indexOfFirstTask + index + 1}</td>
-                            <td className="px-1 py-2 border">
-                              {
-                                projectData?.find(
-                                  (project) => project?.id === task?.project_id,
-                                )?.name
-                              }
-                            </td>
-                            <td className="px-1 py-2 border">{task?.name}</td>
-
-                            <td className="px-1 py-2 border">
-                              {userData?.find(
-                                (user) => user?.id === task?.user_id,
-                              )
-                                ? `${userData.find((user) => user.id === task.user_id)?.f_name || ""} ${userData.find((user) => user.id === task.user_id)?.m_name || ""} ${userData.find((user) => user.id === task.user_id)?.l_name || ""}`.trim()
-                                : ""}
-                            </td>
-                            <td className="px-1 py-2 border">{task?.status}</td>
-                            <td className={`border px-1 py-2`}>
-                              <span
-                                className={`text-sm text-center font-semibold px-3 py-0.5 mx-2 rounded-full border ${color(
-                                  task?.priority,
-                                )}`}
-                              >
-                                {setPriorityValue(task?.priority)}
-                              </span>
-                            </td>
-                            <td className="px-1 py-2 border">
-                              {new Date(task?.due_date).toDateString()}
-                            </td>
-                            <td className="px-1 py-2 border">
-                              {durToHour(task?.duration)}
-                            </td>
-                            <td className="px-1 py-2 border">
-                              {formatMinutesToHours(
-                                task?.workingHourTask?.find((rec) =>
-                                  taskIds.includes(rec.task_id),
-                                )?.duration,
-                              )}
-                            </td>
-
-                            <td className="flex justify-center px-1 py-2 border">
-                              <Button onClick={() => handleViewClick(task?.id)}>
-                                View
-                              </Button>
-                            </td>
-                          </tr>
-                        );
-                      })
-                    )}
-                  </tbody>
-                </table>
-              </div>
-              {/* Pagination Controls */}
-              <div className="flex justify-center mt-4">
-                {Array.from({ length: totalPages }, (_, index) => (
-                  <button
-                    key={index}
-                    className={`px-3 py-1 mx-1 border rounded ${currentPage === index + 1
-                      ? "bg-teal-500 text-white"
-                      : "bg-white text-teal-500"
-                      }`}
-                    onClick={() => handlePageChange(index + 1)}
-                  >
-                    {index + 1}
-                  </button>
-                ))}
-              </div>
-            </div>
+            <select
+              name="project"
+              value={filters.project}
+              onChange={handleFilterChange}
+              className="border p-2 rounded w-full"
+            >
+              <option value="">All project</option>
+              {projects?.map((proj) => (
+                <option key={proj.id} value={proj.name}>
+                  {proj.name}
+                </option>
+              ))}
+            </select>
           </div>
+          {/*
+          <select
+            name="status"
+            value={filters.status}
+            onChange={handleFilterChange}
+            className="border p-2 rounded w-full"
+          >
+            <option value="">All Status</option>
+            <option value="ASSIGNED">ASSIGNED</option>
+            <option value="ACTIVE">ACTIVE</option>
+            <option value="ON-HOLD">ON-HOLD</option>
+            <option value="INACTIVE">INACTIVE</option>
+            <option value="DELAY">DELAY</option>
+            <option value="COMPLETE">COMPLETED</option>
+          </select> */}
+          <DateFilter dateFilter={dateFilter} setDateFilter={setDateFilter} />
         </div>
+
+      </div>
+
+      <div className="overflow-x-auto rounded-md border max-h-[55vh]">
+        <table {...getTableProps()} className="min-w-full text-sm text-center bg-white border">
+          <thead className="sticky top-0 bg-teal-200 z-10">
+            {headerGroups.map((headerGroup) => (
+              <tr {...headerGroup.getHeaderGroupProps()}>
+                {headerGroup.headers.map((column) => (
+                  <th
+                    {...column.getHeaderProps(column.getSortByToggleProps())}
+                    className="px-4 py-2 font-semibold border whitespace-nowrap"
+                  >
+                    {column.render("Header")}
+                    <span className="ml-1">
+                      {column.isSorted
+                        ? column.isSortedDesc
+                          ? " 🔽"
+                          : " 🔼"
+                        : ""}
+                    </span>
+                  </th>
+                ))}
+              </tr>
+            ))}
+          </thead>
+
+          <tbody {...getTableBodyProps()}>
+            {page.length === 0 ? (
+              <tr>
+                <td colSpan={columns.length} className="py-4 text-center">
+                  No Tasks Found
+                </td>
+              </tr>
+            ) : (
+
+              page.map((row) => {
+                prepareRow(row);
+
+                const task = row.original;
+
+                // Parse allocated duration (string like "hh:mm:ss")
+                let allocatedMinutes = 0;
+                if (task.duration) {
+                  const [h = "0", m = "0"] = task.duration.split(":");
+                  allocatedMinutes = parseInt(h) * 60 + parseInt(m);
+                }
+
+                // Parse taken hours (as integer minutes)
+                const takenDuration = task?.workingHourTask?.find((rec) => rec.task_id === task.id)?.duration;
+                const takenMinutes = takenDuration ? parseInt(takenDuration, 10) : 0;
+
+                // Apply bg-red-300 if taken time exceeds allocated time by at least 15 minutes
+                const highlightRow = takenMinutes - allocatedMinutes >= 15;
+
+                return (
+                  <tr
+                    {...row.getRowProps()}
+                    className={`hover:bg-teal-100 ${highlightRow ? "bg-red-100" : ""}`}
+                  >
+                    {row.cells.map((cell) => (
+                      <td {...cell.getCellProps()} className="px-4 py-2 border">
+                        {cell.render("Cell")}
+                      </td>
+                    ))}
+                  </tr>
+                );
+              })
+            )
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <div className="flex justify-between items-center mt-4 px-2">
+        <div className="space-x-1">
+          <button
+            onClick={() => gotoPage(0)}
+            disabled={!canPreviousPage}
+            className="px-3 py-1 border rounded disabled:opacity-50"
+          >
+            {"<<"}
+          </button>
+          <button
+            onClick={() => previousPage()}
+            disabled={!canPreviousPage}
+            className="px-3 py-1 border rounded disabled:opacity-50"
+          >
+            {"<"}
+          </button>
+          <span className="text-sm">
+            Page <strong>{pageIndex + 1}</strong> of{" "}
+            <strong>{pageOptions.length}</strong>
+          </span>
+          <button
+            onClick={() => nextPage()}
+            disabled={!canNextPage}
+            className="px-3 py-1 border rounded disabled:opacity-50"
+          >
+            {">"}
+          </button>
+          <button
+            onClick={() => gotoPage(pageCount - 1)}
+            disabled={!canNextPage}
+            className="px-3 py-1 border rounded disabled:opacity-50"
+          >
+            {">>"}
+          </button>
+        </div>
+
+
+
+        <select
+          value={pageSize}
+          onChange={(e) => setPageSize(Number(e.target.value))}
+          className="border p-1 rounded"
+        >
+          {[15, 30, 45, 60].map((size) => (
+            <option key={size} value={size}>
+              Show {size}
+            </option>
+          ))}
+        </select>
       </div>
       {selectedTask && (
-        <SelectedTask
-          taskDetail={selectedTask}
-          taskID={taskID}
-          isOpen={isModalOpen}
-          onClose={handleCloseModal}
-          setTasks={tasks}
-        />
+        <SelectedTask isOpen={isModalOpen} onClose={handleCloseModal} taskDetail={selectedTask} taskId={taskID} />
       )}
     </div>
   );
