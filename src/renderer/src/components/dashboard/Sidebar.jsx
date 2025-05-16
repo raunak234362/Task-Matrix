@@ -49,7 +49,7 @@ const Sidebar = () => {
 
   const userType = sessionStorage.getItem("userType");
   return (
-    <div className="flex flex-col justify-between md:h-[88vh] h-[88vh] w-64 bg-white/70 md:border-4 text-black md:rounded-xl rounded-lg">
+    <div className=" md:h-[90vh] h-screen w-64 bg-white/70 md:border-4 text-black md:rounded-xl rounded-lg">
       <nav className="p-5">
         <ul className="flex flex-col gap-5">
           {userType !== "human-resource" ? (

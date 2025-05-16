@@ -39,6 +39,10 @@ const AllTask = () => {
       });
     }
 
+    if (filters.status) {
+      filtered = filtered.filter((task) => task.status === filters.status);
+    }
+
     // Apply date filter
     if (dateFilter.type !== "all") {
       filtered = filtered.filter((task) => {
@@ -63,16 +67,23 @@ const AllTask = () => {
         }
 
         if (dateFilter.type === "range") {
-          return (
-            dueDate.getFullYear() === dateFilter.year &&
-            dueDate.getMonth() >= dateFilter.startMonth &&
-            dueDate.getMonth() <= dateFilter.endMonth
-          );
+          const year = dateFilter.year ?? new Date().getFullYear();
+          const start = new Date(year, dateFilter.startMonth, 1);
+          const end = new Date(year, dateFilter.endMonth + 1, 0, 23, 59, 59); // End of month
+          return dueDate >= start && dueDate <= end;
+        }
+
+        if (dateFilter.type === "dateRange") {
+          const start = new Date(dateFilter.startDate);
+          const end = new Date(dateFilter.endDate);
+          return dueDate >= start && dueDate <= end;
         }
 
         return true;
       });
     }
+
+
 
     // Apply search filter
     if (searchQuery.trim()) {
@@ -90,7 +101,7 @@ const AllTask = () => {
     }
 
     setTaskFilter(filtered);
-  }, [tasks, dateFilter, searchQuery, filters.project, userData, projects]);
+  }, [tasks, dateFilter, searchQuery, filters.project, filters.status, userData, projects]);
 
 
 
@@ -178,12 +189,9 @@ const AllTask = () => {
       },
       {
         Header: "Project",
-        accessor: "project_id",
+        accessor: (row) => row?.project?.name || "N/A",
         id: "project",
-        Cell: ({ value }) => {
-          const project = projects?.find((p) => p.id === value);
-          return project ? project.name : "N/A";
-        },
+
       },
       {
         Header: "Task Name",
@@ -191,14 +199,8 @@ const AllTask = () => {
       },
       {
         Header: "Assigned To",
-        accessor: "user_id",
+        accessor: (row) => row?.user?.f_name + " " + row?.user?.m_name + " " + row?.user?.l_name || "N/A",
         id: "assignedTo",
-        Cell: ({ value }) => {
-          const user = userData?.find((u) => u.id === value);
-          return user
-            ? [user.f_name, user.m_name, user.l_name].filter(Boolean).join(" ")
-            : "N/A";
-        },
       },
       {
         Header: "Due Date",
@@ -293,7 +295,7 @@ const AllTask = () => {
   );
 
   return (
-    <div className="p-4 ">
+    <div className="p-4 h-[70vh]">
       <div className=" mb-4">
         <div className="flex flex-col items-center md:flex-row gap-4 mb-4">
           <div className="flex gap-5">
@@ -319,22 +321,21 @@ const AllTask = () => {
                 </option>
               ))}
             </select>
+
+            <select
+              name="status"
+              value={filters.status}
+              onChange={handleFilterChange}
+              className="border p-2 rounded w-full"
+            >
+              <option value="">All Status</option>
+              <option value="ASSIGNED">ASSIGNED</option>
+              <option value="IN_PROGRESS">IN PROGRESS</option>
+              <option value="BREAK">BREAK</option>
+              <option value="IN_REVIEW">IN REVIEW</option>
+              <option value="COMPLETE">COMPLETED</option>
+            </select>
           </div>
-          {/*
-          <select
-            name="status"
-            value={filters.status}
-            onChange={handleFilterChange}
-            className="border p-2 rounded w-full"
-          >
-            <option value="">All Status</option>
-            <option value="ASSIGNED">ASSIGNED</option>
-            <option value="ACTIVE">ACTIVE</option>
-            <option value="ON-HOLD">ON-HOLD</option>
-            <option value="INACTIVE">INACTIVE</option>
-            <option value="DELAY">DELAY</option>
-            <option value="COMPLETE">COMPLETED</option>
-          </select> */}
           <DateFilter dateFilter={dateFilter} setDateFilter={setDateFilter} />
         </div>
 

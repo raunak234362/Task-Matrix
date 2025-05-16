@@ -17,7 +17,7 @@ const DateFilter = ({ dateFilter, setDateFilter }) => {
     const years = Array.from({ length: 10 }, (_, i) => currentYear - i) // You can change range
 
     return (
-        <div className="bg-white rounded-lg p-4 shadow border border-gray-200">
+        <div className="bg-white rounded-lg p-4 shadow border border-gray-200 z-20">
             <div className="flex items-center justify-between gap-5">
                 <div className="flex items-center">
                     <Calendar className="h-5 w-5 text-teal-500 mr-2" />
@@ -37,7 +37,9 @@ const DateFilter = ({ dateFilter, setDateFilter }) => {
                                     ? `Week of ${new Date(dateFilter.weekStart).toLocaleDateString()}`
                                     : dateFilter?.type === "range"
                                         ? `${months[dateFilter.startMonth]} - ${months[dateFilter.endMonth]} ${dateFilter.year}`
-                                        : `Year ${dateFilter.year}`}
+                                        : dateFilter?.type === "dateRange"
+                                            ? `${new Date(dateFilter.startDate).toLocaleDateString()} - ${new Date(dateFilter.endDate).toLocaleDateString()}`
+                                            : `Year ${dateFilter.year}`}
                         <ChevronDown size={16} />
                     </button>
 
@@ -56,7 +58,9 @@ const DateFilter = ({ dateFilter, setDateFilter }) => {
                                         <option value="month">By Month</option>
                                         <option value="year">By Year</option>
                                         <option value="range">Month Range</option>
+                                        <option value="dateRange">Date Range</option> {/* 🔥 NEW */}
                                     </select>
+
                                 </div>
 
                                 {(dateFilter?.type === "month" || dateFilter?.type === "year" || dateFilter?.type === "range") && (
@@ -139,6 +143,32 @@ const DateFilter = ({ dateFilter, setDateFilter }) => {
                                                     <option key={month} value={index}>{month}</option>
                                                 ))}
                                             </select>
+                                        </div>
+                                    </>
+                                )}
+                                {dateFilter?.type === "dateRange" && (
+                                    <>
+                                        <div className="mb-3">
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
+                                            <input
+                                                type="date"
+                                                className="w-full p-2 border border-gray-300 rounded-md text-sm"
+                                                value={dateFilter.startDate ? new Date(dateFilter.startDate).toISOString().split("T")[0] : ""}
+                                                onChange={(e) =>
+                                                    setDateFilter({ ...dateFilter, startDate: new Date(e.target.value).toISOString() })
+                                                }
+                                            />
+                                        </div>
+                                        <div className="mb-3">
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">End Date</label>
+                                            <input
+                                                type="date"
+                                                className="w-full p-2 border border-gray-300 rounded-md text-sm"
+                                                value={dateFilter.endDate ? new Date(dateFilter.endDate).toISOString().split("T")[0] : ""}
+                                                onChange={(e) =>
+                                                    setDateFilter({ ...dateFilter, endDate: new Date(e.target.value).toISOString() })
+                                                }
+                                            />
                                         </div>
                                     </>
                                 )}

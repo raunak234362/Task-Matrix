@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { Button, Input, CustomSelect } from "../../../index";
 import Service from "../../../../api/configAPI";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { addTask } from "../../../../store/taskSlice";
 import { toast } from "react-toastify";
@@ -12,8 +12,9 @@ import socket from "../../../../socket";
 
 const AddTask = () => {
   const [projectOptions, setPtojectOptions] = useState([]);
+  const projects = useSelector((state) => state?.projectData?.projectData);
   const [project, setProject] = useState({});
-  const [parentTaskOptions, setParentTaskOptions] = useState([]);
+  const [projectStage, setProjectStage] = useState([]);
   const [assignedUser, setAssignedUser] = useState([]);
   const dispatch = useDispatch();
   const {
@@ -52,17 +53,19 @@ const AddTask = () => {
       const project = await Service.getProject(projectId);
       setProject(project);
       const assigned =
-        project?.data?.team?.members?.reduce((acc, member) => {
-          const exists = acc.find((item) => item.value === member?.id);
-
-          if (!exists) {
-            acc.push({
-              label: `${member.role} - ${member.f_name} ${member.m_name} ${member.l_name}`,
-              value: member?.id,
-            });
-          }
-          return acc;
-        }, []) || []; // Fallback to an empty array if reduce fails
+      project?.team?.members?.reduce((acc, member) => {
+        const exists = acc.find((item) => item.value === member?.id);
+        
+        if (!exists) {
+          acc.push({
+            label: `${member.role} - ${member.f_name} ${member.m_name} ${member.l_name}`,
+            value: member?.id,
+          });
+        }
+        return acc;
+      }, []) || []; // Fallback to an empty array if reduce fails
+      console.log("projectStage", project?.stage);
+      setProjectStage(project?.stage);
       setAssignedUser(assigned);
     } catch (error) {
       toast.error("Error fetching project details:", error);
@@ -75,7 +78,7 @@ const AddTask = () => {
         label: task?.name,
         value: task?.id,
       }));
-      setParentTaskOptions(options);
+      // setProjectStage(options);
     } catch (error) {
       toast.error("Error fetching parent tasks:", error);
     }
@@ -90,17 +93,21 @@ const AddTask = () => {
 
 
   const onSubmit = async (taskData) => {
+    console.log("Task Data:", projectStage);
     try {
       const token = sessionStorage.getItem("token");
       if (!token) throw new Error("Token not found");
-
+      
       const TaskName = `${taskData.type} - ${taskData.taskname}`;
-
+      
       const data = await Service.addTask({
         ...taskData,
         name: TaskName,
+        status: "ASSIGNED",
+        Stage: projectStage,
         token: token,
       });
+      console.log("Task Data:", data);
 
       toast.success("✅ Task Added Successfully");
       dispatch(addTask(data));
@@ -235,7 +242,7 @@ const AddTask = () => {
                 <p className="text-red-600">{errors.priority.message}</p>
               )}
             </div>
-            <div className="mt-5">
+            {/* <div className="mt-5">
               <CustomSelect
                 label="Status:"
                 name="status"
@@ -255,7 +262,7 @@ const AddTask = () => {
               {errors.status && (
                 <p className="text-red-600">{errors.status.message}</p>
               )}
-            </div>
+            </div> */}
             <div className="flex flex-row w-1/5 gap-5 my-5">
               <div className="w-full ">
                 <Input

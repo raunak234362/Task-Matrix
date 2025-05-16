@@ -159,7 +159,7 @@ class Service {
           "Content-Type": "application/json",
         },
       });
-      return response?.data;
+      return response?.data?.data;
     } catch (error) {
       console.log("Error in getting Project:", error);
       throw error;
@@ -277,6 +277,7 @@ class Service {
     hour,
     min,
     project,
+    Stage,
     user,
   }) {
     try {
@@ -287,6 +288,7 @@ class Service {
         start_date,
         status,
         priority,
+        Stage,
         duration: `${hour}:${min}:00`,
         project,
         user,

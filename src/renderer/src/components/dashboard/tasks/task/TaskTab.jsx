@@ -26,13 +26,13 @@ const TaskTab = () => {
 
   const userType = sessionStorage.getItem("userType");
   return (
-    <div className="w-full h-fit mx-5">
+    <div className="w-full h-[89vh] overflow-y-auto ">
       <div className="flex items-center justify-center w-full">
         <div className="px-5 py-1 mt-2 text-3xl font-bold text-white rounded-lg shadow-xl bg-green-500/70">
           Task
         </div>
       </div>
-      <div className="overflow-y-hidden">
+      <div className="overflow-y-hidden mx-2">
         <div className="grid grid-cols-2 gap-5 my-5 md:grid-cols-3 lg:grid-cols-6">
           <div className="flex flex-col items-center justify-center p-3 rounded-lg shadow-lg bg-white/50">
             <div className="text-xl font-bold text-gray-800">Total Tasks</div>

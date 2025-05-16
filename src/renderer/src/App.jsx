@@ -99,7 +99,7 @@ const App = () => {
   return (
     <Provider store={store}>
       {/* <ToastContainer /> */}
-      <div className="flex flex-col w-screen h-screen overflow-hidden md:flex-row bg-gradient-to-r from-green-300/50 to-teal-300">
+      <div className="flex flex-col w-screen h-screen overflow-hidden md:flex-row bg-gradient-to-br from-gray-700 to-teal-200">
         {/* Sidebar */}
         <NotificationReceiver />
         <div className="flex flex-col w-full">
@@ -112,13 +112,13 @@ const App = () => {
               className={`fixed md:static flex flex-col md:bg-opacity-0 bg-white w-64 z-20 transition-transform duration-300 ${sidebarOpen ? "translate-x-0" : "-translate-x-full"
                 } md:translate-x-0 md:w-64`}
             >
-              <div className="flex items-center justify-between p-4">
+              <div className="flex items-center justify-between pl-2">
                 <Sidebar />
               </div>
             </div>
             {/* Main Content */}
             <div
-              className={`flex h-[89vh] overflow-y-auto flex-grow transition-all duration-300 ${sidebarOpen ? "md:ml-64 ml-0 bg-black/50" : "md:ml-0 ml-0"
+              className={`flex w-full mx-2 border-4 rounded-lg border-white  bg-gradient-to-t from-gray-50/70 to-gray-100/50 overflow-hidden flex-grow transition-all duration-300 ${sidebarOpen ? "md:ml-64 bg-black/80" : ""
                 }`}
             >
               <Outlet />
