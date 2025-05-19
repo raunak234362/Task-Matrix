@@ -1,10 +1,11 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable no-unused-vars */
+import { LayoutList, ListChecks, MonitorPause } from "lucide-react";
 import { useSelector } from "react-redux";
 import { NavLink, Outlet } from "react-router-dom";
 
 const TaskTab = () => {
-  
+
   const tasks = useSelector((state) => state?.taskData.taskData);
   // Count the number of active projects
   const activeTaskCount = tasks.filter(
@@ -28,54 +29,73 @@ const TaskTab = () => {
   return (
     <div className="w-full h-[89vh] overflow-y-auto ">
       <div className="flex items-center justify-center w-full">
-        <div className="px-5 py-1 mt-2 text-3xl font-bold text-white rounded-lg shadow-xl bg-green-500/70">
+        <div className="px-5 py-1 mt-2 text-3xl font-bold text-white rounded-lg shadow-xl bg-teal-500/70">
           Task
         </div>
       </div>
       <div className="overflow-y-hidden mx-2">
-        <div className="grid grid-cols-2 gap-5 my-5 md:grid-cols-3 lg:grid-cols-6">
-          <div className="flex flex-col items-center justify-center p-3 rounded-lg shadow-lg bg-white/50">
-            <div className="text-xl font-bold text-gray-800">Total Tasks</div>
-            <div className="text-3xl font-bold">{tasks.length}</div>
-          </div>
-          <div className="flex flex-col items-center justify-center p-3 rounded-lg shadow-lg bg-white/50">
-            <div className="text-xl font-bold text-gray-800">
-              No. of Completed Tasks
+        <div className="grid grid-cols-2 gap-5 my-5 md:grid-cols-3">
+          <div className="bg-white rounded-lg shadow-md overflow-hidden border-l-4 border-green-500">
+            <div className="p-5">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-gray-500 text-sm">Total Task</p>
+                  <h2 className="text-2xl font-bold text-gray-800">{tasks?.length || 0}</h2>
+                  <div className="items-center mt-1 gap-5">
+                    <span className="text-sm text-green-500">Completed task</span>
+                    <div className="text-xl text-green-500 font-bold">{completedTaskCount}</div>
+                  </div>
+                </div>
+                <div className="bg-green-100 p-3 rounded-full">
+                  {/* <Users  /> */}
+                  <ListChecks className="h-6 w-6 text-green-500" />
+                </div>
+              </div>
             </div>
-            <div className="text-3xl font-bold">{completedTaskCount}</div>
           </div>
-          <div className="flex flex-col items-center justify-center p-3 rounded-lg shadow-lg bg-white/50">
-            <div className="text-xl font-bold text-gray-800">
-              No. of IN_PROGRESS Tasks
+          <div className="bg-white rounded-lg shadow-md overflow-hidden border-l-4 border-amber-500">
+            <div className="p-5">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-gray-500 text-sm">Assigned Tasks</p>
+                  <h2 className="text-2xl font-bold text-gray-800">{assignedTaskCount || 0}</h2>
+                  <div className="items-center mt-1 gap-5">
+                    <span className="text-sm text-amber-500">In Progress tasks</span>
+                    <div className="text-xl text-amber-500 font-bold">{completedTaskCount}</div>
+                  </div>
+                </div>
+                <div className="bg-amber-100 p-3 rounded-full">
+                  {/* <Users  /> */}
+                  <LayoutList className="h-6 w-6 text-amber-500" />
+                </div>
+              </div>
             </div>
-            <div className="text-3xl font-bold">{activeTaskCount}</div>
           </div>
-          <div className="flex flex-col items-center justify-center p-3 rounded-lg shadow-lg bg-white/50">
-            <div className="text-xl font-bold text-gray-800">
-              No. of Assigned Tasks
+          <div className="bg-white rounded-lg shadow-md overflow-hidden border-l-4 border-orange-500">
+            <div className="p-5">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-gray-500 text-sm">In-Review Tasks</p>
+                  <h2 className="text-2xl font-bold text-gray-800">{inReviewTaskCount || 0}</h2>
+                  <div className="items-center mt-2 gap-5">
+                    <span className="text-sm text-orange-500">In Break tasks</span>
+                    <div className="text-xl text-orange-500 font-bold">{breakTaskCount}</div>
+                  </div>
+                </div>
+                <div className="bg-orange-100 p-3 rounded-full">
+                  {/* <Users  /> */}
+                  <MonitorPause className="h-6 w-6 text-orange-500" />
+                </div>
+              </div>
             </div>
-            <div className="text-3xl font-bold">{assignedTaskCount}</div>
-          </div>
-          <div className="flex flex-col items-center justify-center p-3 rounded-lg shadow-lg bg-white/50">
-            <div className="text-xl font-bold text-gray-800">
-              No. of In-Break Tasks
-            </div>
-            <div className="text-3xl font-bold">{breakTaskCount}</div>
-          </div>
-
-          <div className="flex flex-col items-center justify-center p-3 rounded-lg shadow-lg bg-white/50">
-            <div className="text-xl font-bold text-gray-800">
-              No. of IN_REVIEW Tasks
-            </div>
-            <div className="text-3xl font-bold">{inReviewTaskCount}</div>
           </div>
         </div>
 
         {/* Conditional rendering of menu */}
         <div
-          className={`h-full rounded-lg bg-white md:text-lg text-sm`}
+          className={`h-full rounded-lg  md:text-lg text-sm`}
         >
-          <div className=" bg-teal-100 rounded-lg md:w-full w-[90vw]">
+          <div className=" bg-white border-l-4 border-b-2 border-teal-300 rounded-md md:w-full w-[90vw]">
             <nav className="px-5 text-center drop-shadow-md">
               <ul className="flex items-center gap-10 py-1 text-center justify-evenly">
                 <li className="px-2">
@@ -83,8 +103,8 @@ const TaskTab = () => {
                     to="my-task"
                     className={({ isActive }) =>
                       isActive
-                        ? "bg-teal-300 drop-shadow-lg flex px-5 py-2 rounded-lg font-semibold"
-                        : "hover:bg-teal-200 rounded-lg flex px-5 py-2 hover:text-white"
+                        ? " border-2 border-teal-400 bg-teal-100 drop-shadow-lg flex px-5 py-1 rounded-lg text-teal-600 font-medium"
+                        : "hover:bg-teal-200 hover:border-2 hover:border-teal-400 rounded-lg flex px-5 py-1 hover:text-white"
                     }
                   >
                     My Task
@@ -95,8 +115,8 @@ const TaskTab = () => {
                     to="all-task"
                     className={({ isActive }) =>
                       isActive
-                        ? "bg-teal-300 drop-shadow-lg flex px-5 py-2 rounded-lg font-semibold"
-                        : "hover:bg-teal-200 rounded-lg flex px-5 py-2 hover:text-white"
+                        ? " border-2 border-teal-400 bg-teal-100 drop-shadow-lg flex px-5 py-1 rounded-lg text-teal-600 font-medium"
+                        : "hover:bg-teal-200 hover:border-2 hover:border-teal-400 rounded-lg flex px-5 py-1 hover:text-white"
                     }
                   >
                     All Task
@@ -107,23 +127,23 @@ const TaskTab = () => {
                     to="myTask-record"
                     className={({ isActive }) =>
                       isActive
-                        ? "bg-teal-300 drop-shadow-lg flex px-5 py-2 rounded-lg font-semibold"
-                        : "hover:bg-teal-200 rounded-lg flex px-5 py-2 hover:text-white"
+                        ? " border-2 border-teal-400 bg-teal-100 drop-shadow-lg flex px-5 py-1 rounded-lg text-teal-600 font-medium"
+                        : "hover:bg-teal-200 hover:border-2 hover:border-teal-400 rounded-lg flex px-5 py-1 hover:text-white"
                     }
                   >
                     My Task Record
                   </NavLink>
                 </li>
                 {userType === "project-manager" ||
-                userType === "admin" ||
-                userType === "department-manager" ? (
+                  userType === "admin" ||
+                  userType === "department-manager" ? (
                   <li className="px-2">
                     <NavLink
                       to="add-task"
                       className={({ isActive }) =>
                         isActive
-                          ? "bg-teal-300 drop-shadow-lg flex px-5 py-2 rounded-lg font-semibold"
-                          : "hover:bg-teal-200 rounded-lg flex px-5 py-2 hover:text-white"
+                          ? " border-2 border-teal-400 bg-teal-100 drop-shadow-lg flex px-5 py-1 rounded-lg text-teal-600 font-medium"
+                          : "hover:bg-teal-200 hover:border-2 hover:border-teal-400 rounded-lg flex px-5 py-1 hover:text-white"
                       }
                     >
                       Add Task
@@ -136,8 +156,8 @@ const TaskTab = () => {
                       to="approve-assignee"
                       className={({ isActive }) =>
                         isActive
-                          ? "bg-teal-300 drop-shadow-lg flex px-5 py-2 rounded-lg font-semibold"
-                          : "hover:bg-teal-200 rounded-lg flex px-5 py-2 hover:text-white"
+                          ? " border-2 border-teal-400 bg-teal-100 drop-shadow-lg flex px-5 py-1 rounded-lg text-teal-600 font-medium"
+                          : "hover:bg-teal-200 hover:border-2 hover:border-teal-400 rounded-lg flex px-5 py-1 hover:text-white"
                       }
                     >
                       Assignee List

@@ -8,6 +8,8 @@ import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { BASE_URL } from "../../../config/constant";
+import { Building2, ChartPie, ChevronDown, ChevronRight, ChevronUp, Clock4, Files, FolderKanban, FolderOpen, Globe, Pause, Play, Square } from "lucide-react"
+import { MdOutlineDescription } from "react-icons/md"
 
 const Task = ({ taskId, setDisplay }) => {
   const [tasks, setTasks] = useState({});
@@ -156,28 +158,33 @@ const Task = ({ taskId, setDisplay }) => {
           status: "IN_PROGRESS",
         };
       });
-      // window.location.reload();
+      window.location.reload();
+      console.log("Accept Response: --------", accept);
       toast.success("Task Started");
-      sessionStorage.setItem("work_id", accept.data.id);
+      sessionStorage.setItem("work_id", accept.id);
     } catch (error) {
       toast.error("Error in accepting task");
     }
   }
 
-  async function handlePause(ev) {
+  const work_id = sessionStorage.getItem("work_id");
+
+  async function handlePause() {
+    console.log("Pause Event: ", work_id);
     const taskId = tasks?.id;
     const pauseTime = new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" });
     const pauseTimes = JSON.parse(localStorage.getItem("pauseTimes")) || [];
     pauseTimes.push(pauseTime);
     localStorage.setItem("pauseTimes", JSON.stringify(pauseTimes));
     try {
-      await Service.pauseTask(taskId, ev?.target?.value);
+      const pause = await Service.pauseTask(taskId, work_id);
       setTasks((prev) => {
         return {
           ...prev,
           status: "BREAK",
         };
       });
+      console.log("Pause Response: ", pause);
       toast.success("Task Paused");
       fetchTask();
     } catch (error) {
@@ -186,14 +193,14 @@ const Task = ({ taskId, setDisplay }) => {
     }
   }
 
-  async function handleResume(ev) {
+  async function handleResume() {
     const taskID = tasks?.id;
     const resumeTime = new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" });
     const resumeTimes = JSON.parse(localStorage.getItem("resumeTimes")) || [];
     resumeTimes.push(resumeTime);
     localStorage.setItem("resumeTimes", JSON.stringify(resumeTimes));
     try {
-      await Service.resumeTask(taskID, ev?.target?.value);
+      const resume = await Service.resumeTask(taskID, work_id);
 
       setTasks((prev) => {
         return {
@@ -201,6 +208,7 @@ const Task = ({ taskId, setDisplay }) => {
           status: "IN_PROGRESS",
         };
       });
+      console.log("Resume Response: ", resume);
       toast.success("Task Resumed");
       fetchTask();
     } catch (error) {
@@ -209,11 +217,11 @@ const Task = ({ taskId, setDisplay }) => {
     }
   }
 
-  async function handleEnd(ev) {
+  async function handleEnd() {
     const taskID = tasks?.id;
     const end = new Date().toISOString();
     try {
-      const endresponse = await Service.endTask(taskID, ev?.target?.value, end);
+      const endresponse = await Service.endTask(taskID, work_id, end);
       console.log("End Response: ", endresponse.status);
       if (endresponse?.status === "END") {
         toast.success("Task Ended");
@@ -314,393 +322,313 @@ const Task = ({ taskId, setDisplay }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white h-[92%] fixed top-[8%] overflow-x-auto p-5 rounded-lg shadow-lg w-screen ">
-        <div className="flex justify-between px-5 py-1 mt-2 text-3xl font-bold text-white rounded-lg shadow-xl bg-teal-200/50">
-          <div className="text-2xl">
-            <span className="font-bold text-gray-800">Task Name:</span>{" "}
-            {tasks?.name}
+      <div className="bg-white h-screen overflow-x-auto mx-5 p-5 rounded-lg shadow-lg w-11/12">
+        {/* Timer Display - Fixed at the top */}
+        <div className="sticky top-0 z-10 flex items-center justify-between p-3 mb-4 bg-white border-b shadow-md">
+          <div className="flex items-center justify-between w-full">
+            <div className="text-2xl text-teal-500 font-bold">
+              <span className="font-bold">Task:</span> {tasks?.name}
+            </div>
+            <div className="mr-4 text-lg gap-5 flex items-center">
+              <div>
+                <span className="font-semibold">Total Work Hours:</span>
+                <span className="ml-2 px-3 py-1 bg-teal-100 text-teal-800 rounded-full">
+                  {formatMinutesToHoursAndMinutes(workHours?.duration)}
+                </span>
+              </div>
+              <button
+                className="px-5 py-2 text-white transition-colors duration-300 rounded-lg bg-teal-600 hover:bg-teal-700"
+                onClick={handleClose}
+              >
+                Close
+              </button>
+            </div>
           </div>
-          <button
-            className="px-5 text-xl font-bold text-white rounded-lg bg-teal-500/50 hover:bg-teal-700"
-            onClick={handleClose}
-          >
-            Close
-          </button>
         </div>
-        <div className="main-container h-[80vh] overflow-y-auto ">
-          <div className="p-5 m-2 ">
+
+
+        <div className="main-container h-[80vh] overflow-y-auto">
+          <div className="p-5 m-2">
             {taskId ? (
               <>
-                <div className="space-y-4">
+                <div className="space-y-6">
                   {/* Task Detail */}
-                  <div className="w-full p-5 rounded-lg shadow-xl bg-teal-100/50">
-                    <div className="flex items-center my-3">
-                      <span className="w-40 font-bold text-gray-800">
-                        Task Description:
-                      </span>{" "}
-                      <span className="flex flex-wrap text-lg">
-                        {tasks?.description}
-                      </span>
-                    </div>
+                  <div className="w-full p-6 rounded-lg shadow-xl bg-gradient-to-br from-teal-50 to-teal-100">
+                    <h2 className="mb-4 text-xl font-bold text-teal-800 border-b border-teal-200 pb-2">
+                      Task Information
+                    </h2>
 
-                    <div className="flex items-center my-3">
-                      <span className="w-40 font-bold text-gray-800">
-                        Assigned Date:
-                      </span>{" "}
-                      <span className="text-lg">
-                        {start_date?.toDateString()}
-                      </span>
-                    </div>
-
-                    <div className="flex items-center my-3">
-                      <span className="w-40 font-bold text-gray-800">
-                        Due Date:
-                      </span>{" "}
-                      <span className="text-lg">
-                        {due_date?.toDateString()}
-                      </span>
-                    </div>
-
-                    <div className="flex items-center my-3">
-                      <span className="w-40 font-bold text-gray-800">
-                        Duration:
-                      </span>{" "}
-                      <span className="text-lg">
-                        {durToHour(tasks?.duration)}
-                      </span>
-                    </div>
-                    <div className="flex items-center my-3">
-                      <span className="w-40 font-bold text-gray-800">
-                        Work Hours:
-                      </span>
-                      <span className="text-lg">
-                        {formatMinutesToHoursAndMinutes(workHours?.duration)}
-                      </span>
-                    </div>
-                    <div className="flex items-center my-3">
-                      <span className="w-40 font-bold text-gray-800">
-                        Status:
-                      </span>{" "}
-                      <span className="text-lg">
-                        {tasks?.status && (
-                          <span
-                            className={`text-sm text-center font-medium px-3 py-1 rounded-full border ${getStatusBadge(tasks.status)}`}
-                          >
-                            {getStatusLabel(tasks.status)}
-                          </span>
-                        )}
-                      </span>
-                    </div>
-                    <div className="flex items-center my-3">
-                      <span className="w-40 font-bold text-gray-800">
-                        Priority:
-                      </span>{" "}
-                      <span
-                        className={`text-sm text-center font-semibold px-3 py-1 rounded-full border ${color}`}
-                      >
-                        {getPriorityLabel(tasks?.priority)}
-                      </span>
-                    </div>
-                    <div className="flex flex-row items-center my-3">
-                      <div className="w-40 font-bold text-gray-800">
-                        Task Actions:
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                      <div className="flex flex-col">
+                        <span className="text-sm font-medium text-gray-500">Description</span>
+                        <span className="mt-1 text-lg">{tasks?.description}</span>
                       </div>
-                      <div>
-                        {tasks?.status === "ASSIGNED" ||
-                          tasks?.status === "ONHOLD" ||
-                          workdata.id === undefined ? (
-                          <>
-                            <Button
-                              className="flex items-center justify-center font-semibold bg-green-500 rounded-full w-28 hover:bg-green-800"
-                              onClick={handleStart}
+
+                      <div className="flex flex-col">
+                        <span className="text-sm font-medium text-gray-500">Duration</span>
+                        <span className="mt-1 text-lg">{durToHour(tasks?.duration)}</span>
+                      </div>
+
+                      <div className="flex flex-col">
+                        <span className="text-sm font-medium text-gray-500">Assigned Date</span>
+                        <span className="mt-1 text-lg">{start_date?.toDateString()}</span>
+                      </div>
+
+                      <div className="flex flex-col">
+                        <span className="text-sm font-medium text-gray-500">Due Date</span>
+                        <span className="mt-1 text-lg">{due_date?.toDateString()}</span>
+                      </div>
+                      <div className="flex items-center">
+                        <div className="flex gap-3 items-center">
+                          <span className="text-sm font-medium text-gray-500">Status</span>
+                          {tasks?.status && (
+                            <span
+                              className={`text-sm text-center font-medium px-3 py-1 rounded-full border mr-4 ${getStatusBadge(tasks.status)}`}
                             >
-                              Start
-                            </Button>
-                          </>
+                              {getStatusLabel(tasks.status)}
+                            </span>
+                          )}
+                        </div>
+                        <div className="flex gap-3 items-center">
+                          <span className="text-sm font-medium text-gray-500">Status</span>
+                          <span className={`text-sm text-center font-semibold px-3 py-1 rounded-full border ${color}`}>
+                            {getPriorityLabel(tasks?.priority)}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col mt-6">
+                      <span className="text-sm font-medium text-gray-500">Task Actions</span>
+                      <div className="flex flex-wrap gap-3 mt-2">
+                        {tasks?.status === "ASSIGNED" || tasks?.status === "ONHOLD" || workdata.id === undefined ? (
+                          <button
+                            className="flex items-center justify-center cursor-pointer px-4 py-2 font-semibold text-white transition-colors duration-300 bg-green-500 rounded-md hover:bg-green-600"
+                            onClick={handleStart}
+                          >
+
+                            Start Task
+                          </button>
                         ) : (
-                          <>
-                            <div className="flex flex-row items-center justify-center gap-x-5">
-                              {/* Show Pause button if the task is running */}
-                              {tasks?.status === "IN_PROGRESS" && (
-                                <Button
-                                  className="flex items-center justify-center font-semibold bg-yellow-500 rounded-full w-28 hover:bg-yellow-700"
-                                  value={workdata?.id}
-                                  onClick={handlePause}
-                                >
+                          <div className="flex flex-wrap gap-3">
+                            {/* Show Pause button if the task is running */}
+                            {tasks?.status === "IN_PROGRESS" && (
+                              <button
+                                className="flex text-sm items-center justify-center cursor-pointer gap-1 px-4 py-2 font-medium text-white transition-colors duration-300 bg-yellow-800 rounded-md hover:bg-yellow-600"
+                                value={workdata?.id}
+                                onClick={handlePause}
+                              >
+                                <div>
+                                  <Pause />
+                                </div>
+                                <div>
                                   Pause
-                                </Button>
-                              )}
+                                </div>
+                              </button>
+                            )}
 
-                              {/* Show Resume button if the task is paused */}
-                              {tasks?.status === "BREAK" || tasks?.status === "RE_ASSIGNED" ? (
-                                <Button
-                                  className="flex items-center justify-center font-semibold bg-green-500 rounded-full w-28 hover:bg-green-700"
-                                  value={workdata?.id}
-                                  onClick={handleResume}
-                                >
+                            {/* Show Resume button if the task is paused */}
+                            {tasks?.status === "BREAK" || tasks?.status === "RE_ASSIGNED" ? (
+                              <button
+                                className="flex items-center justify-center cursor-pointer gap-1 px-4 py-2 font-medium text-sm text-white transition-colors duration-300 bg-green-500 rounded-md hover:bg-green-600"
+                                value={workdata?.id}
+                                onClick={handleResume}
+                              >
+                                <div>
+                                  <Play />
+                                </div>
+                                <div>
                                   Resume
-                                </Button>
-                              ) : null}
+                                </div>
+                              </button>
+                            ) : null}
 
-                              {/* Always show End button */}
-                              {tasks?.status === "IN_PROGRESS" && (
-                                <Button
-                                  className="flex items-center justify-center font-semibold bg-red-500 rounded-full w-28 hover:bg-red-800"
-                                  value={workdata?.id}
-                                  onClick={handleEnd}
-                                >
-                                  End
-                                </Button>
-                              )}
-                            </div>
-                          </>
+                            {/* Always show End button */}
+                            {tasks?.status === "IN_PROGRESS" && (
+                              <div
+                                className="flex items-center cursor-pointer justify-center gap-1 px-4 py-2 font-medium text-sm text-white transition-colors duration-300 bg-red-500 rounded-md hover:bg-red-600"
+                                value={workdata?.id}
+                                onClick={handleEnd}
+                              >
+                                <div>
+                                  <Square />
+                                </div>
+                                <div>
+                                  End Task
+                                </div>
+                              </div>
+                            )}
+                          </div>
                         )}
                       </div>
                     </div>
                   </div>
-                  {/* select Assignee */}
 
-                  {/* <form
-                    onSubmit={handleSubmit(handleAddAssign)} // separate handler
-                    className="w-full gap-5 p-5 rounded-lg shadow-xl bg-teal-200/30"
-                  >
-                    <div className="mb-4 font-bold text-gray-800">
-                      Assign Other User:
-                    </div>
-                    <div className="flex items-center w-1/2 gap-10 flex-col-2 justify-evenly">
-                      <div className="w-full">
-                        <select
-                          label="Select Assignee"
-                          className="h-10 80"
-                          {...register("assigned_to")}
-                        >
-                          {team?.members?.map((member) => (
-                            <option key={member.id} value={member.id}>
-                              {`${member?.role} - ${staffData.find((staff) => staff.id === member.id)?.f_name} ${staffData.find((staff) => staff.id === member.id)?.m_name} ${staffData.find((staff) => staff.id === member.id)?.l_name}`}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                      <div className="w-full">
-                        <Button
-                          className="py-1 font-bold bg-teal-600 hover:bg-teal-900"
-                          type="submit"
-                        >
-                          Add
-                        </Button>
-                      </div>
-                    </div>
-                  </form> */}
-                  {/* <div className="w-full p-5 rounded-lg shadow-xl bg-teal-200/50">
-                    <div className="mb-4 font-bold text-gray-800">
-                      People Assigned:
-                    </div>
-                    <div className="flex items-center">
-                      <table className="min-w-full bg-white">
-                        <thead className="text-sm leading-normal text-gray-600 uppercase bg-gray-200">
-                          <tr>
-                            <th className="px-6 py-3 text-left">S.No</th>
-                            <th className="px-6 py-3 text-left">Assigned By</th>
-                            <th className="px-6 py-3 text-left">Assigned To</th>
-                            <th className="px-6 py-3 text-left">Assigned On</th>
-                            <th className="px-6 py-3 text-left">Approved By</th>
-                            <th className="px-6 py-3 text-left">Approved On</th>
-                            {(userType === "admin" ||
-                              username ===
-                              tasks?.project?.manager?.username) && (
-                                <th className="px-6 py-3 text-left">Action</th>
-                              )}
-                          </tr>
-                        </thead>
-                        <tbody className="text-sm font-medium text-gray-600">
-                          {tasks?.taskInAssignedList?.map((tasks, index) => (
-                            <tr
-                              key={tasks.id}
-                              className="border-b border-gray-200 hover:bg-gray-100"
-                            >
-                              {console.log(tasks)}
-                              <td className="px-6 py-3 text-left whitespace-nowrap">
-                                {index + 1}
-                              </td>
-
-                              <td className="px-6 py-3 text-left">
-                                {(() => {
-                                  const staff = staffData?.find(
-                                    (staff) => staff?.id === tasks?.assigned_by,
-                                  );
-                                  return `${staff?.f_name || ""} ${staff?.m_name || ""} ${staff?.l_name || ""}`.trim();
-                                })()}
-                              </td>
-                              <td className="px-6 py-3 text-left">
-                                {(() => {
-                                  const staff = staffData?.find(
-                                    (staff) => staff?.id === tasks?.assigned_to,
-                                  );
-                                  return `${staff?.f_name || ""} ${staff?.m_name || ""} ${staff?.l_name || ""}`.trim();
-                                })()}
-                              </td>
-                              <td className="px-6 py-3 text-left">
-                                {new Date(tasks?.assigned_on).toDateString()}
-                              </td>
-                              <td className="px-6 py-3 text-left">
-                                {tasks?.approved_by?.name || (
-                                  <span className="text-red-500">Yet Not Approved</span>
-                                )}
-                              </td>
-                              <td className="px-6 py-3 text-left">
-                                {tasks?.approved_on ? (
-                                  new Date(tasks?.approved_on).toDateString()
-                                ) : (
-                                  <span className="text-red-500">Yet Not Approved</span>
-                                )}
-                              </td>
-                              {(userType === "admin" ||
-                                username === tasks.project?.manager?.username) && (
-                                  <td className="px-6 py-3 text-left">
-                                    <Button
-                                      className={`${tasks?.approved_on
-                                        ? "bg-gray-300 text-gray-700"
-                                        : "bg-green-300 text-green-900"
-                                        } px-2 py-0.5 rounded-full`}
-                                      disabled={tasks?.approved_on}
-                                    >
-                                      {tasks?.approved_on ? "Approved" : "Approve"}
-                                    </Button>
-                                  </td>
-                                )}
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div> */}
-
-                  {/* comment */}
-                  <br />
-
-                  <div className="grid grid-cols-2 gap-5">
+                  <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                     {/* Project */}
-                    <div className="w-full p-5 rounded-lg shadow-xl h-fit bg-teal-200/50">
-                      <div className="flex items-center gap-2 my-5 text-xl">
-                        <span className="font-bold text-gray-800">
-                          Project Detail:
-                        </span>{" "}
-                        <span
-                          className="text-teal-600 cursor-pointer"
+                    <div className="w-full p-6 rounded-lg shadow-xl h-fit bg-gradient-to-br from-blue-50 to-blue-100">
+                      <div className="flex items-center justify-between mb-4">
+                        <h2 className="text-xl font-bold text-blue-800">Project Details</h2>
+                        <button
                           onClick={toggleProjectDetail}
+                          className="flex items-center text-blue-600 hover:text-blue-800"
                         >
-                          {tasks?.project?.name}
-                        </span>
+                          {showProjectDetail ? (
+                            <ChevronUp />
+                          ) : (
+                            <ChevronDown />
+                          )}
+                        </button>
                       </div>
+
+                      <div className="flex items-center p-3 mb-4 bg-white rounded-lg">
+                        <div className="p-2 mr-3 bg-blue-100 rounded-full">
+                          <FolderKanban className="text-blue-700" />
+                        </div>
+                        <div>
+                          <div className="text-sm font-medium text-gray-500">Project Name</div>
+                          <div className="text-lg font-semibold text-blue-700">{tasks?.project?.name}</div>
+                        </div>
+                      </div>
+
                       {showProjectDetail && (
-                        <div className="grid grid-cols-1 gap-6 overflow-x-hidden overflow-y-hidden md:grid-cols-2">
+                        <div className="grid grid-cols-1 gap-4 p-4 mt-2 bg-white rounded-lg md:grid-cols-2">
                           {[
                             {
                               label: "Description",
                               value: projectData?.description,
+                              icon: (
+                                <MdOutlineDescription className="text-blue-500 text-md" />
+                              ),
                             },
                             {
                               label: "Fabricator",
                               value: projectData?.fabricator?.fabName,
+                              icon: (
+                                <Building2 className="text-blue-500 text-md" />
+                              ),
                             },
-                            { label: "Status", value: projectData?.status },
+                            {
+                              label: "Status",
+                              value: projectData?.status,
+                              icon: (
+                                <ChartPie className="text-blue-500 text-sm" />
+                              ),
+                            },
                             {
                               label: "Estimated Hours",
                               value: projectData?.estimatedHours,
-                            },
-                            { label: "Stage", value: projectData?.stage },
-                            { label: "Tool", value: projectData?.tools },
-                            {
-                              label: "Start Date",
-                              value: projectData?.startDate,
+                              icon: (
+                                <Clock4 className="text-blue-500 text-md" />),
                             },
                             {
-                              label: "Department",
-                              value: projectData?.department?.name,
+                              label: "Stage",
+                              value: projectData?.stage,
+                              icon: (
+                                <ChevronRight className="text-blue-500 text-md" />
+                              ),
                             },
-                            {
-                              label: "End Date",
-                              value: projectData?.approvalDate,
-                            },
-                            {
-                              label: "Department Manager",
-                              value: projectData?.manager?.f_name,
-                            },
-                            {
-                              label: "Project Manager",
-                              value: projectData?.manager?.f_name,
-                            },
-
-                            {
-                              label: "Files",
-                              value: Array.isArray(projectData?.files)
-                                ? projectData?.files?.map((file, index) => (
-                                  <a
-                                    key={index}
-                                    href={`${BASE_URL}/project/projects/viewfile/${projectData?.id}/${file.id}`} // Use the file path with baseURL
-                                    target="_blank" // Open in a new tab
-                                    rel="noopener noreferrer"
-                                    className="px-5 py-2 text-teal-500 hover:underline"
-                                  >
-                                    {file.originalName || `File ${index + 1}`}
-                                  </a>
-                                ))
-                                : "Not available",
-                            },
-                          ]?.map(({ label, value }) => (
-                            <div key={label} className="flex flex-col">
-                              <span className="font-medium text-gray-700">
-                                {label}:
-                              </span>
-                              <span className="text-gray-600">
-                                {value || "Not available"}
-                              </span>
+                          ]?.map(({ label, value, icon }) => (
+                            <div key={label} className="flex items-start p-2 rounded-md hover:bg-blue-50">
+                              <div className="flex items-center gap-2">
+                                {icon}
+                                <span className="font-medium text-gray-700">{label}:</span>
+                              </div>
+                              <span className="ml-2 text-gray-600 break-words">{value || "Not available"}</span>
                             </div>
                           ))}
+
+                          {/* Files section */}
+                          {Array.isArray(projectData?.files) && projectData?.files.length > 0 && (
+                            <div className="col-span-2 p-2 mt-2 border-t">
+                              <div className="flex items-center mb-2">
+                                <Files className="text-blue-500 text-md" />
+                                <span className="font-medium text-gray-700">Files:</span>
+                              </div>
+                              <div className="grid grid-cols-1 gap-2 mt-2 sm:grid-cols-2">
+                                {projectData?.files?.map((file, index) => (
+                                  <a
+                                    key={index}
+                                    href={`${BASE_URL}/api/project/projects/viewfile/${projectData?.id}/${file.id}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex items-center p-2 transition-colors duration-200 bg-white border rounded-md hover:bg-blue-50"
+                                  >
+                                    <Files className="text-blue-500 text-md" />
+                                    <span className="text-sm text-gray-700 truncate">
+                                      {file.originalName || `File ${index + 1}`}
+                                    </span>
+                                  </a>
+                                ))}
+                              </div>
+                            </div>
+                          )}
                         </div>
                       )}
                     </div>
 
                     {/* Fabricator */}
-                    <div className="w-full p-5 rounded-lg shadow-xl h-fit bg-teal-200/50">
-                      <div className="flex items-center gap-2 my-5 text-xl">
-                        <span className="font-bold text-gray-800">
-                          Fabricator Detail:
-                        </span>{" "}
-                        <span
-                          className="text-teal-600 cursor-pointer"
+                    <div className="w-full p-6 rounded-lg shadow-xl h-fit bg-gradient-to-br from-teal-50 to-teal-100">
+                      <div className="flex items-center justify-between mb-4">
+                        <h2 className="text-xl font-bold text-purple-800">Fabricator Details</h2>
+                        <button
                           onClick={toggleFabricatorDetail}
+                          className="flex items-center text-purple-600 hover:text-purple-800"
                         >
-                          {projectData?.fabricator?.fabName}
-                        </span>
+                          {showFabricatorDetail ? (
+                            <ChevronUp />
+                          ) : (
+                            <ChevronDown />
+                          )}
+                        </button>
                       </div>
-                      {showFabricatorDetail && (
-                        <div className="ml-8 space-y-4">
-                          <div className="flex items-center gap-4">
-                            <span className="w-40 font-bold text-gray-800">
-                              Website:
-                            </span>{" "}
-                            <a
-                              href={projectData?.fabricator?.website}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="overflow-hidden text-blue-500 hover:text-blue-700 overflow-ellipsis whitespace-nowrap"
-                            >
-                              {projectData?.fabricator?.website}
-                            </a>
+
+                      <div className="flex items-center p-3 mb-4 bg-white rounded-lg">
+                        <div className="p-2 mr-3 bg-purple-100 rounded-full">
+                          <Building2 className="text-purple-500" />
+                        </div>
+                        <div>
+                          <div className="text-sm font-medium text-gray-500">Fabricator Name</div>
+                          <div className="text-lg font-semibold text-purple-700">
+                            {projectData?.fabricator?.fabName}
                           </div>
-                          <div className="flex items-center gap-4">
-                            <span className="w-32 font-bold text-gray-800">
-                              Drive:
-                            </span>{" "}
-                            <a
-                              href={tasks?.project?.fabricator?.drive}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="overflow-hidden text-blue-500 hover:text-blue-700 overflow-ellipsis whitespace-nowrap"
-                            >
-                              {tasks?.project?.fabricator?.drive}
-                            </a>
+                        </div>
+                      </div>
+
+                      {showFabricatorDetail && (
+                        <div className="p-4 mt-2 space-y-4 bg-white rounded-lg">
+                          <div className="flex items-center">
+                            <div className="p-2 mr-3 bg-purple-100 rounded-full">
+                              <Globe className="text-purple-500" />
+                            </div>
+                            <div>
+                              <div className="text-sm font-medium text-gray-500">Website</div>
+                              <a
+                                href={projectData?.fabricator?.website}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-purple-600 hover:text-purple-800 hover:underline"
+                              >
+                                {projectData?.fabricator?.website || "Not available"}
+                              </a>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center">
+                            <div className="p-2 mr-3 bg-purple-100 rounded-full">
+                              <FolderOpen className="text-purple-500" />
+                            </div>
+                            <div>
+                              <div className="text-sm font-medium text-gray-500">Drive</div>
+                              <a
+                                href={tasks?.project?.fabricator?.drive}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-purple-600 hover:text-purple-800 hover:underline"
+                              >
+                                {tasks?.project?.fabricator?.drive || "Not available"}
+                              </a>
+                            </div>
                           </div>
                         </div>
                       )}
@@ -708,77 +636,107 @@ const Task = ({ taskId, setDisplay }) => {
                   </div>
                 </div>
 
-                <div className="flex flex-col w-full gap-5 p-5 mt-5 bg-teal-100 rounded-lg shadow-xl">
-                  <div className="text-2xl font-bold text-gray-800">
-                    Comments:
-                  </div>
-                  <form onSubmit={handleSubmit(onSubmitComment)}>
-                    {" "}
-                    <div className="flex flex-row w-full p-4 rounded-lg bg-gray-200/60">
-                      <div className="w-full">
-                        <Input
-                          type="textarea"
-                          label="Add Comment"
-                          className="w-3/4 h-20"
-                          placeholder="Add Comment"
-                          {...register("comment")}
-                        />
+                {/* Comments Section */}
+                <div className="w-full p-6 mt-6 rounded-lg shadow-xl bg-gradient-to-br from-gray-50 to-gray-100">
+                  <h2 className="mb-4 text-xl font-bold text-gray-800 border-b border-gray-200 pb-2">Comments</h2>
 
-                        <Button type="submit">Add Comment</Button>
+                  <form onSubmit={handleSubmit(onSubmitComment)} className="mb-6">
+                    <div className="p-4 bg-white rounded-lg shadow-sm">
+                      <div className="mb-3">
+                        <label htmlFor="comment" className="block mb-2 text-sm font-medium text-gray-700">
+                          Add Comment
+                        </label>
+                        <textarea
+                          id="comment"
+                          className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                          rows="3"
+                          placeholder="Type a message (Shift + Enter for newline)"
+                          {...register("comment")}
+                        ></textarea>
                       </div>
+                      <button
+                        type="submit"
+                        className="px-4 py-2 text-white transition-colors duration-300 bg-teal-600 rounded-md hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
+                      >
+                        Post Comment
+                      </button>
                     </div>
                   </form>
-                  {tasks?.taskcomment?.length > 0 && (
-                    <div className="p-5 rounded-lg shadow-xl bg-gray-100/70">
-                      <div className="space-y-4">
-                        {tasks?.taskcomment?.map((comment, index) => (
-                          <div
-                            className="p-4 bg-white rounded-lg shadow-md"
-                            key={index}
-                          >
-                            <div className="flex items-center mb-2">
-                              <span className="font-bold text-gray-800">
-                                {
-                                  staffData?.find(
-                                    (staff) => staff?.id === comment?.user_id,
-                                  )?.f_name
-                                }
-                              </span>
-                              <span className="ml-2 text-sm text-gray-500">
-                                {new Date(comment?.created_on).toLocaleString(
-                                  "en-US",
-                                  {
-                                    year: "numeric",
-                                    month: "short",
-                                    day: "numeric",
-                                    hour: "2-digit",
-                                    minute: "2-digit",
-                                    second: "2-digit",
-                                  },
-                                )}
-                              </span>
+
+                  {tasks?.taskcomment?.length > 0 ? (
+                    <div className="space-y-4">
+                      {tasks?.taskcomment?.map((comment, index) => (
+                        <div
+                          className="p-4 transition-shadow duration-300 bg-white rounded-lg shadow-sm hover:shadow-md"
+                          key={index}
+                        >
+                          <div className="flex items-center mb-3">
+                            <div className="p-2 mr-3 text-white bg-teal-600 rounded-full">
+                              {staffData?.find((staff) => staff?.id === comment?.user_id)?.f_name?.charAt(0) || "U"}
                             </div>
-                            <div className="text-gray-600">
-                              <div>{comment?.data} </div>
+                            <div>
+                              <div className="font-medium text-gray-800">
+                                {staffData?.find((staff) => staff?.id === comment?.user_id)?.f_name || "Unknown User"}
+                              </div>
+                              <div className="text-xs text-gray-500">
+                                {new Date(comment?.created_on).toLocaleString("en-US", {
+                                  year: "numeric",
+                                  month: "short",
+                                  day: "numeric",
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                })}
+                              </div>
                             </div>
                           </div>
-                        ))}
-                      </div>
+                          <div className="pl-12 text-gray-700 whitespace-pre-wrap break-words">{comment?.data}</div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center justify-center p-6 text-center bg-white rounded-lg">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="w-12 h-12 mb-4 text-gray-400"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                      </svg>
+                      <h3 className="mb-1 text-lg font-medium text-gray-900">No comments yet</h3>
+                      <p className="text-gray-500">Be the first to add a comment to this task.</p>
                     </div>
                   )}
                 </div>
               </>
             ) : (
-              <div>
-                <h1 className="flex items-center justify-center py-10 text-2xl font-bold text-white uppercase bg-slate-500">
-                  No Task
-                </h1>
+              <div className="flex flex-col items-center justify-center h-64 p-6 bg-white rounded-lg shadow-md">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="w-16 h-16 mb-4 text-gray-400"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="12" y1="8" x2="12" y2="12"></line>
+                  <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+                <h1 className="mb-2 text-2xl font-bold text-gray-800">No Task Found</h1>
+                <p className="text-gray-600">The requested task could not be found or has been deleted.</p>
               </div>
             )}
           </div>
         </div>
       </div>
-    </div >
+    </div>
   );
 };
 

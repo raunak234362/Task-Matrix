@@ -1,18 +1,110 @@
-/* eslint-disable prettier/prettier */
+/* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
-import React, { useEffect, useState } from "react";
-import Task from "../Task";
-import { Button, Header } from "../../../index";
+/* eslint-disable prettier/prettier */
+
+import { toast } from "react-toastify";
+import socket from "../../../../socket";
+import Button from "../../../fields/Button";
+import { useTable } from "react-table";
+import { useEffect, useMemo, useState } from "react";
 import Service from "../../../../api/configAPI";
 import { useSelector } from "react-redux";
-import { io } from "socket.io-client";
-import socket from "../../../../socket";
-import { toast } from "react-toastify";
+import Task from "../Task";
+
+/* eslint-disable react/jsx-key */
 const MyTask = () => {
   const [tasks, setTasks] = useState([]);
   const [specificTask, setSpecificTask] = useState("");
   const [displayTask, setDisplayTask] = useState(false);
+  const [stageFilter, setStageFilter] = useState("");
+  const projects = useSelector((state) => state?.projectData?.projectData);
 
+  // const stageOptions = [
+  //   { label: "All Stages", value: "" },
+  //   { label: "(RFI)Request for Information", value: "RFI" },
+    
+  // ];
+
+  const filteredTasks = useMemo(() => {
+    return stageFilter
+      ? tasks.filter(task => task.stage === stageFilter)
+      : tasks;
+  }, [tasks, stageFilter]);
+
+  const columns = useMemo(() => [
+    { Header: "S.No", accessor: (_, i) => i + 1 },
+    {
+      Header: "Project Name",
+      accessor: row =>
+        projects?.find((project) => project.id === row?.project_id)?.name || "N/A",
+    },
+    { Header: "Task Name", accessor: "name" },
+    {
+      Header: "Start Date",
+      accessor: "start_date",
+      Cell: ({ value }) => new Date(value).toDateString(),
+    },
+    {
+      Header: "Due Date",
+      accessor: "due_date",
+      Cell: ({ value }) => new Date(value).toDateString(),
+    },
+    {
+      Header: "Duration",
+      accessor: "duration",
+      Cell: ({ value }) => durToHour(value),
+    },
+    {
+      Header: "Status",
+      accessor: "status",
+      Cell: ({ value }) => (
+        <span className={`px-3 py-0.5 rounded-full border ${statusColor(value)}`}>
+          {value}
+        </span>
+      ),
+    },
+    {
+      Header: "Priority",
+      accessor: "priority",
+      Cell: ({ value }) => (
+        <span className={`px-3 py-0.5 rounded-full border ${color(value)}`}>
+          {setPriorityValue(value)}
+        </span>
+      ),
+    },
+    {
+      Header: "View",
+      accessor: "id",
+      Cell: ({ row }) => {
+        const canView = unlockableTaskId === row.original.id;
+        return canView ? (
+          <Button onClick={() => handleTaskView(row.original.id)}>View</Button>
+        ) : (
+          <Button className="bg-red-500 text-white font-semibold" disabled>
+            View
+          </Button>
+        );
+      },
+    },
+  ], [projects, tasks]);
+
+  const {
+    getTableProps,
+    getTableBodyProps,
+    headerGroups,
+    rows,
+    prepareRow,
+  } = useTable({ columns, data: filteredTasks });
+
+  const highestPriorityTask = tasks
+    .sort((a, b) => {
+      if (b.priority !== a.priority) {
+        return b.priority - a.priority;
+      }
+      return new Date(a.due_date) - new Date(b.due_date);
+    })[0];
+
+  const unlockableTaskId = highestPriorityTask?.id;
 
   useEffect(() => {
     const fetchTask = async () => {
@@ -23,14 +115,12 @@ const MyTask = () => {
         console.error("Error in fetching task:", error);
       }
     };
-    // Initial fetch
-    fetchTask(tasks);
 
-    // Listen for new task notifications
+    fetchTask();
+
     const handleNewTaskNotification = (data) => {
       const { title = "New Task", message = "You have a new task!" } = data;
 
-      // Show desktop notification
       if (Notification.permission !== "granted") {
         Notification.requestPermission().then((permission) => {
           if (permission === "granted") {
@@ -41,34 +131,19 @@ const MyTask = () => {
         new Notification(title, { body: message });
       }
 
-      // UI toast
       toast.success(message);
-
-      // Re-fetch tasks
       fetchTask();
     };
 
-    // Attach socket listener
     socket.on("customNotification", handleNewTaskNotification);
 
-    // Cleanup on unmount
     return () => {
       socket.off("customNotification", handleNewTaskNotification);
     };
-  }, [tasks.length]);
-
-  // if(tasks.length + 1){
-  //   window.electron.ipcRenderer.send('show-notification', {
-  //     title: 'New Data Added',
-  //     body: 'A new record has been added successfully!',
-  //   })
-  // }
-
-  const projects = useSelector((state) => state?.projectData?.projectData);
+  }, []);
 
   function durToHour(params) {
     if (!params) return "N/A";
-
     const parts = params.split(" ");
     let days = 0;
     let timePart = params;
@@ -103,16 +178,11 @@ const MyTask = () => {
 
   function setPriorityValue(value) {
     switch (value) {
-      case 0:
-        return "LOW";
-      case 1:
-        return "MEDIUM";
-      case 2:
-        return "HIGH";
-      case 3:
-        return "CRITICAL";
-      default:
-        return "";
+      case 0: return "LOW";
+      case 1: return "MEDIUM";
+      case 2: return "HIGH";
+      case 3: return "CRITICAL";
+      default: return "";
     }
   }
 
@@ -121,76 +191,31 @@ const MyTask = () => {
     setDisplayTask(true);
   }
 
-  // Find the highest-priority task that is still pending
-  const highestPriorityTask = tasks
-    .sort((a, b) => {
-      if (b.priority !== a.priority) {
-        return b.priority - a.priority; // higher priority wins
-      }
-      return new Date(a.due_date) - new Date(b.due_date); // earlier due date wins
-    })[0];
-
-  const unlockableTaskId = highestPriorityTask?.id;
-
-  const reloadWnidow = () => {
-    window.location.reload();
-  };
-
   return (
-    <div className="mx-5 my-3 main-container">
-      <div>
-        <Button onClick={reloadWnidow}>Refresh</Button>
-      </div>
-      <div className="mt-5 bg-white h-[60vh] overflow-auto rounded-lg">
-        <table className="h-fit md:w-full w-[90vw] border-collapse text-center md:text-lg text-xs rounded-xl">
-          <thead>
-            <tr className="bg-teal-200/70">
-              <th className="px-2 py-1 uppercase">S.no</th>
-              <th className="px-2 py-1 uppercase">Project Name</th>
-              <th className="px-2 py-1 uppercase">Task Name</th>
-              <th className="px-2 py-1 uppercase">Start Date</th>
-              <th className="px-2 py-1 uppercase">Due Date</th>
-              <th className="px-2 py-1 uppercase">Duration</th>
-              <th className="px-2 py-1 uppercase">Status</th>
-              <th className="px-2 py-1 uppercase">Priority</th>
-              <th className="px-2 py-1 uppercase">View</th>
-            </tr>
+    <div className="mx-2 my-3 main-container">
+      <div className="bg-white h-[60vh] overflow-auto rounded-lg">
+        <table {...getTableProps()} className="w-full border-collapse text-center text-sm">
+          <thead className="bg-teal-200/70">
+            {headerGroups.map(headerGroup => (
+              <tr {...headerGroup.getHeaderGroupProps()}>
+                {headerGroup.headers.map(column => (
+                  <th {...column.getHeaderProps()} className="px-2 py-1 uppercase border">
+                    {column.render("Header")}
+                  </th>
+                ))}
+              </tr>
+            ))}
           </thead>
-          <tbody className="bg-white">
-            {tasks.map((task, index) => {
-              const canView = unlockableTaskId === task.id;
-
+          <tbody {...getTableBodyProps()}>
+            {rows.map(row => {
+              prepareRow(row);
               return (
-                <tr key={task.id} className={index % 2 === 0 ? "bg-white" : "bg-gray-200/50"}>
-                  <td className="px-1 py-2 border">{index + 1}</td>
-                  <td className="px-1 py-2 border">
-                    {projects?.find((project) => project.id === task?.project_id)?.name || "N/A"}
-                  </td>
-                  <td className="px-1 py-2 border">{task.name}</td>
-                  <td className="px-1 py-2 border">{new Date(task.start_date).toDateString()}</td>
-                  <td className="px-1 py-2 border">{new Date(task.due_date).toDateString()}</td>
-                  <td className="px-1 py-2 border">{durToHour(task.duration)}</td>
-                  <td className="px-1 py-2 border">
-                    <span className={`px-3 py-0.5 rounded-full border ${statusColor(task.status)}`}>
-                      {task.status}
-                    </span>
-                  </td>
-                  <td className="px-1 py-2 border">
-                    <span className={`px-3 py-0.5 rounded-full border ${color(task.priority)}`}>
-                      {setPriorityValue(task.priority)}
-                    </span>
-                  </td>
-                  <td className="px-1 py-2 border">
-                    {canView ? (
-                      <Button onClick={() => handleTaskView(task.id)}>View</Button>
-                    ) : (
-                      <Button className="bg-red-500 text-white font-semibold" disabled>
-                        View
-                      </Button>
-                    )}
-
-
-                  </td>
+                <tr {...row.getRowProps()} className="even:bg-gray-100">
+                  {row.cells.map(cell => (
+                    <td {...cell.getCellProps()} className="px-1 py-2 border">
+                      {cell.render("Cell")}
+                    </td>
+                  ))}
                 </tr>
               );
             })}

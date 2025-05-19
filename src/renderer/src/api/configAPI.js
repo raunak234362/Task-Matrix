@@ -408,7 +408,8 @@ class Service {
           "Content-Type": "application/json",
         },
       });
-      return response.data;
+      console.log("Start Task: ", response);
+      return response.data.data;
     } catch (error) {
       console.log("Error in getting Project:", error);
       throw error;
@@ -427,7 +428,7 @@ class Service {
         },
       });
       console.log("Pause Task: ", response.data);
-      return response.data;
+      return response.data.data;
     } catch (error) {
       console.log("Error in getting Project:", error);
       throw error;
@@ -447,7 +448,7 @@ class Service {
         },
       });
       console.log("Resume Task: ", response.data);
-      return response.data;
+      return response.data.data;
     } catch (error) {
       console.log("Error in getting Resume Task: ", error);
       throw error;

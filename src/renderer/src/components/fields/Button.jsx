@@ -2,11 +2,11 @@
 /* eslint-disable react/prop-types */
 
 
-const Button = ({ children, type = "button", className = " bg-teal-500/50 text-white text-xl", ...props }) => {
+const Button = ({ children, type = "button", className ="bg-teal-500 text-white", ...props }) => {
   return (
     <button
       type={type}
-      className={`${className} flex flex-row justify-start items-center rounded-xl px-5 mt-3 `}
+       className={`${className} md:px-5 px-3 md:py-1 py-0 md:text-md text-sm rounded-xl`}
       {...props}
     >
       {children}

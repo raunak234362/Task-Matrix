@@ -95,7 +95,9 @@ const App = () => {
   document.body.style.height = '100%';
   document.getElementById('root').style.height = '100%';
 
-
+  const reloadWnidow = () => {
+    window.location.reload();
+  };
   return (
     <Provider store={store}>
       {/* <ToastContainer /> */}
@@ -113,7 +115,7 @@ const App = () => {
                 } md:translate-x-0 md:w-64`}
             >
               <div className="flex items-center justify-between pl-2">
-                <Sidebar />
+                <Sidebar refresh={reloadWnidow}/>
               </div>
             </div>
             {/* Main Content */}

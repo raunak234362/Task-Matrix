@@ -34,7 +34,7 @@ const ChatSidebar = ({ activeChat, recentChats, setActiveChat, unreadChatIds, se
 
 
   return (
-     <div className="flex flex-col justify-between h-full bg-white shadow-lg rounded-lg overflow-hidden">
+    <div className="flex flex-col justify-between h-full bg-white shadow-lg rounded-lg overflow-hidden">
       {/* Sidebar with contacts */}
       <div className="w-full border-r border-gray-200 bg-white">
         {/* Sidebar header */}
@@ -80,8 +80,8 @@ const ChatSidebar = ({ activeChat, recentChats, setActiveChat, unreadChatIds, se
                   </span>
                 </div>
                 <div className="flex justify-between items-center mt-1">
-                  <p className="text-sm text-gray-700 truncate w-40">{chats.lastMessage}</p>
-                  {(unreadChatIds.includes(chats.group.id) || chats.unread > 0) && activeChat?.group?.id !== chats.group.id && (
+                  <p className="text-sm text-gray-700 truncate w-40">{chats?.lastMessage}</p>
+                  {(unreadChatIds?.includes(chats?.group?.id) || chats?.unread > 0) && activeChat?.group?.id !== chats?.group?.id && (
                     <span className="bg-green-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
                       ●
                     </span>
@@ -95,7 +95,7 @@ const ChatSidebar = ({ activeChat, recentChats, setActiveChat, unreadChatIds, se
       {/* Add group button */}
       <div className="p-4 sticky flex bottom-0 justify-between border-t border-gray-200 bg-white items-center">
 
-{/* 
+        {/* 
         <Button variant="outline" size="xs" onClick={handlePrivateChat}>
           <TiUserAdd />
 

@@ -295,15 +295,15 @@ const AllTask = () => {
   );
 
   return (
-    <div className="p-4 h-[70vh]">
+    <div className="p-4 h-[70vh] bg-white/70 rounded-lg shadow-md overflow-hidden border-l-4 border-teal-300">
       <div className=" mb-4">
         <div className="flex flex-col items-center md:flex-row gap-4 mb-4">
           <div className="flex gap-5">
 
             <input
               type="text"
-              placeholder="Search by task name or user name"
-              className="border p-2 rounded w-full"
+              placeholder="🔍 Task or Username"
+              className="border p-2 rounded-lg w-full"
               value={searchQuery}
               onChange={handleSearch}
             />
@@ -312,7 +312,7 @@ const AllTask = () => {
               name="project"
               value={filters.project}
               onChange={handleFilterChange}
-              className="border p-2 rounded w-full"
+              className="border p-2 rounded-lg w-full"
             >
               <option value="">All project</option>
               {projects?.map((proj) => (
@@ -326,7 +326,7 @@ const AllTask = () => {
               name="status"
               value={filters.status}
               onChange={handleFilterChange}
-              className="border p-2 rounded w-full"
+              className="border p-2 rounded-lg w-full"
             >
               <option value="">All Status</option>
               <option value="ASSIGNED">ASSIGNED</option>
@@ -342,7 +342,7 @@ const AllTask = () => {
       </div>
 
       <div className="overflow-x-auto rounded-md border max-h-[55vh]">
-        <table {...getTableProps()} className="min-w-full text-sm text-center bg-white border">
+        <table {...getTableProps()} className="min-w-full text-sm text-center border">
           <thead className="sticky top-0 bg-teal-200 z-10">
             {headerGroups.map((headerGroup) => (
               <tr {...headerGroup.getHeaderGroupProps()}>
@@ -368,7 +368,7 @@ const AllTask = () => {
           <tbody {...getTableBodyProps()}>
             {page.length === 0 ? (
               <tr>
-                <td colSpan={columns.length} className="py-4 text-center">
+                <td colSpan={columns.length} className="py-4 text-center border ">
                   No Tasks Found
                 </td>
               </tr>
@@ -399,7 +399,7 @@ const AllTask = () => {
                     className={`hover:bg-teal-100 ${highlightRow ? "bg-red-100" : ""}`}
                   >
                     {row.cells.map((cell) => (
-                      <td {...cell.getCellProps()} className="px-4 py-2 border">
+                      <td {...cell.getCellProps()} className="px-4 py-2 border border-black/50">
                         {cell.render("Cell")}
                       </td>
                     ))}

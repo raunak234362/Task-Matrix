@@ -53,17 +53,17 @@ const AddTask = () => {
       const project = await Service.getProject(projectId);
       setProject(project);
       const assigned =
-      project?.team?.members?.reduce((acc, member) => {
-        const exists = acc.find((item) => item.value === member?.id);
-        
-        if (!exists) {
-          acc.push({
-            label: `${member.role} - ${member.f_name} ${member.m_name} ${member.l_name}`,
-            value: member?.id,
-          });
-        }
-        return acc;
-      }, []) || []; // Fallback to an empty array if reduce fails
+        project?.team?.members?.reduce((acc, member) => {
+          const exists = acc.find((item) => item.value === member?.id);
+
+          if (!exists) {
+            acc.push({
+              label: `${member.role} - ${member.f_name} ${member.m_name} ${member.l_name}`,
+              value: member?.id,
+            });
+          }
+          return acc;
+        }, []) || []; // Fallback to an empty array if reduce fails
       console.log("projectStage", project?.stage);
       setProjectStage(project?.stage);
       setAssignedUser(assigned);
@@ -97,9 +97,9 @@ const AddTask = () => {
     try {
       const token = sessionStorage.getItem("token");
       if (!token) throw new Error("Token not found");
-      
+
       const TaskName = `${taskData.type} - ${taskData.taskname}`;
-      
+
       const data = await Service.addTask({
         ...taskData,
         name: TaskName,
@@ -130,32 +130,34 @@ const AddTask = () => {
 
 
   return (
-    <div>
-      <form onSubmit={handleSubmit(onSubmit)} className="w-full p-1">
+    <div className="bg-white/70 w-full h-full rounded-lg p-2 px-5">
+      <form onSubmit={handleSubmit(onSubmit)} className="w-full ">
         <div className="flex flex-col justify-between gap-5 ">
-          <div className="flex flex-col p-5 rounded-lg shadow-lg shadow-black/15">
-            <div className="mt-5">
-              <CustomSelect
-                label="Project:"
-                placeholder="Project"
-                name="project"
-                className="w-full"
-                options={[
-                  {
-                    label: "Select Project",
-                    value: "",
-                  },
-                  ...projectOptions,
-                ]}
-                {...register("project", { required: "Project is required" })}
-                onChange={setValue}
-              />
-              {errors.project && (
-                <p className="text-red-600">{errors.project.message}</p>
-              )}
-            </div>
+          <div className="bg-teal-500/50 rounded-lg px-2 py-2 font-bold text-white">
+            Project:
+          </div>
+          <div className="px-4">
+            <CustomSelect
+              label="Project:"
+              placeholder="Project"
+              name="project"
+              className="w-full"
+              options={[
+                {
+                  label: "Select Project",
+                  value: "",
+                },
+                ...projectOptions,
+              ]}
+              {...register("project", { required: "Project is required" })}
+              onChange={setValue}
+            />
+            {errors.project && (
+              <p className="text-red-600">{errors.project.message}</p>
+            )}
+          </div>
 
-            {/* <div className="mt-5">
+          {/* <div className="mt-5">
               <CustomSelect
                 label="Parent Task: "
                 name="parent"
@@ -172,77 +174,80 @@ const AddTask = () => {
                 onChange={setValue}
               />
             </div> */}
-            <div className="flex flex-row mt-5 gap-x-2">
-              <div className="w-[30%]">
-                <CustomSelect
-                  label="Task Type: "
-                  name="type"
-                  placeholder="Task Type"
-                  className="w-full"
-                  options={[
-                    {
-                      label: "Select Task",
-                      value: "",
-                    },
-                    { label: "Modeling", value: "MODELING" },
-                    { label: "Model Checking", value: "MC" },
-                    { label: "Detailing", value: "DETAILING" },
-                    { label: "Detailing Checking", value: "DC" },
-                    { label: "Erection", value: "ERECTION" },
-                    { label: "Erection Checking", value: "EC" },
-                    { label: "Designing", value: "DESIGNING" },
-                    { label: "Design Checking", value: "DWG_CHECKING" },
-                    { label: "Others", value: "OTHERS" },
-                  ]}
-                  {...register("type", { required: "Task Type is required" })}
-                  onChange={setValue}
-                />
-                {errors.type && (
-                  <p className="text-red-600">{errors.type.message}</p>
-                )}
-              </div>
-              <div className="w-full">
-                <Input
-                  name="taskname"
-                  label="Task Name: "
-                  placeholder="Task Name"
-                  className="w-full"
-                  {...register("taskname", {
-                    validate: (value) => {
-                      if (
-                        watch("type") === "OTHERS" &&
-                        (!value || value.trim() === "")
-                      ) {
-                        return "With Task Type 'Others', Task name is required";
-                      }
-                      return true;
-                    },
-                  })}
-                />
-                {errors.taskname && (
-                  <p className="text-red-600">{errors.taskname.message}</p>
-                )}
-              </div>
-            </div>
-            <div className="mt-5">
+          <div className="bg-teal-500/50 rounded-lg px-2 py-2 font-bold text-white">
+            Task Details:
+          </div>
+          <div className="flex flex-row gap-x-2 px-4">
+            <div className="w-[30%]">
               <CustomSelect
-                label="Priority:"
-                name="priority"
-                options={[
-                  { label: "LOW", value: 0 },
-                  { label: "MEDIUM", value: 1 },
-                  { label: "HIGH", value: 2 },
-                  { label: "Critical", value: 3 },
-                ]}
+                label="Task Type: "
+                name="type"
+                placeholder="Task Type"
                 className="w-full"
-                {...register("priority", { required: "Priority is required" })}
+                options={[
+                  {
+                    label: "Select Task",
+                    value: "",
+                  },
+                  { label: "Modeling", value: "MODELING" },
+                  { label: "Model Checking", value: "MC" },
+                  { label: "Detailing", value: "DETAILING" },
+                  { label: "Detailing Checking", value: "DC" },
+                  { label: "Erection", value: "ERECTION" },
+                  { label: "Erection Checking", value: "EC" },
+                  { label: "Designing", value: "DESIGNING" },
+                  { label: "Design Checking", value: "DWG_CHECKING" },
+                  { label: "Others", value: "OTHERS" },
+                ]}
+                {...register("type", { required: "Task Type is required" })}
                 onChange={setValue}
               />
-              {errors.priority && (
-                <p className="text-red-600">{errors.priority.message}</p>
+              {errors.type && (
+                <p className="text-red-600">{errors.type.message}</p>
               )}
             </div>
-            {/* <div className="mt-5">
+            <div className="w-full">
+              <Input
+                name="taskname"
+                label="Task Name: "
+                placeholder="Task Name"
+                className="w-full"
+                {...register("taskname", {
+                  validate: (value) => {
+                    if (
+                      watch("type") === "OTHERS" &&
+                      (!value || value.trim() === "")
+                    ) {
+                      return "With Task Type 'Others', Task name is required";
+                    }
+                    return true;
+                  },
+                })}
+              />
+              {errors.taskname && (
+                <p className="text-red-600">{errors.taskname.message}</p>
+              )}
+            </div>
+          </div>
+          <div className="px-4">
+            <CustomSelect
+              label="Priority:"
+              name="priority"
+              options={[
+                { label: "LOW", value: 0 },
+                { label: "MEDIUM", value: 1 },
+                { label: "HIGH", value: 2 },
+                { label: "Critical", value: 3 },
+              ]}
+              className="w-full"
+              {...register("priority", { required: "Priority is required" })}
+              onChange={setValue}
+            />
+            {errors.priority && (
+              <p className="text-red-600">{errors.priority.message}</p>
+            )}
+          </div>
+          {/* <div className="mt-5">
               <CustomSelect
                 label="Status:"
                 name="status"
@@ -263,78 +268,42 @@ const AddTask = () => {
                 <p className="text-red-600">{errors.status.message}</p>
               )}
             </div> */}
-            <div className="flex flex-row w-1/5 gap-5 my-5">
-              <div className="w-full ">
-                <Input
-                  label="Start Date:"
-                  name="start_date"
-                  type="date"
-                  className="w-full"
-                  {...register("start_date", {
-                    required: "Start Date is required",
-                  })}
-                />
-                {errors.due_date && (
-                  <p className="text-red-600">{errors.due_date.message}</p>
-                )}
-              </div>
-              <div className="w-full ">
-                <Input
-                  label="Due Date:"
-                  name="due_date"
-                  type="date"
-                  className="w-full"
-                  {...register("due_date", {
-                    required: "Due Date is required",
-                  })}
-                />
-                {errors.due_date && (
-                  <p className="text-red-600">{errors.due_date.message}</p>
-                )}
-              </div>
+          <div className="flex flex-col max-md:flex-row w-1/5 gap-5 px-4">
+            <div className="w-full ">
+              <Input
+                label="Start Date:"
+                name="start_date"
+                type="date"
+                className="w-full"
+                {...register("start_date", {
+                  required: "Start Date is required",
+                })}
+              />
+              {errors.due_date && (
+                <p className="text-red-600">{errors.due_date.message}</p>
+              )}
             </div>
-            <div className="mt-1">
-              <div className="text-lg font-bold">Duration:</div>
-              <div className="flex flex-row w-1/5 gap-5">
-                <div className="w-full">
-                  <Input
-                    type="number"
-                    name="hour"
-                    label="HH"
-                    placeholder="HH"
-                    className="w-20"
-                    min={0}
-                    {...register("hour", {
-                      required: "Hours is required in Duration",
-                    })}
-                    onBlur={(e) => {
-                      if (e.target.value < 0) e.target.value = 0;
-                    }}
-                  />
-                </div>
-                <div className="w-full">
-                  <Input
-                    type="number"
-                    name="min"
-                    placeholder="MM"
-                    label="MM"
-                    className="w-20"
-                    min={0}
-                    max={60}
-                    {...register("min", {
-                      required: "Minutes is required in Duration",
-                    })}
-                    onBlur={(e) => {
-                      if (e.target.value < 0) e.target.value = 0;
-                    }}
-                  />
-                </div>
-                {errors.min && (
-                  <p className="text-red-600">{errors.min.message}</p>
-                )}
-              </div>
+            <div className="w-full ">
+              <Input
+                label="Due Date:"
+                name="due_date"
+                type="date"
+                className="w-full"
+                {...register("due_date", {
+                  required: "Due Date is required",
+                })}
+              />
+              {errors.due_date && (
+                <p className="text-red-600">{errors.due_date.message}</p>
+              )}
             </div>
-            <div className="mt-5">
+          </div>
+
+          <div className="bg-teal-500/50 rounded-lg px-2 py-2 font-bold text-white">
+            Assigning Details:
+          </div>
+          <div className="px-4 space-y-2">
+            <div className="">
               <CustomSelect
                 label="Assign User:"
                 name="user"
@@ -346,7 +315,7 @@ const AddTask = () => {
                 onChange={setValue}
               />
             </div>
-            <div className="mt-5">
+            <div className="">
               <Input
                 type="textarea"
                 label="Description: "
@@ -361,9 +330,51 @@ const AddTask = () => {
                 <p className="text-red-600">{errors.description.message}</p>
               )}
             </div>
-            <div className="w-full mt-5">
-              <Button type="submit">Add Task</Button>
+            <div className="text-md text-gray-700 ">Duration:</div>
+            <div className="flex flex-col md:flex-row max-lg:flex-col w-1/5 gap-2">
+              <div className="w-full">
+                <Input
+                  type="number"
+                  name="hour"
+                  label="HH"
+                  placeholder="HH"
+                  className="w-20"
+                  min={0}
+                  {...register("hour", {
+                    required: "Hours is required in Duration",
+                  })}
+                  onBlur={(e) => {
+                    if (e.target.value < 0) e.target.value = 0;
+                  }}
+                />
+              </div>
+              <div className="w-full">
+                <Input
+                  type="number"
+                  name="min"
+                  placeholder="MM"
+                  label="MM"
+                  className="w-20"
+                  min={0}
+                  max={60}
+                  {...register("min", {
+                    required: "Minutes is required in Duration",
+                  })}
+                  onBlur={(e) => {
+                    if (e.target.value < 0) e.target.value = 0;
+                  }}
+                />
+              </div>
+              {errors.min && (
+                <p className="text-red-600">{errors.min.message}</p>
+              )}
             </div>
+          </div>
+
+          <div className="my-5 w-full">
+            <Button type="submit" className="w-full text-lg bg-teal-100 text-teal-500 border-2 border-teal-500 hover:bg-teal-500 hover:text-white">
+              Add Task
+            </Button>
           </div>
         </div>
       </form>
