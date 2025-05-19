@@ -61,7 +61,7 @@ const TaskTab = () => {
                   <h2 className="text-2xl font-bold text-gray-800">{assignedTaskCount || 0}</h2>
                   <div className="items-center mt-1 gap-5">
                     <span className="text-sm text-amber-500">In Progress tasks</span>
-                    <div className="text-xl text-amber-500 font-bold">{completedTaskCount}</div>
+                    <div className="text-xl text-amber-500 font-bold">{activeTaskCount}</div>
                   </div>
                 </div>
                 <div className="bg-amber-100 p-3 rounded-full">
