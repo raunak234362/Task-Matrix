@@ -158,16 +158,19 @@ const Task = ({ taskId, setDisplay }) => {
           status: "IN_PROGRESS",
         };
       });
-      window.location.reload();
+      localStorage.setItem("work_id", accept?.data?.id);
       console.log("Accept Response: --------", accept);
       toast.success("Task Started");
-      sessionStorage.setItem("work_id", accept.id);
+      if (accept.status === 200) {
+        window.location.reload();
+      }
+
     } catch (error) {
       toast.error("Error in accepting task");
     }
   }
 
-  const work_id = sessionStorage.getItem("work_id");
+  const work_id = localStorage.getItem("work_id");
 
   async function handlePause() {
     console.log("Pause Event: ", work_id);
@@ -225,6 +228,7 @@ const Task = ({ taskId, setDisplay }) => {
       console.log("End Response: ", endresponse.status);
       if (endresponse?.status === "END") {
         toast.success("Task Ended");
+        localStorage.removeItem("work_id");
         fetchTask();
         setDisplay(false);
         window.location.reload();

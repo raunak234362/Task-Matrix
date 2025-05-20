@@ -409,7 +409,7 @@ class Service {
         },
       });
       console.log("Start Task: ", response);
-      return response.data.data;
+      return response.data;
     } catch (error) {
       console.log("Error in getting Project:", error);
       throw error;
