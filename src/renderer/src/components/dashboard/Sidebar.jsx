@@ -145,7 +145,7 @@ const Sidebar = ({ refresh }) => {
 
             onClick={refresh}
           >
-           <RefreshCw />
+            <RefreshCw />
           </Button>
 
         </div>
