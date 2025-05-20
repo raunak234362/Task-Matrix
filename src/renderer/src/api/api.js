@@ -10,7 +10,6 @@ const instance = axios.create({
     rejectUnauthorized: false,
   },
 });
-{console.log("=================================",import.meta.env.VITE_BASE_URL)}
 
 // Add request interceptor to handle CORS
 instance.interceptors.request.use((config) => {
