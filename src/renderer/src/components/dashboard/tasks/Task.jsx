@@ -227,7 +227,7 @@ const Task = ({ taskId, setDisplay }) => {
         toast.success("Task Ended");
         fetchTask();
         setDisplay(false);
-        // window.location.reload();
+        window.location.reload();
       }
     } catch (error) {
       toast.error("Error in ending task");
@@ -330,12 +330,7 @@ const Task = ({ taskId, setDisplay }) => {
               <span className="font-bold">Task:</span> {tasks?.name}
             </div>
             <div className="mr-4 text-lg gap-5 flex items-center">
-              <div>
-                <span className="font-semibold">Total Work Hours:</span>
-                <span className="ml-2 px-3 py-1 bg-teal-100 text-teal-800 rounded-full">
-                  {formatMinutesToHoursAndMinutes(workHours?.duration)}
-                </span>
-              </div>
+
               <button
                 className="px-5 py-2 text-white transition-colors duration-300 rounded-lg bg-teal-600 hover:bg-teal-700"
                 onClick={handleClose}
@@ -347,7 +342,7 @@ const Task = ({ taskId, setDisplay }) => {
         </div>
 
 
-        <div className="main-container h-[80vh] overflow-y-auto">
+        <div className="main-container overflow-y-auto">
           <div className="p-5 m-2">
             {taskId ? (
               <>
@@ -378,6 +373,12 @@ const Task = ({ taskId, setDisplay }) => {
                         <span className="text-sm font-medium text-gray-500">Due Date</span>
                         <span className="mt-1 text-lg">{due_date?.toDateString()}</span>
                       </div>
+                      <div>
+                        <span className="text-sm font-medium text-gray-700">Total Work Hours:</span>
+                        <span className="ml-2 px-3 py-1 bg-teal-100 text-teal-800 border-2 border-teal-800 rounded-full">
+                          {formatMinutesToHoursAndMinutes(workHours?.duration)}
+                        </span>
+                      </div>
                       <div className="flex items-center">
                         <div className="flex gap-3 items-center">
                           <span className="text-sm font-medium text-gray-500">Status</span>
@@ -396,6 +397,7 @@ const Task = ({ taskId, setDisplay }) => {
                           </span>
                         </div>
                       </div>
+
                     </div>
 
                     <div className="flex flex-col mt-6">

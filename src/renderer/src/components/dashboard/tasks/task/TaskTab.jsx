@@ -122,7 +122,7 @@ const TaskTab = () => {
                     All Task
                   </NavLink>
                 </li>
-                <li className="px-2">
+                {/* <li className="px-2">
                   <NavLink
                     to="myTask-record"
                     className={({ isActive }) =>
@@ -133,7 +133,7 @@ const TaskTab = () => {
                   >
                     My Task Record
                   </NavLink>
-                </li>
+                </li> */}
                 {userType === "project-manager" ||
                   userType === "admin" ||
                   userType === "department-manager" ? (

@@ -207,18 +207,26 @@ const MyTask = () => {
             ))}
           </thead>
           <tbody {...getTableBodyProps()}>
-            {rows.map(row => {
-              prepareRow(row);
-              return (
-                <tr {...row.getRowProps()} className="even:bg-gray-100">
-                  {row.cells.map(cell => (
-                    <td {...cell.getCellProps()} className="px-1 py-2 border">
-                      {cell.render("Cell")}
-                    </td>
-                  ))}
-                </tr>
-              );
-            })}
+            {rows.length === 0 ? (
+              <tr>
+                <td colSpan={columns.length} className="px-1 py-2 border font-semibold text-center">
+                  No task assigned
+                </td>
+              </tr>
+            ) : (
+              rows.map(row => {
+                prepareRow(row);
+                return (
+                  <tr {...row.getRowProps()} className="even:bg-gray-100">
+                    {row.cells.map(cell => (
+                      <td {...cell.getCellProps()} className="px-1 py-2 border">
+                        {cell.render("Cell")}
+                      </td>
+                    ))}
+                  </tr>
+                );
+              })
+            )}
           </tbody>
         </table>
       </div>

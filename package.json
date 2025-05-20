@@ -35,7 +35,7 @@
     "country-state-city": "^3.2.1",
     "date-fns": "^3.6.0",
     "dotenv": "^16.5.0",
-    "electron-updater": "^6.1.7",
+    "electron-updater": "^6.6.2",
     "jwt-decode": "^4.0.0",
     "lucide-react": "^0.445.0",
     "react-chartjs-2": "^5.2.0",
@@ -75,5 +75,25 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/raunak234362/Task-Matrix.git"
+  },
+  "build": {
+    "appId": "com.whiteboardtec.taskmatrix",
+    "productName": "TaskMatrix",
+    "copyright": "Copyright © 2025 WBT",
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "raunak234362",
+        "repo": "Task-Matrix"
+      }
+    ],
+    "win": {
+      "target": "nsis"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": true,
+      "allowToChangeInstallationDirectory": true
+    }
   }
 }
