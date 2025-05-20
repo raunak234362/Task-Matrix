@@ -206,7 +206,6 @@ const Task = ({ taskId, setDisplay }) => {
     localStorage.setItem("resumeTimes", JSON.stringify(resumeTimes));
     try {
       const resume = await Service.resumeTask(taskID, workId);
-
       setTasks((prev) => {
         return {
           ...prev,
@@ -261,50 +260,51 @@ const Task = ({ taskId, setDisplay }) => {
       console.error("Error in adding comment:", error);
     }
   };
-  // For Assign Form
-  const handleAddAssign = async (assigneedata) => {
-    console.log("Assignee Data: ", assigneedata);
-    const assigned_to = assigneedata?.assigned_to;
-    const assigned_by = userData.id;
-    const approved_by = userData.id;
-    const assigned_on = new Date().toISOString();
 
-    try {
-      if (
-        userType === "admin" ||
-        userType === "project-manager" ||
-        userType === "department-manager"
-      ) {
-        const updatedData = {
-          assigned_to,
-          assigned_by,
-          assigned_on,
-          approved_by,
-          task_id: taskId,
-        };
-        if (handlePause) {
-          // console.log("Assigned Task: ", response);
-          const response = await Service.addAssigne(tasks?.id, updatedData);
-          fetchTask();
-        }
-      } else {
-        const updatedData = {
-          assigned_to,
-          assigned_by,
-          assigned_on,
-          task_id: taskId,
-        };
-        if (handlePause) {
-          const response = await Service.addAssigne(tasks?.id, updatedData);
-          // console.log("Assigned Task: ", response);
-          fetchTask();
-        }
-      }
-      toast.success("Task assigned successfully.");
-    } catch (error) {
-      toast.error("Error in assigning task: ", error);
-    }
-  };
+  // For Assign Form
+  // const handleAddAssign = async (assigneedata) => {
+  //   console.log("Assignee Data: ", assigneedata);
+  //   const assigned_to = assigneedata?.assigned_to;
+  //   const assigned_by = userData.id;
+  //   const approved_by = userData.id;
+  //   const assigned_on = new Date().toISOString();
+
+  //   try {
+  //     if (
+  //       userType === "admin" ||
+  //       userType === "project-manager" ||
+  //       userType === "department-manager"
+  //     ) {
+  //       const updatedData = {
+  //         assigned_to,
+  //         assigned_by,
+  //         assigned_on,
+  //         approved_by,
+  //         task_id: taskId,
+  //       };
+  //       if (handlePause) {
+  //         // console.log("Assigned Task: ", response);
+  //         const response = await Service.addAssigne(tasks?.id, updatedData);
+  //         fetchTask();
+  //       }
+  //     } else {
+  //       const updatedData = {
+  //         assigned_to,
+  //         assigned_by,
+  //         assigned_on,
+  //         task_id: taskId,
+  //       };
+  //       if (handlePause) {
+  //         const response = await Service.addAssigne(tasks?.id, updatedData);
+  //         // console.log("Assigned Task: ", response);
+  //         fetchTask();
+  //       }
+  //     }
+  //     toast.success("Task assigned successfully.");
+  //   } catch (error) {
+  //     toast.error("Error in assigning task: ", error);
+  //   }
+  // };
 
   function durToHour(params) {
     if (!params) return "N/A";
@@ -336,7 +336,6 @@ const Task = ({ taskId, setDisplay }) => {
               <span className="font-bold">Task:</span> {tasks?.name}
             </div>
             <div className="mr-4 text-lg gap-5 flex items-center">
-
               <button
                 className="px-5 py-2 text-white transition-colors duration-300 rounded-lg bg-teal-600 hover:bg-teal-700"
                 onClick={handleClose}
