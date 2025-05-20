@@ -59,7 +59,7 @@ autoUpdater.on("update-downloaded", () => {
 });
 
 ipcMain.on("install_update", () => {
-  autoUpdater.quitAndInstall();
+  autoUpdater.quitAndInstall(true, true);
 });
 
 app.whenReady().then(() => {

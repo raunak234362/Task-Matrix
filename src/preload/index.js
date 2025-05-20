@@ -1,25 +1,31 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable no-unused-vars */
-import { contextBridge, ipcRenderer, Notification } from 'electron'
-import { electronAPI } from '@electron-toolkit/preload'
+const { contextBridge, ipcRenderer } = require("electron");
+require("@electron-toolkit/preload");
 
-// Custom APIs for renderer
-const api = {
-  showNotification: (task) => {
-    console.log('Received task in preload:', task);
-    ipcRenderer.send('show-notification', task);
-  },
-}
-contextBridge.exposeInMainWorld('electron', {
+contextBridge.exposeInMainWorld("electron", {
   ipcRenderer: {
     send: (channel, data) => {
-      const validChannels = ['show-notification']
+      const validChannels = ["show-notification", "install_update"];
       if (validChannels.includes(channel)) {
-        ipcRenderer.send(channel, data)
+        ipcRenderer.send(channel, data);
+      }
+    },
+    on: (channel, func) => {
+      const validChannels = ["update_available", "update_downloaded"];
+      if (validChannels.includes(channel)) {
+        ipcRenderer.on(channel, (event, ...args) => func(...args));
       }
     }
+  },
+  // Optional: cleaner alias if you prefer `electronAPI` pattern
+  update: {
+    onUpdateAvailable: (callback) => ipcRenderer.on("update_available", callback),
+    onUpdateDownloaded: (callback) => ipcRenderer.on("update_downloaded", callback),
+    installUpdate: () => ipcRenderer.send("install_update")
   }
-})
+});
+
 // Use `contextBridge` APIs to expose Electron APIs to
 // renderer only if context isolation is enabled, otherwise
 // just add to the DOM global.
