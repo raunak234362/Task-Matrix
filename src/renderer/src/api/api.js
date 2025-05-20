@@ -3,19 +3,14 @@
 import axios from "axios";
 
 const instance = axios.create({
-  // baseURL: "https://106.51.141.125:5154",
   baseURL: import.meta.env.VITE_BASE_URL,
-  // baseURL: "https://whiteboardtec.com/backend",
-  // baseURL: "https://192.168.1.153:5154",
-  // baseURL: "http://192.168.1.152:5152/",
-  // baseURL: "http://192.168.1.153:3000",
-  // baseURL: 'https://projectstationbe.onrender.com/',
   withCredentials: false, // Set to false to avoid CORS preflight
   proxy: true,
   httpsAgent: {
     rejectUnauthorized: false,
   },
 });
+{console.log("=================================",import.meta.env.VITE_BASE_URL)}
 
 // Add request interceptor to handle CORS
 instance.interceptors.request.use((config) => {

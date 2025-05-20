@@ -11,6 +11,10 @@ jobs:
   build:
     runs-on: windows-latest
 
+    env:
+      VITE_BASE_URL: ${{ secrets.VITE_BASE_URL }}
+      BASE_URL: ${{ secrets.BASE_URL }}
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
