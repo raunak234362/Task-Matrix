@@ -14,6 +14,7 @@ import { MdOutlineDescription } from "react-icons/md"
 const Task = ({ taskId, setDisplay }) => {
   const [tasks, setTasks] = useState({});
   const [workHours, setWorkHours] = useState(null);
+  const [workId, setWorkId] = useState(null);
   const userType = sessionStorage.getItem("userType");
   const username = sessionStorage.getItem("username");
   const [workdata, setWorkData] = useState({});
@@ -63,6 +64,8 @@ const Task = ({ taskId, setDisplay }) => {
   useEffect(() => {
     const fetchWorkId = async () => {
       const workHour = await Service.getWorkHours(taskId);
+      console.log("Work Hours: ", workHour);
+      setWorkId(workHour?.id);
       setWorkData(workHour);
       setWorkHours(workHour);
     };
@@ -151,17 +154,16 @@ const Task = ({ taskId, setDisplay }) => {
     const taskID = tasks?.id;
     try {
       const accept = await Service.startTask(taskID);
-
       setTasks((prev) => {
         return {
           ...prev,
           status: "IN_PROGRESS",
         };
       });
-      localStorage.setItem("work_id", accept?.data?.id);
+      localStorage.setItem("work_id", accept?.data?.id || workId);
       console.log("Accept Response: --------", accept);
       toast.success("Task Started");
-      if (accept.status === 200) {
+      if (accept?.data?.status) {
         window.location.reload();
       }
 
@@ -173,14 +175,14 @@ const Task = ({ taskId, setDisplay }) => {
   const work_id = localStorage.getItem("work_id");
 
   async function handlePause() {
-    console.log("Pause Event: ", work_id);
+    console.log("Pause Event: ", workId);
     const taskId = tasks?.id;
     const pauseTime = new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" });
     const pauseTimes = JSON.parse(localStorage.getItem("pauseTimes")) || [];
     pauseTimes.push(pauseTime);
     localStorage.setItem("pauseTimes", JSON.stringify(pauseTimes));
     try {
-      const pause = await Service.pauseTask(taskId, work_id);
+      const pause = await Service.pauseTask(taskId, workId);
       setTasks((prev) => {
         return {
           ...prev,
@@ -203,7 +205,7 @@ const Task = ({ taskId, setDisplay }) => {
     resumeTimes.push(resumeTime);
     localStorage.setItem("resumeTimes", JSON.stringify(resumeTimes));
     try {
-      const resume = await Service.resumeTask(taskID, work_id);
+      const resume = await Service.resumeTask(taskID, workId);
 
       setTasks((prev) => {
         return {
@@ -224,7 +226,7 @@ const Task = ({ taskId, setDisplay }) => {
     const taskID = tasks?.id;
     const end = new Date().toISOString();
     try {
-      const endresponse = await Service.endTask(taskID, work_id, end);
+      const endresponse = await Service.endTask(taskID, workId, end);
       console.log("End Response: ", endresponse.status);
       if (endresponse?.status === "END") {
         toast.success("Task Ended");
