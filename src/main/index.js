@@ -5,17 +5,12 @@ import { electronApp, optimizer, is } from "@electron-toolkit/utils";
 import icon from "../../resources/icon.png?asset";
 import { updateElectronApp } from "update-electron-app";
 
-const { autoUpdater } = require("electron-updater");
-const log = require("electron-log");
-
 // Disable SSL certificate errors
 app.commandLine.appendSwitch("ignore-certificate-errors");
 
-let mainWindow;
-
 function createWindow() {
   // Create the browser window.
-  mainWindow = new BrowserWindow({
+  const mainWindow = new BrowserWindow({
     width: 1600,
     height: 980,
     show: false,
@@ -46,28 +41,7 @@ function createWindow() {
 }
 
 
-autoUpdater.logger = log;
-autoUpdater.logger.transports.file.level = "info";
-autoUpdater.autoDownload = true;
 
-autoUpdater.on("update-available", () => {
-  mainWindow.webContents.send("update_available");
-});
-
-autoUpdater.on("update-downloaded", () => {
-  mainWindow.webContents.send("update_downloaded");
-});
-
-ipcMain.on("install_update", () => {
-  autoUpdater.quitAndInstall(true, true);
-});
-
-app.whenReady().then(() => {
-  createWindow();
-
-  // Check for updates after window is created
-  autoUpdater.checkForUpdatesAndNotify();
-});
 // const NOTIFICATION_TITLE = 'Basic Notification'
 // const NOTIFICATION_BODY = 'Notification from the Main process'
 

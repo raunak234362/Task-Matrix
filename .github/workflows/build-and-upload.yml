@@ -26,6 +26,11 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Create .env file
+        run: |
+          echo "VITE_BASE_URL=${{ secrets.PROD_BASE_URL }}" > .env
+
+
       - name: Build Windows Installer
         run: npm run build:win
         env:
