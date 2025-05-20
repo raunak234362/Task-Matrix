@@ -12,8 +12,6 @@ jobs:
     runs-on: windows-latest
 
     env:
-      VITE_BASE_URL: ${{ secrets.VITE_BASE_URL }}
-      BASE_URL: ${{ secrets.BASE_URL }}
       GH_TOKEN: ${{ secrets.GH_TOKEN }}
 
     steps:

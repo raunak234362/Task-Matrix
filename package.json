@@ -75,25 +75,5 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/raunak234362/Task-Matrix.git"
-  },
-  "build": {
-    "appId": "com.whiteboardtec.taskmatrix",
-    "productName": "TaskMatrix",
-    "copyright": "Copyright © 2025 WBT",
-    "publish": [
-      {
-        "provider": "github",
-        "owner": "raunak234362",
-        "repo": "Task-Matrix"
-      }
-    ],
-    "win": {
-      "target": "nsis"
-    },
-    "nsis": {
-      "oneClick": false,
-      "perMachine": true,
-      "allowToChangeInstallationDirectory": true
-    }
   }
 }
