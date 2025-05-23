@@ -9,6 +9,7 @@ import Service from "../../../api/configAPI";
 import Button from "../../fields/Button";
 
 const GroupDetail = ({ group, onClose }) => {
+    console.log("Group in GroupDetail:", group);
     const userType = sessionStorage.getItem("userType");
     const {
         register,

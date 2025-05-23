@@ -85,7 +85,6 @@ class Service {
     }
   }
 
-
   static async getTeamMember(projectId) {
     console.log(projectId);
     const token = sessionStorage.getItem("token");
@@ -183,8 +182,6 @@ class Service {
       throw error;
     }
   }
-
-
 
   static async getMyTask() {
     const token = sessionStorage.getItem("token");
@@ -323,7 +320,7 @@ class Service {
           "Content-Type": "Application/json",
         },
       });
-      return response.data?.data; 
+      return response.data?.data;
     } catch (error) {
       console.log("Error in getting Project:", error);
       throw error;
@@ -381,7 +378,6 @@ class Service {
   }
 
   static async getWorkHours(task_id) {
-    
     const token = sessionStorage.getItem("token");
     try {
       const response = await api.get(`/api/wh/wh/${task_id}`, {
@@ -390,7 +386,7 @@ class Service {
           "Content-Type": "application/json",
         },
       });
-      
+
       return response.data.data;
     } catch (error) {
       console.log("Error in getting Work ID:", error);
@@ -510,12 +506,13 @@ class Service {
       throw error;
     }
   }
-  static async approveAssignee({tid}) {
+  static async approveAssignee({ tid }) {
     const token = sessionStorage.getItem("token");
-    const data={approved:true}
+    const data = { approved: true };
     try {
       const response = await api.patch(
-        `/api/task/update_assigned-list/${tid}`,data,
+        `/api/task/update_assigned-list/${tid}`,
+        data,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -612,8 +609,6 @@ class Service {
     }
   }
 
-
-  
   //add Group for groupchatting
   static async addGroup(groupData) {
     const token = sessionStorage.getItem("token");
@@ -633,7 +628,7 @@ class Service {
 
   //add Group Member
   static async addGroupMember(groupId, memberIds) {
-    const formData = [ ...memberIds ];
+    const formData = [...memberIds];
     try {
       const response = await api.post(
         `/api/chat/group/addmember/${groupId}`,
@@ -643,7 +638,7 @@ class Service {
             "Content-Type": "Application/json",
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
       return response.data;
     } catch (error) {
@@ -652,22 +647,42 @@ class Service {
     }
   }
 
-  // Fetch the Chat by GroupID
-  static async getChatByGroupId(groupId, lastMsgId) {
-    const params =new URLSearchParams();
-
-    if(lastMsgId) {
-      params.append("lastMessageId", lastMsgId);
-    }
-
+  // Fetch all groups members
+  static async getGroupMembers(groupId) {
     const token = sessionStorage.getItem("token");
     try {
-      const response = await api.get(`/api/chat/groupMessages/${groupId}?${params.toString()}`, {
+      const response = await api.get(`/api/chat/getGroupMembers/${groupId}`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
       });
+      return response.data.data;
+    } catch (error) {
+      console.log("Error in getting Group Members: ", error);
+      throw error;
+    }
+  }
+
+  // Fetch the Chat by GroupID
+  static async getChatByGroupId(groupId, lastMsgId) {
+    const params = new URLSearchParams();
+
+    if (lastMsgId) {
+      params.append("lastMessageId", lastMsgId);
+    }
+
+    const token = sessionStorage.getItem("token");
+    try {
+      const response = await api.get(
+        `/api/chat/groupMessages/${groupId}?${params.toString()}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
       console.log("Chat by Group ID: ", response.data.data);
       return response.data.data;
     } catch (error) {
@@ -691,8 +706,6 @@ class Service {
       throw error;
     }
   }
-
-
 
   //Calendar API
   // static async fetchCalendar(date, user) {
@@ -747,6 +760,5 @@ class Service {
   //   }
   // }
 }
-
 
 export default Service;
