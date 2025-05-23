@@ -64,19 +64,19 @@ const ChatMain = ({ activeChat, setActiveChat }) => {
     }
   }
 
- const formatMessage = (text) => {
-    const words = text.split(" ")
+  const formatMessage = (text) => {
+    const words = text?.split(" ")
     let lines = []
     let currentLine = []
 
-    words.forEach(word => {
-      currentLine.push(word)
-      if (currentLine.length >= 20) {
-        lines.push(currentLine.join(" "))
+    words?.forEach(word => {
+      currentLine?.push(word)
+      if (currentLine?.length >= 20) {
+        lines?.push(currentLine?.join(" "))
         currentLine = []
       }
     })
-    if (currentLine.length) lines.push(currentLine.join(" "))
+    if (currentLine?.length) lines?.push(currentLine?.join(" "))
 
     return lines.map((line, idx) => {
       if (line.trim().startsWith("- ") || line.trim().startsWith("* ")) {

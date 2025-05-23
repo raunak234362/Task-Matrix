@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable no-undef */
 import axios from "axios";
-
+console.log("API URL:", import.meta.env.VITE_BASE_URL);
 const instance = axios.create({
   baseURL: import.meta.env.VITE_BASE_URL,
   withCredentials: false, // Set to false to avoid CORS preflight
