@@ -4,8 +4,7 @@ import { io } from "socket.io-client";
 // import { BASE_URL } from "./config/constant";
 
 
-const socket = io("https://backend.whiteboardtec.com:5154", {
-// const socket = io("http://192.168.1.26:5155", {
+const socket = io(import.meta.env.VITE_BASE_URL, {
   transports: ["websocket"],
   autoConnect:false,
 });
