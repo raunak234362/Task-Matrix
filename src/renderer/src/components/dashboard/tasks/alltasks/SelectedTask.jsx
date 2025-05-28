@@ -348,30 +348,32 @@ const SelectedTask = ({ taskDetail, taskId, isOpen, onClose, setTasks }) => {
                     <Pencil className="w-4 h-4 mr-2" />
                     Update Task
                   </button>
-                  {!showDeleteConfirm ? (
-                    <button
-                      onClick={() => setShowDeleteConfirm(true)}
-                      className="flex items-center px-4 py-2 text-sm font-medium text-white transition-colors bg-red-600 rounded-lg hover:bg-red-700"
-                    >
-                      <Trash2 className="w-4 h-4 mr-2" />
-                      Delete Task
-                    </button>
-                  ) : (
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm text-gray-700">Are you sure?</span>
+                  {userType !== "project-manager" && (
+                    !showDeleteConfirm ? (
                       <button
-                        onClick={deleteTaskID}
-                        className="flex items-center px-3 py-2 text-xs font-medium text-white bg-red-600 rounded hover:bg-red-700"
+                        onClick={() => setShowDeleteConfirm(true)}
+                        className="flex items-center px-4 py-2 text-sm font-medium text-white transition-colors bg-red-600 rounded-lg hover:bg-red-700"
                       >
-                        Yes, Delete
+                        <Trash2 className="w-4 h-4 mr-2" />
+                        Delete Task
                       </button>
-                      <button
-                        onClick={() => setShowDeleteConfirm(false)}
-                        className="flex items-center px-3 py-2 text-xs font-medium text-gray-700 bg-gray-200 rounded hover:bg-gray-300"
-                      >
-                        Cancel
-                      </button>
-                    </div>
+                    ) : (
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm text-gray-700">Are you sure?</span>
+                        <button
+                          onClick={deleteTaskID}
+                          className="flex items-center px-3 py-2 text-xs font-medium text-white bg-red-600 rounded hover:bg-red-700"
+                        >
+                          Yes, Delete
+                        </button>
+                        <button
+                          onClick={() => setShowDeleteConfirm(false)}
+                          className="flex items-center px-3 py-2 text-xs font-medium text-gray-700 bg-gray-200 rounded hover:bg-gray-300"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    )
                   )}
                 </div>
               )}
