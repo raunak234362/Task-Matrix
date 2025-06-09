@@ -198,7 +198,7 @@ const EditTask = ({ onClose, task }) => {
                 {...register("description")}
               />
             </div>
-            {userType === "ADMIN" && (
+            {userType === "admin" && (
 
               <div className="mt-1">
                 <div className="text-lg font-bold">Duration:</div>
