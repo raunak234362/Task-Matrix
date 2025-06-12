@@ -25,6 +25,7 @@ const AllTask = () => {
   const [filters, setFilters] = useState({
     project: "",
     status: "",
+    projectManager: ""
   });
   const handleSearch = (e) => setSearchQuery(e.target.value);
 
@@ -180,8 +181,11 @@ const AllTask = () => {
 
   const data = useMemo(() => taskFilter, [taskFilter]);
 
-  const columns = useMemo(
-    () => [
+  // You may need to get userType from redux or props; for now, let's assume it's available
+  const userType = useSelector((state) => state.userData?.userType);
+
+  const columns = useMemo(() => {
+    const cols = [
       {
         Header: "S.No",
         accessor: (row, i) => i + 1,
@@ -191,7 +195,6 @@ const AllTask = () => {
         Header: "Project",
         accessor: (row) => row?.project?.name || "N/A",
         id: "project",
-
       },
       {
         Header: "Task Name",
@@ -199,15 +202,46 @@ const AllTask = () => {
       },
       {
         Header: "Assigned To",
-        accessor: (row) => row?.user?.f_name + " " + row?.user?.m_name + " " + row?.user?.l_name || "N/A",
+        accessor: (row) =>
+          [row?.user?.f_name, row?.user?.m_name, row?.user?.l_name].filter(Boolean).join(" ") || "N/A",
         id: "assignedTo",
       },
       {
-        Header: "Due Date",
-        accessor: "due_date",
-        Cell: ({ value }) => new Date(value).toLocaleDateString(),
-      },
+        Header: "Project Manager",
+        accessor: (row) => {
+          const manager = row?.project?.manager;
+          console.log("Manager:", manager);
+          if (!manager) return "N/A";
+          return [manager.f_name, manager.m_name, manager.l_name].filter(Boolean).join(" ");
+        },
+        id: "projectManager",
+        Cell: ({ value }) => (
+          <span className="px-2 py-1 text-gray-800">
+            {value || "N/A"}
+          </span>
+        ),
+      }
+    ];
 
+    if (userType === "") {
+      cols.push({
+        Header: "Project Manager",
+        accessor: (row) => {
+          const manager = row?.project?.manager;
+          console.log("Manager:", manager);
+          if (!manager) return "N/A";
+          return [manager.f_name, manager.m_name, manager.l_name].filter(Boolean).join(" ");
+        },
+        id: "projectManager",
+        Cell: ({ value }) => (
+          <span className="px-2 py-1 text-gray-800">
+            {value || "N/A"}
+          </span>
+        ),
+      });
+    }
+
+    cols.push(
       {
         Header: "Status",
         accessor: "status",
@@ -225,6 +259,11 @@ const AllTask = () => {
             {setPriorityValue(value)}
           </span>
         ),
+      },
+      {
+        Header: "Due Date",
+        accessor: "due_date",
+        Cell: ({ value }) => new Date(value).toLocaleDateString(),
       },
       {
         Header: "Allocated Hours",
@@ -257,16 +296,15 @@ const AllTask = () => {
         accessor: "actions",
         disableSortBy: true,
         Cell: ({ row }) => (
-          <Button
-            onClick={() => handleViewClick(row.original.id)}
-          >
+          <Button onClick={() => handleViewClick(row.original.id)}>
             View
           </Button>
         ),
-      },
-    ],
-    [dispatch]
-  );
+      }
+    );
+
+    return cols;
+  }, [dispatch, userType]);
 
 
   const {
@@ -295,7 +333,7 @@ const AllTask = () => {
   );
 
   return (
-    <div className="p-4 h-[70vh] bg-white/70 rounded-lg shadow-md overflow-hidden border-l-4 border-teal-300">
+    <div className="p-4 md:h-fit bg-white/70 rounded-lg shadow-md overflow-hidden border-l-4 border-teal-300">
       <div className=" mb-4">
         <div className="flex flex-col items-center md:flex-row gap-4 mb-4 w-full">
           <div className="flex gap-5">
@@ -321,7 +359,6 @@ const AllTask = () => {
                 </option>
               ))}
             </select>
-
             <select
               name="status"
               value={filters.status}
@@ -341,7 +378,7 @@ const AllTask = () => {
 
       </div>
 
-      <div className="overflow-x-auto rounded-md border max-h-[55vh]">
+      <div className="overflow-x-auto rounded-md border max-h-[65vh]">
         <table {...getTableProps()} className="min-w-full text-sm text-center border">
           <thead className="sticky top-0 bg-teal-200 z-10">
             {headerGroups.map((headerGroup) => (

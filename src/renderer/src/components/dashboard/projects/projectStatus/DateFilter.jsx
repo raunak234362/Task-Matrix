@@ -17,7 +17,7 @@ const DateFilter = ({ dateFilter, setDateFilter }) => {
     const years = Array.from({ length: 10 }, (_, i) => currentYear - i) // You can change range
 
     return (
-        <div className="bg-white rounded-lg p-4 shadow border border-gray-200 z-20">
+        <div className="bg-white rounded-lg p-4 shadow border border-gray-200 z-50">
             <div className="flex items-center justify-between gap-5">
                 <div className="flex items-center">
                     <Calendar className="h-5 w-5 text-teal-500 mr-2" />
@@ -28,7 +28,7 @@ const DateFilter = ({ dateFilter, setDateFilter }) => {
                         className="flex items-center gap-2 px-3 py-2 text-sm font-medium bg-teal-50 text-teal-700 rounded-lg hover:bg-teal-100"
                         onClick={() => setShowFilterDropdown(!showFilterDropdown)}
                     >
-                        <Filter size={16} />
+                        <Filter size={12} />
                         {dateFilter?.type === "all"
                             ? "All Time"
                             : dateFilter?.type === "month"
