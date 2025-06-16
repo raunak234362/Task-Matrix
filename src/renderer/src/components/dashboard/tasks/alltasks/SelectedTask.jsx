@@ -6,7 +6,7 @@ import { EditTask } from "../../../index"
 import Service from "../../../../api/configAPI"
 import { useForm } from "react-hook-form"
 import { useDispatch, useSelector } from "react-redux"
-import { updateTask } from "../../../../store/taskSlice"
+import { deleteTask, updateTask } from "../../../../store/taskSlice"
 import { BASE_URL } from "../../../../config/constant"
 import { toast } from "react-toastify"
 import {
@@ -68,6 +68,7 @@ const SelectedTask = ({ taskDetail, taskId, isOpen, onClose, setTasks }) => {
   const deleteTaskID = async () => {
     try {
       const response = await Service.deleteTask(taskId)
+      dispatch(deleteTask(taskId))
       onClose()
       toast.success("Task deleted successfully")
     } catch (error) {

@@ -22,7 +22,7 @@ const MyTask = () => {
   // const stageOptions = [
   //   { label: "All Stages", value: "" },
   //   { label: "(RFI)Request for Information", value: "RFI" },
-    
+
   // ];
 
   const filteredTasks = useMemo(() => {
@@ -76,16 +76,26 @@ const MyTask = () => {
       Header: "View",
       accessor: "id",
       Cell: ({ row }) => {
-        const canView = unlockableTaskId === row.original.id;
-        return canView ? (
-          <Button onClick={() => handleTaskView(row.original.id)}>View</Button>
-        ) : (
-          <Button className="bg-red-500 text-white font-semibold" disabled>
+        const task = row.original;
+
+        const canView =
+          task.status === "IN_REVIEW" || task.id === unlockableTaskId;
+
+        return (
+          <Button
+            onClick={() => handleTaskView(task.id)}
+            disabled={!canView}
+            className={
+              canView
+                ? "bg-teal-500 text-white font-semibold hover:bg-teal-600"
+                : "bg-red-500 text-white font-semibold opacity-50 cursor-not-allowed"
+            }
+          >
             View
           </Button>
         );
       },
-    },
+    }
   ], [projects, tasks]);
 
   const {
@@ -96,7 +106,11 @@ const MyTask = () => {
     prepareRow,
   } = useTable({ columns, data: filteredTasks });
 
+  // First, find the highest-priority unlockable task from ASSIGNED, IN_PROGRESS, or BREAK
+  const unlockableStatuses = ['ASSIGNED', 'IN_PROGRESS', 'BREAK'];
+
   const highestPriorityTask = tasks
+    .filter(task => unlockableStatuses.includes(task.status))
     .sort((a, b) => {
       if (b.priority !== a.priority) {
         return b.priority - a.priority;
@@ -105,6 +119,8 @@ const MyTask = () => {
     })[0];
 
   const unlockableTaskId = highestPriorityTask?.id;
+
+
 
   useEffect(() => {
     const fetchTask = async () => {
@@ -158,7 +174,8 @@ const MyTask = () => {
   }
 
   function statusColor(status) {
-    return status === "IN_PROGRESS" ? "text-green-700" : "text-red-700";
+    if (status === "IN_REVIEW") return "text-yellow-700 border-yellow-700 bg-yellow-100";
+    return status === "IN_PROGRESS" ? "text-green-700 border-green-700 bg-green-100" : "text-red-700 border-red-700 bg-red-100";
   }
 
   function color(priority) {
