@@ -194,8 +194,6 @@ const ChatMain = ({ activeChat, setActiveChat }) => {
     // IMPORTANT: Do NOT scroll on pagination
   }, [currentConversation?.messages, isFirstLoad, isLiveMessage]);
 
-
-
   useEffect(() => {
     const container = scrollContainerRef.current
     if (!container) return
