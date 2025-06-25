@@ -333,7 +333,7 @@ const AllTask = () => {
   );
 
   return (
-    <div className="p-4 md:h-fit bg-white/70 rounded-lg shadow-md overflow-hidden border-l-4 border-teal-300">
+    <div className="p-4 md:h-[80vh] bg-white/70 rounded-lg shadow-md overflow-hidden border-l-4 border-teal-300">
       <div className=" mb-4">
         <div className="flex flex-col items-center md:flex-row gap-4 mb-4 w-full">
           <div className="flex gap-5">
