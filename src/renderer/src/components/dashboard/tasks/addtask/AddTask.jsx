@@ -253,7 +253,7 @@ const AddTask = () => {
                 },
                 { label: "(RIFC)Re-issue for Construction", value: "RIFC" },
                 { label: "(REV)Revision", value: "REV" },
-                { label: "(CO#)Change Order", value: "CO#" },
+                { label: "(CO#)Change Order", value: "CO" },
               ]}
               {...register("Stage", { required: "Stage is required" })}
               onChange={setValue}
