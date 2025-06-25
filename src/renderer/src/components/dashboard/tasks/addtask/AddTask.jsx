@@ -93,7 +93,7 @@ const AddTask = () => {
 
 
   const onSubmit = async (taskData) => {
-    console.log("Task Data:", projectStage);
+    console.log("Task Data:", taskData);
     try {
       const token = sessionStorage.getItem("token");
       if (!token) throw new Error("Token not found");
@@ -104,7 +104,6 @@ const AddTask = () => {
         ...taskData,
         name: TaskName,
         status: "ASSIGNED",
-        Stage: projectStage,
         token: token,
       });
       console.log("Task Data:", data);
@@ -228,6 +227,38 @@ const AddTask = () => {
                 <p className="text-red-600">{errors.taskname.message}</p>
               )}
             </div>
+          </div>
+          <div className="px-4">
+            <CustomSelect
+              label="Stage"
+              name="stage"
+              options={[
+                { label: "Select Stage", value: "" },
+                { label: "(RFI)Request for Information", value: "RFI" },
+                { label: "(IFA)Issue for Approval", value: "IFA" },
+                {
+                  label: "(BFA)Back from Approval/ Returned App",
+                  value: "BFA",
+                },
+                {
+                  label: "(BFA-M)Back from Approval - Markup",
+                  value: "BFA_M",
+                },
+                { label: "(RIFA)Re-issue for Approval", value: "RIFA" },
+                { label: "(RBFA)Return Back from Approval", value: "RBFA" },
+                { label: "(IFC)Issue for Construction/ DIF", value: "IFC" },
+                {
+                  label: "(BFC)Back from Construction/ Drawing Revision",
+                  value: "BFC",
+                },
+                { label: "(RIFC)Re-issue for Construction", value: "RIFC" },
+                { label: "(REV)Revision", value: "REV" },
+                { label: "(CO#)Change Order", value: "CO#" },
+              ]}
+              {...register("Stage", { required: "Stage is required" })}
+              onChange={setValue}
+            />
+            {errors.stage && <div>This field is required</div>}
           </div>
           <div className="px-4">
             <CustomSelect
