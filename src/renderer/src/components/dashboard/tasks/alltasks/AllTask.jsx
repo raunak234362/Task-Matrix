@@ -337,7 +337,6 @@ const AllTask = () => {
       <div className=" mb-4">
         <div className="flex flex-col items-center md:flex-row gap-4 mb-4 w-full">
           <div className="flex gap-5">
-
             <input
               type="text"
               placeholder="🔍 Task or Username"
