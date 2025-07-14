@@ -66,6 +66,7 @@ const Task = ({ taskId, fetchTaskData,setDisplay }) => {
       const workHour = await Service.getWorkHours(taskId);
       console.log("Work Hours: ", workHour);
       setWorkId(workHour?.id);
+      localStorage.setItem("work_id", workHour?.id || workId);
       setWorkData(workHour);
       setWorkHours(workHour);
     };
@@ -222,7 +223,7 @@ console.log("Work ID: ", workdata);
     const taskID = tasks?.id;
     const end = new Date().toISOString();
     try {
-      const endresponse = await Service.endTask(taskID, work_id, end);
+      const endresponse = await Service.endTask(taskID, workId, end);
       if (endresponse?.status === "END") {
         toast.success("Task Ended");
         localStorage.removeItem("work_id");
