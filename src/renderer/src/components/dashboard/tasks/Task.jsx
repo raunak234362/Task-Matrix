@@ -11,7 +11,7 @@ import { BASE_URL } from "../../../config/constant";
 import { Building2, ChartPie, ChevronDown, ChevronRight, ChevronUp, Clock4, Files, FolderKanban, FolderOpen, Globe, Pause, Play, Square } from "lucide-react"
 import { MdOutlineDescription } from "react-icons/md"
 
-const Task = ({ taskId, setDisplay }) => {
+const Task = ({ taskId, fetchTaskData,setDisplay }) => {
   const [tasks, setTasks] = useState({});
   const [workHours, setWorkHours] = useState(null);
   const [workId, setWorkId] = useState(null);
@@ -70,7 +70,7 @@ const Task = ({ taskId, setDisplay }) => {
       setWorkHours(workHour);
     };
     fetchWorkId();
-  }, []);
+  }, [taskId]);
 
   useEffect(() => {
     let interval;
@@ -133,7 +133,6 @@ const Task = ({ taskId, setDisplay }) => {
   };
 
   function handleClose() {
-    window.location.reload();
     setDisplay(false);
   }
 
@@ -163,17 +162,15 @@ const Task = ({ taskId, setDisplay }) => {
       localStorage.setItem("work_id", accept?.data?.id || workId);
       console.log("Accept Response: --------", accept);
       toast.success("Task Started");
-      if (accept?.data?.status) {
-        window.location.reload();
-      }
-
+      fetchTask();
+      fetchTaskData();
     } catch (error) {
       toast.error("Error in accepting task");
     }
   }
 
   const work_id = localStorage.getItem("work_id");
-
+console.log("Work ID: ", workdata);
   async function handlePause() {
     console.log("Pause Event: ", workId);
     const taskId = tasks?.id;
@@ -182,16 +179,16 @@ const Task = ({ taskId, setDisplay }) => {
     pauseTimes.push(pauseTime);
     localStorage.setItem("pauseTimes", JSON.stringify(pauseTimes));
     try {
-      const pause = await Service.pauseTask(taskId, workId);
+      const pause = await Service.pauseTask(taskId, work_id);
       setTasks((prev) => {
         return {
           ...prev,
           status: "BREAK",
         };
       });
-      console.log("Pause Response: ", pause);
       toast.success("Task Paused");
       fetchTask();
+      fetchTaskData();
     } catch (error) {
       toast.error("Error in pausing task");
       console.log("Error in pausing task: ", error);
@@ -205,16 +202,16 @@ const Task = ({ taskId, setDisplay }) => {
     resumeTimes.push(resumeTime);
     localStorage.setItem("resumeTimes", JSON.stringify(resumeTimes));
     try {
-      const resume = await Service.resumeTask(taskID, workId);
+      const resume = await Service.resumeTask(taskID, work_id);
       setTasks((prev) => {
         return {
           ...prev,
           status: "IN_PROGRESS",
         };
       });
-      console.log("Resume Response: ", resume);
       toast.success("Task Resumed");
       fetchTask();
+      fetchTaskData();
     } catch (error) {
       toast.error("Error in resuming task");
       console.log("Error in resuming task: ", error);
@@ -225,12 +222,12 @@ const Task = ({ taskId, setDisplay }) => {
     const taskID = tasks?.id;
     const end = new Date().toISOString();
     try {
-      const endresponse = await Service.endTask(taskID, workId, end);
-      console.log("End Response: ", endresponse.status);
+      const endresponse = await Service.endTask(taskID, work_id, end);
       if (endresponse?.status === "END") {
         toast.success("Task Ended");
         localStorage.removeItem("work_id");
         fetchTask();
+        fetchTaskData();
         setDisplay(false);
         window.location.reload();
       }
@@ -255,56 +252,13 @@ const Task = ({ taskId, setDisplay }) => {
       const response = await Service.addComment(tasks.id, data);
       toast.success("Comment Added Successfully");
       await fetchTask();
+      fetchTaskData();
     } catch (error) {
       toast.error(error);
       console.error("Error in adding comment:", error);
     }
   };
 
-  // For Assign Form
-  // const handleAddAssign = async (assigneedata) => {
-  //   console.log("Assignee Data: ", assigneedata);
-  //   const assigned_to = assigneedata?.assigned_to;
-  //   const assigned_by = userData.id;
-  //   const approved_by = userData.id;
-  //   const assigned_on = new Date().toISOString();
-
-  //   try {
-  //     if (
-  //       userType === "admin" ||
-  //       userType === "project-manager" ||
-  //       userType === "department-manager"
-  //     ) {
-  //       const updatedData = {
-  //         assigned_to,
-  //         assigned_by,
-  //         assigned_on,
-  //         approved_by,
-  //         task_id: taskId,
-  //       };
-  //       if (handlePause) {
-  //         // console.log("Assigned Task: ", response);
-  //         const response = await Service.addAssigne(tasks?.id, updatedData);
-  //         fetchTask();
-  //       }
-  //     } else {
-  //       const updatedData = {
-  //         assigned_to,
-  //         assigned_by,
-  //         assigned_on,
-  //         task_id: taskId,
-  //       };
-  //       if (handlePause) {
-  //         const response = await Service.addAssigne(tasks?.id, updatedData);
-  //         // console.log("Assigned Task: ", response);
-  //         fetchTask();
-  //       }
-  //     }
-  //     toast.success("Task assigned successfully.");
-  //   } catch (error) {
-  //     toast.error("Error in assigning task: ", error);
-  //   }
-  // };
 
   function durToHour(params) {
     if (!params) return "N/A";
@@ -408,7 +362,7 @@ const Task = ({ taskId, setDisplay }) => {
                     <div className="flex flex-col mt-6">
                       <span className="text-sm font-medium text-gray-500">Task Actions</span>
                       <div className="flex flex-wrap gap-3 mt-2">
-                        {tasks?.status === "ASSIGNED" || tasks?.status === "ONHOLD" || workdata.id === undefined ? (
+                        {tasks?.status === "ASSIGNED" || tasks?.status === "ONHOLD"  ? (
                           <button
                             className="flex items-center justify-center cursor-pointer px-4 py-2 font-semibold text-white transition-colors duration-300 bg-green-500 rounded-md hover:bg-green-600"
                             onClick={handleStart}

@@ -16,6 +16,16 @@ const DateFilter = ({ dateFilter, setDateFilter }) => {
     const currentYear = new Date().getFullYear()
     const years = Array.from({ length: 10 }, (_, i) => currentYear - i) // You can change range
 
+    // Set default year if not present in dateFilter
+    if (
+        (dateFilter?.type === "month" ||
+            dateFilter?.type === "year" ||
+            dateFilter?.type === "range") &&
+        (dateFilter.year === undefined || dateFilter.year === null)
+    ) {
+        setDateFilter({ ...dateFilter, year: currentYear })
+    }
+
     return (
         <div className="bg-white rounded-lg p-4 shadow border border-gray-200 z-50">
             <div className="flex items-center justify-between gap-5">

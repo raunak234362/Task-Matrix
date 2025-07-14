@@ -5,7 +5,7 @@
 import { toast } from "react-toastify";
 import socket from "../../../../socket";
 import Button from "../../../fields/Button";
-import { useTable } from "react-table";
+import { useSortBy, useTable } from "react-table";
 import { useEffect, useMemo, useState } from "react";
 import Service from "../../../../api/configAPI";
 import { useSelector } from "react-redux";
@@ -27,90 +27,92 @@ const MyTask = () => {
 
   const filteredTasks = useMemo(() => {
     return stageFilter
-      ? tasks.filter(task => task.stage === stageFilter)
+      ? tasks.filter((task) => task.stage === stageFilter)
       : tasks;
   }, [tasks, stageFilter]);
 
-  const columns = useMemo(() => [
-    { Header: "S.No", accessor: (_, i) => i + 1 },
-    {
-      Header: "Project Name",
-      accessor: row =>
-        projects?.find((project) => project.id === row?.project_id)?.name || "N/A",
-    },
-    { Header: "Task Name", accessor: "name" },
-    {
-      Header: "Start Date",
-      accessor: "start_date",
-      Cell: ({ value }) => new Date(value).toDateString(),
-    },
-    {
-      Header: "Due Date",
-      accessor: "due_date",
-      Cell: ({ value }) => new Date(value).toDateString(),
-    },
-    {
-      Header: "Duration",
-      accessor: "duration",
-      Cell: ({ value }) => durToHour(value),
-    },
-    {
-      Header: "Status",
-      accessor: "status",
-      Cell: ({ value }) => (
-        <span className={`px-3 py-0.5 rounded-full border ${statusColor(value)}`}>
-          {value}
-        </span>
-      ),
-    },
-    {
-      Header: "Priority",
-      accessor: "priority",
-      Cell: ({ value }) => (
-        <span className={`px-3 py-0.5 rounded-full border ${color(value)}`}>
-          {setPriorityValue(value)}
-        </span>
-      ),
-    },
-    {
-      Header: "View",
-      accessor: "id",
-      Cell: ({ row }) => {
-        const task = row.original;
-
-        const canView =
-          task.status === "IN_REVIEW" || task.id === unlockableTaskId;
-
-        return (
-          <Button
-            onClick={() => handleTaskView(task.id)}
-            disabled={!canView}
-            className={
-              canView
-                ? "bg-teal-500 text-white font-semibold hover:bg-teal-600"
-                : "bg-red-500 text-white font-semibold opacity-50 cursor-not-allowed"
-            }
-          >
-            View
-          </Button>
-        );
+  const columns = useMemo(
+    () => [
+      { Header: "S.No", accessor: (_, i) => i + 1, disableSortBy: false },
+      {
+        Header: "Project Name",
+        accessor: (row) =>
+          projects?.find((project) => project.id === row?.project_id)?.name ||
+          "N/A",
+        disableSortBy: true,
       },
-    }
-  ], [projects, tasks]);
+      { Header: "Task Name", accessor: "name" },
+      {
+        Header: "Start Date",
+        accessor: "start_date",
+        Cell: ({ value }) => new Date(value).toDateString(),
+      },
+      {
+        Header: "Due Date",
+        accessor: "due_date",
+        Cell: ({ value }) => new Date(value).toDateString(),
+      },
+      {
+        Header: "Duration",
+        accessor: "duration",
+        Cell: ({ value }) => durToHour(value),
+        disableSortBy: true,
+      },
+      {
+        Header: "Status",
+        accessor: "status",
+        Cell: ({ value }) => (
+          <span
+            className={`px-3 py-0.5 rounded-full border ${statusColor(value)}`}
+          >
+            {value}
+          </span>
+        ),
+      },
+      {
+        Header: "Priority",
+        accessor: "priority",
+        Cell: ({ value }) => (
+          <span className={`px-3 py-0.5 rounded-full border ${color(value)}`}>
+            {setPriorityValue(value)}
+          </span>
+        ),
+      },
+      {
+        Header: "View",
+        accessor: "id",
+        Cell: ({ row }) => {
+          const task = row.original;
+          const canView =
+            task.status === "IN_REVIEW" || task.id === unlockableTaskId;
+          return (
+            <Button
+              onClick={() => handleTaskView(task.id)}
+              disabled={!canView}
+              className={
+                canView
+                  ? "bg-teal-500 text-white font-semibold hover:bg-teal-600"
+                  : "bg-red-500 text-white font-semibold opacity-50 cursor-not-allowed"
+              }
+            >
+              View
+            </Button>
+          );
+        },
+        disableSortBy: true,
+      },
+    ],
+    [projects, tasks],
+  );
 
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    rows,
-    prepareRow,
-  } = useTable({ columns, data: filteredTasks });
+  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
+    useTable({ columns, data: filteredTasks }, useSortBy);
 
   // First, find the highest-priority unlockable task from ASSIGNED, IN_PROGRESS, or BREAK
-  const unlockableStatuses = ['ASSIGNED', 'IN_PROGRESS', 'BREAK'];
+  const unlockableStatuses = ["ASSIGNED", "IN_PROGRESS", "BREAK"];
 
   const highestPriorityTask = tasks
-    .filter(task => unlockableStatuses.includes(task.status))
+    .filter((task) => unlockableStatuses.includes(task.status))
     .sort((a, b) => {
       if (b.priority !== a.priority) {
         return b.priority - a.priority;
@@ -120,18 +122,15 @@ const MyTask = () => {
 
   const unlockableTaskId = highestPriorityTask?.id;
 
-
-
+  const fetchTask = async () => {
+    try {
+      const task = await Service.getMyTask();
+      setTasks(task);
+    } catch (error) {
+      console.error("Error in fetching task:", error);
+    }
+  };
   useEffect(() => {
-    const fetchTask = async () => {
-      try {
-        const task = await Service.getMyTask();
-        setTasks(task);
-      } catch (error) {
-        console.error("Error in fetching task:", error);
-      }
-    };
-
     fetchTask();
 
     const handleNewTaskNotification = (data) => {
@@ -146,8 +145,7 @@ const MyTask = () => {
       } else {
         new Notification(title, { body: message });
       }
-
-      toast.success(message);
+      // toast.success(message);
       fetchTask();
     };
 
@@ -174,8 +172,11 @@ const MyTask = () => {
   }
 
   function statusColor(status) {
-    if (status === "IN_REVIEW") return "text-yellow-700 border-yellow-700 bg-yellow-100";
-    return status === "IN_PROGRESS" ? "text-green-700 border-green-700 bg-green-100" : "text-red-700 border-red-700 bg-red-100";
+    if (status === "IN_REVIEW")
+      return "text-yellow-700 border-yellow-700 bg-yellow-100";
+    return status === "IN_PROGRESS"
+      ? "text-green-700 border-green-700 bg-green-100"
+      : "text-red-700 border-red-700 bg-red-100";
   }
 
   function color(priority) {
@@ -195,11 +196,16 @@ const MyTask = () => {
 
   function setPriorityValue(value) {
     switch (value) {
-      case 0: return "LOW";
-      case 1: return "MEDIUM";
-      case 2: return "HIGH";
-      case 3: return "CRITICAL";
-      default: return "";
+      case 0:
+        return "LOW";
+      case 1:
+        return "MEDIUM";
+      case 2:
+        return "HIGH";
+      case 3:
+        return "CRITICAL";
+      default:
+        return "";
     }
   }
 
@@ -211,13 +217,22 @@ const MyTask = () => {
   return (
     <div className="mx-2 my-3 main-container">
       <div className="bg-white h-[60vh] overflow-auto rounded-lg">
-        <table {...getTableProps()} className="w-full border-collapse text-center text-sm">
+        <table
+          {...getTableProps()}
+          className="w-full border-collapse text-center text-sm"
+        >
           <thead className="bg-teal-200/70">
-            {headerGroups.map(headerGroup => (
+            {headerGroups.map((headerGroup) => (
               <tr {...headerGroup.getHeaderGroupProps()}>
-                {headerGroup.headers.map(column => (
-                  <th {...column.getHeaderProps()} className="px-2 py-1 uppercase border">
+                {headerGroup.headers.map((column) => (
+                  <th
+                    {...column.getHeaderProps(column.getSortByToggleProps())}
+                    className="px-2 py-1 uppercase border cursor-pointer select-none"
+                  >
                     {column.render("Header")}
+                    <span>
+                      {column.isSorted ? (column.isSortedDesc ? " " : " ") : ""}
+                    </span>
                   </th>
                 ))}
               </tr>
@@ -226,16 +241,19 @@ const MyTask = () => {
           <tbody {...getTableBodyProps()}>
             {rows.length === 0 ? (
               <tr>
-                <td colSpan={columns.length} className="px-1 py-2 border font-semibold text-center">
+                <td
+                  colSpan={columns.length}
+                  className="px-1 py-2 border font-semibold text-center"
+                >
                   No task assigned
                 </td>
               </tr>
             ) : (
-              rows.map(row => {
+              rows.map((row) => {
                 prepareRow(row);
                 return (
                   <tr {...row.getRowProps()} className="even:bg-gray-100">
-                    {row.cells.map(cell => (
+                    {row.cells.map((cell) => (
                       <td {...cell.getCellProps()} className="px-1 py-2 border">
                         {cell.render("Cell")}
                       </td>
@@ -248,7 +266,13 @@ const MyTask = () => {
         </table>
       </div>
 
-      {displayTask && <Task taskId={specificTask} setDisplay={setDisplayTask} />}
+      {displayTask && (
+        <Task
+          taskId={specificTask}
+          fetchTaskData={fetchTask}
+          setDisplay={setDisplayTask}
+        />
+      )}
     </div>
   );
 };
