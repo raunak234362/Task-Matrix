@@ -150,6 +150,21 @@ const TaskTab = () => {
                     </NavLink>
                   </li>
                 ) : null}
+                {
+                  userType !== "admin"? (
+                  <li className="px-2">
+                    <NavLink
+                      to="estimation"
+                      className={({ isActive }) =>
+                        isActive
+                          ? " border-2 border-teal-400 bg-teal-100 drop-shadow-lg flex px-5 py-1 rounded-lg text-teal-600 font-medium"
+                          : "hover:bg-teal-200 hover:border-2 hover:border-teal-400 rounded-lg flex px-5 py-1 hover:text-white"
+                      }
+                    >
+                      Estimation
+                    </NavLink>
+                  </li>
+                ) : null}
                 {userType === "manager" || userType === "admin" ? (
                   <li className="px-2">
                     <NavLink

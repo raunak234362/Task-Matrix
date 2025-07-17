@@ -8,10 +8,24 @@ import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { BASE_URL } from "../../../config/constant";
-import { Building2, ChartPie, ChevronDown, ChevronRight, ChevronUp, Clock4, Files, FolderKanban, FolderOpen, Globe, Pause, Play, Square } from "lucide-react"
-import { MdOutlineDescription } from "react-icons/md"
+import {
+  Building2,
+  ChartPie,
+  ChevronDown,
+  ChevronRight,
+  ChevronUp,
+  Clock4,
+  Files,
+  FolderKanban,
+  FolderOpen,
+  Globe,
+  Pause,
+  Play,
+  Square,
+} from "lucide-react";
+import { MdOutlineDescription } from "react-icons/md";
 
-const Task = ({ taskId, fetchTaskData,setDisplay }) => {
+const Task = ({ taskId, fetchTaskData, setDisplay }) => {
   const [tasks, setTasks] = useState({});
   const [workHours, setWorkHours] = useState(null);
   const [workId, setWorkId] = useState(null);
@@ -52,7 +66,7 @@ const Task = ({ taskId, fetchTaskData,setDisplay }) => {
   useEffect(() => {
     fetchTask();
   }, []);
-  console.log(tasks)
+  console.log(tasks);
   const teams = useSelector(
     (state) =>
       state?.projectData?.teamData?.filter(
@@ -107,13 +121,13 @@ const Task = ({ taskId, fetchTaskData,setDisplay }) => {
 
   const getStatusLabel = (status) => {
     const labels = {
-      "IN_PROGRESS": "IN PROGRESS",
-      "ONHOLD": "ONHOLD",
-      "BREAK": "Break",
-      "IN_REVIEW": "IN_REVIEW",
-      "Completed": "Completed",
-      "APPROVED": "Approved",
-      "ASSIGNED": "ASSIGNED",
+      IN_PROGRESS: "IN PROGRESS",
+      ONHOLD: "ONHOLD",
+      BREAK: "Break",
+      IN_REVIEW: "IN_REVIEW",
+      Completed: "Completed",
+      APPROVED: "Approved",
+      ASSIGNED: "ASSIGNED",
     };
     return labels[status] || status;
   };
@@ -121,14 +135,14 @@ const Task = ({ taskId, fetchTaskData,setDisplay }) => {
   // Status styles mapping
   const getStatusBadge = (status) => {
     const statusStyles = {
-      "IN_PROGRESS": "bg-green-100 text-green-400 border-green-400",
-      "ONHOLD": "bg-yellow-100 text-yellow-700 border-yellow-700",
-      "BREAK": "bg-red-100 text-red-600 border-red-600",
-      "IN_REVIEW": "bg-orange-100 text-orange-600 border-orange-600",
-      "COMPLETE": "bg-green-100 text-green-800 border-green-800",
-      "APPROVED": "bg-purple-100 text-purple-600 border-purple-600",
-      "ASSIGNED": "bg-pink-100 text-pink-500 border-pink-500",
-      "RE_ASSIGNED": " bg-cyan-100 text-cyan-500 border-cyan-500",
+      IN_PROGRESS: "bg-green-100 text-green-400 border-green-400",
+      ONHOLD: "bg-yellow-100 text-yellow-700 border-yellow-700",
+      BREAK: "bg-red-100 text-red-600 border-red-600",
+      IN_REVIEW: "bg-orange-100 text-orange-600 border-orange-600",
+      COMPLETE: "bg-green-100 text-green-800 border-green-800",
+      APPROVED: "bg-purple-100 text-purple-600 border-purple-600",
+      ASSIGNED: "bg-pink-100 text-pink-500 border-pink-500",
+      RE_ASSIGNED: " bg-cyan-100 text-cyan-500 border-cyan-500",
     };
     return statusStyles[status] || "bg-gray-100 text-gray-500 border-gray-500";
   };
@@ -136,7 +150,6 @@ const Task = ({ taskId, fetchTaskData,setDisplay }) => {
   function handleClose() {
     setDisplay(false);
   }
-
 
   const due_date = new Date(tasks?.due_date);
   const start_date = new Date(tasks?.start_date);
@@ -171,11 +184,13 @@ const Task = ({ taskId, fetchTaskData,setDisplay }) => {
   }
 
   const work_id = localStorage.getItem("work_id");
-console.log("Work ID: ", workdata);
+  console.log("Work ID: ", workdata);
   async function handlePause() {
     console.log("Pause Event: ", workId);
     const taskId = tasks?.id;
-    const pauseTime = new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" });
+    const pauseTime = new Date().toLocaleString("en-US", {
+      timeZone: "Asia/Kolkata",
+    });
     const pauseTimes = JSON.parse(localStorage.getItem("pauseTimes")) || [];
     pauseTimes.push(pauseTime);
     localStorage.setItem("pauseTimes", JSON.stringify(pauseTimes));
@@ -198,7 +213,9 @@ console.log("Work ID: ", workdata);
 
   async function handleResume() {
     const taskID = tasks?.id;
-    const resumeTime = new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" });
+    const resumeTime = new Date().toLocaleString("en-US", {
+      timeZone: "Asia/Kolkata",
+    });
     const resumeTimes = JSON.parse(localStorage.getItem("resumeTimes")) || [];
     resumeTimes.push(resumeTime);
     localStorage.setItem("resumeTimes", JSON.stringify(resumeTimes));
@@ -260,7 +277,6 @@ console.log("Work ID: ", workdata);
     }
   };
 
-
   function durToHour(params) {
     if (!params) return "N/A";
 
@@ -301,7 +317,6 @@ console.log("Work ID: ", workdata);
           </div>
         </div>
 
-
         <div className="main-container overflow-y-auto">
           <div className="p-5 m-2">
             {taskId ? (
@@ -315,33 +330,53 @@ console.log("Work ID: ", workdata);
 
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                       <div className="flex flex-col">
-                        <span className="text-sm font-medium text-gray-500">Description</span>
-                        <span className="mt-1 text-lg">{tasks?.description}</span>
+                        <span className="text-sm font-medium text-gray-500">
+                          Description
+                        </span>
+                        <span className="mt-1 text-lg">
+                          {tasks?.description}
+                        </span>
                       </div>
 
                       <div className="flex flex-col">
-                        <span className="text-sm font-medium text-gray-500">Duration</span>
-                        <span className="mt-1 text-lg">{durToHour(tasks?.duration)}</span>
+                        <span className="text-sm font-medium text-gray-500">
+                          Duration
+                        </span>
+                        <span className="mt-1 text-lg">
+                          {durToHour(tasks?.duration)}
+                        </span>
                       </div>
 
                       <div className="flex flex-col">
-                        <span className="text-sm font-medium text-gray-500">Assigned Date</span>
-                        <span className="mt-1 text-lg">{start_date?.toDateString()}</span>
+                        <span className="text-sm font-medium text-gray-500">
+                          Assigned Date
+                        </span>
+                        <span className="mt-1 text-lg">
+                          {start_date?.toDateString()}
+                        </span>
                       </div>
 
                       <div className="flex flex-col">
-                        <span className="text-sm font-medium text-gray-500">Due Date</span>
-                        <span className="mt-1 text-lg">{due_date?.toDateString()}</span>
+                        <span className="text-sm font-medium text-gray-500">
+                          Due Date
+                        </span>
+                        <span className="mt-1 text-lg">
+                          {due_date?.toDateString()}
+                        </span>
                       </div>
                       <div>
-                        <span className="text-sm font-medium text-gray-700">Total Work Hours:</span>
+                        <span className="text-sm font-medium text-gray-700">
+                          Total Work Hours:
+                        </span>
                         <span className="ml-2 px-3 py-1 bg-teal-100 text-teal-800 border-2 border-teal-800 rounded-full">
                           {formatMinutesToHoursAndMinutes(workHours?.duration)}
                         </span>
                       </div>
                       <div className="flex items-center">
                         <div className="flex gap-3 items-center">
-                          <span className="text-sm font-medium text-gray-500">Status</span>
+                          <span className="text-sm font-medium text-gray-500">
+                            Status
+                          </span>
                           {tasks?.status && (
                             <span
                               className={`text-sm text-center font-medium px-3 py-1 rounded-full border mr-4 ${getStatusBadge(tasks.status)}`}
@@ -351,24 +386,29 @@ console.log("Work ID: ", workdata);
                           )}
                         </div>
                         <div className="flex gap-3 items-center">
-                          <span className="text-sm font-medium text-gray-500">Status</span>
-                          <span className={`text-sm text-center font-semibold px-3 py-1 rounded-full border ${color}`}>
+                          <span className="text-sm font-medium text-gray-500">
+                            Status
+                          </span>
+                          <span
+                            className={`text-sm text-center font-semibold px-3 py-1 rounded-full border ${color}`}
+                          >
                             {getPriorityLabel(tasks?.priority)}
                           </span>
                         </div>
                       </div>
-
                     </div>
 
                     <div className="flex flex-col mt-6">
-                      <span className="text-sm font-medium text-gray-500">Task Actions</span>
+                      <span className="text-sm font-medium text-gray-500">
+                        Task Actions
+                      </span>
                       <div className="flex flex-wrap gap-3 mt-2">
-                        {tasks?.status === "ASSIGNED" || tasks?.status === "ONHOLD"  ? (
+                        {tasks?.status === "ASSIGNED" ||
+                        tasks?.status === "ONHOLD" ? (
                           <button
                             className="flex items-center justify-center cursor-pointer px-4 py-2 font-semibold text-white transition-colors duration-300 bg-green-500 rounded-md hover:bg-green-600"
                             onClick={handleStart}
                           >
-
                             Start Task
                           </button>
                         ) : (
@@ -383,14 +423,13 @@ console.log("Work ID: ", workdata);
                                 <div>
                                   <Pause />
                                 </div>
-                                <div>
-                                  Pause
-                                </div>
+                                <div>Pause</div>
                               </button>
                             )}
 
                             {/* Show Resume button if the task is paused */}
-                            {tasks?.status === "BREAK" || tasks?.status === "RE_ASSIGNED" ? (
+                            {tasks?.status === "BREAK" ||
+                            tasks?.status === "RE_ASSIGNED" ? (
                               <button
                                 className="flex items-center justify-center cursor-pointer gap-1 px-4 py-2 font-medium text-sm text-white transition-colors duration-300 bg-green-500 rounded-md hover:bg-green-600"
                                 value={workdata?.id}
@@ -399,9 +438,7 @@ console.log("Work ID: ", workdata);
                                 <div>
                                   <Play />
                                 </div>
-                                <div>
-                                  Resume
-                                </div>
+                                <div>Resume</div>
                               </button>
                             ) : null}
 
@@ -415,9 +452,7 @@ console.log("Work ID: ", workdata);
                                 <div>
                                   <Square />
                                 </div>
-                                <div>
-                                  End Task
-                                </div>
+                                <div>End Task</div>
                               </div>
                             )}
                           </div>
@@ -430,16 +465,14 @@ console.log("Work ID: ", workdata);
                     {/* Project */}
                     <div className="w-full p-6 rounded-lg shadow-xl h-fit bg-gradient-to-br from-blue-50 to-blue-100">
                       <div className="flex items-center justify-between mb-4">
-                        <h2 className="text-xl font-bold text-blue-800">Project Details</h2>
+                        <h2 className="text-xl font-bold text-blue-800">
+                          Project Details
+                        </h2>
                         <button
                           onClick={toggleProjectDetail}
                           className="flex items-center text-blue-600 hover:text-blue-800"
                         >
-                          {showProjectDetail ? (
-                            <ChevronUp />
-                          ) : (
-                            <ChevronDown />
-                          )}
+                          {showProjectDetail ? <ChevronUp /> : <ChevronDown />}
                         </button>
                       </div>
 
@@ -448,8 +481,12 @@ console.log("Work ID: ", workdata);
                           <FolderKanban className="text-blue-700" />
                         </div>
                         <div>
-                          <div className="text-sm font-medium text-gray-500">Project Name</div>
-                          <div className="text-lg font-semibold text-blue-700">{tasks?.project?.name}</div>
+                          <div className="text-sm font-medium text-gray-500">
+                            Project Name
+                          </div>
+                          <div className="text-lg font-semibold text-blue-700">
+                            {tasks?.project?.name}
+                          </div>
                         </div>
                       </div>
 
@@ -481,7 +518,8 @@ console.log("Work ID: ", workdata);
                               label: "Estimated Hours",
                               value: projectData?.estimatedHours,
                               icon: (
-                                <Clock4 className="text-blue-500 text-md" />),
+                                <Clock4 className="text-blue-500 text-md" />
+                              ),
                             },
                             {
                               label: "Stage",
@@ -491,40 +529,51 @@ console.log("Work ID: ", workdata);
                               ),
                             },
                           ]?.map(({ label, value, icon }) => (
-                            <div key={label} className="flex items-start p-2 rounded-md hover:bg-blue-50">
+                            <div
+                              key={label}
+                              className="flex items-start p-2 rounded-md hover:bg-blue-50"
+                            >
                               <div className="flex items-center gap-2">
                                 {icon}
-                                <span className="font-medium text-gray-700">{label}:</span>
+                                <span className="font-medium text-gray-700">
+                                  {label}:
+                                </span>
                               </div>
-                              <span className="ml-2 text-gray-600 break-words">{value || "Not available"}</span>
+                              <span className="ml-2 text-gray-600 break-words">
+                                {value || "Not available"}
+                              </span>
                             </div>
                           ))}
 
                           {/* Files section */}
-                          {Array.isArray(projectData?.files) && projectData?.files.length > 0 && (
-                            <div className="col-span-2 p-2 mt-2 border-t">
-                              <div className="flex items-center mb-2">
-                                <Files className="text-blue-500 text-md" />
-                                <span className="font-medium text-gray-700">Files:</span>
+                          {Array.isArray(projectData?.files) &&
+                            projectData?.files.length > 0 && (
+                              <div className="col-span-2 p-2 mt-2 border-t">
+                                <div className="flex items-center mb-2">
+                                  <Files className="text-blue-500 text-md" />
+                                  <span className="font-medium text-gray-700">
+                                    Files:
+                                  </span>
+                                </div>
+                                <div className="grid grid-cols-1 gap-2 mt-2 sm:grid-cols-2">
+                                  {projectData?.files?.map((file, index) => (
+                                    <a
+                                      key={index}
+                                      href={`${BASE_URL}/api/project/projects/viewfile/${projectData?.id}/${file.id}`}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="flex items-center p-2 transition-colors duration-200 bg-white border rounded-md hover:bg-blue-50"
+                                    >
+                                      <Files className="text-blue-500 text-md" />
+                                      <span className="text-sm text-gray-700 truncate">
+                                        {file.originalName ||
+                                          `File ${index + 1}`}
+                                      </span>
+                                    </a>
+                                  ))}
+                                </div>
                               </div>
-                              <div className="grid grid-cols-1 gap-2 mt-2 sm:grid-cols-2">
-                                {projectData?.files?.map((file, index) => (
-                                  <a
-                                    key={index}
-                                    href={`${BASE_URL}/api/project/projects/viewfile/${projectData?.id}/${file.id}`}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="flex items-center p-2 transition-colors duration-200 bg-white border rounded-md hover:bg-blue-50"
-                                  >
-                                    <Files className="text-blue-500 text-md" />
-                                    <span className="text-sm text-gray-700 truncate">
-                                      {file.originalName || `File ${index + 1}`}
-                                    </span>
-                                  </a>
-                                ))}
-                              </div>
-                            </div>
-                          )}
+                            )}
                         </div>
                       )}
                     </div>
@@ -532,7 +581,9 @@ console.log("Work ID: ", workdata);
                     {/* Fabricator */}
                     <div className="w-full p-6 rounded-lg shadow-xl h-fit bg-gradient-to-br from-teal-50 to-teal-100">
                       <div className="flex items-center justify-between mb-4">
-                        <h2 className="text-xl font-bold text-purple-800">Fabricator Details</h2>
+                        <h2 className="text-xl font-bold text-purple-800">
+                          Fabricator Details
+                        </h2>
                         <button
                           onClick={toggleFabricatorDetail}
                           className="flex items-center text-purple-600 hover:text-purple-800"
@@ -550,7 +601,9 @@ console.log("Work ID: ", workdata);
                           <Building2 className="text-purple-500" />
                         </div>
                         <div>
-                          <div className="text-sm font-medium text-gray-500">Fabricator Name</div>
+                          <div className="text-sm font-medium text-gray-500">
+                            Fabricator Name
+                          </div>
                           <div className="text-lg font-semibold text-purple-700">
                             {projectData?.fabricator?.fabName}
                           </div>
@@ -564,14 +617,17 @@ console.log("Work ID: ", workdata);
                               <Globe className="text-purple-500" />
                             </div>
                             <div>
-                              <div className="text-sm font-medium text-gray-500">Website</div>
+                              <div className="text-sm font-medium text-gray-500">
+                                Website
+                              </div>
                               <a
                                 href={projectData?.fabricator?.website}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="text-purple-600 hover:text-purple-800 hover:underline"
                               >
-                                {projectData?.fabricator?.website || "Not available"}
+                                {projectData?.fabricator?.website ||
+                                  "Not available"}
                               </a>
                             </div>
                           </div>
@@ -581,14 +637,17 @@ console.log("Work ID: ", workdata);
                               <FolderOpen className="text-purple-500" />
                             </div>
                             <div>
-                              <div className="text-sm font-medium text-gray-500">Drive</div>
+                              <div className="text-sm font-medium text-gray-500">
+                                Drive
+                              </div>
                               <a
                                 href={tasks?.project?.fabricator?.drive}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="text-purple-600 hover:text-purple-800 hover:underline"
                               >
-                                {tasks?.project?.fabricator?.drive || "Not available"}
+                                {tasks?.project?.fabricator?.drive ||
+                                  "Not available"}
                               </a>
                             </div>
                           </div>
@@ -600,12 +659,20 @@ console.log("Work ID: ", workdata);
 
                 {/* Comments Section */}
                 <div className="w-full p-6 mt-6 rounded-lg shadow-xl bg-gradient-to-br from-gray-50 to-gray-100">
-                  <h2 className="mb-4 text-xl font-bold text-gray-800 border-b border-gray-200 pb-2">Comments</h2>
+                  <h2 className="mb-4 text-xl font-bold text-gray-800 border-b border-gray-200 pb-2">
+                    Comments
+                  </h2>
 
-                  <form onSubmit={handleSubmit(onSubmitComment)} className="mb-6">
+                  <form
+                    onSubmit={handleSubmit(onSubmitComment)}
+                    className="mb-6"
+                  >
                     <div className="p-4 bg-white rounded-lg shadow-sm">
                       <div className="mb-3">
-                        <label htmlFor="comment" className="block mb-2 text-sm font-medium text-gray-700">
+                        <label
+                          htmlFor="comment"
+                          className="block mb-2 text-sm font-medium text-gray-700"
+                        >
                           Add Comment
                         </label>
                         <textarea
@@ -634,24 +701,35 @@ console.log("Work ID: ", workdata);
                         >
                           <div className="flex items-center mb-3">
                             <div className="p-2 mr-3 text-white bg-teal-600 rounded-full">
-                              {staffData?.find((staff) => staff?.id === comment?.user_id)?.f_name?.charAt(0) || "U"}
+                              {staffData
+                                ?.find(
+                                  (staff) => staff?.id === comment?.user_id,
+                                )
+                                ?.f_name?.charAt(0) || "U"}
                             </div>
                             <div>
                               <div className="font-medium text-gray-800">
-                                {staffData?.find((staff) => staff?.id === comment?.user_id)?.f_name || "Unknown User"}
+                                {staffData?.find(
+                                  (staff) => staff?.id === comment?.user_id,
+                                )?.f_name || "Unknown User"}
                               </div>
                               <div className="text-xs text-gray-500">
-                                {new Date(comment?.created_on).toLocaleString("en-US", {
-                                  year: "numeric",
-                                  month: "short",
-                                  day: "numeric",
-                                  hour: "2-digit",
-                                  minute: "2-digit",
-                                })}
+                                {new Date(comment?.created_on).toLocaleString(
+                                  "en-US",
+                                  {
+                                    year: "numeric",
+                                    month: "short",
+                                    day: "numeric",
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                  },
+                                )}
                               </div>
                             </div>
                           </div>
-                          <div className="pl-12 text-gray-700 whitespace-pre-wrap break-words">{comment?.data}</div>
+                          <div className="pl-12 text-gray-700 whitespace-pre-wrap break-words">
+                            {comment?.data}
+                          </div>
                         </div>
                       ))}
                     </div>
@@ -669,8 +747,12 @@ console.log("Work ID: ", workdata);
                       >
                         <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
                       </svg>
-                      <h3 className="mb-1 text-lg font-medium text-gray-900">No comments yet</h3>
-                      <p className="text-gray-500">Be the first to add a comment to this task.</p>
+                      <h3 className="mb-1 text-lg font-medium text-gray-900">
+                        No comments yet
+                      </h3>
+                      <p className="text-gray-500">
+                        Be the first to add a comment to this task.
+                      </p>
                     </div>
                   )}
                 </div>
@@ -691,8 +773,12 @@ console.log("Work ID: ", workdata);
                   <line x1="12" y1="8" x2="12" y2="12"></line>
                   <line x1="12" y1="16" x2="12.01" y2="16"></line>
                 </svg>
-                <h1 className="mb-2 text-2xl font-bold text-gray-800">No Task Found</h1>
-                <p className="text-gray-600">The requested task could not be found or has been deleted.</p>
+                <h1 className="mb-2 text-2xl font-bold text-gray-800">
+                  No Task Found
+                </h1>
+                <p className="text-gray-600">
+                  The requested task could not be found or has been deleted.
+                </p>
               </div>
             )}
           </div>

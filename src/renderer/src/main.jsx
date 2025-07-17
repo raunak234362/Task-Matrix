@@ -27,6 +27,7 @@ import "./index.css";
 import App from "./App.jsx";
 import { ToastContainer } from "react-toastify";
 import ProtectedRoute from "./util/ProtectedRoute.jsx";
+import Estimation from "./components/dashboard/tasks/EstimationTask/Estimation.jsx";
 
 const router = createHashRouter([
   {
@@ -92,6 +93,10 @@ const router = createHashRouter([
             path: "myTask-record",
             element: <TaskRecord />,
           },
+          {
+            path: "estimation",
+            element: <Estimation />,
+          }
         ],
       },
       {

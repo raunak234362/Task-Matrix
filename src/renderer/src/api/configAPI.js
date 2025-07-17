@@ -707,6 +707,27 @@ class Service {
     }
   }
 
+   //Fetch all estimation tasks
+  static async allEstimationTasks() {
+    const token = sessionStorage.getItem("token");
+    try {
+      const response = await api.get(
+        `/api/EstimationTask/getMyTasks`,
+        {
+          headers: {
+            "Content-Type": "Application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log("All Estimation Tasks: ", response.data);
+      return response.data?.data;
+    } catch (error) {
+      console.log("Error fetching all estimation tasks:", error);
+      throw error;
+    }
+  }
+
   //Calendar API
   // static async fetchCalendar(date, user) {
   //   const token = sessionStorage.getItem("token");
