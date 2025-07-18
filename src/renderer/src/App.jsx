@@ -131,9 +131,6 @@ const App = () => {
       <div className="flex flex-col w-screen h-screen overflow-hidden md:flex-row bg-gradient-to-br from-gray-700 to-teal-200">
         <NotificationReceiver />
         <div className="flex flex-col w-full">
-          <div className="mx-5 my-2 shadow-2xl drop-shadow-lg">
-            <Header sidebarOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
-          </div>
           <div className="flex flex-row">
             <div
               className={`fixed md:static flex flex-col md:bg-opacity-0 bg-white w-64 z-20 transition-transform duration-300 ${

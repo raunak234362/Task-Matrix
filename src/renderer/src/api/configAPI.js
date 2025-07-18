@@ -728,6 +728,23 @@ class Service {
     }
   }
 
+  // Fetch estimation task by ID
+  static async getEstimationTaskById(id) {
+    const token = sessionStorage.getItem("token");
+    try {
+      const response = await api.get(`/api/EstimationTask/task/${id}`, {
+        headers: {
+          "Content-Type": "Application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data?.data;
+    } catch (error) {
+      console.log("Error fetching estimation task by ID:", error);
+      throw error;
+    }
+  }
+
   //Calendar API
   // static async fetchCalendar(date, user) {
   //   const token = sessionStorage.getItem("token");
