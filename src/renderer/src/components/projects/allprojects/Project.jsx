@@ -7,57 +7,16 @@ import { Button } from "../../index";
 import ProjectStatus from "./ProjectStatus";
 
 const Project = ({ projectId, onClose }) => {
-  const [project, setProject] = useState([]);
-  const [selectedProject, setSelectedProject] = useState(null);
   const [selectedEditProject, setSelectedEditProject] = useState(null);
-  const [selectedProjectWB, setSelectedProjectWB] = useState(null);
-  const [addWorkBreakdown, setAddWorkBreakdown] = useState(false);
-  const [allWorkBreakdown, setAllWorkBreakdown] = useState(false);
   const [selectedProjectStatus, setSelectedProjectStatus] = useState(null);
   const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
-
-  const [editWorkBreakdown, setEditWorkBreakdown] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const projectData = useSelector((state) =>
     state?.projectData.projectData.find((project) => project.id === projectId),
   );
-  console.log("Project Data", projectData);
-
-  // const fetchFiles = async (data) => {
-  //   console.log("Fetching files", data);
-  //   try {
-  //     const files = await Service.allProjectFile(projectId,data);
-
-  //     console.log("Files", files);
-  //   } catch (error) {
-  //     console.log("Error fetching files:", error);
-  //   }
-  // };
-
-  // const fetchFileAndOpen = async (fileId) => {
-  //   try {
-  //     const response = await Service.allProjectFile(projectId, fileId, { responseType: 'blob' }); // API call to fetch the file as blob
-  //     console.log("File response", response);
-  //     // const fileUrl = URL.createObjectURL(response.data); // Create object URL from blob
-  //     // console.log("File URL", fileUrl);
-  //     window.open(response, "_blank"); // Open file in a new tab
-  //   } catch (error) {
-  //     console.error("Error opening file:", error);
-  //   }
-  // };
-
+  
   const handleClose = async () => {
     onClose(true);
-  };
-
-  const handleEditClick = () => {
-    setIsModalOpen(true);
-    setSelectedEditProject(projectData);
-  };
-  const handleModalClose = () => {
-    setIsModalOpen(false);
-    setSelectedEditProject(null);
   };
 
   const handleStatusView = (projectID) => {
@@ -68,11 +27,6 @@ const Project = ({ projectId, onClose }) => {
   const handleStatusClose = () => {
     setSelectedProjectStatus(null);
     setIsStatusModalOpen(false);
-  };
-
-  const projectDetails = {
-    projectData: projectData, // Ensure correct property assignment
-    // Add other properties as needed
   };
 
   return (

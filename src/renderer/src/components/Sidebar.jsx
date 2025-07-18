@@ -148,6 +148,9 @@ const Sidebar = ({ refresh }) => {
           <div className="text-xs text-gray-500 mb-2">
             {userType.toUpperCase()}
           </div>
+          <div className="text-xs text-gray-500 mb-2">
+            Version - 1.0.0
+          </div>
           <div className="flex flex-row gap-2 p-6">
             <Button onClick={fetchLogout}>Logout</Button>
             <Button onClick={refresh}>
