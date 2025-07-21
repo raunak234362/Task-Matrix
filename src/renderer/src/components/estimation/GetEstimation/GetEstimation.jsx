@@ -22,7 +22,7 @@ import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
 
 /* eslint-disable react/prop-types */
-const GetEstimation = ({ task, setDisplay }) => {
+const GetEstimation = ({ task, setDisplay, fetchEstimation }) => {
   const [tasks, setTasks] = useState({});
   const [workHours, setWorkHours] = useState(null);
   const [workId, setWorkId] = useState(null);
@@ -43,6 +43,7 @@ const GetEstimation = ({ task, setDisplay }) => {
     try {
       const response = await Service.getEstimationTaskById(task);
       setTasks(response);
+      fetchEstimation();
       console.log("Estimation details:", response);
     } catch (error) {
       console.error("Error fetching estimation details:", error);
@@ -52,7 +53,7 @@ const GetEstimation = ({ task, setDisplay }) => {
 
   useEffect(() => {
     const fetchWorkId = async () => {
-      const workHour = await Service.getWorkHours(task);
+      const workHour = await Service.getEstWorkHours(task);
       console.log("Work Hours: ", workHour);
       setWorkId(workHour?.id);
       localStorage.setItem("work_id", workHour?.id || workId);
@@ -164,11 +165,102 @@ const GetEstimation = ({ task, setDisplay }) => {
     return `${totalHours}h ${minutes}m`;
   }
 
+  async function handleStart() {
+    const taskID = tasks?.id;
+    try {
+      const accept = await Service.startEstTask(taskID);
+      setTasks((prev) => {
+        return {
+          ...prev,
+          status: "IN_PROGRESS",
+        };
+      });
+      localStorage.setItem("work_id", accept?.data?.id || workId);
+      console.log("Accept Response: --------", accept);
+      toast.success("Task Started");
+      fetchEstimationDetails();
+      fetchEstimation();
+    } catch (error) {
+      toast.error("Error in accepting task");
+    }
+  }
+
+  const work_id = localStorage.getItem("work_id");
+  console.log("Work ID: ", workdata);
+  async function handlePause() {
+    console.log("Pause Event: ", workId);
+    const taskId = tasks?.id;
+    const pauseTime = new Date().toLocaleString("en-US", {
+      timeZone: "Asia/Kolkata",
+    });
+    const pauseTimes = JSON.parse(localStorage.getItem("pauseTimes")) || [];
+    pauseTimes.push(pauseTime);
+    localStorage.setItem("pauseTimes", JSON.stringify(pauseTimes));
+    try {
+      const pause = await Service.pauseEstTask(taskId, work_id);
+      setTasks((prev) => {
+        return {
+          ...prev,
+          status: "BREAK",
+        };
+      });
+      toast.success("Task Paused");
+      fetchEstimationDetails();
+      fetchEstimation();
+    } catch (error) {
+      toast.error("Error in pausing task");
+      console.log("Error in pausing task: ", error);
+    }
+  }
+
+  async function handleResume() {
+    const taskID = tasks?.id;
+    const resumeTime = new Date().toLocaleString("en-US", {
+      timeZone: "Asia/Kolkata",
+    });
+    const resumeTimes = JSON.parse(localStorage.getItem("resumeTimes")) || [];
+    resumeTimes.push(resumeTime);
+    localStorage.setItem("resumeTimes", JSON.stringify(resumeTimes));
+    try {
+      const resume = await Service.resumeEstTask(taskID, work_id);
+      setTasks((prev) => {
+        return {
+          ...prev,
+          status: "IN_PROGRESS",
+        };
+      });
+      fetchEstimationDetails();
+      fetchEstimation();
+      toast.success("Task Resumed");
+    } catch (error) {
+      toast.error("Error in resuming task");
+      console.log("Error in resuming task: ", error);
+    }
+  }
+
+  async function handleEnd() {
+    const taskID = tasks?.id;
+    const end = new Date().toISOString();
+    try {
+      const endresponse = await Service.endEstTask(taskID, workId, end);
+      if (endresponse?.status === "END") {
+        localStorage.removeItem("work_id");
+        fetchEstimationDetails();
+        fetchEstimation();
+        setDisplay(false);
+        toast.success("Task Ended");
+        window.location.reload();
+      }
+    } catch (error) {
+      toast.error("Error in ending task");
+    }
+  }
+
   // For Comment Form
   const onSubmitComment = async (data) => {
     // console.log(data);
     try {
-      const response = await Service.addComment(task, data);
+      const response = await Service.addEstComment(task, data);
       toast.success("Comment Added Successfully");
       await fetchEstimationDetails();
     } catch (error) {
@@ -272,7 +364,7 @@ const GetEstimation = ({ task, setDisplay }) => {
                   tasks?.status === "ONHOLD" ? (
                     <button
                       className="flex items-center justify-center cursor-pointer px-4 py-2 font-semibold text-white transition-colors duration-300 bg-green-500 rounded-md hover:bg-green-600"
-                      // onClick={handleStart}
+                      onClick={handleStart}
                     >
                       Start Task
                     </button>
@@ -283,7 +375,7 @@ const GetEstimation = ({ task, setDisplay }) => {
                         <button
                           className="flex text-sm items-center justify-center cursor-pointer gap-1 px-4 py-2 font-medium text-white transition-colors duration-300 bg-yellow-800 rounded-md hover:bg-yellow-600"
                           value={workdata?.id}
-                          // onClick={handlePause}
+                          onClick={handlePause}
                         >
                           <div>
                             <Pause />
@@ -298,7 +390,7 @@ const GetEstimation = ({ task, setDisplay }) => {
                         <button
                           className="flex items-center justify-center cursor-pointer gap-1 px-4 py-2 font-medium text-sm text-white transition-colors duration-300 bg-green-500 rounded-md hover:bg-green-600"
                           value={workdata?.id}
-                          // onClick={handleResume}
+                          onClick={handleResume}
                         >
                           <div>
                             <Play />
@@ -312,7 +404,7 @@ const GetEstimation = ({ task, setDisplay }) => {
                         <div
                           className="flex items-center cursor-pointer justify-center gap-1 px-4 py-2 font-medium text-sm text-white transition-colors duration-300 bg-red-500 rounded-md hover:bg-red-600"
                           value={workdata?.id}
-                          // onClick={handleEnd}
+                          onClick={handleEnd}
                         >
                           <div>
                             <Square />
@@ -359,9 +451,9 @@ const GetEstimation = ({ task, setDisplay }) => {
             </div>
           </form>
 
-          {tasks?.taskcomment?.length > 0 ? (
+          {tasks?.comment?.length > 0 ? (
             <div className="space-y-4">
-              {tasks?.taskcomment?.map((comment, index) => (
+              {tasks?.comment?.map((comment, index) => (
                 <div
                   className="p-4 transition-shadow duration-300 bg-white rounded-lg shadow-sm hover:shadow-md"
                   key={index}

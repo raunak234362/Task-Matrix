@@ -16,13 +16,9 @@ const Estimation = () => {
   const fetchEstimationTask = async () => {
     try {
       const response = await Service.allEstimationTasks();
-      console.log("Fetched data:", response);
-      // Ensure response is an array; fallback to empty array if not
-      setEstimationTasks(Array.isArray(response) ? response : []);
-      setError(null); // Clear any previous errors
+      setEstimationTasks(response);
     } catch (error) {
       console.error("Fetch error:", error);
-      setEstimationTasks([]); // Fallback to empty array
       setError("Failed to fetch tasks. Please try again later.");
     }
   };
@@ -59,9 +55,9 @@ const Estimation = () => {
         disableSortBy: true,
       },
       {
-        Header: "Title",
-        accessor: "title",
-        Cell: ({ value, row }) => value || `Task ${row.index + 1}`,
+        Header: "Project Name",
+        accessor: (row) => row.estimation?.projectName || "",
+        id: "projectName",
       },
       {
         Header: "Description",
@@ -81,20 +77,12 @@ const Estimation = () => {
         Cell: ({ value }) => value || "Unknown",
       },
       {
-        Header: "Assigned Hours",
-        accessor: "duration",
-        Cell: ({ value, row }) =>
-          value
-            ? (row.original.parseDurationToMinutes?.(value) / 60).toFixed(2)
-            : "0.00",
-      },
-      {
         Header: "Working Hours",
-        accessor: "workingHourTask",
+        accessor: "workinghours",
         Cell: ({ value }) =>
-          value
+          Array.isArray(value)
             ? value
-                .reduce((total, hour) => total + (hour.duration / 60 || 0), 0)
+                .reduce((total, hour) => total + (hour.duration || 0) / 60, 0)
                 .toFixed(2)
             : "0.00",
       },
@@ -103,16 +91,13 @@ const Estimation = () => {
         accessor: "id",
         Cell: ({ row }) => {
           const task = row.original;
-          const canView =
-            task.status === "IN_REVIEW" || task.id === unlockableTaskId;
+
           return (
             <Button
               onClick={() => handleTaskView(task.id)}
               // disabled={!canView}
               className={
-                canView
-                  ? "bg-teal-500 text-white font-semibold hover:bg-teal-600"
-                  : "bg-red-500 text-white font-semibold opacity-50 cursor-not-allowed"
+                "bg-teal-500 text-white font-semibold hover:bg-teal-600"
               }
             >
               View
@@ -136,12 +121,13 @@ const Estimation = () => {
       useSortBy,
     );
 
-  const unlockableStatuses = ["ASSIGNED", "IN_PROGRESS", "BREAK"];
+  // const unlockableStatuses = ["ASSIGNED", "IN_PROGRESS", "BREAK"];
 
-  const highestPriorityTask = estimationTasks
-    .filter((task) => unlockableStatuses.includes(task.status))[0];
+  // const highestPriorityTask = estimationTasks.filter((task) =>
+  //   unlockableStatuses.includes(task.status),
+  // )[0];
 
-  const unlockableTaskId = highestPriorityTask?.id;
+  // const unlockableTaskId = highestPriorityTask?.id;
 
   function handleTaskView(taskId) {
     setSpecificTask(taskId);
@@ -227,7 +213,11 @@ const Estimation = () => {
         </table>
       </div>
       {displayTask && (
-        <GetEstimation task={specificTask} setDisplay={setDisplayTask} />
+        <GetEstimation
+          task={specificTask}
+          setDisplay={setDisplayTask}
+          fetchEstimation={fetchEstimationTask}
+        />
       )}
     </>
   );

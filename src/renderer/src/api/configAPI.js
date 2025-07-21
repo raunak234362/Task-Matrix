@@ -393,12 +393,45 @@ class Service {
       throw error;
     }
   }
+  static async getEstWorkHours(task_id) {
+    const token = sessionStorage.getItem("token");
+    try {
+      const response = await api.get(`/api/EWH/ewh/${task_id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      return response.data.data;
+    } catch (error) {
+      console.log("Error in getting Work ID:", error);
+      throw error;
+    }
+  }
 
   static async startTask(task_id) {
     const formData = { task_id };
     const token = sessionStorage.getItem("token");
     try {
       const response = await api.post(`/api/wh/wh/start/`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      console.log("Start Task: ", response);
+      return response.data;
+    } catch (error) {
+      console.log("Error in getting Project:", error);
+      throw error;
+    }
+  }
+  static async startEstTask(task_id) {
+    const formData = { estimationTaskId: task_id };
+    const token = sessionStorage.getItem("token");
+    try {
+      const response = await api.post(`/api/EWH/ewh/start/`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
@@ -418,6 +451,24 @@ class Service {
     const token = sessionStorage.getItem("token");
     try {
       const response = await api.patch(`/api/wh/wh/pause/`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      console.log("Pause Task: ", response.data);
+      return response.data.data;
+    } catch (error) {
+      console.log("Error in getting Project:", error);
+      throw error;
+    }
+  }
+  static async pauseEstTask(task_id, work_id) {
+    console.log("pause-=-=-=-==-=-=-", task_id, work_id);
+    const formData = { estimationTaskId:task_id, work_id };
+    const token = sessionStorage.getItem("token");
+    try {
+      const response = await api.patch(`/api/EWH/ewh/pause/`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
@@ -450,6 +501,24 @@ class Service {
       throw error;
     }
   }
+  static async resumeEstTask(task_id, work_id) {
+    console.log("resume-=-=-=-==-=-=-", task_id);
+    const formData = { estimationTaskId:task_id, work_id };
+    const token = sessionStorage.getItem("token");
+    try {
+      const response = await api.patch(`/api/EWH/ewh/resume/`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      console.log("Resume Task: ", response.data);
+      return response.data.data;
+    } catch (error) {
+      console.log("Error in getting Resume Task: ", error);
+      throw error;
+    }
+  }
 
   static async endTask(task_id, work_id, end) {
     console.log("end-=-=-=-==-=-=-", task_id, work_id, end);
@@ -457,6 +526,25 @@ class Service {
     const token = sessionStorage.getItem("token");
     try {
       const response = await api.patch(`/api/wh/wh/end/`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await response.data.data;
+      console.log("End Task: ", data);
+      return data;
+    } catch (error) {
+      console.log("Error in getting End Task: ", error);
+      throw error;
+    }
+  }
+  static async endEstTask(task_id, work_id, end) {
+    console.log("end-=-=-=-==-=-=-", task_id, work_id, end);
+    const formData = { estimationTaskId:task_id, work_id, end };
+    const token = sessionStorage.getItem("token");
+    try {
+      const response = await api.patch(`/api/EWH/ewh/end/`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
@@ -558,6 +646,27 @@ class Service {
       const token = sessionStorage.getItem("token");
       const response = await api.post(
         `/api/task/tasks/add_comment/${id}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+      return response.data;
+    } catch (error) {
+      console.log("Error fetching projects:", error);
+      throw error;
+    }
+  }
+  static async addEstComment(id, data) {
+    const formData = { ...data };
+    console.log(data);
+    try {
+      const token = sessionStorage.getItem("token");
+      const response = await api.post(
+        `/api/EstimationTask/addComment/${id}`,
         formData,
         {
           headers: {
