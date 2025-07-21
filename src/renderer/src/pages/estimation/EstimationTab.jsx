@@ -1,5 +1,4 @@
 import { useState } from "react";
-import {  ProjectStats } from "../../components";
 import Estimation from "../../components/estimation/EstimationTask/Estimation";
 
 const EstimationTab = () => {
@@ -18,24 +17,12 @@ const EstimationTab = () => {
             >
               All Estimation
             </button>
-            <button
-              onClick={() => setActiveTab("EstimationTasks")}
-              className={`px-1.5 md:px-4 py-2 rounded-lg rounded-b ${activeTab === "EstimationTasks" ? "text-base md:text-base bg-teal-500 text-white font-semibold" : "md:text-base text-sm bg-white"}`}
-            >
-              Estimation Tasks
-            </button>
           </div>
         </div>
         <div className="flex-grow p-2 h-[85vh] overflow-y-auto">
           {activeTab === "allEstimation" && (
             <div>
               <Estimation />
-            </div>
-          )}
-
-          {activeTab === "EstimationTasks" && (
-            <div>
-              <ProjectStats />
             </div>
           )}
         </div>
