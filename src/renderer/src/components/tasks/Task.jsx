@@ -387,7 +387,7 @@ const Task = ({ taskId, fetchTaskData, setDisplay }) => {
                         </div>
                         <div className="flex gap-3 items-center">
                           <span className="text-sm font-medium text-gray-500">
-                            Status
+                            Priority
                           </span>
                           <span
                             className={`text-sm text-center font-semibold px-3 py-1 rounded-full border ${color}`}
