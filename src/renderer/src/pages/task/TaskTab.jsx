@@ -52,8 +52,8 @@ const TaskTab = () => {
     <div className="w-full">
       <div className="flex flex-col w-full h-screen overflow-y-auto">
         {/* Summary Cards */}
-        <div className="mx-2">
-          <div className="grid grid-cols-2 gap-5 my-5 md:grid-cols-3">
+        <div className="mx-1 space-y-3">
+          <div className="grid grid-cols-2 gap-5 my-1 md:grid-cols-3">
             <SummaryCard
               title="Total Task"
               mainCount={tasks.length}
@@ -123,9 +123,9 @@ const TaskTab = () => {
                   </button>
                 )}
               </div>
-            </div>
-            <div className="flex-grow border-l-4 border-t-2 border-teal-300 rounded-md bg-white">
-              {renderCurrentTab()}
+              <div className="flex-grow w-full overflow-y-auto border-l-4 border-t-2 border-teal-300 rounded-md bg-white">
+                {renderCurrentTab()}
+              </div>
             </div>
           </div>
         </div>

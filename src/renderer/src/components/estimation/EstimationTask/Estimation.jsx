@@ -1,31 +1,16 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable prettier/prettier */
-import { useEffect, useMemo, useState } from "react";
-import Service from "../../../api/configAPI";
+import { useMemo, useState } from "react";
 import { useSortBy, useTable } from "react-table";
 import Button from "../../fields/Button";
 import GetEstimation from "../GetEstimation/GetEstimation";
 
-const Estimation = () => {
-  const [estimationTasks, setEstimationTasks] = useState([]);
+const Estimation = ({ estimationTasks, error, fetchEstimationTask }) => {
   const [statusFilter, setStatusFilter] = useState("");
-  const [error, setError] = useState(null); // Add error state for user feedback
+
   const [specificTask, setSpecificTask] = useState("");
   const [displayTask, setDisplayTask] = useState(false);
   // Fetch tasks on mount
-  const fetchEstimationTask = async () => {
-    try {
-      const response = await Service.allEstimationTasks();
-      setEstimationTasks(response);
-    } catch (error) {
-      console.error("Fetch error:", error);
-      setError("Failed to fetch tasks. Please try again later.");
-    }
-  };
-
-  useEffect(() => {
-    fetchEstimationTask();
-  }, []);
 
   // Memoize filtered and sorted tasks
   const filteredEstimationTasks = useMemo(() => {

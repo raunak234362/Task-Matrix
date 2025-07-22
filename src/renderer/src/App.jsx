@@ -4,7 +4,7 @@
 import { Provider, useDispatch } from "react-redux";
 import store from "./store/store";
 import { useCallback, useEffect, useState } from "react";
-import { Header, Sidebar } from "./components/index";
+import { Sidebar } from "./components/index"; // Removed Header if not used
 import { Outlet } from "react-router-dom";
 import Service from "./api/configAPI";
 import { setUserData, showStaff } from "./store/userSlice";
@@ -14,7 +14,7 @@ import socket, { connectSocket } from "./socket";
 import NotificationReceiver from "./util/NotificationReceiver";
 
 const App = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isSidebarMinimized, setIsSidebarMinimized] = useState(false);
   const [tasks, setTasks] = useState([]);
   const [userDetail, setUserDetail] = useState();
   const [updateAvailable, setUpdateAvailable] = useState(false);
@@ -25,7 +25,7 @@ const App = () => {
   const userType = sessionStorage.getItem("userType");
 
   const toggleSidebar = useCallback(() => {
-    setSidebarOpen((prev) => !prev);
+    setIsSidebarMinimized((prev) => !prev);
   }, []);
 
   const fetchProjects = async () => {
@@ -36,8 +36,17 @@ const App = () => {
   const fetchTasks = async () => {
     const tasks = await Service.getAllTask(token);
     setTasks(tasks);
-    const departmentTasks = tasks?.flatMap((task) => task?.tasks) || [];
-    dispatch(showTask(userType === "department-manager" ? departmentTasks : tasks));
+    const departmentTasks =
+      tasks?.flatMap((task) =>
+        task?.tasks?.map((subTask) => ({
+          ...subTask,
+          project:task?.name,
+          manager: task?.manager, // Attach manager from parent task
+        })),
+      ) || [];
+    dispatch(
+      showTask(userType === "department-manager" ? departmentTasks : tasks),
+    );
   };
 
   const fetchMyTasks = async () => {
@@ -107,7 +116,7 @@ const App = () => {
     }
 
     return () => {
-      // Optional cleanup (if you ever unsubscribe from events)
+      // Optional cleanup
     };
   }, []);
 
@@ -128,27 +137,23 @@ const App = () => {
 
   return (
     <Provider store={store}>
-      <div className="flex flex-col w-screen h-screen overflow-hidden md:flex-row bg-gradient-to-br from-gray-700 to-teal-200">
+      <div className="flex h-screen w-screen overflow-hidden bg-gradient-to-br from-gray-700 to-teal-200">
         <NotificationReceiver />
-        <div className="flex flex-col w-full">
-          <div className="flex flex-row">
-            <div
-              className={`fixed md:static flex flex-col md:bg-opacity-0 bg-white w-64 z-20 transition-transform duration-300 ${
-                sidebarOpen ? "translate-x-0" : "-translate-x-full"
-              } md:translate-x-0 md:w-64`}
-            >
-              <div className="flex items-center justify-between pl-2">
-                <Sidebar refresh={reloadWindow} />
-              </div>
-            </div>
-            <div
-              className={`flex w-full mx-2 border-4 rounded-lg border-white bg-gradient-to-t from-gray-50/70 to-gray-100/50 overflow-hidden flex-grow transition-all duration-300 ${
-                sidebarOpen ? "md:ml-64 bg-black/80" : ""
-              }`}
-            >
-              <Outlet />
-            </div>
-          </div>
+        <div
+          className={`h-full transition-all duration-300 ${
+            isSidebarMinimized ? "w-16" : "w-64"
+          }`}
+        >
+          <Sidebar
+            refresh={reloadWindow}
+            isMinimized={isSidebarMinimized}
+            toggleSidebar={toggleSidebar}
+          />
+        </div>
+        <div
+          className={`flex-1 h-full overflow-hidden transition-all duration-300 bg-gradient-to-t from-gray-50/70 to-gray-100/70 rounded-lg border-4 border-white`}
+        >
+          <Outlet />
         </div>
       </div>
     </Provider>

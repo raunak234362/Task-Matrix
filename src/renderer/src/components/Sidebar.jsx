@@ -13,10 +13,12 @@ import {
   RefreshCw,
   SquareKanban,
   User2,
+  Menu,
+  ChevronLeft,
 } from "lucide-react";
 import { useSelector } from "react-redux";
 
-const Sidebar = ({ refresh }) => {
+const Sidebar = ({ refresh, isMinimized, toggleSidebar }) => {
   const userData = useSelector((state) => state.userData.userData);
   const navigate = useNavigate();
 
@@ -53,13 +55,13 @@ const Sidebar = ({ refresh }) => {
       label: "Tasks",
       to: "tasks",
       icon: <ChartCandlestick />,
-      roles: ["admin", "department-manager","project-manager", "user", "human-resource"],
+      roles: ["admin", "department-manager", "project-manager", "user", "human-resource"],
     },
     {
       label: "Estimations",
       to: "estimation",
       icon: <ChartCandlestick />,
-      roles: ["admin", "department-manager","user"],
+      roles: ["admin", "department-manager", "user"],
     },
     {
       label: "Chats",
@@ -94,69 +96,79 @@ const Sidebar = ({ refresh }) => {
 
   const fetchLogout = async () => {
     try {
-      // const response = await AuthService.logout(token);
       sessionStorage.removeItem("userType");
       sessionStorage.removeItem("token");
       sessionStorage.removeItem("socketId");
       sessionStorage.removeItem("userId");
       toast.success("Logout Successfully");
-      // dispatch(logoutAction());
       navigate("/");
     } catch (error) {
       console.error("Logout failed:", error);
     }
   };
 
-
   const userType = sessionStorage.getItem("userType");
-  return (
-    <section className=" md:h-screen h-screen w-64 bg-white/70 md:border-4 text-black md:rounded-xl rounded-lg">
-      <div className="flex flex-col justify-between h-full">
-        <div>
-          <nav className="p-0 md:p-5 space-y-3">
-            <div className="flex items-center justify-center p-2 mb-4">
-              <img src={LOGO} alt="" className="w-40" />
-            </div>
 
-            <ul className="flex flex-col gap-5">
-              {navItems.map(
-                ({ label, to, roles, icon }) =>
-                  canView(roles) && (
-                    <li key={label}>
-                      <NavLink
-                        to={to}
-                        end={to === "/dashboard"}
-                        className={({ isActive }) =>
-                          isActive
-                            ? "flex gap-3 justify-center items-center text-white bg-teal-400/50 py-1 rounded-md w-full delay-150"
-                            : "text-black gap-3 hover:text-white hover:bg-teal-200 hover:px-4 py-1 flex justify-start items-center rounded-md"
-                        }
-                      >
-                        <div className="text-teal-500">{icon}</div>
-                        <div>{label}</div>
-                      </NavLink>
-                    </li>
-                  ),
-              )}
-            </ul>
-          </nav>
-        </div>
-        <div className="flex flex-col items-center justify-center">
-          <div className="text-center text-base font-semibold">
-            {userData?.f_name} {userData?.m_name} {userData?.l_name}
+  return (
+    <section
+      className={`h-full bg-white/70 border-r-4 border-gray-200 text-black transition-all duration-300 flex flex-col ${
+        isMinimized ? "w-16" : "w-64"
+      }`}
+    >
+      <div className="flex items-center p-2">
+        {!isMinimized && <img src={LOGO} alt="Logo" className="w-40" />}
+      </div>
+        <Button onClick={toggleSidebar} className="p-1">
+          {isMinimized ? <Menu size={20} /> : <ChevronLeft size={20} />}
+        </Button>
+      <div className="flex-1 overflow-y-auto">
+        <nav className="px-2 space-y-2">
+          <ul className="flex flex-col gap-3">
+            {navItems.map(
+              ({ label, to, roles, icon }) =>
+                canView(roles) && (
+                  <li key={label}>
+                    <NavLink
+                      to={to}
+                      end={to === "/dashboard"}
+                      className={({ isActive }) =>
+                        isActive
+                          ? `flex items-center text-white bg-teal-400/50 py-1 px-2 rounded-md w-full ${
+                              isMinimized ? "justify-center" : "justify-start"
+                            }`
+                          : `text-black hover:text-white hover:bg-teal-200 py-1 px-2 rounded-md flex items-center w-full ${
+                              isMinimized ? "justify-center" : "justify-start"
+                            }`
+                      }
+                    >
+                      <div className="text-teal-500 flex-shrink-0">{icon}</div>
+                      {!isMinimized && <div className="ml-3">{label}</div>}
+                    </NavLink>
+                  </li>
+                ),
+            )}
+          </ul>
+        </nav>
+      </div>
+      <div className="p-4 flex flex-col items-center">
+        {!isMinimized && (
+          <div >
+            <div className="text-center text-base font-semibold truncate w-full">
+              {userData?.f_name} {userData?.m_name} {userData?.l_name}
+            </div>
+            <div className="text-xs text-gray-500 mb-2">
+              {userType?.toUpperCase()}
+            </div>
+            <div className="text-xs text-gray-500 mb-2">Version - 1.0.0</div>
           </div>
-          <div className="text-xs text-gray-500 mb-2">
-            {userType.toUpperCase()}
-          </div>
-          <div className="text-xs text-gray-500 mb-2">
-            Version - 1.0.0
-          </div>
-          <div className="flex flex-row gap-2 p-6">
-            <Button onClick={fetchLogout}>Logout</Button>
-            <Button onClick={refresh}>
-              <RefreshCw />
-            </Button>
-          </div>
+        )}
+        <div className={`flex ${isMinimized ? "flex-col" : "flex-row"} gap-2 w-full justify-center`}>
+          <Button onClick={fetchLogout} className="p-1">
+            {isMinimized ? <User2 size={20} /> : "Logout"}
+          </Button>
+          <Button onClick={refresh} className="p-1">
+            <RefreshCw size={20} />
+          </Button>
         </div>
       </div>
     </section>
