@@ -15,7 +15,7 @@ import NotificationReceiver from "./util/NotificationReceiver";
 
 const App = () => {
   const [isSidebarMinimized, setIsSidebarMinimized] = useState(false);
-  const [tasks, setTasks] = useState([]);
+  // const [tasks, setTasks] = useState([]);
   const [userDetail, setUserDetail] = useState();
   const [updateAvailable, setUpdateAvailable] = useState(false);
   const [updateDownloaded, setUpdateDownloaded] = useState(false);
