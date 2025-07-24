@@ -9,13 +9,13 @@ import { Outlet } from "react-router-dom";
 import Service from "./api/configAPI";
 import { setUserData, showStaff } from "./store/userSlice";
 import { showProjects, showTeam } from "./store/projectSlice";
-import { showTask, showTaskRecord } from "./store/taskSlice";
+import { showTask,showTaskRecord } from "./store/taskSlice";
 import socket, { connectSocket } from "./socket";
 import NotificationReceiver from "./util/NotificationReceiver";
 
 const App = () => {
   const [isSidebarMinimized, setIsSidebarMinimized] = useState(false);
-  // const [tasks, setTasks] = useState([]);
+  const [tasks, setTasks] = useState([]);
   const [userDetail, setUserDetail] = useState();
   const [updateAvailable, setUpdateAvailable] = useState(false);
   const [updateDownloaded, setUpdateDownloaded] = useState(false);
@@ -44,6 +44,8 @@ const App = () => {
           manager: task?.manager, // Attach manager from parent task
         })),
       ) || [];
+      console.log("Department Tasks:", departmentTasks);
+      console.log("All Tasks:", tasks);
     dispatch(
       showTask(userType === "department-manager" ? departmentTasks : tasks),
     );
