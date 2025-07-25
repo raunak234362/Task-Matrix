@@ -44,8 +44,6 @@ const App = () => {
           manager: task?.manager, // Attach manager from parent task
         })),
       ) || [];
-      console.log("Department Tasks:", departmentTasks);
-      console.log("All Tasks:", tasks);
     dispatch(
       showTask(userType === "department-manager" ? departmentTasks : tasks),
     );
