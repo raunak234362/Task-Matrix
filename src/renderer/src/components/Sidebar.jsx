@@ -15,6 +15,7 @@ import {
   User2,
   Menu,
   ChevronLeft,
+  Hourglass,
 } from "lucide-react";
 import { useSelector } from "react-redux";
 
@@ -60,7 +61,7 @@ const Sidebar = ({ refresh, isMinimized, toggleSidebar }) => {
     {
       label: "Estimations",
       to: "estimation",
-      icon: <ChartCandlestick />,
+      icon: <Hourglass />,
       roles: ["admin", "department-manager", "user"],
     },
     {

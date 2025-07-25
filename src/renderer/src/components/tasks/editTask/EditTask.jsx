@@ -17,9 +17,17 @@ const EditTask = ({ onClose, task }) => {
   const dispatch = useDispatch();
   const [assignedUser, setAssignedUser] = useState([]);
   console.log("TASK-=-==-=-=-=-=-=", taskDetail);
-  const [defaultHour, defaultMin] = (taskDetail?.duration ?? "00:00").split(":").slice(0, 2);
+  const [defaultHour, defaultMin] = (taskDetail?.duration ?? "00:00")
+    .split(":")
+    .slice(0, 2);
   const userType = sessionStorage.getItem("userType");
-  const { register, handleSubmit, watch, formState: { errors }, setValue } = useForm({
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+    setValue,
+  } = useForm({
     defaultValues: {
       name: taskDetail?.name || "",
       description: taskDetail?.description || "",
@@ -27,8 +35,8 @@ const EditTask = ({ onClose, task }) => {
       start_date: taskDetail?.start_date || "",
       due_date: taskDetail?.due_date || "",
       status: taskDetail?.status || "",
-      hour: defaultHour,  // Ensure hour is set
-      min: defaultMin,    // Ensure minutes are set
+      hour: defaultHour, // Ensure hour is set
+      min: defaultMin, // Ensure minutes are set
     },
   });
 
@@ -92,7 +100,7 @@ const EditTask = ({ onClose, task }) => {
         ...data,
         name: data?.type ? `${data?.type} - ${data?.taskname}` : data?.name,
         user_id: data?.user,
-        duration: `${durationHour}:${durationMin}:00`, // Ensuring default values
+        duration: `${durationHour}:${durationMin}:00`,
       };
 
       // Remove unnecessary fields before sending to backend
@@ -198,7 +206,6 @@ const EditTask = ({ onClose, task }) => {
               />
             </div>
             {userType === "admin" && (
-
               <div className="mt-1">
                 <div className="text-lg font-bold">Duration:</div>
                 <div className="flex flex-row w-1/5 gap-5">
@@ -235,6 +242,46 @@ const EditTask = ({ onClose, task }) => {
                   {errors.min && (
                     <p className="text-red-600">{errors.min.message}</p>
                   )}
+                </div>
+                <div className="px-4">
+                  <CustomSelect
+                    label="Stage"
+                    name="stage"
+                    options={[
+                      { label: "Select Stage", value: "" },
+                      { label: "(RFI)Request for Information", value: "RFI" },
+                      { label: "(IFA)Issue for Approval", value: "IFA" },
+                      {
+                        label: "(BFA)Back from Approval/ Returned App",
+                        value: "BFA",
+                      },
+                      {
+                        label: "(BFA-M)Back from Approval - Markup",
+                        value: "BFA_M",
+                      },
+                      { label: "(RIFA)Re-issue for Approval", value: "RIFA" },
+                      {
+                        label: "(RBFA)Return Back from Approval",
+                        value: "RBFA",
+                      },
+                      {
+                        label: "(IFC)Issue for Construction/ DIF",
+                        value: "IFC",
+                      },
+                      {
+                        label: "(BFC)Back from Construction/ Drawing Revision",
+                        value: "BFC",
+                      },
+                      {
+                        label: "(RIFC)Re-issue for Construction",
+                        value: "RIFC",
+                      },
+                      { label: "(REV)Revision", value: "REV" },
+                      { label: "(CO#)Change Order", value: "CO" },
+                    ]}
+                    {...register("Stage")}
+                    onChange={setValue}
+                  />
                 </div>
               </div>
             )}

@@ -111,15 +111,17 @@ const MyTask = () => {
   // First, find the highest-priority unlockable task from ASSIGNED, IN_PROGRESS, or BREAK
   const unlockableStatuses = ["ASSIGNED", "IN_PROGRESS", "BREAK"];
 
-  const highestPriorityTask = tasks
-    .filter((task) => unlockableStatuses.includes(task.status))
-    .sort((a, b) => {
-      if (b.priority !== a.priority) {
-        return b.priority - a.priority;
-      }
-      return new Date(a.due_date) - new Date(b.due_date);
-    })[0];
-
+ const highestPriorityTask = tasks
+  .filter((task) => unlockableStatuses.includes(task.status))
+  .sort((a, b) => {
+    if (b.priority !== a.priority) {
+      return b.priority - a.priority; // Higher priority first
+    }
+    if (new Date(a.due_date).getTime() !== new Date(b.due_date).getTime()) {
+      return new Date(a.due_date) - new Date(b.due_date); // Earlier due date first
+    }
+    return new Date(a.created_on) - new Date(b.created_on); // Earlier created_on first
+  })[0];
   const unlockableTaskId = highestPriorityTask?.id;
 
   const fetchTask = async () => {

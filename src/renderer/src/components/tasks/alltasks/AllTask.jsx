@@ -165,14 +165,13 @@ const AllTask = () => {
   }
 
   const handleViewClick = async (taskId) => {
-    console.log("Task ID:", taskId);
     try {
       const task = await Service.getTaskById(taskId);
       setSelectedTask(task);
       setTaskID(taskId);
       setIsModalOpen(true);
     } catch (error) {
-      console.error("Error fetching task details:", error);
+      alert.error("Error fetching task details:", error);
     }
   };
 
@@ -182,7 +181,6 @@ const AllTask = () => {
   };
 
   const data = useMemo(() => taskFilter, [taskFilter]);
-  console.log(data);
   const columns = useMemo(() => {
     const cols = [
       {
@@ -329,7 +327,7 @@ const AllTask = () => {
   return (
     <div className="h-[80vh] bg-white/70 rounded-lg shadow-md overflow-y-auto">
       <div className="p-4">
-        <div className="flex flex-col md:flex-row gap-4 mb-4 w-full">
+        <div className="flex flex-col md:flex-row items-center gap-4 mb-4 w-full">
           <div className="flex gap-4 w-full">
             <input
               type="text"
