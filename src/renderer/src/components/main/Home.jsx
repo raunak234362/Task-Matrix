@@ -95,7 +95,7 @@ const Home = () => {
             <>
               {/* Stats Cards */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-5">
-                <NavLink to="/admin/project" className="transform transition-transform hover:scale-105">
+                {/* <NavLink to="/dashboard/project" className="transform transition-transform hover:scale-105"> */}
                   <div className="bg-white rounded-lg shadow-md overflow-hidden border-l-4 border-blue-500">
                     <div className="p-5">
                       <div className="flex items-center justify-between">
@@ -120,9 +120,9 @@ const Home = () => {
                       </div>
                     </div>
                   </div>
-                </NavLink>
+                {/* </NavLink> */}
 
-                <NavLink to="/admin/task" className="transform transition-transform hover:scale-105">
+                
                   <div className="bg-white rounded-lg shadow-md overflow-hidden border-l-4 border-green-500">
                     <div className="p-5">
                       <div className="flex items-center justify-between">
@@ -147,7 +147,7 @@ const Home = () => {
                       </div>
                     </div>
                   </div>
-                </NavLink>
+                
 
                 {(userType === "manager" || userType === "admin") && (
                   // <NavLink to="/admin/user/all-user" className="transform transition-transform hover:scale-105">

@@ -4,6 +4,7 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { Button } from "./index";
 import LOGO from "../assets/logo.png";
+import SmallLogo from "../assets/logoSm.png"
 import { toast } from "react-toastify";
 import {
   ChartCandlestick,
@@ -102,7 +103,7 @@ const Sidebar = ({ refresh, isMinimized, toggleSidebar }) => {
       }`}
     >
       <div className="flex items-center p-2">
-        {!isMinimized && <img src={LOGO} alt="Logo" className="w-40" />}
+        {!isMinimized ? <img src={LOGO} alt="Logo" className="w-40" />:<img src={SmallLogo} alt="Logo" className="w-20" />}
       </div>
         <Button onClick={toggleSidebar} className="p-1">
           {isMinimized ? <Menu size={20} /> : <ChevronLeft size={20} />}
