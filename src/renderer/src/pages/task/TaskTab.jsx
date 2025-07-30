@@ -14,8 +14,10 @@ const STATUS = {
 };
 
 const TaskTab = () => {
-  const user = sessionStorage.getItem("user");
-  const [activeTab, setActiveTab] = useState(user ? "myTask" : "allTasks");
+  const userType = sessionStorage.getItem("userType");
+  const [activeTab, setActiveTab] = useState(
+    userType === "user" ? "myTask" : "allTasks",
+  );
   const tasks = useSelector((state) => state?.taskData?.taskData ?? []);
 
   // Helper to count tasks by status
@@ -28,7 +30,6 @@ const TaskTab = () => {
   const assignedTaskCount = countByStatus(STATUS.ASSIGNED);
   const breakTaskCount = countByStatus(STATUS.BREAK);
 
-  const userType = sessionStorage.getItem("userType");
   const canAddTask = [
     "project-manager",
     "admin",
