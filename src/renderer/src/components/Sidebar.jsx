@@ -6,16 +6,15 @@ import { Button } from "./index";
 import LOGO from "../assets/logo.png";
 import { toast } from "react-toastify";
 import {
-  Building2,
   ChartCandlestick,
   Home,
   MessageSquare,
   RefreshCw,
-  SquareKanban,
   User2,
   Menu,
   ChevronLeft,
   Hourglass,
+  LogOut,
 } from "lucide-react";
 import { useSelector } from "react-redux";
 
@@ -28,20 +27,6 @@ const Sidebar = ({ refresh, isMinimized, toggleSidebar }) => {
       label: "Dashboard",
       to: "/dashboard",
       icon: <Home />,
-      roles: [
-        "admin",
-        "department-manager",
-        "project-manager",
-        "client",
-        "user",
-        "estimator",
-        "sales",
-      ],
-    },
-    {
-      label: "Project",
-      to: "project",
-      icon: <SquareKanban />,
       roles: [
         "admin",
         "department-manager",
@@ -112,7 +97,7 @@ const Sidebar = ({ refresh, isMinimized, toggleSidebar }) => {
 
   return (
     <section
-      className={`h-full bg-white/70 border-r-4 border-gray-200 text-black transition-all duration-300 flex flex-col ${
+      className={`h-full bg-white/70 border-r-4 rounded-lg border-gray-200 text-black transition-all duration-300 flex flex-col ${
         isMinimized ? "w-16" : "w-64"
       }`}
     >
@@ -151,7 +136,7 @@ const Sidebar = ({ refresh, isMinimized, toggleSidebar }) => {
           </ul>
         </nav>
       </div>
-      <div className="p-4 flex flex-col items-center">
+      <div className="p-4 flex flex-col items-start">
         {!isMinimized && (
           <div >
             <div className="text-center text-base font-semibold truncate w-full">
@@ -160,14 +145,14 @@ const Sidebar = ({ refresh, isMinimized, toggleSidebar }) => {
             <div className="text-xs text-gray-500 mb-2">
               {userType?.toUpperCase()}
             </div>
-            <div className="text-xs text-gray-500 mb-2">Version - 1.0.0</div>
+            <div className="text-xs text-gray-500 mb-2">Version - 1.0.1</div>
           </div>
         )}
-        <div className={`flex ${isMinimized ? "flex-col" : "flex-row"} gap-2 w-full justify-center`}>
-          <Button onClick={fetchLogout} className="p-1">
-            {isMinimized ? <User2 size={20} /> : "Logout"}
+        <div className={`flex ${isMinimized ? "flex-col" : "flex-row"} gap-2 w-full justify-center items-center px-4`}>
+          <Button onClick={fetchLogout} className="p-1 bg-teal-400 text-white">
+            {isMinimized ? <LogOut size={20} /> : "Logout"}
           </Button>
-          <Button onClick={refresh} className="p-1">
+          <Button onClick={refresh} className="p-1  bg-teal-400 text-white">
             <RefreshCw size={20} />
           </Button>
         </div>

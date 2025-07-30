@@ -199,9 +199,6 @@ const Home = () => {
                   <div className="p-5 border-b">
                     <div className="flex items-center justify-between">
                       <h3 className="text-lg font-semibold text-gray-800">Recent Projects</h3>
-                      <NavLink to="/admin/project/all-project" className="text-sm text-teal-600 hover:text-teal-800">
-                        View All
-                      </NavLink>
                     </div>
                   </div>
                   <div className="p-5">
@@ -241,9 +238,7 @@ const Home = () => {
                   <div className="p-5 border-b">
                     <div className="flex items-center justify-between">
                       <h3 className="text-lg font-semibold text-gray-800">Upcoming Deadlines</h3>
-                      <NavLink to="/admin/task/all-task" className="text-sm text-teal-600 hover:text-teal-800">
-                        View All Tasks
-                      </NavLink>
+                      
                     </div>
                   </div>
                   <div className="p-5">

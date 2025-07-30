@@ -74,7 +74,7 @@ const Login = () => {
           userType === "department-manager"
         )
           navigate("/dashboard");
-        else if (userType === "human-resource") navigate("/dashboard/profile")
+        else if (userType === "human-resource") navigate("/dashboard/profile");
         // else if (userType === "client") navigate("/client");
         // else if (userType === "sales") navigate("/sales");
         // else if (userType === "staff") navigate("/staff");
@@ -92,8 +92,6 @@ const Login = () => {
     }
   };
 
-
-
   return (
     <>
       <div className="fixed z-10 grid w-screen grid-cols-1 md:grid-cols-2">
@@ -104,7 +102,7 @@ const Login = () => {
             <img src={Logo} alt="Logo" />
           </div>
         </div>
-        <div className="flex items-center justify-center h-screen md:bg-green-400">
+        <div className="flex items-center justify-center h-screen md:bg-black/50">
           <div className="bg-white md:bg-opacity-100 bg-opacity-60 h-fit w-[80%] md:w-2/3 rounded-2xl shadow-lg shadow-gray-600 border-4 border-white md:border-green-500 p-5">
             <h1 className="mb-10 text-4xl font-bold text-center text-gray-600">
               Login to <span className="text-teal-500">TASK MATRIX</span>
@@ -143,8 +141,13 @@ const Login = () => {
               {errors.password && (
                 <p className="text-red-500">{errors.password.message}</p>
               )}
-              <div className="flex justify-center w-full my-5">
-                <Button type="submit">Login</Button>
+              <div className="my-5 w-full">
+                <Button
+                  type="submit"
+                  className="w-full text-lg bg-teal-100 text-teal-500 border-2 border-teal-500 hover:bg-teal-500 hover:text-white"
+                >
+                  Login
+                </Button>
               </div>
             </form>
 

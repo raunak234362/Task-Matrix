@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react'
-import { Button, Project, Header, BarView, FabricatorCharts, BarViews } from '../../index'
+import { Button, Header, BarView, FabricatorCharts, BarViews } from '../../index'
 import SegregateProject from '../../../util/SegregateProject'
 import { useSelector } from 'react-redux'
 

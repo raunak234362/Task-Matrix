@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Allprojects, ProjectStats } from "../../components";
+import {  ProjectStats } from "../../components";
 
 const ProjectView = () => {
   const [activeTab, setActiveTab] = useState("allProject");
@@ -28,7 +28,7 @@ const ProjectView = () => {
         <div className="flex-grow p-2 h-[85vh] overflow-y-auto">
           {activeTab === "allProject" && (
             <div>
-              <Allprojects />
+              {/* <Allprojects /> */}
             </div>
           )}
 

@@ -37,9 +37,7 @@ import TaskSelected from "./tasks/approveassignee/TaskSelected.jsx";
 import TaskTab from "../pages/task/TaskTab.jsx";
 import EditTask from "./tasks/editTask/EditTask.jsx";
 
-//Projects
-import Allprojects from "./projects/allprojects/Allprojects.jsx";
-import Project from "./projects/allprojects/Project.jsx";
+
 import BarView from "./projects/allprojects/BarView.jsx";
 import BarViews from "./projects/allprojects/BarViews.jsx";
 import FabricatorCharts from "./projects/allprojects/FabricatorChart.jsx";
@@ -53,7 +51,6 @@ import GaantChartt from "./charts/GaantChartt.jsx";
 
 export {
   AllUser,
-  Project,
   ProjectStats,
   ProjectTab,
   BarViews,
@@ -88,5 +85,4 @@ export {
   Layout,
   Sidebar,
   Home,
-  Allprojects,
 };

@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import api from "./api";
 
-console.log("API URL:", import.meta.env.VITE_BASE_URL);
+// console.log("API URL:", import.meta.env.VITE_BASE_URL);
 class AuthService {
 
   static async login({ username, password }) {

@@ -243,7 +243,7 @@ const EditTask = ({ onClose, task }) => {
                     <p className="text-red-600">{errors.min.message}</p>
                   )}
                 </div>
-                <div className="px-4">
+                <div className="my-2">
                   <CustomSelect
                     label="Stage"
                     name="stage"
@@ -345,7 +345,7 @@ const EditTask = ({ onClose, task }) => {
               />
             </div>
 
-            <Button type="submit">Update Project</Button>
+            <Button type="submit" className="w-full text-lg bg-teal-100 text-teal-500 border-2 border-teal-500 hover:bg-teal-500 hover:text-white">Update Project</Button>
           </form>
         </div>
       </div>

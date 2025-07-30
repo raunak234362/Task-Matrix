@@ -14,7 +14,7 @@ import socket, { connectSocket } from "./socket";
 import NotificationReceiver from "./util/NotificationReceiver";
 
 const App = () => {
-  const [isSidebarMinimized, setIsSidebarMinimized] = useState(false);
+  const [isSidebarMinimized, setIsSidebarMinimized] = useState(true);
   const [tasks, setTasks] = useState([]);
   const [userDetail, setUserDetail] = useState();
   const [updateAvailable, setUpdateAvailable] = useState(false);
@@ -74,8 +74,9 @@ const App = () => {
       if (socket) {
         sessionStorage.setItem("socketId", socket.id);
         socket.on("connect", () => {
-          console.log("✅ Connected with socket:", socket.id);
-          console.log("✅ Connected with userID:", user.id);
+          // console.log("✅ Connected with socket:", socket.id);
+          // console.log("✅ Connected with userID:", user.id);
+          
         });
       }
 
@@ -137,7 +138,7 @@ const App = () => {
 
   return (
     <Provider store={store}>
-      <div className="flex h-screen w-screen overflow-hidden bg-gradient-to-br from-gray-700 to-teal-200">
+      <div className="flex h-screen w-screen p-2 gap-2 overflow-hidden bg-gradient-to-br from-gray-700 to-teal-200">
         <NotificationReceiver />
         <div
           className={`h-full transition-all duration-300 ${

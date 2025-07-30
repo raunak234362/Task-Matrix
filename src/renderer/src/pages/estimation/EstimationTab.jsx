@@ -41,14 +41,14 @@ const EstimationTab = () => {
 
   return (
     <div className="w-full overflow-y-hidden">
-      <div className="flex flex-col w-full h-full">
+      <div className="flex flex-col w-full h-full space-y-2">
         <div className="px-3 flex flex-col justify-between items-start bg-gradient-to-t from-teal-100 to-teal-400 border-b rounded-md ">
           <h1 className="text-2xl py-2 font-bold text-white">
             Estimation Detail
           </h1>
         </div>
         <div
-          className={`bg-white rounded-lg shadow-md overflow-hidden border-l-4`}
+          className={`bg-white rounded-lg shadow-md overflow-hidden border-l-4 mx-2`}
         >
           <div className="flex items-center justify-between">
             <div>

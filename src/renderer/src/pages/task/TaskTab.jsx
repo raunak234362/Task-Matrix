@@ -14,7 +14,7 @@ const STATUS = {
 };
 
 const TaskTab = () => {
-  const [activeTab, setActiveTab] = useState("allTasks");
+  const [activeTab, setActiveTab] = useState("myTask");
   const tasks = useSelector((state) => state?.taskData?.taskData ?? []);
 
   // Helper to count tasks by status

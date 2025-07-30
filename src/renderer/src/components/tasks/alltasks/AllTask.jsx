@@ -325,8 +325,8 @@ const AllTask = () => {
   );
 
   return (
-    <div className="h-[80vh] bg-white/70 rounded-lg shadow-md overflow-y-auto">
-      <div className="p-4">
+    <div className="h-[fit] bg-white/70 rounded-lg shadow-md overflow-y-auto">
+      <div className="p-4 my-2 space-y-2">
         <div className="flex flex-col md:flex-row items-center gap-4 mb-4 w-full">
           <div className="flex gap-4 w-full">
             <input
@@ -366,31 +366,41 @@ const AllTask = () => {
           <DateFilter dateFilter={dateFilter} setDateFilter={setDateFilter} />
         </div>
 
-        <div className="overflow-x-auto rounded-md border">
+        <div className="overflow-x-auto overflow-y-auto h-[90vh] rounded-md border">
           <table
             {...getTableProps()}
             className="min-w-full text-sm text-center border"
           >
             <thead className="sticky top-0 bg-teal-200 z-10">
-              {headerGroups.map((headerGroup) => (
-                <tr {...headerGroup.getHeaderGroupProps()}>
-                  {headerGroup.headers.map((column) => (
-                    <th
-                      {...column.getHeaderProps(column.getSortByToggleProps())}
-                      className="px-4 py-2 font-semibold border whitespace-nowrap"
-                    >
-                      {column.render("Header")}
-                      <span className="ml-1">
-                        {column.isSorted
-                          ? column.isSortedDesc
-                            ? " 🔽"
-                            : " 🔼"
-                          : ""}
-                      </span>
-                    </th>
-                  ))}
-                </tr>
-              ))}
+              {headerGroups.map((headerGroup, headerGroupIdx) => {
+                const { key, ...restHeaderGroupProps } = headerGroup.getHeaderGroupProps();
+                return (
+                  <tr
+                    key={headerGroup.id || headerGroupIdx}
+                    {...restHeaderGroupProps}
+                  >
+                    {headerGroup.headers.map((column, colIdx) => {
+                      const { key, ...restHeaderProps } = column.getHeaderProps(column.getSortByToggleProps());
+                      return (
+                        <th
+                          key={column.id || colIdx}
+                          {...restHeaderProps}
+                          className="px-4 py-2 font-semibold border whitespace-nowrap"
+                        >
+                          {column.render("Header")}
+                          <span className="ml-1">
+                            {column.isSorted
+                              ? column.isSortedDesc
+                                ? " 🔽"
+                                : " 🔼"
+                              : ""}
+                          </span>
+                        </th>
+                      );
+                    })}
+                  </tr>
+                );
+              })}
             </thead>
             <tbody {...getTableBodyProps()}>
               {page.length === 0 ? (
@@ -422,18 +432,23 @@ const AllTask = () => {
                   return (
                     <tr
                       {...row.getRowProps()}
+                      key={row.id || row.index}
                       className={`hover:bg-teal-100 ${
                         highlightRow ? "bg-red-100" : ""
                       }`}
                     >
-                      {row.cells.map((cell) => (
-                        <td
-                          {...cell.getCellProps()}
-                          className="px-4 py-2 border border-black/50"
-                        >
-                          {cell.render("Cell")}
-                        </td>
-                      ))}
+                      {row.cells.map((cell) => {
+                        const { key, ...restCellProps } = cell.getCellProps();
+                        return (
+                          <td
+                            key={key}
+                            {...restCellProps}
+                            className="px-4 py-2 border border-black/50"
+                          >
+                            {cell.render("Cell")}
+                          </td>
+                        );
+                      })}
                     </tr>
                   );
                 })
@@ -441,54 +456,53 @@ const AllTask = () => {
             </tbody>
           </table>
         </div>
-      </div>
-
-      <div className="flex justify-between items-center mt-4 px-4">
-        <div className="space-x-1">
-          <button
-            onClick={() => gotoPage(0)}
-            disabled={!canPreviousPage}
-            className="px-3 py-1 border rounded disabled:opacity-50"
+        <div className="flex justify-between items-center mt-1 px-4">
+          <div className="space-x-1">
+            <button
+              onClick={() => gotoPage(0)}
+              disabled={!canPreviousPage}
+              className="px-3 py-1 border rounded disabled:opacity-50"
+            >
+              {"<<"}
+            </button>
+            <button
+              onClick={() => previousPage()}
+              disabled={!canPreviousPage}
+              className="px-3 py-1 border rounded disabled:opacity-50"
+            >
+              {"<"}
+            </button>
+            <span className="text-sm">
+              Page <strong>{pageIndex + 1}</strong> of{" "}
+              <strong>{pageOptions.length}</strong>
+            </span>
+            <button
+              onClick={() => nextPage()}
+              disabled={!canNextPage}
+              className="px-3 py-1 border rounded disabled:opacity-50"
+            >
+              {">"}
+            </button>
+            <button
+              onClick={() => gotoPage(pageCount - 1)}
+              disabled={!canNextPage}
+              className="px-3 py-1 border rounded disabled:opacity-50"
+            >
+              {">>"}
+            </button>
+          </div>
+          <select
+            value={pageSize}
+            onChange={(e) => setPageSize(Number(e.target.value))}
+            className="border p-1 rounded"
           >
-            {"<<"}
-          </button>
-          <button
-            onClick={() => previousPage()}
-            disabled={!canPreviousPage}
-            className="px-3 py-1 border rounded disabled:opacity-50"
-          >
-            {"<"}
-          </button>
-          <span className="text-sm">
-            Page <strong>{pageIndex + 1}</strong> of{" "}
-            <strong>{pageOptions.length}</strong>
-          </span>
-          <button
-            onClick={() => nextPage()}
-            disabled={!canNextPage}
-            className="px-3 py-1 border rounded disabled:opacity-50"
-          >
-            {">"}
-          </button>
-          <button
-            onClick={() => gotoPage(pageCount - 1)}
-            disabled={!canNextPage}
-            className="px-3 py-1 border rounded disabled:opacity-50"
-          >
-            {">>"}
-          </button>
+            {[15, 30, 45, 60].map((size) => (
+              <option key={size} value={size}>
+                Show {size}
+              </option>
+            ))}
+          </select>
         </div>
-        <select
-          value={pageSize}
-          onChange={(e) => setPageSize(Number(e.target.value))}
-          className="border p-1 rounded"
-        >
-          {[15, 30, 45, 60].map((size) => (
-            <option key={size} value={size}>
-              Show {size}
-            </option>
-          ))}
-        </select>
       </div>
 
       {selectedTask && (
