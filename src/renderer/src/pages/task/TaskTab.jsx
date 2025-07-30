@@ -14,7 +14,8 @@ const STATUS = {
 };
 
 const TaskTab = () => {
-  const [activeTab, setActiveTab] = useState("myTask");
+  const user = sessionStorage.getItem("user");
+  const [activeTab, setActiveTab] = useState(user ? "myTask" : "allTasks");
   const tasks = useSelector((state) => state?.taskData?.taskData ?? []);
 
   // Helper to count tasks by status
