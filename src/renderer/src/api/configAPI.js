@@ -393,6 +393,23 @@ class Service {
       throw error;
     }
   }
+  static async getREWorkHours(reworkPayload) {
+    const formData = { ...reworkPayload };
+    const token = sessionStorage.getItem("token");
+    try {
+      const response = await api.patch(`/api/wh/rework`,reworkPayload, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      return response.data.data;
+    } catch (error) {
+      console.log("Error in getting Work ID:", error);
+      throw error;
+    }
+  }
   static async getEstWorkHours(task_id) {
     const token = sessionStorage.getItem("token");
     try {

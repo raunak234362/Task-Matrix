@@ -149,7 +149,7 @@ const Home = () => {
                   </div>
                 
 
-                {(userType === "manager" || userType === "admin") && (
+                {(userType === "manager" || userType === "admin") && ( 
                   // <NavLink to="/admin/user/all-user" className="transform transition-transform hover:scale-105">
                   <div className="bg-white rounded-lg shadow-md overflow-hidden border-l-4 border-purple-500">
                     <div className="p-5">

@@ -109,7 +109,7 @@ const MyTask = () => {
     useTable({ columns, data: filteredTasks }, useSortBy);
 
   // First, find the highest-priority unlockable task from ASSIGNED, IN_PROGRESS, or BREAK
-  const unlockableStatuses = ["ASSIGNED", "IN_PROGRESS", "BREAK"];
+  const unlockableStatuses = ["ASSIGNED", "IN_PROGRESS", "BREAK", "REWORK"];
 
  const highestPriorityTask = tasks
   .filter((task) => unlockableStatuses.includes(task.status))

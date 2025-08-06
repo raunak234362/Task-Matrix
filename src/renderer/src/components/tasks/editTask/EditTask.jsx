@@ -39,7 +39,8 @@ const EditTask = ({ onClose, task }) => {
       min: defaultMin, // Ensure minutes are set
     },
   });
-
+  const status = watch("status");
+  console.log("STATUS-=-=-=-=-=-=-=-", status);
   console.log("TASK-=-=-=-=-=-=-=-", taskDetail);
   const teams = useSelector(
     (state) =>
@@ -47,7 +48,6 @@ const EditTask = ({ onClose, task }) => {
         (team) => team.id === taskDetail?.project?.teamID,
       ) || [],
   );
-  console.log("STAFF-=-=-=-=-=-=-=-", teams);
 
   const team = teams[0];
 
@@ -73,7 +73,7 @@ const EditTask = ({ onClose, task }) => {
 
   const assigned = teamData?.members?.reduce((acc, member) => {
     const exists = acc?.find((item) => item?.value === member?.id);
-    console.log("EXISTS-=-=-=-=-=-=-=-", member);
+    // console.log("EXISTS-=-=-=-=-=-=-=-", member);
     if (!exists) {
       acc.push({
         label: `${member?.role} - ${staffData.find((staff) => staff.id === member.id)?.f_name} ${staffData.find((staff) => staff.id === member.id)?.m_name} ${staffData.find((staff) => staff.id === member.id)?.l_name}`,
@@ -83,7 +83,7 @@ const EditTask = ({ onClose, task }) => {
     return acc;
   }, []);
 
-  console.log("ASSIGNED-=-=-=-=-=-=-=-", assigned);
+  // console.log("ASSIGNED-=-=-=-=-=-=-=-", assigned);
   // useEffect(() => {
   //   processTeamMembers();
   // }, [teamData]);
@@ -109,13 +109,37 @@ const EditTask = ({ onClose, task }) => {
       delete taskData.hour;
       delete taskData.min;
 
-      const updatedTask = await Service.editTask(taskDetail?.id, taskData);
-      toast.success("Successfully Updated Task: ", updatedTask);
-      dispatch(updateTask(updatedTask));
+      // If status is REWORK, only send reworkStartTime
+      if (data.status === "REWORK") {
+        const reworkPayload = {
+          ...data,
+          name: data?.type ? `${data?.type} - ${data?.taskname}` : data?.name,
+          user_id: data?.user,
+          duration: `${durationHour}:${durationMin}:00`,
+          reworkStartTime: new Date().toISOString(),
+        };
+
+        delete reworkPayload.type;
+        delete reworkPayload.taskname;
+        delete reworkPayload.hour;
+        delete reworkPayload.min;
+
+        const updatedTask = await Service.editTask(
+          taskDetail?.id,
+          reworkPayload,
+        );
+
+        toast.success("Successfully Updated Task: ", updatedTask);
+        dispatch(updateTask(updatedTask));
+      } else {
+        const updatedTask = await Service.editTask(taskDetail?.id, taskData);
+        toast.success("Successfully Updated Task: ", updatedTask);
+        dispatch(updateTask(updatedTask));
+      }
     } catch (error) {
       toast.error(error);
     }
-    onClose();
+    // onClose();
   };
 
   return (
@@ -131,7 +155,6 @@ const EditTask = ({ onClose, task }) => {
           </button>
         </div>
         <div>
-          {console.log(teamData)}
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="my-2">
               <p className="text-red-700 text-xs">
@@ -295,7 +318,7 @@ const EditTask = ({ onClose, task }) => {
                   { label: "ON HOLD", value: "ONHOLD" },
                   { label: "BREAK", value: "BREAK" },
                   { label: "IN REVIEW", value: "IN_REVIEW" },
-                  { label: "RE-ASSIGNED", value: "RE_ASSIGNED" },
+                  { label: "RE-WORK", value: "REWORK" },
                   { label: "COMPLETED", value: "COMPLETE" },
                 ]}
                 className="w-full"
@@ -345,7 +368,12 @@ const EditTask = ({ onClose, task }) => {
               />
             </div>
 
-            <Button type="submit" className="w-full text-lg bg-teal-100 text-teal-500 border-2 border-teal-500 hover:bg-teal-500 hover:text-white">Update Project</Button>
+            <Button
+              type="submit"
+              className="w-full text-lg bg-teal-100 text-teal-500 border-2 border-teal-500 hover:bg-teal-500 hover:text-white"
+            >
+              Update Project
+            </Button>
           </form>
         </div>
       </div>

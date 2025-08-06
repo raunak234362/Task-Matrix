@@ -183,6 +183,7 @@ const Task = ({ taskId, fetchTaskData, setDisplay }) => {
     }
   }
 
+
   const work_id = localStorage.getItem("work_id");
   console.log("Work ID: ", workdata);
   async function handlePause() {
@@ -242,17 +243,27 @@ const Task = ({ taskId, fetchTaskData, setDisplay }) => {
     try {
       const endresponse = await Service.endTask(taskID, workId, end);
       if (endresponse?.status === "END") {
-        toast.success("Task Ended");
-        localStorage.removeItem("work_id");
+        toast.success("Task Ended"); 
         fetchTask();
         fetchTaskData();
         setDisplay(false);
-        window.location.reload();
       }
     } catch (error) {
       toast.error("Error in ending task");
     }
   }
+
+    const fetchReworkData = async () => {
+    const reworkPayload = {task_id: taskId,work_id:  workId || work_id };
+    console.log("Rework Payload: ", reworkPayload);
+    const reworkData = await Service.getREWorkHours(reworkPayload);
+    console.log("Rework Data: =-=-=-=-=-=-=-=-=-=-=-", reworkData);
+  }
+
+  useEffect(() => {
+    fetchReworkData();
+  },[])
+
 
   const formatMinutesToHoursAndMinutes = (totalMinutes) => {
     if (!totalMinutes) return "0h 0m";
@@ -429,7 +440,7 @@ const Task = ({ taskId, fetchTaskData, setDisplay }) => {
 
                             {/* Show Resume button if the task is paused */}
                             {tasks?.status === "BREAK" ||
-                            tasks?.status === "RE_ASSIGNED" ? (
+                            tasks?.status === "REWORK" ? (
                               <button
                                 className="flex items-center justify-center cursor-pointer gap-1 px-4 py-2 font-medium text-sm text-white transition-colors duration-300 bg-green-500 rounded-md hover:bg-green-600"
                                 value={workdata?.id}
