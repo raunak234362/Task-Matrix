@@ -28,6 +28,7 @@ import { MdOutlineDescription } from "react-icons/md";
 const Task = ({ taskId, fetchTaskData, setDisplay }) => {
   const [tasks, setTasks] = useState({});
   const [workHours, setWorkHours] = useState(null);
+  const [rework, setRework] = useState(null);
   const [workId, setWorkId] = useState(null);
   const userType = sessionStorage.getItem("userType");
   const username = sessionStorage.getItem("username");
@@ -80,6 +81,7 @@ const Task = ({ taskId, fetchTaskData, setDisplay }) => {
       const workHour = await Service.getWorkHours(taskId);
       console.log("Work Hours: ", workHour);
       setWorkId(workHour?.id);
+      console.log("Work ID: ", workHour?.id);
       localStorage.setItem("work_id", workHour?.id || workId);
       setWorkData(workHour);
       setWorkHours(workHour);
@@ -183,7 +185,6 @@ const Task = ({ taskId, fetchTaskData, setDisplay }) => {
     }
   }
 
-
   const work_id = localStorage.getItem("work_id");
   console.log("Work ID: ", workdata);
   async function handlePause() {
@@ -243,7 +244,7 @@ const Task = ({ taskId, fetchTaskData, setDisplay }) => {
     try {
       const endresponse = await Service.endTask(taskID, workId, end);
       if (endresponse?.status === "END") {
-        toast.success("Task Ended"); 
+        toast.success("Task Ended");
         fetchTask();
         fetchTaskData();
         setDisplay(false);
@@ -253,17 +254,17 @@ const Task = ({ taskId, fetchTaskData, setDisplay }) => {
     }
   }
 
-    const fetchReworkData = async () => {
-    const reworkPayload = {task_id: taskId,work_id:  workId || work_id };
+  const fetchReworkData = async () => {
+    const reworkPayload = { task_id: taskId, work_id: workId || work_id };
     console.log("Rework Payload: ", reworkPayload);
     const reworkData = await Service.getREWorkHours(reworkPayload);
+    setRework(reworkData);
     console.log("Rework Data: =-=-=-=-=-=-=-=-=-=-=-", reworkData);
-  }
+  };
 
   useEffect(() => {
     fetchReworkData();
-  },[])
-
+  }, []);
 
   const formatMinutesToHoursAndMinutes = (totalMinutes) => {
     if (!totalMinutes) return "0h 0m";
@@ -381,6 +382,14 @@ const Task = ({ taskId, fetchTaskData, setDisplay }) => {
                         </span>
                         <span className="ml-2 px-3 py-1 bg-teal-100 text-teal-800 border-2 border-teal-800 rounded-full">
                           {formatMinutesToHoursAndMinutes(workHours?.duration)}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-sm font-medium text-gray-700">
+                          Total Rework Hours:
+                        </span>
+                        <span className="ml-2 px-3 py-1 bg-teal-100 text-teal-800 border-2 border-teal-800 rounded-full">
+                          {formatMinutesToHoursAndMinutes(Math.max(0, rework?.minutes || 0))}
                         </span>
                       </div>
                       <div className="flex items-center">
