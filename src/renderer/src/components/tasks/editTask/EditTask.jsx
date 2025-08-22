@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable no-unused-vars */
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { updateTask } from "../../../store/taskSlice";
@@ -12,15 +12,17 @@ import { toast } from "react-toastify";
 
 /* eslint-disable react/prop-types */
 const EditTask = ({ onClose, task }) => {
-  // console.log(task);
   const taskDetail = task[0];
   const dispatch = useDispatch();
-  const [assignedUser, setAssignedUser] = useState([]);
-  console.log("TASK-=-==-=-=-=-=-=", taskDetail);
+  const takenHour = taskDetail?.workingHourTask?.[0]?.duration;
+  const work_id = taskDetail?.workingHourTask?.[0]?.id;
+
   const [defaultHour, defaultMin] = (taskDetail?.duration ?? "00:00")
     .split(":")
     .slice(0, 2);
+
   const userType = sessionStorage.getItem("userType");
+
   const {
     register,
     handleSubmit,
@@ -35,13 +37,13 @@ const EditTask = ({ onClose, task }) => {
       start_date: taskDetail?.start_date || "",
       due_date: taskDetail?.due_date || "",
       status: taskDetail?.status || "",
-      hour: defaultHour, // Ensure hour is set
-      min: defaultMin, // Ensure minutes are set
+      hour: defaultHour,
+      min: defaultMin,
     },
   });
+
   const status = watch("status");
-  console.log("STATUS-=-=-=-=-=-=-=-", status);
-  console.log("TASK-=-=-=-=-=-=-=-", taskDetail);
+
   const teams = useSelector(
     (state) =>
       state?.projectData?.teamData?.filter(
@@ -50,96 +52,76 @@ const EditTask = ({ onClose, task }) => {
   );
 
   const team = teams[0];
-
   const teamData = useSelector((state) =>
     state?.projectData?.teamData.find(
       (team) => team.id === taskDetail?.project?.teamID,
     ),
   );
   const staffData = useSelector((state) => state?.userData?.staffData) || [];
-  // const processTeamMembers = () => {
-  //   try {
-  //     if (!teamData) {
-  //       console.log("No team data available");
-  //       return;
-  //     }
-
-  //     console.log("Team members processed:", assigned);
-  //     setAssignedUser(assigned);
-  //   } catch (error) {
-  //     console.error("Error processing team members:", error);
-  //   }
-  // };
 
   const assigned = teamData?.members?.reduce((acc, member) => {
-    const exists = acc?.find((item) => item?.value === member?.id);
-    // console.log("EXISTS-=-=-=-=-=-=-=-", member);
-    if (!exists) {
+    if (!acc?.some((item) => item?.value === member?.id)) {
+      const staff = staffData.find((staff) => staff.id === member.id);
       acc.push({
-        label: `${member?.role} - ${staffData.find((staff) => staff.id === member.id)?.f_name} ${staffData.find((staff) => staff.id === member.id)?.m_name} ${staffData.find((staff) => staff.id === member.id)?.l_name}`,
+        label: `${member?.role} - ${staff?.f_name} ${staff?.m_name} ${staff?.l_name}`,
         value: member?.id,
       });
     }
     return acc;
   }, []);
 
-  // console.log("ASSIGNED-=-=-=-=-=-=-=-", assigned);
-  // useEffect(() => {
-  //   processTeamMembers();
-  // }, [teamData]);
+  const minutesToHHMMSS = (minutes) => {
+    const h = String(Math.floor(minutes / 60)).padStart(2, "0");
+    const m = String(minutes % 60).padStart(2, "0");
+    return `${h}:${m}:00`;
+  };
+
+  const hhmmssToMinutes = (str) => {
+    const [h, m] = str.split(":").map(Number);
+    return h * 60 + m;
+  };
 
   const onSubmit = async (data) => {
-    console.log("Data: +++++++++++++++", data);
     try {
-      // Ensure hour and min have default values if empty
-      const durationHour = data.hour ? data.hour : "00";
-      const durationMin = data.min ? data.min : "00";
+      const durationHour = data.hour || "00";
+      const durationMin = data.min || "00";
 
-      // Combine type and taskname into name field
-      const taskData = {
+      let taskData = {
         ...data,
         name: data?.type ? `${data?.type} - ${data?.taskname}` : data?.name,
         user_id: data?.user,
         duration: `${durationHour}:${durationMin}:00`,
       };
 
-      // Remove unnecessary fields before sending to backend
-      delete taskData.type;
-      delete taskData.taskname;
-      delete taskData.hour;
-      delete taskData.min;
+      ["type", "taskname", "hour", "min"].forEach(
+        (field) => delete taskData[field],
+      );
 
-      // If status is REWORK, only send reworkStartTime
-      if (data.status === "REWORK") {
-        const reworkPayload = {
-          ...data,
-          name: data?.type ? `${data?.type} - ${data?.taskname}` : data?.name,
-          user_id: data?.user,
-          duration: `${durationHour}:${durationMin}:00`,
-          reworkStartTime: new Date().toISOString(),
-        };
-
-        delete reworkPayload.type;
-        delete reworkPayload.taskname;
-        delete reworkPayload.hour;
-        delete reworkPayload.min;
-
-        const updatedTask = await Service.editTask(
-          taskDetail?.id,
-          reworkPayload,
-        );
-
-        toast.success("Successfully Updated Task: ", updatedTask);
-        dispatch(updateTask(updatedTask));
-      } else {
-        const updatedTask = await Service.editTask(taskDetail?.id, taskData);
-        toast.success("Successfully Updated Task: ", updatedTask);
-        dispatch(updateTask(updatedTask));
+      if (data.status === "VALIDATE_COMPLETE" && takenHour) {
+        taskData.duration = minutesToHHMMSS(takenHour);
       }
+
+      if (data.status === "COMPLETE_OTHER" && takenHour) {
+        const durationInMinutes = hhmmssToMinutes(taskData.duration);
+        const updatedDuration = durationInMinutes;
+        taskData.workingHourTask = [{ duration: updatedDuration }];
+        await Service.getEditWorkHoursById(
+          { duration: updatedDuration },
+          work_id,
+        );
+      }
+
+      if (data.status === "REWORK") {
+        taskData = { ...taskData, reworkStartTime: new Date().toISOString() };
+      }
+      delete taskData.workingHourTask;
+
+      const updatedTask = await Service.editTask(taskDetail?.id, taskData);
+      toast.success("Successfully Updated Task");
+      dispatch(updateTask(updatedTask));
     } catch (error) {
-      toast.error(error);
+      toast.error(error?.message || "Error updating task");
     }
-    // onClose();
   };
 
   return (
@@ -154,228 +136,179 @@ const EditTask = ({ onClose, task }) => {
             Close
           </button>
         </div>
-        <div>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="my-2">
-              <p className="text-red-700 text-xs">
-                *If you want to update the Task Name you have to select the Task
-                Type
-              </p>
-              <CustomSelect
-                label="Task Type: "
-                name="type"
-                placeholder="Task Type"
-                className="w-full"
-                defaultValues={task?.name?.split(" - ")[0]}
-                options={[
-                  { label: "Select Task", value: "" },
-                  { label: "Modeling", value: "MODELING" },
-                  { label: "Model checking", value: "MC" },
-                  { label: "Erection", value: "ERECTION" },
-                  { label: "Erection checking", value: "EC" },
-                  { label: "Detailing", value: "DETAILING" },
-                  { label: "Detail checking", value: "DC" },
-                  { label: "Designing", value: "DESIGNING" },
-                  { label: "Design Checking", value: "DWG_CHECKING" },
-                  { label: "Others", value: "OTHERS" },
-                ]}
-                {...register("type")}
-                onChange={setValue}
-              />
-            </div>
-            <div className="my-2">
-              <Input
-                name="taskname"
-                label="Task Name: "
-                placeholder="Task Name"
-                defaultValues={task?.name?.split(" - ")[1]}
-                className="w-full"
-                {...register("taskname", {
-                  validate: (value) => {
-                    if (
-                      watch("type") === "OTHERS" &&
-                      (!value || value.trim() === "")
-                    ) {
-                      return "With Task Type 'Others', Task name is required";
-                    }
-                    return true;
-                  },
-                })}
-              />
-            </div>
-            <div className="my-2">
-              <CustomSelect
-                label="Current User:"
-                name="user"
-                options={team?.members?.map((member) => ({
-                  label: `${member?.role} - ${staffData.find((staff) => staff.id === member.id)?.f_name} ${staffData.find((staff) => staff.id === member.id)?.m_name} ${staffData.find((staff) => staff.id === member.id)?.l_name}`,
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div className="my-2">
+            <p className="text-red-700 text-xs">
+              *If you want to update the Task Name you have to select the Task
+              Type
+            </p>
+            <CustomSelect
+              label="Task Type: "
+              name="type"
+              placeholder="Task Type"
+              className="w-full"
+              defaultValues={task?.name?.split(" - ")[0]}
+              options={[
+                { label: "Select Task", value: "" },
+                { label: "Modeling", value: "MODELING" },
+                { label: "Model checking", value: "MC" },
+                { label: "Erection", value: "ERECTION" },
+                { label: "Erection checking", value: "EC" },
+                { label: "Detailing", value: "DETAILING" },
+                { label: "Detail checking", value: "DC" },
+                { label: "Designing", value: "DESIGNING" },
+                { label: "Design Checking", value: "DWG_CHECKING" },
+                { label: "Others", value: "OTHERS" },
+              ]}
+              {...register("type")}
+              onChange={setValue}
+            />
+          </div>
+
+          <div className="my-2">
+            <Input
+              name="taskname"
+              label="Task Name: "
+              placeholder="Task Name"
+              defaultValues={task?.name?.split(" - ")[1]}
+              className="w-full"
+              {...register("taskname", {
+                validate: (value) =>
+                  watch("type") === "OTHERS" && (!value || value.trim() === "")
+                    ? "With Task Type 'Others', Task name is required"
+                    : true,
+              })}
+            />
+          </div>
+
+          <div className="my-2">
+            <CustomSelect
+              label="Current User:"
+              name="user"
+              options={team?.members?.map((member) => {
+                const staff = staffData.find((staff) => staff.id === member.id);
+                return {
+                  label: `${member?.role} - ${staff?.f_name} ${staff?.m_name} ${staff?.l_name}`,
                   value: member?.id,
-                }))}
-                className="w-full"
-                defaultValues={task?.assignedUser}
-                {...register("user")}
-                onChange={setValue}
-              />
-            </div>
-            <div className="my-2">
-              <Input
-                type="textarea"
-                label="Description: "
-                name="description"
-                placeholder="Description"
-                className="w-full"
-                defaultValues={task?.description}
-                {...register("description")}
-              />
-            </div>
-            {userType === "admin" && (
-              <div className="mt-1">
-                <div className="text-lg font-bold">Duration:</div>
-                <div className="flex flex-row w-1/5 gap-5">
-                  <div className="w-full">
-                    <Input
-                      type="number"
-                      name="hour"
-                      label="HH"
-                      defaultValues={task?.duration}
-                      placeholder="HH"
-                      className="w-20"
-                      min={0}
-                      {...register("hour")}
-                      onBlur={(e) => {
-                        if (e.target.value < 0) e.target.value = 0;
-                      }}
-                    />
-                  </div>
-                  <div className="w-full">
-                    <Input
-                      type="number"
-                      name="min"
-                      placeholder="MM"
-                      label="MM"
-                      className="w-20"
-                      min={0}
-                      max={60}
-                      {...register("min")}
-                      onBlur={(e) => {
-                        if (e.target.value < 0) e.target.value = 0;
-                      }}
-                    />
-                  </div>
-                  {errors.min && (
-                    <p className="text-red-600">{errors.min.message}</p>
-                  )}
-                </div>
-                <div className="my-2">
-                  <CustomSelect
-                    label="Stage"
-                    name="stage"
-                    options={[
-                      { label: "Select Stage", value: "" },
-                      { label: "(RFI)Request for Information", value: "RFI" },
-                      { label: "(IFA)Issue for Approval", value: "IFA" },
-                      {
-                        label: "(BFA)Back from Approval/ Returned App",
-                        value: "BFA",
-                      },
-                      {
-                        label: "(BFA-M)Back from Approval - Markup",
-                        value: "BFA_M",
-                      },
-                      { label: "(RIFA)Re-issue for Approval", value: "RIFA" },
-                      {
-                        label: "(RBFA)Return Back from Approval",
-                        value: "RBFA",
-                      },
-                      {
-                        label: "(IFC)Issue for Construction/ DIF",
-                        value: "IFC",
-                      },
-                      {
-                        label: "(BFC)Back from Construction/ Drawing Revision",
-                        value: "BFC",
-                      },
-                      {
-                        label: "(RIFC)Re-issue for Construction",
-                        value: "RIFC",
-                      },
-                      { label: "(REV)Revision", value: "REV" },
-                      { label: "(CO#)Change Order", value: "CO" },
-                    ]}
-                    {...register("Stage")}
-                    onChange={setValue}
-                  />
-                </div>
+                };
+              })}
+              className="w-full"
+              defaultValues={task?.assignedUser}
+              {...register("user")}
+              onChange={setValue}
+            />
+          </div>
+
+          <div className="my-2">
+            <Input
+              type="textarea"
+              label="Description: "
+              name="description"
+              placeholder="Description"
+              className="w-full"
+              defaultValues={task?.description}
+              {...register("description")}
+            />
+          </div>
+
+          {userType === "admin" && (
+            <div className="mt-1">
+              <div className="text-lg font-bold">Duration:</div>
+              <div className="flex flex-row w-1/5 gap-5">
+                <Input
+                  type="number"
+                  name="hour"
+                  label="HH"
+                  defaultValues={defaultHour}
+                  placeholder="HH"
+                  className="w-20"
+                  min={0}
+                  {...register("hour")}
+                />
+                <Input
+                  type="number"
+                  name="min"
+                  label="MM"
+                  placeholder="MM"
+                  className="w-20"
+                  min={0}
+                  max={60}
+                  {...register("min")}
+                />
+                {errors.min && (
+                  <p className="text-red-600">{errors.min.message}</p>
+                )}
               </div>
+            </div>
+          )}
+
+          <div className="my-2">
+            <CustomSelect
+              label="Status:"
+              name="status"
+              options={[
+                { label: "ASSIGNED", value: "ASSIGNED" },
+                { label: "IN PROGRESS", value: "IN_PROGRESS" },
+                { label: "ON HOLD", value: "ONHOLD" },
+                { label: "BREAK", value: "BREAK" },
+                { label: "IN REVIEW", value: "IN_REVIEW" },
+                { label: "RE-WORK", value: "REWORK" },
+                { label: "COMPLETED", value: "COMPLETE" },
+                { label: "VALIDATE & COMPLETED", value: "VALIDATE_COMPLETE" },
+                { label: "COMPLETED(Other reasons)", value: "COMPLETE_OTHER" },
+              ]}
+              className="w-full"
+              defaultValues={task?.status}
+              {...register("status")}
+              onChange={setValue}
+            />
+            {errors.status && (
+              <p className="text-red-600">{errors.status.message}</p>
             )}
-            <div className="my-2">
-              <CustomSelect
-                label="Status:"
-                name="status"
-                options={[
-                  { label: "ASSIGNED", value: "ASSIGNED" },
-                  { label: "IN PROGRESS", value: "IN_PROGRESS" },
-                  { label: "ON HOLD", value: "ONHOLD" },
-                  { label: "BREAK", value: "BREAK" },
-                  { label: "IN REVIEW", value: "IN_REVIEW" },
-                  { label: "RE-WORK", value: "REWORK" },
-                  { label: "COMPLETED", value: "COMPLETE" },
-                ]}
-                className="w-full"
-                defaultValues={task?.status}
-                {...register("status")}
-                onChange={setValue}
-              />
-              {errors.status && (
-                <p className="text-red-600">{errors.status.message}</p>
-              )}
-            </div>
-            <div className="my-2">
-              <CustomSelect
-                label="Priority:"
-                name="priority"
-                options={[
-                  { label: "LOW", value: 0 },
-                  { label: "MEDIUM", value: 1 },
-                  { label: "HIGH", value: 2 },
-                  { label: "Critical", value: 3 },
-                ]}
-                className="w-full"
-                defaultValues={task?.priority}
-                {...register("priority")}
-                onChange={setValue}
-              />
-            </div>
+          </div>
 
-            <div className=" w-full my-2">
-              <Input
-                label="Start Date:"
-                name="start_date"
-                type="date"
-                className="w-full"
-                defaultValues={task?.start_date}
-                {...register("start_date")}
-              />
-            </div>
-            <div className=" w-full my-2">
-              <Input
-                label="Due Date:"
-                name="due_date"
-                type="date"
-                className="w-full"
-                defaultValues={task?.due_date}
-                {...register("due_date")}
-              />
-            </div>
+          <div className="my-2">
+            <CustomSelect
+              label="Priority:"
+              name="priority"
+              options={[
+                { label: "LOW", value: 0 },
+                { label: "MEDIUM", value: 1 },
+                { label: "HIGH", value: 2 },
+                { label: "Critical", value: 3 },
+              ]}
+              className="w-full"
+              defaultValues={task?.priority}
+              {...register("priority")}
+              onChange={setValue}
+            />
+          </div>
 
-            <Button
-              type="submit"
-              className="w-full text-lg bg-teal-100 text-teal-500 border-2 border-teal-500 hover:bg-teal-500 hover:text-white"
-            >
-              Update Project
-            </Button>
-          </form>
-        </div>
+          <Input
+            label="Start Date:"
+            name="start_date"
+            type="date"
+            className="w-full my-2"
+            defaultValues={task?.start_date}
+            {...register("start_date")}
+          />
+
+          <Input
+            label="Due Date:"
+            name="due_date"
+            type="date"
+            className="w-full my-2"
+            defaultValues={task?.due_date}
+            {...register("due_date")}
+          />
+
+          <Button
+            type="submit"
+            className="w-full text-lg bg-teal-100 text-teal-500 border-2 border-teal-500 hover:bg-teal-500 hover:text-white"
+          >
+            Update Project
+          </Button>
+        </form>
       </div>
     </div>
   );

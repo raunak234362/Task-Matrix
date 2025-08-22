@@ -410,6 +410,24 @@ class Service {
       throw error;
     }
   }
+
+  static async getEditWorkHoursById(updatedData, work_id) {
+    const token = sessionStorage.getItem("token");
+    try {
+      const response = await api.patch(`/api/wh/working-hours/${work_id}`,updatedData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      return response.data.data;
+    } catch (error) {
+      console.log("Error in getting Work ID:", error);
+      throw error;
+    }
+  }
+
   static async getEstWorkHours(task_id) {
     const token = sessionStorage.getItem("token");
     try {

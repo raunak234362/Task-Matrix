@@ -185,8 +185,12 @@ const AllTask = () => {
     const cols = [
       {
         Header: "S.No",
-        accessor: (row, i) => i + 1,
         id: "sno",
+        Cell: ({ row }) => {
+          // These values are read from the react-table instance state (in your component scope)
+          // Closure has access to pageIndex and pageSize
+          return row.index + 1 + pageIndex * pageSize;
+        },
       },
       {
         Header: "Project",
@@ -373,14 +377,17 @@ const AllTask = () => {
           >
             <thead className="sticky top-0 bg-teal-200 z-10">
               {headerGroups.map((headerGroup, headerGroupIdx) => {
-                const { key, ...restHeaderGroupProps } = headerGroup.getHeaderGroupProps();
+                const { key, ...restHeaderGroupProps } =
+                  headerGroup.getHeaderGroupProps();
                 return (
                   <tr
                     key={headerGroup.id || headerGroupIdx}
                     {...restHeaderGroupProps}
                   >
                     {headerGroup.headers.map((column, colIdx) => {
-                      const { key, ...restHeaderProps } = column.getHeaderProps(column.getSortByToggleProps());
+                      const { key, ...restHeaderProps } = column.getHeaderProps(
+                        column.getSortByToggleProps(),
+                      );
                       return (
                         <th
                           key={column.id || colIdx}
