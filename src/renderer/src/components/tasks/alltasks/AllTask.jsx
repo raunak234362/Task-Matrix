@@ -364,6 +364,8 @@ const AllTask = () => {
               <option value="IN_PROGRESS">IN PROGRESS</option>
               <option value="BREAK">BREAK</option>
               <option value="IN_REVIEW">IN REVIEW</option>
+              <option value="VALIDATE_COMPLETE">VALIDATE & COMPLETED</option>
+              <option value="COMPLETE_OTHER">COMPLETED(TECHNICAL ISSUE)</option>
               <option value="COMPLETE">COMPLETED</option>
             </select>
           </div>

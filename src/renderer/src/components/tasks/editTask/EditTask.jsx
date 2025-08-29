@@ -255,7 +255,7 @@ const EditTask = ({ onClose, task }) => {
                 { label: "RE-WORK", value: "REWORK" },
                 { label: "COMPLETED", value: "COMPLETE" },
                 { label: "VALIDATE & COMPLETED", value: "VALIDATE_COMPLETE" },
-                { label: "COMPLETED(Other reasons)", value: "COMPLETE_OTHER" },
+                { label: "COMPLETED(TECHNICAL ISSUE)", value: "COMPLETE_OTHER" },
               ]}
               className="w-full"
               defaultValues={task?.status}
