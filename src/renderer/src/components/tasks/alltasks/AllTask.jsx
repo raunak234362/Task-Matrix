@@ -129,6 +129,10 @@ const AllTask = () => {
         return "bg-blue-200 border-blue-600 text-blue-500";
       case "COMPLETE":
         return "bg-green-200 border-green-500 text-green-800";
+      case "COMPLETE_OTHER":
+        return "bg-brown-200 border-brown-500 text-brown-800";
+      case "VALIDATE_COMPLETE":
+        return "bg-lime-200 border-lime-500 text-lime-800";
       default:
         return "text-gray-700";
     }
@@ -242,13 +246,17 @@ const AllTask = () => {
       {
         Header: "Status",
         accessor: "status",
-        Cell: ({ value }) => (
-          <span
-            className={`px-2 py-1 rounded-full border ${statusColor(value)}`}
-          >
-            {value}
-          </span>
-        ),
+        Cell: ({ value }) => {
+          const displayStatus =
+            value === "COMPLETE_OTHER" ? "Completed(T.I.)" : value;
+          return (
+            <span
+              className={`px-2 py-1 rounded-full border flex-nowrap ${statusColor(value)}`}
+            >
+              {displayStatus}
+            </span>
+          );
+        },
       },
       {
         Header: "Priority",

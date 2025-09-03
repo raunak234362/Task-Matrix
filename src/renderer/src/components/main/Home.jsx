@@ -88,7 +88,7 @@ const Home = () => {
           (task) =>
             task &&
             task.status &&
-            !["COMPLETE", "IN_REVIEW", "ONHOLD"].includes(task.status.toUpperCase())
+            !["COMPLETE", "IN_REVIEW", "ONHOLD","COMPLETE_OTHER", "VALIDATE_COMPLETE"].includes(task.status.toUpperCase())
         )
         .sort((a, b) => new Date(a.due_date) - new Date(b.due_date))
         .slice(0, 15),
