@@ -66,7 +66,7 @@ const Task = ({ taskId, fetchTaskData, setDisplay }) => {
   };
   useEffect(() => {
     fetchTask();
-  }, []);
+  }, [taskId]);
   console.log(tasks);
   const teams = useSelector(
     (state) =>
@@ -76,16 +76,17 @@ const Task = ({ taskId, fetchTaskData, setDisplay }) => {
   );
   const team = teams[0];
 
+  const fetchWorkId = async () => {
+    const workHour = await Service.getWorkHours(taskId);
+    console.log("Work Hours: ", workHour);
+    setWorkId(workHour?.id);
+    fetchTaskData();
+    console.log("Work ID: ", workHour?.id);
+    localStorage.setItem("work_id", workHour?.id || workId);
+    setWorkData(workHour);
+    setWorkHours(workHour);
+  };
   useEffect(() => {
-    const fetchWorkId = async () => {
-      const workHour = await Service.getWorkHours(taskId);
-      console.log("Work Hours: ", workHour);
-      setWorkId(workHour?.id);
-      console.log("Work ID: ", workHour?.id);
-      localStorage.setItem("work_id", workHour?.id || workId);
-      setWorkData(workHour);
-      setWorkHours(workHour);
-    };
     fetchWorkId();
   }, [taskId]);
 
@@ -179,6 +180,7 @@ const Task = ({ taskId, fetchTaskData, setDisplay }) => {
       console.log("Accept Response: --------", accept);
       toast.success("Task Started");
       fetchTask();
+      fetchWorkId();
       fetchTaskData();
     } catch (error) {
       toast.error("Error in accepting task");
@@ -206,6 +208,7 @@ const Task = ({ taskId, fetchTaskData, setDisplay }) => {
       });
       toast.success("Task Paused");
       fetchTask();
+      fetchWorkId();
       fetchTaskData();
     } catch (error) {
       toast.error("Error in pausing task");
@@ -231,6 +234,7 @@ const Task = ({ taskId, fetchTaskData, setDisplay }) => {
       });
       toast.success("Task Resumed");
       fetchTask();
+      fetchWorkId();
       fetchTaskData();
     } catch (error) {
       toast.error("Error in resuming task");
@@ -247,6 +251,7 @@ const Task = ({ taskId, fetchTaskData, setDisplay }) => {
         toast.success("Task Ended");
         fetchTask();
         fetchTaskData();
+        fetchWorkId();
         setDisplay(false);
       }
     } catch (error) {
@@ -389,7 +394,9 @@ const Task = ({ taskId, fetchTaskData, setDisplay }) => {
                           Total Rework Hours:
                         </span>
                         <span className="ml-2 px-3 py-1 bg-teal-100 text-teal-800 border-2 border-teal-800 rounded-full">
-                          {formatMinutesToHoursAndMinutes(Math.max(0, rework?.minutes || 0))}
+                          {formatMinutesToHoursAndMinutes(
+                            Math.max(0, rework?.minutes || 0),
+                          )}
                         </span>
                       </div>
                       <div className="flex items-center">

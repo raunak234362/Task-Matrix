@@ -264,6 +264,24 @@ class Service {
       throw error;
     }
   }
+
+  //fetch milestone by project id
+  static async getMilestoneByProjectId(projectID) {
+    const token = sessionStorage.getItem("token");
+    try {
+      const response = await api.get(`/api/Milestone/project/${projectID}`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.log("Error in fetching Milestones by project ID: ", error);
+      throw error;
+    }
+  }
+
   static async addTask({
     name,
     description,
@@ -273,6 +291,7 @@ class Service {
     priority,
     hour,
     min,
+    mileStone_id,
     project,
     Stage,
     user,
@@ -286,6 +305,7 @@ class Service {
         status,
         priority,
         Stage,
+        mileStone_id,
         duration: `${hour}:${min}:00`,
         project,
         user,
@@ -397,7 +417,7 @@ class Service {
     const formData = { ...reworkPayload };
     const token = sessionStorage.getItem("token");
     try {
-      const response = await api.patch(`/api/wh/rework`,reworkPayload, {
+      const response = await api.patch(`/api/wh/rework`, reworkPayload, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
@@ -414,12 +434,16 @@ class Service {
   static async getEditWorkHoursById(updatedData, work_id) {
     const token = sessionStorage.getItem("token");
     try {
-      const response = await api.patch(`/api/wh/working-hours/${work_id}`,updatedData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
+      const response = await api.patch(
+        `/api/wh/working-hours/${work_id}`,
+        updatedData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
         },
-      });
+      );
 
       return response.data.data;
     } catch (error) {
@@ -500,7 +524,7 @@ class Service {
   }
   static async pauseEstTask(task_id, work_id) {
     console.log("pause-=-=-=-==-=-=-", task_id, work_id);
-    const formData = { estimationTaskId:task_id, work_id };
+    const formData = { estimationTaskId: task_id, work_id };
     const token = sessionStorage.getItem("token");
     try {
       const response = await api.patch(`/api/EWH/ewh/pause/`, formData, {
@@ -538,7 +562,7 @@ class Service {
   }
   static async resumeEstTask(task_id, work_id) {
     console.log("resume-=-=-=-==-=-=-", task_id);
-    const formData = { estimationTaskId:task_id, work_id };
+    const formData = { estimationTaskId: task_id, work_id };
     const token = sessionStorage.getItem("token");
     try {
       const response = await api.patch(`/api/EWH/ewh/resume/`, formData, {
@@ -576,7 +600,7 @@ class Service {
   }
   static async endEstTask(task_id, work_id, end) {
     console.log("end-=-=-=-==-=-=-", task_id, work_id, end);
-    const formData = { estimationTaskId:task_id, work_id, end };
+    const formData = { estimationTaskId: task_id, work_id, end };
     const token = sessionStorage.getItem("token");
     try {
       const response = await api.patch(`/api/EWH/ewh/end/`, formData, {
@@ -851,19 +875,16 @@ class Service {
     }
   }
 
-   //Fetch all estimation tasks
+  //Fetch all estimation tasks
   static async allEstimationTasks() {
     const token = sessionStorage.getItem("token");
     try {
-      const response = await api.get(
-        `/api/EstimationTask/getMyTasks`,
-        {
-          headers: {
-            "Content-Type": "Application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await api.get(`/api/EstimationTask/getMyTasks`, {
+        headers: {
+          "Content-Type": "Application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
       console.log("All Estimation Tasks: ", response.data);
       return response.data?.data;
     } catch (error) {
