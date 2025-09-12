@@ -18,7 +18,7 @@ import {
   Files,
   FolderKanban,
   FolderOpen,
-  Globe,
+  Globe, 
   Pause,
   Play,
   Square,
