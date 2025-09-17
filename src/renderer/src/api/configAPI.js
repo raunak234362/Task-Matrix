@@ -910,6 +910,171 @@ class Service {
     }
   }
 
+    static async getRFIByProjectId(projectId) {
+    try {
+      const token = sessionStorage.getItem("token");
+      const response = await api.get(`/api/RFI/${projectId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.log("Error fetching RFI:", error);
+      throw error;
+    }
+  }
+
+    static async getSubmittalByProjectId(projectId) {
+    try {
+      const token = sessionStorage.getItem("token");
+      const response = await api.get(`/api/Submittals/${projectId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.log("Error fetching RFI:", error);
+      throw error;
+    }
+  }
+
+    static async getListOfAllCOByProjectId(projectID) {
+    try {
+      const token = sessionStorage.getItem("token");
+      const response = await api.get(`/api/co/${projectID}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching all COs:", error);
+      throw error;
+    }
+  }
+
+  //Notes
+  static async addNotes(noteData, projectID) {
+    const token = sessionStorage.getItem("token");
+    try {
+      const response = await api.post(
+        `/api/Note/addNote/${projectID}`,
+        noteData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.log("Error in adding Notes: ", error);
+      throw error;
+    }
+  }
+
+  //list of notes by project ID
+  static async getNotesByProjectId(projectID) {
+    const token = sessionStorage.getItem("token");
+    try {
+      const response = await api.get(`/api/Note/notes/${projectID}`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.log("Error in getting Notes: ", error);
+      throw error;
+    }
+  }
+
+
+  static async updateJobStudy(jobStudyId, data) {
+    const token = sessionStorage.getItem("token");
+    try {
+      const response = await api.patch(
+        `/api/br/putJobStudy/${jobStudyId}`,
+        data,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.log("Error updating job study:", error);
+      throw error;
+    }
+  }
+
+  //Fetch workBreakdown Activity
+  static async fetchWorkBreakdownActivity(
+    selectedTask,
+    projectId,
+    projectStage
+  ) {
+    const token = sessionStorage.getItem("token");
+    try {
+      const response = await api.get(
+        `/api/wbs/wbs/${selectedTask}/${projectId}/${projectStage}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      return response.data.data;
+    } catch (error) {
+      console.log("Error fetching work breakdown activity:", error);
+    }
+  }
+  //Fetch workBreakdown Activity
+  static async fetchWorkBreakdownHours(selectedTask, projectId, projectStage) {
+    const token = sessionStorage.getItem("token");
+    try {
+      const response = await api.get(
+        `/api/wbs/wbs/totalHours/${selectedTask}/${projectId}/${projectStage}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      return response.data.data;
+    } catch (error) {
+      console.log("Error fetching work breakdown activity:", error);
+    }
+  }
+  static async fetchWorkBreakdownTotalHours(projectId, projectStage) {
+    const token = sessionStorage.getItem("token");
+    try {
+      const response = await api.get(
+        `/api/wbs/totalWbsHours/${projectId}/${projectStage}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      return response.data.data;
+    } catch (error) {
+      console.log("Error fetching work breakdown activity:", error);
+    }
+  }
+
   //Calendar API
   // static async fetchCalendar(date, user) {
   //   const token = sessionStorage.getItem("token");

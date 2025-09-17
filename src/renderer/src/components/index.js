@@ -7,6 +7,7 @@ import Input from "./fields/Input";
 import CustomSelect from "./fields/Select";
 import MultiSelectCheckbox from "./fields/MultiSelectCheckbox";
 import Toggle from "./fields/Toggle";
+import MultipleFileUpload from "./fields/MultipleFileUpload.jsx";
 
 //Dashboard
 import Sidebar from "./Sidebar";
@@ -38,10 +39,7 @@ import TaskTab from "../pages/task/TaskTab.jsx";
 import EditTask from "./tasks/editTask/EditTask.jsx";
 
 
-import BarView from "./projects/allprojects/BarView.jsx";
-import BarViews from "./projects/allprojects/BarViews.jsx";
 import FabricatorCharts from "./projects/allprojects/FabricatorChart.jsx";
-import ProjectStats from "./projects/stats/ProjectStats.jsx";
 import ProjectTab from "../pages/project/ProjectTab.jsx";
 
 //Charts
@@ -51,14 +49,11 @@ import GaantChartt from "./charts/GaantChartt.jsx";
 
 export {
   AllUser,
-  ProjectStats,
   ProjectTab,
-  BarViews,
   UserTab,
   ChangePassword,
   Toggle,
   AddCSV,
-  BarView,
   GhantChart,
   GaantChart,
   GaantChartt,
@@ -71,6 +66,7 @@ export {
   TaskTab,
   SelectedTask,
   TaskSelected,
+  MultipleFileUpload,
   // UsersTaskRecord,
   CustomSelect,
   Input,

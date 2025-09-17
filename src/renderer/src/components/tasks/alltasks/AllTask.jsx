@@ -6,9 +6,9 @@ import React, { useMemo, useEffect, useState } from "react";
 import { useTable, useSortBy, usePagination } from "react-table";
 import { useSelector, useDispatch } from "react-redux";
 import SelectedTask from "./SelectedTask";
-import DateFilter from "../../projects/projectStatus/DateFilter";
 import Button from "../../fields/Button";
 import Service from "../../../api/configAPI";
+import DateFilter from "../../../util/DateFilter";
 
 const AllTask = () => {
   const dispatch = useDispatch();

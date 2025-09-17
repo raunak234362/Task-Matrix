@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ProjectStats } from "../../components";
+import AllProjects from "../../components/project/AllProjects";
 
 const ProjectView = () => {
   const [activeTab, setActiveTab] = useState("allProject");
@@ -17,20 +17,12 @@ const ProjectView = () => {
             >
               All Project
             </button>
-            <button
-              onClick={() => setActiveTab("projectStats")}
-              className={`px-1.5 md:px-4 py-2 rounded-lg rounded-b ${activeTab === "projectStats" ? "text-base md:text-base bg-teal-500 text-white font-semibold" : "md:text-base text-sm bg-white"}`}
-            >
-              Project Stats
-            </button>
           </div>
         </div>
         <div className="flex-grow p-2 h-[85vh] overflow-y-auto">
-          {activeTab === "allProject" && <div>{/* <Allprojects /> */}</div>}
-
-          {activeTab === "projectStats" && (
+          {activeTab === "allProject" && (
             <div>
-              <ProjectStats />
+              <AllProjects />
             </div>
           )}
         </div>

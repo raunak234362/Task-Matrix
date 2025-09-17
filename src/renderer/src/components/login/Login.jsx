@@ -27,11 +27,11 @@ const Login = () => {
   const login = async (data) => {
     try {
       const user = await AuthService.login(data);
-      console.log(user);
       if ("token" in user) {
         const token = user.token;
         sessionStorage.setItem("token", token);
         const userData = await Service.getCurrentUser();
+        console.log(userData);
         dispatch(setUserData(userData));
         sessionStorage.setItem("userId", userData.id);
         const userId = sessionStorage.getItem("userId");
@@ -47,6 +47,8 @@ const Login = () => {
         if (userData.role === "STAFF") {
           if (userData.is_superuser) {
             userType = "admin";
+          } else if (userData.is_systemadmin) {
+            userType = "system-admin";
           } else if (userData.is_sales) {
             userType = "sales";
           } else if (userData.is_staff && userData.is_manager) {
@@ -69,6 +71,7 @@ const Login = () => {
         if (userData?.is_firstLogin) navigate("/change-password/");
         else if (
           userType === "user" ||
+          userType === "system-admin" ||
           userType === "project-manager" ||
           userType === "admin" ||
           userType === "department-manager"

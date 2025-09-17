@@ -16,6 +16,7 @@ import {
   ChevronLeft,
   Hourglass,
   LogOut,
+  FolderOpenDot,
 } from "lucide-react";
 import { useSelector } from "react-redux";
 
@@ -33,16 +34,23 @@ const Sidebar = ({ refresh, isMinimized, toggleSidebar }) => {
         "department-manager",
         "project-manager",
         "client",
+        "system-admin",
         "user",
         "estimator",
         "sales",
       ],
     },
     {
+      label:"Projects",
+      to:"projects",
+      icon: <FolderOpenDot/>,
+      roles: ["admin", "department-manager", "project-manager", "user","system-admin", "human-resource"],
+    },
+    {
       label: "Tasks",
       to: "tasks",
       icon: <ChartCandlestick />,
-      roles: ["admin", "department-manager", "project-manager", "user", "human-resource"],
+      roles: ["admin", "department-manager", "project-manager", "user","system-admin", "human-resource"],
     },
     {
       label: "Estimations",
@@ -74,6 +82,7 @@ const Sidebar = ({ refresh, isMinimized, toggleSidebar }) => {
         "sales",
         "project-manager",
         "department-manager",
+        "system-admin",
         "human-resource",
       ],
     },

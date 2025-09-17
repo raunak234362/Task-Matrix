@@ -2,7 +2,6 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable prettier/prettier */
 
-import { toast } from "react-toastify";
 import socket from "../../../socket";
 import Button from "../../fields/Button.jsx";
 import { useSortBy, useTable } from "react-table";
@@ -25,12 +24,14 @@ const MyTask = () => {
 
   // ];
 
+  // Filter out tasks with status "VALIDATE_COMPLETE"
   const filteredTasks = useMemo(() => {
-    return stageFilter
-      ? tasks.filter((task) => task.stage === stageFilter)
-      : tasks;
-  }, [tasks, stageFilter]);
-
+    return tasks.filter(
+      (task) =>
+        task.status !== "VALIDATE_COMPLETE" &&
+        task.status !== "COMPLETE_OTHER"
+    );
+  }, [tasks]);
   const columns = useMemo(
     () => [
       { Header: "S.No", accessor: (_, i) => i + 1, disableSortBy: false },

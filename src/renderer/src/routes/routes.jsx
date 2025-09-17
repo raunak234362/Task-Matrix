@@ -33,7 +33,7 @@ const routes = [
             element: <Home />,
           },
           {
-            path: "project",
+            path: "projects",
             element: <ProjectTab />,
           },
           {

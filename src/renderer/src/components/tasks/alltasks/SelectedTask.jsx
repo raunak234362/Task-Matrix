@@ -340,7 +340,7 @@ const SelectedTask = ({ taskDetail, taskId, isOpen, onClose, setTasks }) => {
               </div>
 
               {/* Action Buttons */}
-              {userType !== "user" && (
+              {userType !== "user" && userType !== "system-admin" && (
                 <div className="flex gap-3 mt-6">
                   <button
                     onClick={handleEditClick}
@@ -349,7 +349,7 @@ const SelectedTask = ({ taskDetail, taskId, isOpen, onClose, setTasks }) => {
                     <Pencil className="w-4 h-4 mr-2" />
                     Update Task
                   </button>
-                  {userType !== "project-manager" && (
+                  {userType !== "user" && userType !== "system-admin" && (
                     !showDeleteConfirm ? (
                       <button
                         onClick={() => setShowDeleteConfirm(true)}
