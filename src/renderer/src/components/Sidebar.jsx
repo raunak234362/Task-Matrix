@@ -44,7 +44,7 @@ const Sidebar = ({ refresh, isMinimized, toggleSidebar }) => {
       label:"Projects",
       to:"projects",
       icon: <FolderOpenDot/>,
-      roles: ["admin", "department-manager", "project-manager", "user","system-admin", "human-resource"],
+      roles: ["admin", "department-manager", "project-manager", "user", "human-resource"],
     },
     {
       label: "Tasks",
