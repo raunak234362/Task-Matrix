@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 "use client";
 
@@ -477,26 +478,26 @@ const Overview = ({
               />
             ),
           },
-          {
-            icon: <UsersRound className="w-5 h-5 text-gray-500" />,
-            label: "Team Members",
-            value: filteredUserContributions.length,
-          },
-          {
-            icon: <Hourglass className="w-5 h-5 text-gray-800" />,
-            label: "Total Hours",
-            value: formatHours(totalAssignedHours),
-          },
-          {
-            icon: <Timer className="w-5 h-5 text-blue-500" />,
-            label: "Approval Hours",
-            value: formatHours(totalAssignedHours * EFFICIENCY_FACTOR),
-          },
-          {
-            icon: <Timer className="w-5 h-5 text-purple-500" />,
-            label: "Fabrication Hours",
-            value: formatHours(totalAssignedHours * FABRICATION_FACTOR),
-          },
+          // {
+          //   icon: <UsersRound className="w-5 h-5 text-gray-500" />,
+          //   label: "Team Members",
+          //   value: filteredUserContributions.length,
+          // },
+          // {
+          //   icon: <Hourglass className="w-5 h-5 text-gray-800" />,
+          //   label: "Total Hours",
+          //   value: formatHours(totalAssignedHours),
+          // },
+          // {
+          //   icon: <Timer className="w-5 h-5 text-blue-500" />,
+          //   label: "Approval Hours",
+          //   value: formatHours(totalAssignedHours * EFFICIENCY_FACTOR),
+          // },
+          // {
+          //   icon: <Timer className="w-5 h-5 text-purple-500" />,
+          //   label: "Fabrication Hours",
+          //   value: formatHours(totalAssignedHours * FABRICATION_FACTOR),
+          // },
           {
             icon: <Timer className="w-5 h-5 text-gray-700" />,
             label: "Total Assigned Hours",
@@ -530,38 +531,38 @@ const Overview = ({
               filterStage && filterStage !== "all" ? "Stage efficiency" : null,
             show: filterStage === "IFA",
           },
-          {
-            icon: <Target className="w-5 h-5 text-purple-500" />,
-            label: "Project Efficiency for Fabrication",
-            value:
-              totalTakenHours > 0
-                ? `${Math.round(
-                    ((totalAssignedHours * FABRICATION_FACTOR) /
-                      totalTakenHours) *
-                      100
-                  )}%`
-                : "0%",
-            subtext:
-              filterStage && filterStage !== "all" ? "Stage efficiency" : null,
-            show: filterStage === "IFC",
-          },
-          {
-            icon: <Target className="w-5 h-5 text-purple-500" />,
-            label: "Project Efficiency for Change Order",
-            value:
-              totalTakenHours > 0
-                ? `${Math.round((totalAssignedHours / totalTakenHours) * 100)}%`
-                : "0%",
-            subtext:
-              filterStage && filterStage !== "all" ? "Stage efficiency" : null,
-            show: filterStage === "CO",
-          },
+          // {
+          //   icon: <Target className="w-5 h-5 text-purple-500" />,
+          //   label: "Project Efficiency for Fabrication",
+          //   value:
+          //     totalTakenHours > 0
+          //       ? `${Math.round(
+          //           ((totalAssignedHours * FABRICATION_FACTOR) /
+          //             totalTakenHours) *
+          //             100
+          //         )}%`
+          //       : "0%",
+          //   subtext:
+          //     filterStage && filterStage !== "all" ? "Stage efficiency" : null,
+          //   show: filterStage === "IFC",
+          // },
+          // {
+          //   icon: <Target className="w-5 h-5 text-purple-500" />,
+          //   label: "Project Efficiency for Change Order",
+          //   value:
+          //     totalTakenHours > 0
+          //       ? `${Math.round((totalAssignedHours / totalTakenHours) * 100)}%`
+          //       : "0%",
+          //   subtext:
+          //     filterStage && filterStage !== "all" ? "Stage efficiency" : null,
+          //   show: filterStage === "CO",
+          // },
           {
             icon: <Target className="w-5 h-5 text-purple-500" />,
             label: "Overall Project Efficiency",
             value:
               totalTakenHours > 0
-                ? `${Math.round((totalAssignedHours / totalTakenHours) * 100)}%`
+                ? `${Math.round((assignedHour / totalTakenHours) * 100)}%`
                 : "0%",
             subtext:
               filterStage && filterStage !== "all" ? "Stage efficiency" : null,

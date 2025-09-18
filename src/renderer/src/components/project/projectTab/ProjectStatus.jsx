@@ -488,7 +488,7 @@ const ProjectStatus = ({ projectId, onClose }) => {
                   { key: "team", label: "Team" },
                   { key: "RFI", label: "RFI" },
                   { key: "Submittals", label: "Submittals" },
-                  { key: "CO", label: "CO#" },
+                  // { key: "CO", label: "CO#" },
                   { key: "Notes", label: "Notes" },
                 ].map(({ key, label }) => (
                   <button
@@ -560,7 +560,7 @@ const ProjectStatus = ({ projectId, onClose }) => {
             {activeTab === "Submittals" && (
               <Submittals projectData={projectData} />
             )}
-            {activeTab === "CO" && <CO projectData={projectData} />}
+            {/* {activeTab === "CO" && <CO projectData={projectData} />} */}
             {activeTab === "Notes" && (
               <Notes projectData={projectData} projectId={projectId} />
             )}

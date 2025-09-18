@@ -910,7 +910,7 @@ class Service {
     }
   }
 
-    static async getRFIByProjectId(projectId) {
+  static async getRFIByProjectId(projectId) {
     try {
       const token = sessionStorage.getItem("token");
       const response = await api.get(`/api/RFI/${projectId}`, {
@@ -926,7 +926,40 @@ class Service {
     }
   }
 
-    static async getSubmittalByProjectId(projectId) {
+  static async fetchRFIResponseById(id) {
+    try {
+      const token = sessionStorage.getItem("token");
+      const response = await api.get(`/api/RFI/rfi/getResponse/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/form-data",
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching RFI response:", error);
+      throw error;
+    }
+  }
+
+  //Fetch RFI by ID
+  static async fetchRFIById(id) {
+    try {
+      const token = sessionStorage.getItem("token");
+      const response = await api.get(`/api/RFI/rfi/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/form-data",
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.log("Error fetching RFI:", error);
+      throw error;
+    }
+  }
+
+  static async getSubmittalByProjectId(projectId) {
     try {
       const token = sessionStorage.getItem("token");
       const response = await api.get(`/api/Submittals/${projectId}`, {
@@ -942,7 +975,27 @@ class Service {
     }
   }
 
-    static async getListOfAllCOByProjectId(projectID) {
+  // Get sent Submittals
+  static async getSentSubmittals(submittalsId) {
+    try {
+      const token = sessionStorage.getItem("token");
+      const response = await api.get(
+        `/api/submittals/getSubmittals/${submittalsId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        },
+      );
+      return response.data.data;
+    } catch (error) {
+      console.log("Error adding RFI:", error);
+      throw error;
+    }
+  }
+
+  static async getListOfAllCOByProjectId(projectID) {
     try {
       const token = sessionStorage.getItem("token");
       const response = await api.get(`/api/co/${projectID}`, {
@@ -970,7 +1023,7 @@ class Service {
             "Content-Type": "multipart/form-data",
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
       return response.data;
     } catch (error) {
@@ -996,7 +1049,6 @@ class Service {
     }
   }
 
-
   static async updateJobStudy(jobStudyId, data) {
     const token = sessionStorage.getItem("token");
     try {
@@ -1008,7 +1060,7 @@ class Service {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
       return response.data;
     } catch (error) {
@@ -1021,7 +1073,7 @@ class Service {
   static async fetchWorkBreakdownActivity(
     selectedTask,
     projectId,
-    projectStage
+    projectStage,
   ) {
     const token = sessionStorage.getItem("token");
     try {
@@ -1032,7 +1084,7 @@ class Service {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
-        }
+        },
       );
       return response.data.data;
     } catch (error) {
@@ -1050,7 +1102,7 @@ class Service {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
-        }
+        },
       );
       return response.data.data;
     } catch (error) {
@@ -1067,7 +1119,7 @@ class Service {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
-        }
+        },
       );
       return response.data.data;
     } catch (error) {

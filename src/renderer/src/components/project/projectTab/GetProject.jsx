@@ -178,17 +178,17 @@ const GetProject = ({ projectId, projectData, getProject, onClose }) => {
         <CardHeader
           title="Project Details"
           icon={<Calendar size={18} />}
-          action={
-            <Button
-              variant="outline"
-              className="bg-teal-500 text-white font-semibold"
-              size="sm"
-              onClick={handleEditClick}
-            >
-              <Edit2 size={16} />
-              Edit
-            </Button>
-          }
+          // action={
+          //   <Button
+          //     variant="outline"
+          //     className="bg-teal-500 text-white font-semibold"
+          //     size="sm"
+          //     onClick={handleEditClick}
+          //   >
+          //     <Edit2 size={16} />
+          //     Edit
+          //   </Button>
+          // }
         />
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -251,14 +251,14 @@ const GetProject = ({ projectId, projectData, getProject, onClose }) => {
               </div>
             </div>
             <div className="space-y-4">
-              <div>
+              {/* <div>
                 <h4 className="text-sm font-medium text-gray-500 mb-1">
                   Estimated Hours
                 </h4>
                 <p className="text-gray-800 font-semibold">
                   {projectData?.estimatedHours || "Not available"}
                 </p>
-              </div>
+              </div> */}
               <div>
                 <h4 className="text-sm font-medium text-gray-500 mb-1">
                   Stage
@@ -275,7 +275,7 @@ const GetProject = ({ projectId, projectData, getProject, onClose }) => {
                   {projectData?.tools || "Not available"}
                 </p>
               </div>
-              <div className="grid grid-cols-3 gap-4">
+              {/* <div className="grid grid-cols-3 gap-4">
                 <div>
                   <h4 className="text-sm font-medium text-gray-500 mb-1">
                     Start Date
@@ -300,7 +300,7 @@ const GetProject = ({ projectId, projectData, getProject, onClose }) => {
                     {formatDate(projectData?.endDate)}
                   </p>
                 </div>
-              </div>
+              </div> */}
               <div className="grid grid-cols-3 gap-2">
                 <div>
                   <h4 className="text-sm font-medium text-gray-500 mb-1">
@@ -336,6 +336,26 @@ const GetProject = ({ projectId, projectData, getProject, onClose }) => {
                     }
                   >
                     {projectData?.customerDesign ? "Required" : "Not required"}
+                  </Badge>
+                </div>
+                <div>
+                  <h4 className="text-sm font-medium text-gray-500 mb-1">
+                    Main Steel
+                  </h4>
+                  <Badge
+                    variant={projectData?.detailingMain ? "success" : "default"}
+                  >
+                    {projectData?.detailingMain ? "Required" : "Not required"}
+                  </Badge>
+                </div>
+                <div>
+                  <h4 className="text-sm font-medium text-gray-500 mb-1">
+                    Miscellaneous Steel
+                  </h4>
+                  <Badge
+                    variant={projectData?.detailingMisc ? "success" : "default"}
+                  >
+                    {projectData?.detailingMisc ? "Required" : "Not required"}
                   </Badge>
                 </div>
               </div>
@@ -437,10 +457,10 @@ const GetProject = ({ projectId, projectData, getProject, onClose }) => {
     <div className="space-y-4">
       <div className="flex justify-between items-center">
         <h4 className="text-sm font-medium text-gray-700">Project Files</h4>
-        <Button size="sm" variant="outline">
+        {/* <Button size="sm" variant="outline">
           <Plus size={14} />
           Add Files
-        </Button>
+        </Button> */}
       </div>
       {Array.isArray(projectData?.files) && projectData?.files.length > 0 ? (
         <div className="grid grid-cols-1 gap-2">
