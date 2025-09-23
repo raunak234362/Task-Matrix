@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable no-unused-vars */
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { updateTask } from "../../../store/taskSlice";
@@ -13,10 +13,11 @@ import { toast } from "react-toastify";
 /* eslint-disable react/prop-types */
 const EditTask = ({ onClose, task }) => {
   const taskDetail = task[0];
+  const [milestoneOptions, setMilestoneOptions] = useState([]);
   const dispatch = useDispatch();
   const takenHour = taskDetail?.workingHourTask?.[0]?.duration;
   const work_id = taskDetail?.workingHourTask?.[0]?.id;
-
+  const projectId = taskDetail?.project_id;
   const [defaultHour, defaultMin] = (taskDetail?.duration ?? "00:00")
     .split(":")
     .slice(0, 2);
@@ -57,6 +58,28 @@ const EditTask = ({ onClose, task }) => {
       (team) => team.id === taskDetail?.project?.teamID,
     ),
   );
+  console.log("===========", taskDetail);
+
+  const fetchMilestones = async () => {
+    try {
+      const milestones = await Service.getMilestoneByProjectId(projectId);
+      const options =
+        milestones?.data?.map((milestone) => ({
+          label: milestone.subject,
+          value: milestone.id,
+        })) || [];
+      setMilestoneOptions(options);
+      console.log("Milestone Options:", options);
+    } catch (error) {
+      console.error("Error fetching milestones:", error);
+      toast.error("Error fetching milestones");
+      setMilestoneOptions([]);
+    }
+  };
+
+  useEffect(() => {
+    fetchMilestones();
+  }, []);
   const staffData = useSelector((state) => state?.userData?.staffData) || [];
 
   const assigned = teamData?.members?.reduce((acc, member) => {
@@ -126,7 +149,7 @@ const EditTask = ({ onClose, task }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-white h-[65vh] overflow-x-auto p-5 rounded-lg shadow-lg w-full md:w-[50vw] ">
+      <div className="bg-white h-[70vh] overflow-x-auto p-5 rounded-lg shadow-lg w-full md:w-[50vw] ">
         <div className="flex justify-between my-5 bg-teal-200/50 p-2 rounded-lg">
           <h2 className="text-2xl font-bold">Edit Task</h2>
           <button
@@ -136,8 +159,8 @@ const EditTask = ({ onClose, task }) => {
             Close
           </button>
         </div>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="my-2">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-2">
+          <div className="">
             <p className="text-red-700 text-xs">
               *If you want to update the Task Name you have to select the Task
               Type
@@ -165,7 +188,7 @@ const EditTask = ({ onClose, task }) => {
             />
           </div>
 
-          <div className="my-2">
+          <div className="">
             <Input
               name="taskname"
               label="Task Name: "
@@ -180,8 +203,25 @@ const EditTask = ({ onClose, task }) => {
               })}
             />
           </div>
+          <div className="">
+            <CustomSelect
+              label="Milestone:"
+              placeholder="Select Milestone"
+              name="milestone"
+              className="w-full"
+              options={[
+                { label: "Select Milestone", value: "" },
+                ...milestoneOptions,
+              ]}
+              {...register("milestone_id")}
+              onChange={setValue}
+            />
+            {errors.milestone && (
+              <p className="text-red-600">{errors.milestone.message}</p>
+            )}
+          </div>
 
-          <div className="my-2">
+          <div className="">
             <CustomSelect
               label="Current User:"
               name="user"
@@ -199,7 +239,7 @@ const EditTask = ({ onClose, task }) => {
             />
           </div>
 
-          <div className="my-2">
+          <div className="">
             <Input
               type="textarea"
               label="Description: "
@@ -242,7 +282,7 @@ const EditTask = ({ onClose, task }) => {
             </div>
           )}
 
-          <div className="my-2">
+          <div className="">
             <CustomSelect
               label="Status:"
               name="status"
@@ -255,7 +295,10 @@ const EditTask = ({ onClose, task }) => {
                 { label: "RE-WORK", value: "REWORK" },
                 { label: "COMPLETED", value: "COMPLETE" },
                 { label: "VALIDATE & COMPLETED", value: "VALIDATE_COMPLETE" },
-                { label: "COMPLETED(TECHNICAL ISSUE)", value: "COMPLETE_OTHER" },
+                {
+                  label: "COMPLETED(TECHNICAL ISSUE)",
+                  value: "COMPLETE_OTHER",
+                },
               ]}
               className="w-full"
               defaultValues={task?.status}
@@ -267,7 +310,7 @@ const EditTask = ({ onClose, task }) => {
             )}
           </div>
 
-          <div className="my-2">
+          <div className="">
             <CustomSelect
               label="Priority:"
               name="priority"
@@ -288,7 +331,7 @@ const EditTask = ({ onClose, task }) => {
             label="Start Date:"
             name="start_date"
             type="date"
-            className="w-full my-2"
+            className="w-full "
             defaultValues={task?.start_date}
             {...register("start_date")}
           />
@@ -297,7 +340,7 @@ const EditTask = ({ onClose, task }) => {
             label="Due Date:"
             name="due_date"
             type="date"
-            className="w-full my-2"
+            className="w-full "
             defaultValues={task?.due_date}
             {...register("due_date")}
           />

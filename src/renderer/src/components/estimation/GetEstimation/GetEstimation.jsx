@@ -20,6 +20,7 @@ import { MdOutlineDescription } from "react-icons/md";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
+import LineItem from "../lineItem/LineItem";
 
 /* eslint-disable react/prop-types */
 const GetEstimation = ({ task, setDisplay, fetchEstimation }) => {
@@ -30,6 +31,7 @@ const GetEstimation = ({ task, setDisplay, fetchEstimation }) => {
   const [color, setColor] = useState("");
   const [timer, setTimer] = useState(0); // Timer in seconds
   const [isTimerRunning, setIsTimerRunning] = useState(false);
+
   const staffData = useSelector((state) => state?.userData?.staffData);
   const {
     register,
@@ -414,6 +416,12 @@ const GetEstimation = ({ task, setDisplay, fetchEstimation }) => {
                       )}
                     </div>
                   )}
+                </div>
+              </div>
+              {/* Line Item Group */}
+              <div className="mt-6">
+                <div className="p-4 bg-white rounded-lg shadow-sm">
+                  <LineItem estimationId={tasks?.estimationId} />
                 </div>
               </div>
             </div>

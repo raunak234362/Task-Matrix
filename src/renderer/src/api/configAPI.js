@@ -1127,6 +1127,85 @@ class Service {
     }
   }
 
+  //adding estimation line item group
+  static async addEstimationLineItemGroup(estimationId,data) {
+    const token = sessionStorage.getItem("token");
+    try {
+      const response = await api.post(`/api/lineItemGroup/add/${estimationId}`, data, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.log("Error adding estimation line item group:", error);
+      throw error;
+    }
+  }
+
+  //fetching estimation line item group
+  static async getEstimationLineItemGroup(estimationId) {
+    console.log(estimationId);
+    const token = sessionStorage.getItem("token");
+    try {
+      const response = await api.get(`/api/lineItemGroup/all/${estimationId}`, {
+        headers: {
+  
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      return response.data.data;
+    } catch (error) {
+      console.log("Error fetching estimation line item group:", error);
+      throw error;
+    }
+  }
+
+  //delete Estimation Task Line Items by ID
+  static async deleteEstimationTaskLineItemsById(lineItemID) {
+    const token = sessionStorage.getItem("token");
+    try {
+      const response = await api.delete(`/api/lineItemGroup/delete/${lineItemID}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.log("Error deleting line items:", error);
+      throw error;
+    }
+  }
+
+  //update Estimation Task Line Items by ID
+  static async updateEstimationTaskLineItemsById(
+    lineItemID,
+    lineItemData
+  ) {
+    const token = sessionStorage.getItem("token");
+    try {
+      const response = await api.patch(
+        `/api/Estimation/estimationLineItems/${lineItemID}`,
+        lineItemData,
+        {
+          headers: {
+            "Content-Type": "Application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.log("Error updating line items:", error);
+      throw error;
+    }
+  }
+
+  
+
   //Calendar API
   // static async fetchCalendar(date, user) {
   //   const token = sessionStorage.getItem("token");
