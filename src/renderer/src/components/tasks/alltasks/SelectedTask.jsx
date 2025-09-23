@@ -349,7 +349,7 @@ const SelectedTask = ({ taskDetail, taskId, isOpen, onClose, setTasks }) => {
                     <Pencil className="w-4 h-4 mr-2" />
                     Update Task
                   </button>
-                  {userType !== "user" && userType !== "system-admin" && (
+                  {userType !== "user" && userType !== "system-admin" && userType !== "project-manager" && (
                     !showDeleteConfirm ? (
                       <button
                         onClick={() => setShowDeleteConfirm(true)}
