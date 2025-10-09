@@ -541,13 +541,13 @@ const Task = ({ taskId, fetchTaskData, setDisplay }) => {
                                 <ChartPie className="text-blue-500 text-sm" />
                               ),
                             },
-                            {
-                              label: "Estimated Hours",
-                              value: projectData?.estimatedHours,
-                              icon: (
-                                <Clock4 className="text-blue-500 text-md" />
-                              ),
-                            },
+                            // {
+                            //   label: "Estimated Hours",
+                            //   value: projectData?.estimatedHours,
+                            //   icon: (
+                            //     <Clock4 className="text-blue-500 text-md" />
+                            //   ),
+                            // },
                             {
                               label: "Stage",
                               value: projectData?.stage,
