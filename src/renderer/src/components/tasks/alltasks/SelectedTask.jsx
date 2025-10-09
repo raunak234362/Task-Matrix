@@ -292,6 +292,17 @@ const SelectedTask = ({ taskDetail, taskId, isOpen, onClose, setTasks }) => {
                         </p>
                       </div>
                     </div>
+                    {/* <div className="flex items-start gap-3">
+                      <Tag className="w-5 h-5 mt-0.5 text-gray-500" />
+                      <div>
+                        <p className="text-sm font-medium text-gray-500">
+                          MileStone
+                        </p>
+                        <p className="text-gray-800">
+                          {task?.mileStone?.subject}
+                        </p>
+                      </div>
+                    </div> */}
 
                     <div className="flex items-start gap-3">
                       <Clock className="w-5 h-5 mt-0.5 text-gray-500" />
@@ -324,7 +335,7 @@ const SelectedTask = ({ taskDetail, taskId, isOpen, onClose, setTasks }) => {
                       <Clock className="w-5 h-5 mt-0.5 text-gray-500" />
                       <div>
                         <p className="text-sm font-medium text-gray-500">
-                         Stage
+                          Stage
                         </p>
                         <p className="text-gray-800">{task?.Stage}</p>
                       </div>

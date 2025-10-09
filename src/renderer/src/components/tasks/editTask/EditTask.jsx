@@ -310,7 +310,7 @@ const EditTask = ({ onClose, task }) => {
               <p className="text-red-600">{errors.status.message}</p>
             )}
           </div>
-          <div>
+          {/* <div>
             <CustomSelect
               label="Stage:"
               name="stage"
@@ -340,7 +340,7 @@ const EditTask = ({ onClose, task }) => {
               {...register("Stage")}
               onChange={setValue}
             />
-          </div>
+          </div> */}
           <div>
             <CustomSelect
               label="Stage:"
