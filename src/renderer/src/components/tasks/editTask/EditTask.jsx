@@ -203,6 +203,7 @@ const EditTask = ({ onClose, task }) => {
               })}
             />
           </div>
+
           <div className="">
             <CustomSelect
               label="Milestone:"
@@ -308,6 +309,68 @@ const EditTask = ({ onClose, task }) => {
             {errors.status && (
               <p className="text-red-600">{errors.status.message}</p>
             )}
+          </div>
+          <div>
+            <CustomSelect
+              label="Stage:"
+              name="stage"
+              options={[
+                { label: "Select Stage", value: "" },
+                { label: "(RFI) Request for Information", value: "RFI" },
+                { label: "(IFA) Issue for Approval", value: "IFA" },
+                {
+                  label: "(BFA) Back from Approval/Returned App",
+                  value: "BFA",
+                },
+                {
+                  label: "(BFA-M) Back from Approval - Markup",
+                  value: "BFA_M",
+                },
+                { label: "(RIFA) Re-issue for Approval", value: "RIFA" },
+                { label: "(RBFA) Return Back from Approval", value: "RBFA" },
+                { label: "(IFC) Issue for Construction/DIF", value: "IFC" },
+                {
+                  label: "(BFC) Back from Construction/Drawing Revision",
+                  value: "BFC",
+                },
+                { label: "(RIFC) Re-issue for Construction", value: "RIFC" },
+                { label: "(REV) Revision", value: "REV" },
+                { label: "(CO#) Change Order", value: "CO" },
+              ]}
+              {...register("Stage")}
+              onChange={setValue}
+            />
+          </div>
+          <div>
+            <CustomSelect
+              label="Stage:"
+              name="stage"
+              options={[
+                { label: "Select Stage", value: "" },
+                { label: "(RFI) Request for Information", value: "RFI" },
+                { label: "(IFA) Issue for Approval", value: "IFA" },
+                {
+                  label: "(BFA) Back from Approval/Returned App",
+                  value: "BFA",
+                },
+                {
+                  label: "(BFA-M) Back from Approval - Markup",
+                  value: "BFA_M",
+                },
+                { label: "(RIFA) Re-issue for Approval", value: "RIFA" },
+                { label: "(RBFA) Return Back from Approval", value: "RBFA" },
+                { label: "(IFC) Issue for Construction/DIF", value: "IFC" },
+                {
+                  label: "(BFC) Back from Construction/Drawing Revision",
+                  value: "BFC",
+                },
+                { label: "(RIFC) Re-issue for Construction", value: "RIFC" },
+                { label: "(REV) Revision", value: "REV" },
+                { label: "(CO#) Change Order", value: "CO" },
+              ]}
+              {...register("Stage")}
+              onChange={setValue}
+            />
           </div>
 
           <div className="">

@@ -22,13 +22,13 @@ const TaskTab = () => {
 
   // Helper to count tasks by status
   const countByStatus = (status) =>
-    tasks.filter((task) => task.status === status).length;
+    tasks?.filter((task) => task?.status === status)?.length;
 
-  const activeTaskCount = countByStatus(STATUS.IN_PROGRESS);
-  const completedTaskCount = countByStatus(STATUS.COMPLETE);
-  const inReviewTaskCount = countByStatus(STATUS.IN_REVIEW);
-  const assignedTaskCount = countByStatus(STATUS.ASSIGNED);
-  const breakTaskCount = countByStatus(STATUS.BREAK);
+  const activeTaskCount = countByStatus(STATUS?.IN_PROGRESS);
+  const completedTaskCount = countByStatus(STATUS?.COMPLETE);
+  const inReviewTaskCount = countByStatus(STATUS?.IN_REVIEW);
+  const assignedTaskCount = countByStatus(STATUS?.ASSIGNED);
+  const breakTaskCount = countByStatus(STATUS?.BREAK);
 
   const canAddTask = [
     "project-manager",

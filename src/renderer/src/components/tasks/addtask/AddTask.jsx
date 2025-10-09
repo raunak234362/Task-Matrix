@@ -10,11 +10,14 @@ import { toast } from "react-toastify";
 
 const AddTask = () => {
   const [projectOptions, setProjectOptions] = useState([]);
-  const [milestoneOptions, setMilestoneOptions] = useState([]); // New state for milestone options
+  const [milestoneOptions, setMilestoneOptions] = useState([]);
+  const tasks = useSelector((state) => state?.taskData?.taskData);
   const projects = useSelector((state) => state?.projectData?.projectData);
   const [project, setProject] = useState({});
   const [projectStage, setProjectStage] = useState([]);
   const [assignedUser, setAssignedUser] = useState([]);
+  const [pendingTaskError, setPendingTaskError] = useState(null); // State for pending task error
+  const [isSubmitDisabled, setIsSubmitDisabled] = useState(false); // State for button disabled
   const dispatch = useDispatch();
   const {
     register,
@@ -25,6 +28,7 @@ const AddTask = () => {
   } = useForm();
 
   const projectId = watch("project");
+  const selectedUser = watch("user");
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -80,43 +84,159 @@ const AddTask = () => {
         }, []) || [];
       setProjectStage(project?.stage || []);
       setAssignedUser(assigned);
-      // Fetch milestones for the selected project
       await fetchMilestones(projectId);
     } catch (error) {
       console.error("Error fetching project details:", error);
       toast.error("Error fetching project details");
-      setMilestoneOptions([]); // Reset milestone options on error
+      setMilestoneOptions([]);
     }
   };
 
-  const handleParentTasks = async (projectId) => {
+  // const handleParentTasks = async (projectId) => {
+  //   try {
+  //     const parentTasks = await Service.getParentTasks(projectId);
+  //     const options =
+  //       parentTasks?.map((task) => ({
+  //         label: task?.name,
+  //         value: task?.id,
+  //       })) || [];
+  //     console.log("Parent Task Options:", options);
+  //   } catch (error) {
+  //     console.error("Error fetching parent tasks:", error);
+  //     toast.error("Error fetching parent tasks");
+  //   }
+  // };
+
+  // const checkUserPendingTasks = (userId) => {
+  //   console.log("Checking pending tasks for user:", userId);
+  //   if (!userId) {
+  //     setPendingTaskError(null);
+  //     setIsSubmitDisabled(false);
+  //     return;
+  //   }
+
+  //   try {
+  //     const tasks = useSelector((state) => state.taskData.taskData);
+  //     console.log("All Tasks from Store:", tasks);
+  //     // Get today's date and subtract 24 hours
+  //     const now = new Date();
+
+  //     // Helper: check if day is weekend
+  //     const isWeekend = (date) => {
+  //       const day = date.getDay();
+  //       return day === 6 || day === 0; // Saturday or Sunday
+  //     };
+
+  //     // Filter tasks belonging to the selected user with IN_REVIEW status
+  //     const inReviewTasks = tasks?.filter(
+  //       (t) => t.assignedUserId === userId && t.status === "IN_REVIEW",
+  //     );
+
+  //     const hasOldInReview = inReviewTasks?.some((task) => {
+  //       const reviewDate = new Date(task.updatedAt || task.inReviewAt);
+  //       const hoursDifference = (now - reviewDate) / (1000 * 60 * 60);
+
+  //       // If task has been in review > 24 hours and it's not weekend
+  //       return hoursDifference > 24 && !isWeekend(now);
+  //     });
+
+  //     if (hasOldInReview) {
+  //       setPendingTaskError(
+  //         "⚠️ This user has a task pending in review for over 24 hours (excluding weekends). Please review it first.",
+  //       );
+  //       setIsSubmitDisabled(true);
+  //     } else {
+  //       setPendingTaskError(null);
+  //       setIsSubmitDisabled(false);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error checking user tasks:", error);
+  //     setPendingTaskError("Error checking user tasks. Please try again.");
+  //     setIsSubmitDisabled(true);
+  //   }
+  // };
+
+  // 🔹 Check pending tasks for selected user
+  const checkUserPendingTasks = (userId) => {
+    console.log("Checking pending tasks for user:", userId);
+
+    if (!userId) {
+      setPendingTaskError(null);
+      setIsSubmitDisabled(false);
+      return;
+    }
+
     try {
-      const parentTasks = await Service.getParentTasks(projectId);
-      const options =
-        parentTasks?.map((task) => ({
-          label: task?.name,
-          value: task?.id,
-        })) || [];
-      // Optionally use parentTasks if needed
-      console.log("Parent Task Options:", options);
+      const now = new Date();
+
+      const isWeekend = (date) => {
+        const day = date.getDay();
+        return day === 6 || day === 0; // Sat or Sun
+      };
+
+      const calculateBusinessHoursDifference = (start, end) => {
+        let diffHours = 0;
+        const temp = new Date(start);
+
+        while (temp < end) {
+          if (!isWeekend(temp)) diffHours += 1;
+          temp.setHours(temp.getHours() + 1);
+        }
+
+        return diffHours;
+      };
+
+      const inReviewTasks = tasks?.filter(
+        (t) => t.user_id === userId && t.status === "IN_REVIEW",
+      );
+
+      console.log("In Review Tasks for User:", inReviewTasks);
+
+      const hasOldInReview = inReviewTasks?.some((task) => {
+        const reviewDate = new Date(task.inReviewTime?.[0]);
+        const hoursDifference = calculateBusinessHoursDifference(
+          reviewDate,
+          now,
+        );
+        console.log("Business Hours Since Review:", hoursDifference);
+
+        // Only count as "old" if more than 24 business hours have passed
+        return hoursDifference > 24;
+      });
+
+      if (hasOldInReview) {
+        setPendingTaskError(
+          "⚠️ This user has a task pending in review for over 24 business hours (excluding weekends). Please review it first.",
+        );
+        setIsSubmitDisabled(true);
+      } else {
+        setPendingTaskError(null);
+        setIsSubmitDisabled(false);
+      }
     } catch (error) {
-      console.error("Error fetching parent tasks:", error);
-      toast.error("Error fetching parent tasks");
+      console.error("Error checking user tasks:", error);
+      setPendingTaskError("Error checking user tasks. Please try again.");
+      setIsSubmitDisabled(true);
     }
   };
 
   useEffect(() => {
     if (projectId) {
       handleProjectChange(projectId);
-      handleParentTasks(projectId);
     } else {
-      // Reset milestones and other dependent fields when no project is selected
       setMilestoneOptions([]);
       setAssignedUser([]);
       setProjectStage([]);
       setProject({});
+      setPendingTaskError(null);
+      setIsSubmitDisabled(false);
     }
   }, [projectId]);
+
+  // Check pending tasks when user changes
+  useEffect(() => {
+    checkUserPendingTasks(selectedUser);
+  }, [selectedUser]);
 
   const onSubmit = async (taskData) => {
     console.log("Task Data:", taskData);
@@ -131,15 +251,23 @@ const AddTask = () => {
         name: TaskName,
         status: "ASSIGNED",
         token: token,
-        mileStone_id: taskData.milestone_id, // Include milestoneId in task data
+        mileStone_id: taskData.milestone_id,
       });
       console.log("Task Added:", data);
 
       toast.success("✅ Task Added Successfully");
       dispatch(addTask(data));
     } catch (error) {
-      console.error("Error adding task:", error);
-      toast.error("❌ Error adding task");
+      const errorMessage = error?.response?.data?.message;
+      if (
+        errorMessage ===
+        "User has an old pending task. Please complete it before assigning a new one."
+      ) {
+        setPendingTaskError(errorMessage);
+        setIsSubmitDisabled(true);
+      } else {
+        toast.warning("Failed to add task. Please try again.", errorMessage);
+      }
     }
   };
 
@@ -292,7 +420,7 @@ const AddTask = () => {
             )}
           </div>
           <div className="flex flex-col max-md:flex-row w-full gap-5 px-4">
-            <div className="w-full">
+            <div className="w-1/3">
               <Input
                 label="Start Date:"
                 name="start_date"
@@ -306,7 +434,7 @@ const AddTask = () => {
                 <p className="text-red-600">{errors.start_date.message}</p>
               )}
             </div>
-            <div className="w-full">
+            <div className="w-1/3">
               <Input
                 label="Due Date:"
                 name="due_date"
@@ -335,7 +463,10 @@ const AddTask = () => {
                 {...register("user", {
                   required: "Assigning User is required",
                 })}
-                onChange={setValue}
+                onChange={(name, value) => {
+                  setValue(name, value);
+                  checkUserPendingTasks(value); // Re-check on user change
+                }}
               />
               {errors.user && (
                 <p className="text-red-600">{errors.user.message}</p>
@@ -400,10 +531,20 @@ const AddTask = () => {
             </div>
           </div>
 
+          {/* Display pending task error above button */}
+          {pendingTaskError && (
+            <p className="text-red-600 text-center mt-4">{pendingTaskError}</p>
+          )}
           <div className="my-5 w-full">
             <Button
               type="submit"
-              className="w-full text-lg bg-teal-100 text-teal-500 border-2 border-teal-500 hover:bg-teal-500 hover:text-white"
+              disabled={isSubmitDisabled}
+              className={`w-full text-lg border-2 transition-colors duration-300 
+    ${
+      isSubmitDisabled
+        ? "bg-red-100 text-red-500 border-red-500 cursor-not-allowed hover:bg-red-100 hover:text-red-500"
+        : "bg-teal-100 text-teal-500 border-teal-500 hover:bg-teal-500 hover:text-white"
+    }`}
             >
               Add Task
             </Button>

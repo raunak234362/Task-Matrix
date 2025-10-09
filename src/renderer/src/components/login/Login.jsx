@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-/* eslint-disable prettier/prettier */
+
 import React, { useEffect, useState } from "react";
 import { Button, Input } from "../index";
 import Logo from "../../assets/logo.png";
@@ -47,10 +47,12 @@ const Login = () => {
         if (userData.role === "STAFF") {
           if (userData.is_superuser) {
             userType = "admin";
-          } else if (userData.is_systemadmin) {
-            userType = "system-admin";
           } else if (userData.is_sales) {
             userType = "sales";
+          } else if (userData.is_systemadmin) {
+            userType = "system-admin";
+          } else if (userData.is_supermanager) {
+            userType = "deputy-manager";
           } else if (userData.is_staff && userData.is_manager) {
             userType = "department-manager";
           } else if (userData.is_manager) {
@@ -67,13 +69,13 @@ const Login = () => {
         sessionStorage.setItem("userType", userType);
         dispatch(authLogin(user));
         // dispatch(setUserData(userData.data))
-        console.log(userData.is_firstLogin);
         if (userData?.is_firstLogin) navigate("/change-password/");
         else if (
           userType === "user" ||
           userType === "system-admin" ||
           userType === "project-manager" ||
           userType === "admin" ||
+          userType === "deputy-manager" ||
           userType === "department-manager"
         )
           navigate("/dashboard");
@@ -96,7 +98,7 @@ const Login = () => {
   };
 
   return (
-    <>
+    <div>
       <div className="fixed z-10 grid w-screen grid-cols-1 md:grid-cols-2">
         <div
           className={`md:flex md:my-0 mt-10 md:h-screen justify-center items-center`}
@@ -164,7 +166,7 @@ const Login = () => {
         alt="background"
         className="h-screen w-screen object-cover blur-[8px]"
       />
-    </>
+    </div>
   );
 };
 

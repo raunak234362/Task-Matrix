@@ -2,6 +2,7 @@
 /* eslint-disable prettier/prettier */
 import api from "./api";
 import { BASE_URL } from "../config/constant";
+import toast from "react-hot-toast";
 const token = sessionStorage.getItem("token");
 class Service {
   // Fetch the logged-in user - updated
@@ -324,9 +325,10 @@ class Service {
       });
 
       console.log(response.data);
-      return response.data?.data; // Return the response data
+      return response.data; // Return the response data
     } catch (error) {
-      console.log("Error in adding Task: ", error);
+      toast.error("Failed to add task. Please try again.",error.response.data.message);
+      console.log("Error in adding Task: ", error.response.data.message);
       throw error; // Rethrow the error after logging
     }
   }
