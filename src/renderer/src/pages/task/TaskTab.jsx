@@ -8,6 +8,8 @@ import { AddTask, AllTask, MyTask } from "../../components";
 const STATUS = {
   IN_PROGRESS: "IN_PROGRESS",
   COMPLETE: "COMPLETE",
+  VALIDATE_COMPLETE: "VALIDATE_COMPLETE",
+  COMPLETE_OTHER: "COMPLETE_OTHER",
   IN_REVIEW: "IN_REVIEW",
   ASSIGNED: "ASSIGNED",
   BREAK: "BREAK",
@@ -25,7 +27,10 @@ const TaskTab = () => {
     tasks?.filter((task) => task?.status === status)?.length;
 
   const activeTaskCount = countByStatus(STATUS?.IN_PROGRESS);
-  const completedTaskCount = countByStatus(STATUS?.COMPLETE);
+  const completedTaskCount =
+    countByStatus(STATUS?.COMPLETE) +
+    countByStatus(STATUS?.COMPLETE_OTHER) +
+    countByStatus(STATUS?.VALIDATE_COMPLETE);
   const inReviewTaskCount = countByStatus(STATUS?.IN_REVIEW);
   const assignedTaskCount = countByStatus(STATUS?.ASSIGNED);
   const breakTaskCount = countByStatus(STATUS?.BREAK);
