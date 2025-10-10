@@ -9,7 +9,7 @@ import { Outlet } from "react-router-dom";
 import Service from "./api/configAPI";
 import { setUserData, showStaff } from "./store/userSlice";
 import { showProjects, showTeam } from "./store/projectSlice";
-import { showTask,showTaskRecord } from "./store/taskSlice";
+import { showTask, showTaskRecord } from "./store/taskSlice";
 import socket, { connectSocket } from "./socket";
 import NotificationReceiver from "./util/NotificationReceiver";
 
@@ -40,7 +40,7 @@ const App = () => {
       tasks?.flatMap((task) =>
         task?.tasks?.map((subTask) => ({
           ...subTask,
-          project:task?.name,
+          project: task?.name,
           manager: task?.manager, // Attach manager from parent task
         })),
       ) || [];
@@ -64,6 +64,11 @@ const App = () => {
     dispatch(showTeam(teamData));
   };
 
+  const fetchFabricators = async () => {
+    const fabricatorData = await Service.getAllFabricators(token);
+    dispatch(showFabricator(fabricatorData));
+  }
+
   const fetchUser = async () => {
     try {
       const user = await Service.getCurrentUser(token);
@@ -76,7 +81,6 @@ const App = () => {
         socket.on("connect", () => {
           // console.log("✅ Connected with socket:", socket.id);
           // console.log("✅ Connected with userID:", user.id);
-          
         });
       }
 

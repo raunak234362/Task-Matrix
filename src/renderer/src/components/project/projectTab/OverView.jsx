@@ -105,7 +105,7 @@ const filterTasksByDate = (tasks, dateFilter) => {
         const weekStart = new Date(dateFilter.weekStart).getTime();
         const weekEnd = new Date(dateFilter.weekEnd).getTime();
         return tasks.filter((task) =>
-          isDateInRange(task.start_date, task.due_date, weekStart, weekEnd)
+          isDateInRange(task.start_date, task.due_date, weekStart, weekEnd),
         );
       }
       case "month": {
@@ -114,7 +114,7 @@ const filterTasksByDate = (tasks, dateFilter) => {
         const monthStart = new Date(
           dateFilter.year,
           dateFilter.month,
-          1
+          1,
         ).getTime();
         const monthEnd = new Date(
           dateFilter.year,
@@ -123,10 +123,10 @@ const filterTasksByDate = (tasks, dateFilter) => {
           23,
           59,
           59,
-          999
+          999,
         ).getTime();
         return tasks.filter((task) =>
-          isDateInRange(task.start_date, task.due_date, monthStart, monthEnd)
+          isDateInRange(task.start_date, task.due_date, monthStart, monthEnd),
         );
       }
       case "year": {
@@ -139,10 +139,10 @@ const filterTasksByDate = (tasks, dateFilter) => {
           23,
           59,
           59,
-          999
+          999,
         ).getTime();
         return tasks.filter((task) =>
-          isDateInRange(task.start_date, task.due_date, yearStart, yearEnd)
+          isDateInRange(task.start_date, task.due_date, yearStart, yearEnd),
         );
       }
       case "range": {
@@ -155,7 +155,7 @@ const filterTasksByDate = (tasks, dateFilter) => {
         const rangeStart = new Date(
           dateFilter.year,
           dateFilter.startMonth,
-          1
+          1,
         ).getTime();
         const rangeEnd = new Date(
           dateFilter.year,
@@ -164,10 +164,10 @@ const filterTasksByDate = (tasks, dateFilter) => {
           23,
           59,
           59,
-          999
+          999,
         ).getTime();
         return tasks.filter((task) =>
-          isDateInRange(task.start_date, task.due_date, rangeStart, rangeEnd)
+          isDateInRange(task.start_date, task.due_date, rangeStart, rangeEnd),
         );
       }
       case "dateRange": {
@@ -175,7 +175,7 @@ const filterTasksByDate = (tasks, dateFilter) => {
         const rangeStart = new Date(dateFilter.startDate).setHours(0, 0, 0, 0);
         const rangeEnd = new Date(dateFilter.endDate).setHours(23, 59, 59, 999);
         return tasks.filter((task) =>
-          isDateInRange(task.start_date, task.due_date, rangeStart, rangeEnd)
+          isDateInRange(task.start_date, task.due_date, rangeStart, rangeEnd),
         );
       }
       default:
@@ -230,7 +230,7 @@ const Overview = ({
             const data = await Service.fetchWorkBreakdownHours(
               type,
               projectData?.id,
-              filterStage
+              filterStage,
             );
             hours[type] = data;
           }
@@ -273,7 +273,7 @@ const Overview = ({
       types[type] = {
         assigned: tasks.reduce(
           (sum, task) => sum + parseDuration(task.duration),
-          0
+          0,
         ),
         taken:
           tasks.reduce(
@@ -282,9 +282,9 @@ const Overview = ({
               (task?.workingHourTask?.reduce(
                 (innerSum, innerTask) =>
                   innerSum + (Number(innerTask.duration) || 0),
-                0
+                0,
               ) || 0),
-            0
+            0,
           ) / 60, // Convert minutes to hours
       };
     });
@@ -294,11 +294,11 @@ const Overview = ({
   const totalAssignedHours = projectData?.estimatedHours || 0;
   const totalTakenHours = Object.values(taskTypes).reduce(
     (sum, type) => sum + type.taken,
-    0
+    0,
   );
   const assignedHour = Object.values(taskTypes).reduce(
     (sum, type) => sum + type.assigned,
-    0
+    0,
   );
 
   // Task status distribution for pie chart
@@ -338,23 +338,23 @@ const Overview = ({
     return userContributions
       .map((user) => {
         const userTasks = filteredTasks.filter(
-          (task) => task.user?.id === user.id
+          (task) => task.user?.id === user.id,
         );
         const totalWorkingHourTasks = userTasks.reduce(
           (sum, task) =>
             sum +
             (task.workingHourTask?.reduce(
               (innerSum, innerTask) => innerSum + (innerTask.duration || 0),
-              0
+              0,
             ) || 0),
-          0
+          0,
         );
         return {
           ...user,
           taskCount: userTasks.length,
           totalAssignedHours: userTasks.reduce(
             (sum, task) => sum + parseDuration(task.duration),
-            0
+            0,
           ),
           totalWorkedHours: (totalWorkingHourTasks / 60).toFixed(2),
         };
@@ -369,7 +369,7 @@ const Overview = ({
     const stageHours = {
       assigned: filteredTasks.reduce(
         (sum, task) => sum + parseDuration(task.duration),
-        0
+        0,
       ),
       taken:
         filteredTasks.reduce(
@@ -378,9 +378,9 @@ const Overview = ({
             (task?.workingHourTask?.reduce(
               (innerSum, innerTask) =>
                 innerSum + (Number(innerTask.duration) || 0),
-              0
+              0,
             ) || 0),
-          0
+          0,
         ) / 60,
     };
     return {
@@ -394,7 +394,7 @@ const Overview = ({
       completedTasks: filteredTasks.filter((task) => task.status === "COMPLETE")
         .length,
       inProgressTasks: filteredTasks.filter(
-        (task) => task.status === "IN_PROGRESS"
+        (task) => task.status === "IN_PROGRESS",
       ).length,
       inReviewTasks: filteredTasks.filter((task) => task.status === "IN_REVIEW")
         .length,
@@ -466,13 +466,21 @@ const Overview = ({
           {
             icon: <ClipboardCheck className="w-5 h-5 text-green-700" />,
             label: "Completed",
-            value: filteredTasks.filter((task) => task.status === "COMPLETE" || task.status === "VALIDATE_COMPLETE" || task.status === "COMPLETE_OTHER")
-              .length,
+            value: filteredTasks.filter(
+              (task) =>
+                task.status === "COMPLETE" ||
+                task.status === "VALIDATE_COMPLETE" ||
+                task.status === "COMPLETE_OTHER",
+            ).length,
             component: (
               <ProgressBar
                 value={
-                  filteredTasks.filter((task) => task.status === "COMPLETE" || task.status === "VALIDATE_COMPLETE" || task.status === "COMPLETE_OTHER")
-                    .length
+                  filteredTasks.filter(
+                    (task) =>
+                      task.status === "COMPLETE" ||
+                      task.status === "VALIDATE_COMPLETE" ||
+                      task.status === "COMPLETE_OTHER",
+                  ).length
                 }
                 max={filteredTasks.length}
               />
@@ -524,7 +532,7 @@ const Overview = ({
                 ? `${Math.round(
                     ((totalAssignedHours * EFFICIENCY_FACTOR) /
                       totalTakenHours) *
-                      100
+                      100,
                   )}%`
                 : "0%",
             subtext:
@@ -606,14 +614,14 @@ const Overview = ({
                 {
                   label: "Completed",
                   value: filteredTasks.filter(
-                    (task) => task.status === "COMPLETE"
+                    (task) => task.status === "COMPLETE",
                   ).length,
                   className: "text-teal-800",
                 },
                 {
                   label: "In Review",
                   value: filteredTasks.filter(
-                    (task) => task.status === "IN_REVIEW"
+                    (task) => task.status === "IN_REVIEW",
                   ).length,
                   className: "text-teal-800",
                 },
@@ -626,14 +634,14 @@ const Overview = ({
                 {
                   label: "In Progress",
                   value: filteredTasks.filter(
-                    (task) => task.status === "IN_PROGRESS"
+                    (task) => task.status === "IN_PROGRESS",
                   ).length,
                   className: "text-teal-800",
                 },
                 {
                   label: "Not Started",
                   value: filteredTasks.filter(
-                    (task) => task.status === "ASSIGNED"
+                    (task) => task.status === "ASSIGNED",
                   ).length,
                   className: "text-teal-800",
                 },
@@ -718,44 +726,92 @@ const Overview = ({
 
         {/* Status Distribution Pie Chart */}
         <Card>
-          <div className="p-5">
+          <div className="p-3">
             <h2 className="flex items-center gap-2 mb-4 text-lg font-bold">
               <PieChart className="w-5 h-5" /> Task Status Distribution
             </h2>
-            <div className="h-[300px]">
+
+            <div className="h-[300px] flex flex-row items-center justify-between">
               {statusData.length > 0 ? (
-                <ResponsiveContainer width="100%" height="100%">
-                  <RechartsPieChart>
-                    <Pie
-                      data={statusData}
-                      cx="50%"
-                      cy="50%"
-                      labelLine={false}
-                      outerRadius={80}
-                      dataKey="value"
-                      label={({ name, percent }) =>
-                        `${name}: ${(percent * 100).toFixed(0)}%`
-                      }
-                    >
-                      {statusData.map((_, index) => (
-                        <Cell
-                          key={`cell-${index}`}
-                          fill={COLORS[index % COLORS.length]}
-                        />
-                      ))}
-                    </Pie>
-                    <Tooltip
-                      formatter={(value) => [`${value} tasks`, "Count"]}
-                      contentStyle={{
-                        backgroundColor: "rgba(255, 255, 255, 0.9)",
-                        border: "1px solid #ccc",
-                        borderRadius: "4px",
-                        padding: "10px",
-                      }}
-                    />
-                    <Legend />
-                  </RechartsPieChart>
-                </ResponsiveContainer>
+                <div className="flex w-full items-center justify-center gap-10">
+                  {/* 🥧 PIE CHART ON LEFT */}
+                  <ResponsiveContainer width="60%" height={300}>
+                    <RechartsPieChart>
+                      <Pie
+                        data={statusData}
+                        cx="50%"
+                        cy="50%"
+                        labelLine={false}
+                        outerRadius={90}
+                        dataKey="value"
+                        nameKey="name"
+                      >
+                        {statusData.map((_, index) => (
+                          <Cell
+                            key={`cell-${index}`}
+                            fill={COLORS[index % COLORS.length]}
+                          />
+                        ))}
+                      </Pie>
+
+                      {/* 🧠 CUSTOM TOOLTIP */}
+                      <Tooltip
+                        content={({ active, payload }) => {
+                          if (active && payload && payload.length) {
+                            const data = payload[0];
+                            const total = statusData.reduce(
+                              (acc, item) => acc + item.value,
+                              0,
+                            );
+                            const percentage = (
+                              (data.value / total) *
+                              100
+                            ).toFixed(1);
+
+                            return (
+                              <div
+                                className="bg-white shadow-md rounded-md p-3 border border-gray-200 text-sm"
+                                style={{ lineHeight: "1.5" }}
+                              >
+                                <p className="font-semibold text-gray-800">
+                                  {data.name}
+                                </p>
+                                <p className="text-gray-600">
+                                  <span className="font-medium">Count:</span>{" "}
+                                  {data.value}
+                                </p>
+                                <p className="text-gray-600">
+                                  <span className="font-medium">
+                                    Percentage:
+                                  </span>{" "}
+                                  {percentage}%
+                                </p>
+                              </div>
+                            );
+                          }
+                          return null;
+                        }}
+                      />
+                    </RechartsPieChart>
+                  </ResponsiveContainer>
+
+                  {/* 🧾 LEGEND ON RIGHT */}
+                  <div className="flex flex-col gap-2 text-sm">
+                    {statusData.map((entry, index) => (
+                      <div key={index} className="flex items-center gap-2">
+                        <div
+                          className="w-3 h-3 rounded-full"
+                          style={{
+                            backgroundColor: COLORS[index % COLORS.length],
+                          }}
+                        ></div>
+                        <span className="font-medium text-gray-700">
+                          {entry.name}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               ) : (
                 <div className="flex items-center justify-center h-full text-gray-500">
                   No data available for the selected{" "}

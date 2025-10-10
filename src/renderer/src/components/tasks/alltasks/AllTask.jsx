@@ -87,15 +87,16 @@ const AllTask = () => {
 
     // Apply search filter
     if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase();
+      const query = searchQuery.toLowerCase().trim().replace(/\s+/g, " ");
       filtered = filtered.filter((task) => {
-        const taskName = task.name?.toLowerCase() || "";
+        const taskName = (task.name || "").toLowerCase();
         const user = userData?.find((u) => u.id === task.user_id);
         const fullName = user
           ? [user.f_name, user.m_name, user.l_name]
               .filter(Boolean)
               .join(" ")
               .toLowerCase()
+              .replace(/\s+/g, " ")
           : "";
         return taskName.includes(query) || fullName.includes(query);
       });
@@ -372,6 +373,7 @@ const AllTask = () => {
               <option value="IN_PROGRESS">IN PROGRESS</option>
               <option value="BREAK">BREAK</option>
               <option value="IN_REVIEW">IN REVIEW</option>
+              <option value="ONHOLD">ON HOLD</option>
               <option value="VALIDATE_COMPLETE">VALIDATE & COMPLETED</option>
               <option value="COMPLETE_OTHER">COMPLETED(TECHNICAL ISSUE)</option>
               <option value="COMPLETE">COMPLETED</option>

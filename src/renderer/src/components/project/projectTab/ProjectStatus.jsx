@@ -8,12 +8,13 @@ import Overview from "./OverView";
 import Team from "./TeamTab";
 import TimeLine from "./TimelineTab";
 import Service from "../../../api/configAPI";
-import RFI from "../../rfi/RFI"
-import Submittals from "../../submittals/Submittals"
-import Notes from "../../notes/Notes"
-import CO from "../../changeOrder/CO"
+import RFI from "../../rfi/RFI";
+import Submittals from "../../submittals/Submittals";
+import Notes from "../../notes/Notes";
+import CO from "../../changeOrder/CO";
 const ProjectStatus = ({ projectId, onClose }) => {
   const [activeTab, setActiveTab] = useState("projectDetail");
+  const [files, setFiles] = useState([]);
   const [projectData, setProjectData] = useState(null);
   const [filteredData, setFilteredData] = useState(null);
   const [sortBy, setSortBy] = useState("stage_date");
@@ -71,7 +72,7 @@ const ProjectStatus = ({ projectId, onClose }) => {
           (task.tasks || []).map((subTask) => ({
             ...subTask,
             projectId,
-          }))
+          })),
         );
     }
     return taskData;
@@ -114,7 +115,7 @@ const ProjectStatus = ({ projectId, onClose }) => {
             task.workingHourTask?.reduce(
               (innerSum, innerTask) =>
                 innerSum + (Number(innerTask.duration) || 0),
-              0
+              0,
             ) || 0;
           return sum + taskDuration;
         }, 0);
@@ -124,7 +125,7 @@ const ProjectStatus = ({ projectId, onClose }) => {
           taskCount: userTasks.length,
           totalAssignedHours: userTasks.reduce(
             (sum, task) => sum + parseDuration(task.duration),
-            0
+            0,
           ),
           totalWorkedHours: (totalWorkingHourTasks / 60).toFixed(2),
         };
@@ -151,7 +152,7 @@ const ProjectStatus = ({ projectId, onClose }) => {
       const takenHours =
         task.workingHourTask?.reduce(
           (sum, innerTask) => sum + (Number(innerTask.duration) || 0),
-          0
+          0,
         ) || 0;
 
       let progress = assignedHours
@@ -180,6 +181,18 @@ const ProjectStatus = ({ projectId, onClose }) => {
       };
     });
   }, [projectTasks]);
+
+  const fetchFilesByProjectId = async () => {
+    const response = await Service.getFilesByProjectId(projectId);
+    console.log("Fetched Files:", response.data);
+    setFiles(response.data);
+  };
+
+  useEffect(() => {
+    if (projectId) {
+      fetchFilesByProjectId(projectId);
+    }
+  }, [projectId]);
 
   // Apply date filtering
   const applyDateFilter = useCallback(
@@ -213,7 +226,7 @@ const ProjectStatus = ({ projectId, onClose }) => {
             const filterStartDate = new Date(
               dateFilter.year,
               dateFilter.month,
-              1
+              1,
             ).getTime();
             const filterEndDate = new Date(
               dateFilter.year,
@@ -222,7 +235,7 @@ const ProjectStatus = ({ projectId, onClose }) => {
               23,
               59,
               59,
-              999
+              999,
             ).getTime();
             return (
               (taskStartDate >= filterStartDate &&
@@ -242,7 +255,7 @@ const ProjectStatus = ({ projectId, onClose }) => {
               23,
               59,
               59,
-              999
+              999,
             ).getTime();
             return (
               (taskStartDate >= filterStartDate &&
@@ -262,7 +275,7 @@ const ProjectStatus = ({ projectId, onClose }) => {
             const filterStartDate = new Date(
               dateFilter.year,
               dateFilter.startMonth,
-              1
+              1,
             ).getTime();
             const filterEndDate = new Date(
               dateFilter.year,
@@ -271,7 +284,7 @@ const ProjectStatus = ({ projectId, onClose }) => {
               23,
               59,
               59,
-              999
+              999,
             ).getTime();
             return (
               (taskStartDate >= filterStartDate &&
@@ -292,7 +305,7 @@ const ProjectStatus = ({ projectId, onClose }) => {
               23,
               59,
               59,
-              999
+              999,
             );
             return (
               (taskStartDate >= filterStartDate &&
@@ -311,7 +324,7 @@ const ProjectStatus = ({ projectId, onClose }) => {
         }
       });
     },
-    [dateFilter]
+    [dateFilter],
   );
 
   // Compute filtered Gantt data
@@ -324,7 +337,7 @@ const ProjectStatus = ({ projectId, onClose }) => {
       filtered = filtered.filter(
         (task) =>
           task.name.toLowerCase().includes(lowerSearchTerm) ||
-          task.username.toLowerCase().includes(lowerSearchTerm)
+          task.username.toLowerCase().includes(lowerSearchTerm),
       );
     }
 
@@ -390,7 +403,7 @@ const ProjectStatus = ({ projectId, onClose }) => {
   const minDate = useMemo(() => {
     return projectTasks.length > 0
       ? Math.min(
-          ...projectTasks.map((task) => new Date(task.start_date).getTime())
+          ...projectTasks.map((task) => new Date(task.start_date).getTime()),
         )
       : new Date().getTime();
   }, [projectTasks]);
@@ -398,7 +411,7 @@ const ProjectStatus = ({ projectId, onClose }) => {
   const maxDate = useMemo(() => {
     return projectTasks.length > 0
       ? Math.max(
-          ...projectTasks.map((task) => new Date(task.due_date).getTime())
+          ...projectTasks.map((task) => new Date(task.due_date).getTime()),
         )
       : new Date().getTime();
   }, [projectTasks]);
@@ -410,7 +423,9 @@ const ProjectStatus = ({ projectId, onClose }) => {
   const typeColors = useMemo(() => {
     const types = [
       ...new Set(
-        projectTasks.map((task) => (task.name || "").split(" ")[0] || "Unknown")
+        projectTasks.map(
+          (task) => (task.name || "").split(" ")[0] || "Unknown",
+        ),
       ),
     ];
     const colors = [
@@ -510,6 +525,7 @@ const ProjectStatus = ({ projectId, onClose }) => {
               <GetProject
                 projectId={projectId}
                 onClose={onClose}
+                files={files}
                 projectData={projectData}
                 getProject={getProject}
               />

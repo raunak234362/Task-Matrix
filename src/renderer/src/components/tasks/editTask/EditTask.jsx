@@ -290,12 +290,12 @@ const EditTask = ({ onClose, task }) => {
               options={[
                 { label: "ASSIGNED", value: "ASSIGNED" },
                 { label: "IN PROGRESS", value: "IN_PROGRESS" },
-                { label: "ON HOLD", value: "ONHOLD" },
                 { label: "BREAK", value: "BREAK" },
                 { label: "IN REVIEW", value: "IN_REVIEW" },
                 { label: "RE-WORK", value: "REWORK" },
                 { label: "COMPLETED", value: "COMPLETE" },
                 { label: "VALIDATE & COMPLETED", value: "VALIDATE_COMPLETE" },
+                { label: "ON HOLD", value: "ONHOLD" },
                 {
                   label: "COMPLETED(TECHNICAL ISSUE)",
                   value: "COMPLETE_OTHER",

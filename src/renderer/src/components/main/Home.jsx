@@ -62,8 +62,12 @@ const Home = () => {
 
   const completedTasks = useMemo(
     () =>
-      tasks.filter((task) => task?.status?.toUpperCase() === "COMPLETE")
-        ?.length || 0,
+      tasks.filter(
+        (task) =>
+          task?.status?.toUpperCase() === "COMPLETE" ||
+          task?.status?.toUpperCase() === "VALIDATE_COMPLETE" ||
+          task?.status?.toUpperCase() === "COMPLETE_OTHER",
+      )?.length || 0,
     [tasks],
   );
 

@@ -7,7 +7,7 @@ import { useState } from "react"
 import GroupDetail from "./GroupDetail"
 
 const ChatHead = ({ contact, onBack }) => {
-  console.log("Contact in ChatHead:", contact)
+  // console.log("Contact in ChatHead:", contact)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [selectedGroup, setSelectedGroup] = useState(null)
   const group = contact?.group
@@ -17,7 +17,7 @@ const ChatHead = ({ contact, onBack }) => {
     setSelectedGroup(group)
     setIsModalOpen(true)
   }
-console.log("Selected group in ChatHead:", selectedGroup)
+// console.log("Selected group in ChatHead:", selectedGroup)
   const handleCloseModal = () => {
     setIsModalOpen(false)
     setSelectedGroup(null)

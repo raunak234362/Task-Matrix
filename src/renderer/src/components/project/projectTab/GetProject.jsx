@@ -16,6 +16,7 @@ import {
 import EditProject from "./EditProject";
 import Service from "../../../api/configAPI";
 import AddWB from "../wb/AddWB";
+import RenderFiles from "../RenderFiles";
 
 // UI Components
 const Button = ({
@@ -118,14 +119,16 @@ const Tabs = ({ tabs, activeTab, onChange }) => {
 };
 
 // Main Component
-const GetProject = ({ projectId, projectData, getProject, onClose }) => {
+const GetProject = ({ projectId, projectData, getProject, onClose, files }) => {
   const [activeTab, setActiveTab] = useState("details");
 
   const [selectedEditProject, setSelectedEditProject] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProjectStatus, setSelectedProjectStatus] = useState(null);
   const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
-
+  const [isAddFilesModalOpen, setIsAddFilesModalOpen] = useState(false);
+  const handleAddFilesClick = () => setIsAddFilesModalOpen(true);
+  const handleAddFilesClose = () => setIsAddFilesModalOpen(false);
   const handleEditClick = () => {
     setIsModalOpen(true);
     setSelectedEditProject(projectData);
@@ -148,7 +151,7 @@ const GetProject = ({ projectId, projectData, getProject, onClose }) => {
 
   const tabs = [
     { id: "details", label: "Details & Fabricator" },
-    { id: "files", label: "Files" },
+    { id: "files", label: "Document" },
   ];
 
   const getStatusVariant = (status) => {
@@ -212,13 +215,13 @@ const GetProject = ({ projectId, projectData, getProject, onClose }) => {
                   <Badge variant={getStatusVariant(projectData?.status)}>
                     {projectData?.status || "Not available"}
                   </Badge>
-                  <Button
+                  {/* <Button
                     size="sm"
                     variant="ghost"
                     onClick={() => handleStatusView(projectId)}
                   >
                     View Details
-                  </Button>
+                  </Button> */}
                 </div>
               </div>
               <div>
@@ -267,14 +270,14 @@ const GetProject = ({ projectId, projectData, getProject, onClose }) => {
                   {projectData?.stage || "Not available"}
                 </p>
               </div>
-              <div>
+              {/* <div>
                 <h4 className="text-sm font-medium text-gray-500 mb-1">
                   Tools
                 </h4>
                 <p className="text-gray-800 font-semibold">
                   {projectData?.tools || "Not available"}
                 </p>
-              </div>
+              </div> */}
               {/* <div className="grid grid-cols-3 gap-4">
                 <div>
                   <h4 className="text-sm font-medium text-gray-500 mb-1">
@@ -301,62 +304,86 @@ const GetProject = ({ projectId, projectData, getProject, onClose }) => {
                   </p>
                 </div>
               </div> */}
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-rows-2 gap-5">
+                {/* Connection Design Scope */}
                 <div>
-                  <h4 className="text-sm font-medium text-gray-500 mb-1">
-                    Main Design
-                  </h4>
-                  <Badge
-                    variant={
-                      projectData?.connectionDesign ? "success" : "default"
-                    }
-                  >
-                    {projectData?.connectionDesign
-                      ? "Required"
-                      : "Not required"}
-                  </Badge>
+                  <h2 className="text-sm font-medium text-gray-800 mb-1">
+                    Connection Design Scope
+                  </h2>
+                  <div className="flex flex-row space-x-5 mt-2 w-full">
+                    {/* Main Design */}
+                    <div>
+                      <h4
+                        className={`text-sm font-medium mb-1  ${
+                          projectData?.connectionDesign
+                            ? "text-green-600 bg-green-200/70 rounded-xl px-2 py-1"
+                            : "text-red-600 bg-red-200/70 rounded-xl px-2 py-1"
+                        }`}
+                      >
+                        Main Design
+                      </h4>
+                    </div>
+
+                    {/* Misc Design */}
+                    <div>
+                      <h4
+                        className={`text-sm font-medium mb-1  ${
+                          projectData?.miscDesign
+                            ? "text-green-600 bg-green-200/70 rounded-xl px-2 py-1"
+                            : "text-red-600 bg-red-200/70 rounded-xl px-2 py-1"
+                        }`}
+                      >
+                        Misc Design
+                      </h4>
+                    </div>
+
+                    {/* Customer Design */}
+                    <div>
+                      <h4
+                        className={`text-sm font-medium mb-1  ${
+                          projectData?.customerDesign
+                            ? "text-green-600 bg-green-200/70 rounded-xl px-2 py-1"
+                            : "text-red-600 bg-red-200/70 rounded-xl px-2 py-1"
+                        }`}
+                      >
+                        Connection Design
+                      </h4>
+                    </div>
+                  </div>
                 </div>
+
+                {/* Detailing Scope */}
                 <div>
-                  <h4 className="text-sm font-medium text-gray-500 mb-1">
-                    Misc Design
-                  </h4>
-                  <Badge
-                    variant={projectData?.miscDesign ? "success" : "default"}
-                  >
-                    {projectData?.miscDesign ? "Required" : "Not required"}
-                  </Badge>
-                </div>
-                <div>
-                  <h4 className="text-sm font-medium text-gray-500 mb-1">
-                    Connection Design
-                  </h4>
-                  <Badge
-                    variant={
-                      projectData?.customerDesign ? "success" : "default"
-                    }
-                  >
-                    {projectData?.customerDesign ? "Required" : "Not required"}
-                  </Badge>
-                </div>
-                <div>
-                  <h4 className="text-sm font-medium text-gray-500 mb-1">
-                    Main Steel
-                  </h4>
-                  <Badge
-                    variant={projectData?.detailingMain ? "success" : "default"}
-                  >
-                    {projectData?.detailingMain ? "Required" : "Not required"}
-                  </Badge>
-                </div>
-                <div>
-                  <h4 className="text-sm font-medium text-gray-500 mb-1">
-                    Miscellaneous Steel
-                  </h4>
-                  <Badge
-                    variant={projectData?.detailingMisc ? "success" : "default"}
-                  >
-                    {projectData?.detailingMisc ? "Required" : "Not required"}
-                  </Badge>
+                  <h2 className="text-sm font-medium text-gray-800 mb-1">
+                    Detailing Scope
+                  </h2>
+                  <div className="flex flex-row space-x-5 mt-2 w-full">
+                    {/* Main Steel */}
+                    <div>
+                      <h4
+                        className={`text-sm font-medium mb-1  ${
+                          projectData?.detailingMain
+                            ? "text-green-600 bg-green-200/70 rounded-xl px-2 py-1"
+                            : "text-red-600 bg-red-200/70 rounded-xl px-2 py-1"
+                        }`}
+                      >
+                        Main Steel
+                      </h4>
+                    </div>
+
+                    {/* Miscellaneous Steel */}
+                    <div>
+                      <h4
+                        className={`text-sm font-medium mb-1  ${
+                          projectData?.detailingMisc
+                            ? "text-green-600 bg-green-200/70 rounded-xl px-2 py-1"
+                            : "text-red-600 bg-red-200/70 rounded-xl px-2 py-1"
+                        }`}
+                      >
+                        Miscellaneous Steel
+                      </h4>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -453,50 +480,12 @@ const GetProject = ({ projectId, projectData, getProject, onClose }) => {
     </div>
   );
 
-  const renderFiles = () => (
-    <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <h4 className="text-sm font-medium text-gray-700">Project Files</h4>
-        {/* <Button size="sm" variant="outline">
-          <Plus size={14} />
-          Add Files
-        </Button> */}
-      </div>
-      {Array.isArray(projectData?.files) && projectData?.files.length > 0 ? (
-        <div className="grid grid-cols-1 gap-2">
-          {projectData?.files?.map((file, index) => (
-            <a
-              key={index}
-              href={`${
-                import.meta.env.VITE_BASE_URL
-              }/api/project/projects/viewfile/${projectId}/${file.id}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 p-3 rounded-lg border border-gray-100 hover:bg-gray-50 transition-colors"
-            >
-              <FileText size={18} className="text-teal-500" />
-              <div>
-                <p className="text-gray-800 text-sm font-medium">
-                  {file.originalName || `File ${index + 1}`}
-                </p>
-                <p className="text-xs text-gray-500">
-                  Added on {new Date().toLocaleDateString()}
-                </p>
-              </div>
-              <ChevronRight size={16} className="text-gray-400 ml-auto" />
-            </a>
-          ))}
-        </div>
-      ) : (
-        <div className="text-center py-8 border border-dashed border-gray-200 rounded-lg">
-          <p className="text-gray-500">No files available for this project</p>
-          <Button size="sm" variant="ghost" className="mt-2">
-            <Plus size={14} />
-            Upload Files
-          </Button>
-        </div>
-      )}
-    </div>
+  const renderFilesTab = () => (
+    <RenderFiles
+      files={files}
+      onAddFilesClick={handleAddFilesClick}
+      formatDate={formatDate}
+    />
   );
 
   const renderTabContent = () => {
@@ -504,7 +493,7 @@ const GetProject = ({ projectId, projectData, getProject, onClose }) => {
       case "details":
         return renderDetailsAndFabricator();
       case "files":
-        return renderFiles();
+        return renderFilesTab();
       default:
         return renderDetailsAndFabricator();
     }

@@ -327,7 +327,10 @@ class Service {
       console.log(response.data);
       return response.data; // Return the response data
     } catch (error) {
-      toast.error("Failed to add task. Please try again.",error.response.data.message);
+      toast.error(
+        "Failed to add task. Please try again.",
+        error.response.data.message,
+      );
       console.log("Error in adding Task: ", error.response.data.message);
       throw error; // Rethrow the error after logging
     }
@@ -395,6 +398,23 @@ class Service {
       return response.data.data;
     } catch (error) {
       console.log("Error in getting Task Record: ", error);
+      throw error;
+    }
+  }
+  static async getFilesByProjectId(projectID) {
+    const token = sessionStorage.getItem("token");
+    try {
+      const response = await api.get(
+        `/api/designDrawings/designdrawing/project/${projectID}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+      return response.data;
+    } catch (error) {
+      console.log("Error in getting Files by Project ID: ", error);
       throw error;
     }
   }
@@ -1130,15 +1150,19 @@ class Service {
   }
 
   //adding estimation line item group
-  static async addEstimationLineItemGroup(estimationId,data) {
+  static async addEstimationLineItemGroup(estimationId, data) {
     const token = sessionStorage.getItem("token");
     try {
-      const response = await api.post(`/api/lineItemGroup/add/${estimationId}`, data, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
+      const response = await api.post(
+        `/api/lineItemGroup/add/${estimationId}`,
+        data,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
         },
-      });
+      );
       return response.data;
     } catch (error) {
       console.log("Error adding estimation line item group:", error);
@@ -1153,7 +1177,6 @@ class Service {
     try {
       const response = await api.get(`/api/lineItemGroup/all/${estimationId}`, {
         headers: {
-  
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
@@ -1169,12 +1192,15 @@ class Service {
   static async deleteEstimationTaskLineItemsById(lineItemID) {
     const token = sessionStorage.getItem("token");
     try {
-      const response = await api.delete(`/api/lineItemGroup/delete/${lineItemID}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
+      const response = await api.delete(
+        `/api/lineItemGroup/delete/${lineItemID}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
         },
-      });
+      );
       return response.data;
     } catch (error) {
       console.log("Error deleting line items:", error);
@@ -1183,10 +1209,7 @@ class Service {
   }
 
   //update Estimation Task Line Items by ID
-  static async updateEstimationTaskLineItemsById(
-    lineItemID,
-    lineItemData
-  ) {
+  static async updateEstimationTaskLineItemsById(lineItemID, lineItemData) {
     const token = sessionStorage.getItem("token");
     try {
       const response = await api.patch(
@@ -1197,7 +1220,7 @@ class Service {
             "Content-Type": "Application/json",
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
       return response.data;
     } catch (error) {
@@ -1205,8 +1228,6 @@ class Service {
       throw error;
     }
   }
-
-  
 
   //Calendar API
   // static async fetchCalendar(date, user) {
