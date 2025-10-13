@@ -419,6 +419,23 @@ class Service {
     }
   }
 
+  //Hours assigned & Taken APIs
+  static async getAssignedHours() {
+    const token = sessionStorage.getItem("token");
+    try {
+      const response = await api.get(`/api/stats/dailyWorkingHours/`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      console.log("Assigned Hours: ", response.data);
+      return response.data.data;
+    } catch (error) {
+      console.log("Error in getting Assigned Hours: ", error);
+    }
+  }
+
   static async getWorkHours(task_id) {
     const token = sessionStorage.getItem("token");
     try {

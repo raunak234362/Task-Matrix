@@ -4,18 +4,19 @@
 /* eslint-disable react/jsx-key */
 import React, { useMemo, useEffect, useState } from "react";
 import { useTable, useSortBy, usePagination } from "react-table";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import SelectedTask from "./SelectedTask";
 import Button from "../../fields/Button";
 import Service from "../../../api/configAPI";
 import DateFilter from "../../../util/DateFilter";
+import { CustomSelect } from "../..";
 
 const AllTask = () => {
-  const dispatch = useDispatch();
   const tasks = useSelector((state) => state.taskData.taskData);
   const projects = useSelector((state) => state.projectData.projectData);
   const userData = useSelector((state) => state.userData.staffData);
   const userType = useSelector((state) => state.userData?.userType);
+
   const [taskID, setTaskID] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState();
@@ -25,14 +26,15 @@ const AllTask = () => {
   const [filters, setFilters] = useState({
     project: "",
     status: "",
+    user: "", // ✅ added missing user filter key
   });
 
   const handleSearch = (e) => setSearchQuery(e.target.value);
 
+  // ✅ Filtering logic
   useEffect(() => {
     let filtered = [...tasks];
 
-    // Apply project filter
     if (filters.project) {
       filtered = filtered.filter((task) => {
         const project = projects.find((p) => p.id === task.project_id);
@@ -40,54 +42,44 @@ const AllTask = () => {
       });
     }
 
-    // Apply status filter
     if (filters.status) {
       filtered = filtered.filter((task) => task.status === filters.status);
     }
 
-    // Apply date filter
+    // date filter (same as yours)
     if (dateFilter.type !== "all") {
       filtered = filtered.filter((task) => {
         const dueDate = new Date(task.due_date);
-
         if (dateFilter.type === "month") {
           return (
             dueDate.getFullYear() === dateFilter.year &&
             dueDate.getMonth() === dateFilter.month
           );
         }
-
-        if (dateFilter.type === "year") {
+        if (dateFilter.type === "year")
           return dueDate.getFullYear() === dateFilter.year;
-        }
-
-        if (dateFilter.type === "week") {
+        if (dateFilter.type === "week")
           return (
-            dueDate.getTime() >= dateFilter.weekStart &&
-            dueDate.getTime() <= dateFilter.weekEnd
+            dueDate >= dateFilter.weekStart && dueDate <= dateFilter.weekEnd
           );
-        }
-
         if (dateFilter.type === "range") {
           const year = dateFilter.year ?? new Date().getFullYear();
           const start = new Date(year, dateFilter.startMonth, 1);
           const end = new Date(year, dateFilter.endMonth + 1, 0, 23, 59, 59);
           return dueDate >= start && dueDate <= end;
         }
-
         if (dateFilter.type === "dateRange") {
           const start = new Date(dateFilter.startDate);
           const end = new Date(dateFilter.endDate);
           return dueDate >= start && dueDate <= end;
         }
-
         return true;
       });
     }
 
-    // Apply search filter
-    if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase().trim().replace(/\s+/g, " ");
+    // ✅ search + user filter fixed
+    if (searchQuery.trim() || filters.user) {
+      const query = searchQuery.toLowerCase().trim();
       filtered = filtered.filter((task) => {
         const taskName = (task.name || "").toLowerCase();
         const user = userData?.find((u) => u.id === task.user_id);
@@ -96,78 +88,25 @@ const AllTask = () => {
               .filter(Boolean)
               .join(" ")
               .toLowerCase()
-              .replace(/\s+/g, " ")
           : "";
-        return taskName.includes(query) || fullName.includes(query);
+
+        const matchBySearch =
+          !query || taskName.includes(query) || fullName.includes(query);
+        const matchByUser =
+          !filters.user ||
+          task.user_id?.toString() === filters.user?.toString();
+
+        return matchBySearch && matchByUser;
       });
     }
 
     setTaskFilter(filtered);
-  }, [
-    tasks,
-    dateFilter,
-    searchQuery,
-    filters.project,
-    filters.status,
-    userData,
-    projects,
-  ]);
+  }, [tasks, dateFilter, searchQuery, filters, userData, projects]);
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
     setFilters((prev) => ({ ...prev, [name]: value }));
   };
-
-  function statusColor(status) {
-    switch (status) {
-      case "IN_PROGRESS":
-        return "bg-yellow-200 border-yellow-800 text-yellow-800";
-      case "ASSIGNED":
-        return "bg-orange-200 border-orange-800 text-orange-800";
-      case "BREAK":
-        return "bg-red-200 border-red-500 text-red-500";
-      case "IN_REVIEW":
-        return "bg-blue-200 border-blue-600 text-blue-500";
-      case "COMPLETE":
-        return "bg-green-200 border-green-500 text-green-800";
-      case "COMPLETE_OTHER":
-        return "bg-brown-200 border-brown-500 text-brown-800";
-      case "VALIDATE_COMPLETE":
-        return "bg-lime-200 border-lime-500 text-lime-800";
-      default:
-        return "text-gray-700";
-    }
-  }
-
-  function color(priority) {
-    switch (priority) {
-      case 0:
-        return "bg-green-200 border-green-800 text-green-800";
-      case 1:
-        return "bg-yellow-200 border-yellow-800 text-yellow-800";
-      case 2:
-        return "bg-purple-200 border-purple-800 text-purple-800";
-      case 3:
-        return "bg-red-200 border-red-700 text-red-700";
-      default:
-        return "";
-    }
-  }
-
-  function setPriorityValue(value) {
-    switch (value) {
-      case 0:
-        return "LOW";
-      case 1:
-        return "MEDIUM";
-      case 2:
-        return "HIGH";
-      case 3:
-        return "CRITICAL";
-      default:
-        return "";
-    }
-  }
 
   const handleViewClick = async (taskId) => {
     try {
@@ -176,7 +115,7 @@ const AllTask = () => {
       setTaskID(taskId);
       setIsModalOpen(true);
     } catch (error) {
-      alert.error("Error fetching task details:", error);
+      console.error("Error fetching task details:", error);
     }
   };
 
@@ -185,18 +124,11 @@ const AllTask = () => {
     setTaskID(null);
   };
 
+  // ✅ Table setup (moved after hook so we can access pageIndex/pageSize)
   const data = useMemo(() => taskFilter, [taskFilter]);
-  const columns = useMemo(() => {
-    const cols = [
-      {
-        Header: "S.No",
-        id: "sno",
-        Cell: ({ row }) => {
-          // These values are read from the react-table instance state (in your component scope)
-          // Closure has access to pageIndex and pageSize
-          return row.index + 1 + pageIndex * pageSize;
-        },
-      },
+  const columns = useMemo(
+    () => [
+      
       {
         Header: "Project",
         accessor: (row) =>
@@ -217,61 +149,8 @@ const AllTask = () => {
         id: "assignedTo",
       },
       {
-        Header: "Project Manager",
-        accessor: (row) => {
-          if (typeof row.manager === "string") {
-            return row.manager;
-          } else if (row.manager && typeof row.manager === "object") {
-            return [row.manager.f_name, row.manager.m_name, row.manager.l_name]
-              .filter(Boolean)
-              .join(" ");
-          } else if (
-            row.project?.manager &&
-            typeof row.project.manager === "object"
-          ) {
-            return [
-              row.project.manager.f_name,
-              row.project.manager.m_name,
-              row.project.manager.l_name,
-            ]
-              .filter(Boolean)
-              .join(" ");
-          }
-          return "N/A";
-        },
-        id: "projectManager",
-        Cell: ({ value }) => (
-          <span className="px-2 py-1 text-gray-800">{value || "N/A"}</span>
-        ),
-      },
-      {
         Header: "Status",
         accessor: "status",
-        Cell: ({ value }) => {
-          const displayStatus =
-            value === "COMPLETE_OTHER" ? "Completed(T.I.)" : value;
-          return (
-            <span
-              className={`px-2 py-1 rounded-full border flex-nowrap ${statusColor(value)}`}
-            >
-              {displayStatus}
-            </span>
-          );
-        },
-      },
-      {
-        Header: "Priority",
-        accessor: "priority",
-        Cell: ({ value }) => (
-          <span className={`px-2 py-1 rounded-full border ${color(value)}`}>
-            {setPriorityValue(value)}
-          </span>
-        ),
-      },
-      {
-        Header: "Due Date",
-        accessor: "due_date",
-        Cell: ({ value }) => new Date(value).toLocaleDateString(),
       },
       {
         Header: "Allocated Hours",
@@ -279,9 +158,7 @@ const AllTask = () => {
         Cell: ({ value }) => {
           if (!value) return "N/A";
           const [h = "0", m = "0"] = value.split(":");
-          const hours = parseInt(h, 10);
-          const mins = parseInt(m, 10);
-          return `${hours} h ${mins} min`;
+          return `${parseInt(h)} h ${parseInt(m)} min`;
         },
       },
       {
@@ -289,28 +166,26 @@ const AllTask = () => {
         accessor: "taken_hours",
         Cell: ({ row }) => {
           const task = row.original;
-          const takenDuration = task?.workingHourTask?.find(
+          const taken = task?.workingHourTask?.find(
             (rec) => rec.task_id === task.id,
           )?.duration;
-          if (!takenDuration || isNaN(Number(takenDuration))) return "N/A";
-          const totalMinutes = parseInt(takenDuration, 10);
-          const hours = Math.floor(totalMinutes / 60);
-          const mins = totalMinutes % 60;
-          return `${hours} h ${mins} min`;
+          if (!taken) return "N/A";
+          const total = parseInt(taken, 10);
+          const h = Math.floor(total / 60);
+          const m = total % 60;
+          return `${h} h ${m} min`;
         },
       },
       {
         Header: "Actions",
         accessor: "actions",
-        disableSortBy: true,
         Cell: ({ row }) => (
           <Button onClick={() => handleViewClick(row.original.id)}>View</Button>
         ),
       },
-    ];
-
-    return cols;
-  }, [userType]);
+    ],
+    [],
+  );
 
   const {
     getTableProps,
@@ -338,16 +213,27 @@ const AllTask = () => {
   );
 
   return (
-    <div className="h-[fit] bg-white/70 rounded-lg shadow-md overflow-y-auto">
+    <div className="h-fit bg-white/70 rounded-lg shadow-md overflow-y-auto">
       <div className="p-4 my-2 space-y-2">
         <div className="flex flex-col md:flex-row items-center gap-4 mb-4 w-full">
-          <div className="flex gap-4 w-full">
-            <input
-              type="text"
-              placeholder="🔍 Task or Username"
-              className="border p-2 rounded-lg w-full"
-              value={searchQuery}
-              onChange={handleSearch}
+          <div className="flex gap-4 w-full z-40">
+            {/* ✅ CustomSelect for User */}
+            <CustomSelect
+              label="Select User"
+              name="user"
+              placeholder="Filter by User"
+              options={[
+                { label: "All Users", value: "" },
+                ...(userData?.map((user) => ({
+                  label: [user.f_name, user.m_name, user.l_name]
+                    .filter(Boolean)
+                    .join(" "),
+                  value: user.id?.toString(),
+                })) || []),
+              ]}
+              onChange={(_, value) => {
+                setFilters((prev) => ({ ...prev, user: value || "" }));
+              }}
             />
             <select
               name="project"
@@ -364,7 +250,7 @@ const AllTask = () => {
             </select>
             <select
               name="status"
-              value={filters?.status}
+              value={filters.status}
               onChange={handleFilterChange}
               className="border p-2 rounded-lg w-full"
             >
@@ -373,53 +259,49 @@ const AllTask = () => {
               <option value="IN_PROGRESS">IN PROGRESS</option>
               <option value="BREAK">BREAK</option>
               <option value="IN_REVIEW">IN REVIEW</option>
-              <option value="ONHOLD">ON HOLD</option>
               <option value="VALIDATE_COMPLETE">VALIDATE & COMPLETED</option>
-              <option value="COMPLETE_OTHER">COMPLETED(TECHNICAL ISSUE)</option>
+              <option value="COMPLETE_OTHER">
+                COMPLETED (TECHNICAL ISSUE)
+              </option>
               <option value="COMPLETE">COMPLETED</option>
             </select>
           </div>
           <DateFilter dateFilter={dateFilter} setDateFilter={setDateFilter} />
         </div>
 
-        <div className="overflow-x-auto overflow-y-auto h-[90vh] rounded-md border">
+        {/* ✅ Table */}
+        <div className="overflow-x-auto h-[90vh] border rounded-md">
           <table
             {...getTableProps()}
             className="min-w-full text-sm text-center border"
           >
-            <thead className="sticky top-0 bg-teal-200 z-10">
-              {headerGroups.map((headerGroup, headerGroupIdx) => {
-                const { key, ...restHeaderGroupProps } =
-                  headerGroup.getHeaderGroupProps();
-                return (
-                  <tr
-                    key={headerGroup.id || headerGroupIdx}
-                    {...restHeaderGroupProps}
-                  >
-                    {headerGroup.headers.map((column, colIdx) => {
-                      const { key, ...restHeaderProps } = column.getHeaderProps(
-                        column.getSortByToggleProps(),
-                      );
-                      return (
-                        <th
-                          key={column.id || colIdx}
-                          {...restHeaderProps}
-                          className="px-4 py-2 font-semibold border whitespace-nowrap"
-                        >
-                          {column.render("Header")}
-                          <span className="ml-1">
-                            {column.isSorted
-                              ? column.isSortedDesc
-                                ? " 🔽"
-                                : " 🔼"
-                              : ""}
-                          </span>
-                        </th>
-                      );
-                    })}
-                  </tr>
-                );
-              })}
+            <thead className="sticky top-0 z-10 bg-teal-200">
+              {headerGroups.map((headerGroup, headerGroupIdx) => (
+                <tr
+                  key={headerGroup.id || headerGroupIdx}
+                  {...headerGroup.getHeaderGroupProps()}
+                >
+                  {/* Add S.No header manually */}
+                  <th className="px-4 py-2 font-semibold border whitespace-nowrap">
+                    S.No
+                  </th>
+
+                  {headerGroup.headers.map((column, colIdx) => (
+                    <th
+                      key={column.id || colIdx}
+                      {...column.getHeaderProps(column.getSortByToggleProps())}
+                      className="px-4 py-2 font-semibold border whitespace-nowrap"
+                    >
+                      {column.render("Header")}
+                      {column.isSorted
+                        ? column.isSortedDesc
+                          ? " ↓"
+                          : " ↑"
+                        : ""}
+                    </th>
+                  ))}
+                </tr>
+              ))}
             </thead>
             <tbody {...getTableBodyProps()}>
               {page.length === 0 ? (
@@ -432,95 +314,30 @@ const AllTask = () => {
                   </td>
                 </tr>
               ) : (
-                page.map((row) => {
+                page.map((row, index) => {
                   prepareRow(row);
-                  const task = row.original;
-                  let allocatedMinutes = 0;
-                  if (task.duration) {
-                    const [h = "0", m = "0"] = task.duration.split(":");
-                    allocatedMinutes = parseInt(h) * 60 + parseInt(m);
-                  }
-                  const takenDuration = task?.workingHourTask?.find(
-                    (rec) => rec.task_id === task.id,
-                  )?.duration;
-                  const takenMinutes = takenDuration
-                    ? parseInt(takenDuration, 10)
-                    : 0;
-                  const highlightRow = takenMinutes - allocatedMinutes >= 15;
-
                   return (
                     <tr
+                      key={row.id}
                       {...row.getRowProps()}
-                      key={row.id || row.index}
-                      className={`hover:bg-teal-100 ${
-                        highlightRow ? "bg-red-100" : ""
-                      }`}
+                      className="hover:bg-teal-100"
                     >
-                      {row.cells.map((cell) => {
-                        const { key, ...restCellProps } = cell.getCellProps();
-                        return (
-                          <td
-                            key={key}
-                            {...restCellProps}
-                            className="px-4 py-2 border border-black/50"
-                          >
-                            {cell.render("Cell")}
-                          </td>
-                        );
-                      })}
+                      <td className="px-4 py-2 border">{index + 1}</td>
+                      {row.cells.map((cell) => (
+                        <td
+                          key={cell.id}
+                          {...cell.getCellProps()}
+                          className="px-4 py-2 border"
+                        >
+                          {cell.render("Cell")}
+                        </td>
+                      ))}
                     </tr>
                   );
                 })
               )}
             </tbody>
           </table>
-        </div>
-        <div className="flex justify-between items-center mt-1 px-4">
-          <div className="space-x-1">
-            <button
-              onClick={() => gotoPage(0)}
-              disabled={!canPreviousPage}
-              className="px-3 py-1 border rounded disabled:opacity-50"
-            >
-              {"<<"}
-            </button>
-            <button
-              onClick={() => previousPage()}
-              disabled={!canPreviousPage}
-              className="px-3 py-1 border rounded disabled:opacity-50"
-            >
-              {"<"}
-            </button>
-            <span className="text-sm">
-              Page <strong>{pageIndex + 1}</strong> of{" "}
-              <strong>{pageOptions.length}</strong>
-            </span>
-            <button
-              onClick={() => nextPage()}
-              disabled={!canNextPage}
-              className="px-3 py-1 border rounded disabled:opacity-50"
-            >
-              {">"}
-            </button>
-            <button
-              onClick={() => gotoPage(pageCount - 1)}
-              disabled={!canNextPage}
-              className="px-3 py-1 border rounded disabled:opacity-50"
-            >
-              {">>"}
-            </button>
-          </div>
-          <select
-            value={pageSize}
-            onChange={(e) => setPageSize(Number(e.target.value))}
-            className="border p-1 rounded"
-          >
-            {[15, 30, 45, 60].map((size) => (
-              <option key={size} value={size}>
-                Show {size}
-              </option>
-            ))}
-          </select>
         </div>
       </div>
 

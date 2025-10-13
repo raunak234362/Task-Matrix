@@ -1,9 +1,10 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import { LayoutList, ListChecks, MonitorPause } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { AddTask, AllTask, MyTask } from "../../components";
+import Service from "../../api/configAPI";
 
 const STATUS = {
   IN_PROGRESS: "IN_PROGRESS",
@@ -54,6 +55,15 @@ const TaskTab = () => {
         return null;
     }
   }
+
+  const fetchHours = async () => {
+    const response = await Service.getAssignedHours();
+    console.log("Fetched Hours:", response.data);
+  };
+
+  useEffect(() => {
+    fetchHours();
+  }, []);
 
   return (
     <div className="w-full">
