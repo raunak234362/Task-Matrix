@@ -358,13 +358,13 @@ const AllTask = () => {
               <option value="">All Projects</option>
               {projects?.map((proj) => (
                 <option key={proj.id} value={proj.name}>
-                  {proj.name}
+                  {proj?.name}
                 </option>
               ))}
             </select>
             <select
               name="status"
-              value={filters.status}
+              value={filters?.status}
               onChange={handleFilterChange}
               className="border p-2 rounded-lg w-full"
             >
