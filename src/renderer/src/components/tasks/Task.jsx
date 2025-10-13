@@ -18,7 +18,7 @@ import {
   Files,
   FolderKanban,
   FolderOpen,
-  Globe, 
+  Globe,
   Pause,
   Play,
   Square,
@@ -346,13 +346,16 @@ const Task = ({ taskId, fetchTaskData, setDisplay }) => {
                     </h2>
 
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                      <div className="flex flex-col">
-                        <span className="text-sm font-medium text-gray-500">
+                      <div>
+                        <h4 className="text-sm font-medium text-gray-500 mb-1">
                           Description
-                        </span>
-                        <span className="mt-1 text-lg">
-                          {tasks?.description}
-                        </span>
+                        </h4>
+                        <div
+                          className="text-gray-700 w-full text-sm md:text-base whitespace-normal text-right sm:text-left"
+                          dangerouslySetInnerHTML={{
+                            __html: tasks?.description || "N/A",
+                          }}
+                        />
                       </div>
 
                       <div className="flex flex-col">
@@ -519,14 +522,25 @@ const Task = ({ taskId, fetchTaskData, setDisplay }) => {
 
                       {showProjectDetail && (
                         <div className="grid grid-cols-1 gap-4 p-4 mt-2 bg-white rounded-lg md:grid-cols-2">
+                          {/* Description Section with HTML Rendering */}
+                          <div className="col-span-2 p-2 rounded-md hover:bg-blue-50">
+                            <div className="flex items-center gap-2 mb-1">
+                              <MdOutlineDescription className="text-blue-500 text-md" />
+                              <span className="font-medium text-gray-700">
+                                Description:
+                              </span>
+                            </div>
+                            <div
+                              className="text-gray-600 text-sm md:text-base whitespace-normal"
+                              dangerouslySetInnerHTML={{
+                                __html:
+                                  projectData?.description || "Not available",
+                              }}
+                            />
+                          </div>
+
+                          {/* Other Project Details */}
                           {[
-                            {
-                              label: "Description",
-                              value: projectData?.description,
-                              icon: (
-                                <MdOutlineDescription className="text-blue-500 text-md" />
-                              ),
-                            },
                             {
                               label: "Fabricator",
                               value: projectData?.fabricator?.fabName,
@@ -542,19 +556,12 @@ const Task = ({ taskId, fetchTaskData, setDisplay }) => {
                               ),
                             },
                             // {
-                            //   label: "Estimated Hours",
-                            //   value: projectData?.estimatedHours,
+                            //   label: "Stage",
+                            //   value: projectData?.stage,
                             //   icon: (
-                            //     <Clock4 className="text-blue-500 text-md" />
+                            //     <ChevronRight className="text-blue-500 text-md" />
                             //   ),
                             // },
-                            {
-                              label: "Stage",
-                              value: projectData?.stage,
-                              icon: (
-                                <ChevronRight className="text-blue-500 text-md" />
-                              ),
-                            },
                           ]?.map(({ label, value, icon }) => (
                             <div
                               key={label}
@@ -572,7 +579,7 @@ const Task = ({ taskId, fetchTaskData, setDisplay }) => {
                             </div>
                           ))}
 
-                          {/* Files section */}
+                          {/* Files Section */}
                           {Array.isArray(projectData?.files) &&
                             projectData?.files.length > 0 && (
                               <div className="col-span-2 p-2 mt-2 border-t">

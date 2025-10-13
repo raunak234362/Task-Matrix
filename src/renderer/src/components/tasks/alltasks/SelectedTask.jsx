@@ -32,7 +32,7 @@ const SelectedTask = ({ taskDetail, taskId, isOpen, onClose, setTasks }) => {
     state?.taskData?.taskData.filter((task) => task.id === taskId),
   );
   const task = taskData[0];
-  console.log("Task Data: ", task);
+  console.log("Task Data: ", taskDetail);
   const staffData = useSelector((state) => state?.userData?.staffData);
   const projectData = useSelector((state) =>
     state?.projectData?.projectData.find(
