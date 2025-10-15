@@ -399,7 +399,7 @@ const Home = () => {
               </div>
 
               {/* Charts Section */}
-              {userType === "system-admin" ? null : (
+              {userType !== "admin" ? null : (
                 <div className="bg-white rounded-lg shadow-md p-5 mb-8">
                   <h3 className="text-lg font-semibold text-gray-800 mb-4">
                     Project Analytics

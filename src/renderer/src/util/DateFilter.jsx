@@ -29,11 +29,17 @@ const DateFilter = ({ dateFilter, setDateFilter }) => {
   useEffect(() => {
     const { type } = dateFilter;
     if (
-      (type === "month" && dateFilter.year !== undefined && dateFilter.month !== undefined) ||
+      (type === "month" &&
+        dateFilter.year !== undefined &&
+        dateFilter.month !== undefined) ||
       (type === "year" && dateFilter.year !== undefined) ||
       (type === "week" && dateFilter.weekStart && dateFilter.weekEnd) ||
-      (type === "range" && dateFilter.startMonth !== undefined && dateFilter.endMonth !== undefined && dateFilter.year !== undefined) ||
+      (type === "range" &&
+        dateFilter.startMonth !== undefined &&
+        dateFilter.endMonth !== undefined &&
+        dateFilter.year !== undefined) ||
       (type === "dateRange" && dateFilter.startDate && dateFilter.endDate) ||
+      (type === "specificDate" && dateFilter.date) ||
       type === "all"
     ) {
       setShowFilterDropdown(false);
@@ -53,14 +59,16 @@ const DateFilter = ({ dateFilter, setDateFilter }) => {
             {dateFilter?.type === "all"
               ? "All Time"
               : dateFilter?.type === "month"
-              ? `${months[dateFilter.month]} ${dateFilter.year}`
-              : dateFilter?.type === "week"
-              ? `Week of ${new Date(dateFilter.weekStart).toLocaleDateString()}`
-              : dateFilter?.type === "range"
-              ? `${months[dateFilter.startMonth]} - ${months[dateFilter.endMonth]} ${dateFilter.year}`
-              : dateFilter?.type === "dateRange"
-              ? `${new Date(dateFilter.startDate).toLocaleDateString()} - ${new Date(dateFilter.endDate).toLocaleDateString()}`
-              : `Year ${dateFilter.year}`}
+                ? `${months[dateFilter.month]} ${dateFilter.year}`
+                : dateFilter?.type === "week"
+                  ? `Week of ${new Date(dateFilter.weekStart).toLocaleDateString()}`
+                  : dateFilter?.type === "range"
+                    ? `${months[dateFilter.startMonth]} - ${months[dateFilter.endMonth]} ${dateFilter.year}`
+                    : dateFilter?.type === "dateRange"
+                      ? `${new Date(dateFilter.startDate).toLocaleDateString()} - ${new Date(dateFilter.endDate).toLocaleDateString()}`
+                      : dateFilter?.type === "specificDate"
+                        ? `${new Date(dateFilter.date).toLocaleDateString()}`
+                        : `Year ${dateFilter.year}`}
             <ChevronDown size={16} />
           </button>
 
@@ -88,6 +96,7 @@ const DateFilter = ({ dateFilter, setDateFilter }) => {
                     <option value="year">By Year</option>
                     <option value="range">Month Range</option>
                     <option value="dateRange">Date Range</option>
+                    <option value="specificDate">Specific Date</option>
                   </select>
                 </div>
 
@@ -128,7 +137,9 @@ const DateFilter = ({ dateFilter, setDateFilter }) => {
                       className="w-full p-2 border border-gray-300 rounded-md text-sm"
                       value={
                         dateFilter.weekStart
-                          ? new Date(dateFilter.weekStart).toISOString().split("T")[0]
+                          ? new Date(dateFilter.weekStart)
+                              .toISOString()
+                              .split("T")[0]
                           : ""
                       }
                       onChange={(e) => {
@@ -233,7 +244,9 @@ const DateFilter = ({ dateFilter, setDateFilter }) => {
                         className="w-full p-2 border border-gray-300 rounded-md text-sm"
                         value={
                           dateFilter.startDate
-                            ? new Date(dateFilter.startDate).toISOString().split("T")[0]
+                            ? new Date(dateFilter.startDate)
+                                .toISOString()
+                                .split("T")[0]
                             : ""
                         }
                         onChange={(e) =>
@@ -253,7 +266,9 @@ const DateFilter = ({ dateFilter, setDateFilter }) => {
                         className="w-full p-2 border border-gray-300 rounded-md text-sm"
                         value={
                           dateFilter.endDate
-                            ? new Date(dateFilter.endDate).toISOString().split("T")[0]
+                            ? new Date(dateFilter.endDate)
+                                .toISOString()
+                                .split("T")[0]
                             : ""
                         }
                         onChange={(e) =>
@@ -265,6 +280,32 @@ const DateFilter = ({ dateFilter, setDateFilter }) => {
                       />
                     </div>
                   </>
+                )}
+
+                {/* Specific Date Input */}
+                {dateFilter?.type === "specificDate" && (
+                  <div className="mb-3">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Select Date
+                    </label>
+                    <input
+                      type="date"
+                      className="w-full p-2 border border-gray-300 rounded-md text-sm"
+                      value={
+                        dateFilter.date
+                          ? new Date(dateFilter.date)
+                              .toISOString()
+                              .split("T")[0]
+                          : ""
+                      }
+                      onChange={(e) =>
+                        setDateFilter({
+                          ...dateFilter,
+                          date: new Date(e.target.value).toISOString(),
+                        })
+                      }
+                    />
+                  </div>
                 )}
 
                 {/* ✅ Apply Button */}

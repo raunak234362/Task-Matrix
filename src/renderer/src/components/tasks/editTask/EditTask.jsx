@@ -149,9 +149,9 @@ const EditTask = ({ onClose, task }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-white h-[70vh] overflow-x-auto p-5 rounded-lg shadow-lg w-full md:w-[50vw] ">
-        <div className="flex justify-between my-5 bg-teal-200/50 p-2 rounded-lg">
-          <h2 className="text-2xl font-bold">Edit Task</h2>
+      <div className="bg-white h-[70%] overflow-x-auto p-2 rounded-lg shadow-lg w-full md:w-[50vw] ">
+        <div className="sticky top-0 z-10 flex md:flex-row flex-col items-center justify-between p-2 bg-gradient-to-r from-teal-400 to-teal-100 border-b rounded-md">
+          <h2 className="text-2xl font-bold text-white">Edit Task</h2>
           <button
             className="text-xl font-bold bg-teal-500/50 hover:bg-teal-700 text-white px-5 rounded-lg"
             onClick={onClose}
@@ -252,37 +252,6 @@ const EditTask = ({ onClose, task }) => {
             />
           </div>
 
-          {userType === "admin" && (
-            <div className="mt-1">
-              <div className="text-lg font-bold">Duration:</div>
-              <div className="flex flex-row w-1/5 gap-5">
-                <Input
-                  type="number"
-                  name="hour"
-                  label="HH"
-                  defaultValues={defaultHour}
-                  placeholder="HH"
-                  className="w-20"
-                  min={0}
-                  {...register("hour")}
-                />
-                <Input
-                  type="number"
-                  name="min"
-                  label="MM"
-                  placeholder="MM"
-                  className="w-20"
-                  min={0}
-                  max={60}
-                  {...register("min")}
-                />
-                {errors.min && (
-                  <p className="text-red-600">{errors.min.message}</p>
-                )}
-              </div>
-            </div>
-          )}
-
           <div className="">
             <CustomSelect
               label="Status:"
@@ -310,37 +279,6 @@ const EditTask = ({ onClose, task }) => {
               <p className="text-red-600">{errors.status.message}</p>
             )}
           </div>
-          {/* <div>
-            <CustomSelect
-              label="Stage:"
-              name="stage"
-              options={[
-                { label: "Select Stage", value: "" },
-                { label: "(RFI) Request for Information", value: "RFI" },
-                { label: "(IFA) Issue for Approval", value: "IFA" },
-                {
-                  label: "(BFA) Back from Approval/Returned App",
-                  value: "BFA",
-                },
-                {
-                  label: "(BFA-M) Back from Approval - Markup",
-                  value: "BFA_M",
-                },
-                { label: "(RIFA) Re-issue for Approval", value: "RIFA" },
-                { label: "(RBFA) Return Back from Approval", value: "RBFA" },
-                { label: "(IFC) Issue for Construction/DIF", value: "IFC" },
-                {
-                  label: "(BFC) Back from Construction/Drawing Revision",
-                  value: "BFC",
-                },
-                { label: "(RIFC) Re-issue for Construction", value: "RIFC" },
-                { label: "(REV) Revision", value: "REV" },
-                { label: "(CO#) Change Order", value: "CO" },
-              ]}
-              {...register("Stage")}
-              onChange={setValue}
-            />
-          </div> */}
           <div>
             <CustomSelect
               label="Stage:"
@@ -389,7 +327,36 @@ const EditTask = ({ onClose, task }) => {
               onChange={setValue}
             />
           </div>
-
+          {userType === "admin" && (
+            <div className="mt-1">
+              <div className="text-lg font-bold">Duration:</div>
+              <div className="flex flex-row w-1/5 gap-5">
+                <Input
+                  type="number"
+                  name="hour"
+                  label="HH"
+                  defaultValues={defaultHour}
+                  placeholder="HH"
+                  className="w-20"
+                  min={0}
+                  {...register("hour")}
+                />
+                <Input
+                  type="number"
+                  name="min"
+                  label="MM"
+                  placeholder="MM"
+                  className="w-20"
+                  min={0}
+                  max={60}
+                  {...register("min")}
+                />
+                {errors.min && (
+                  <p className="text-red-600">{errors.min.message}</p>
+                )}
+              </div>
+            </div>
+          )}
           <Input
             label="Start Date:"
             name="start_date"

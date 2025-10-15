@@ -111,7 +111,7 @@ const FabricatorCharts = ({ segregateProject }) => {
 
                         return (
                             <div key={fabricatorIndex} className="border p-4 rounded-lg shadow-md bg-white">
-                                <h3 className="text-lg font-bold mb-4">{fabricator}</h3>
+                                <h3 className="text-lg font-bold mb-4">Fabricator:-{fabricator}</h3>
                                 {chartType === 'bar' ? (
                                     <Bar
                                         data={barData}

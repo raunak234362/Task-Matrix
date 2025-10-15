@@ -256,8 +256,13 @@ const SelectedTask = ({ taskDetail, taskId, isOpen, onClose, setTasks }) => {
                 <h3 className="mb-4 text-lg font-semibold text-gray-800">
                   Description
                 </h3>
-                <p className="text-gray-700 whitespace-pre-line">
-                  {task?.description || "No description provided."}
+                <p
+                  className="text-gray-700 whitespace-pre-line"
+                  style={{ whiteSpace: "pre-line" }}
+                >
+                  {(task?.description || "No description provided.")
+                    .replace(/\s+/g, " ")
+                    .trim()}
                 </p>
               </div>
 
@@ -300,7 +305,6 @@ const SelectedTask = ({ taskDetail, taskId, isOpen, onClose, setTasks }) => {
                         </p>
                         <p className="text-gray-800">
                           {taskDetail?.mileStone?.subject}
-                          
                         </p>
                       </div>
                     </div>

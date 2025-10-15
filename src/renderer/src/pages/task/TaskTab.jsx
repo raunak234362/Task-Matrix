@@ -18,6 +18,7 @@ const STATUS = {
 
 const TaskTab = () => {
   const userType = sessionStorage.getItem("userType");
+  const [hourTaken, setHourTaken] = useState();
   const [activeTab, setActiveTab] = useState(
     userType === "user" ? "myTask" : "allTasks",
   );
@@ -58,11 +59,18 @@ const TaskTab = () => {
 
   const fetchHours = async () => {
     const response = await Service.getAssignedHours();
-    console.log("Fetched Hours:", response.data);
+    setHourTaken(response);
+    console.log("Fetched Hours:", response);
   };
+  console.log("Hour Taken", hourTaken);
 
   useEffect(() => {
     fetchHours();
+    const onHoursUpdated = () => {
+      fetchHours();
+    };
+    window.addEventListener("hours-updated", onHoursUpdated);
+    return () => window.removeEventListener("hours-updated", onHoursUpdated);
   }, []);
 
   return (
@@ -70,7 +78,73 @@ const TaskTab = () => {
       <div className="flex flex-col w-full h-screen overflow-y-auto">
         {/* Summary Cards */}
         <div className="mx-1 space-y-3">
-          <div className="grid grid-cols-2 gap-5 my-1 md:grid-cols-3">
+          <div className="grid grid-cols-2 gap-5 my-1 md:grid-cols-4">
+            <div
+              className={`p-6 rounded-2xl shadow-xl text-white flex items-center justify-between transition-all hover:scale-[1.02] duration-300
+    ${
+      hourTaken?.totalWorkingHours / 60 >= 8
+        ? "bg-gradient-to-r from-green-500 via-emerald-500 to-teal-50 border-r-4 border-green-500"
+        : hourTaken?.totalWorkingHours / 60 >= 6
+          ? "bg-gradient-to-r from-teal-500 via-cyan-500 to-blue-50 border-r-4 border-cyan-500"
+          : hourTaken?.totalWorkingHours / 60 >= 4
+            ? "bg-gradient-to-r from-yellow-500 via-amber-400 to-orange-50 border-r-4 border-yellow-400"
+            : "bg-gradient-to-r from-red-500 via-red-200 to-pink-50 border-r-4 border-red-500"
+    }`}
+            >
+              <div className="flex items-center space-x-4">
+                <div className="bg-white/20 p-3 rounded-full">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="w-8 h-8 text-white"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-sm opacity-90">Total Hours Utilized</p>
+                  <h2 className="text-2xl font-bold tracking-wide">
+                    {(() => {
+                      const totalMinutes = hourTaken?.totalWorkingHours || 0;
+                      const hours = Math.floor(totalMinutes / 60);
+                      const minutes = totalMinutes % 60;
+                      return `${hours.toString().padStart(2, "0")} hrs ${minutes
+                        .toString()
+                        .padStart(2, "0")} mins`;
+                    })()}
+                  </h2>
+                </div>
+              </div>
+
+              {/* Dynamic message */}
+              <div
+                className={`w-1/2 text-sm px-4 py-2 rounded-full backdrop-blur-sm font-medium ${
+                  hourTaken?.totalWorkingHours >= 8
+                    ? "bg-green-500/20"
+                    : hourTaken?.totalWorkingHours >= 6
+                      ? "bg-teal-500/20"
+                      : hourTaken?.totalWorkingHours >= 4
+                        ? "bg-yellow-500/20"
+                        : "bg-red-500/20"
+                }`}
+              >
+                {hourTaken?.totalWorkingHours >= 8
+                  ? "🔥 You performed well and maintained your 8hrs work!"
+                  : hourTaken?.totalWorkingHours >= 6
+                    ? "💪 Keep going — you're close to your daily milestone!"
+                    : hourTaken?.totalWorkingHours >= 4
+                      ? "⚡ Good effort! Try to reach your target today."
+                      : "⏳ Let’s boost your focus and hit that 8-hour goal!"}
+              </div>
+            </div>
+
             <SummaryCard
               title="Total Task"
               mainCount={tasks.length}

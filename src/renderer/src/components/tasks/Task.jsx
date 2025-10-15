@@ -150,6 +150,14 @@ const Task = ({ taskId, fetchTaskData, setDisplay }) => {
     return statusStyles[status] || "bg-gray-100 text-gray-500 border-gray-500";
   };
 
+  const notifyHoursUpdated = () => {
+    try {
+      window.dispatchEvent(new Event("hours-updated"));
+    } catch (e) {
+      // no-op if window not available
+    }
+  };
+
   function handleClose() {
     setDisplay(false);
   }
@@ -182,6 +190,7 @@ const Task = ({ taskId, fetchTaskData, setDisplay }) => {
       fetchTask();
       fetchWorkId();
       fetchTaskData();
+      notifyHoursUpdated();
     } catch (error) {
       toast.error("Error in accepting task");
     }
@@ -210,6 +219,7 @@ const Task = ({ taskId, fetchTaskData, setDisplay }) => {
       fetchTask();
       fetchWorkId();
       fetchTaskData();
+      notifyHoursUpdated();
     } catch (error) {
       toast.error("Error in pausing task");
       console.log("Error in pausing task: ", error);
@@ -236,6 +246,7 @@ const Task = ({ taskId, fetchTaskData, setDisplay }) => {
       fetchTask();
       fetchWorkId();
       fetchTaskData();
+      notifyHoursUpdated();
     } catch (error) {
       toast.error("Error in resuming task");
       console.log("Error in resuming task: ", error);
@@ -253,6 +264,7 @@ const Task = ({ taskId, fetchTaskData, setDisplay }) => {
         fetchTaskData();
         fetchWorkId();
         setDisplay(false);
+        notifyHoursUpdated();
       }
     } catch (error) {
       toast.error("Error in ending task");

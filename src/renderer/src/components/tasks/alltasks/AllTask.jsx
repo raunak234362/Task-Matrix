@@ -31,6 +31,58 @@ const AllTask = () => {
 
   const handleSearch = (e) => setSearchQuery(e.target.value);
 
+  function statusColor(status) {
+    switch (status) {
+      case "IN_PROGRESS":
+        return "bg-yellow-200 border-yellow-800 text-yellow-800";
+      case "ASSIGNED":
+        return "bg-orange-200 border-orange-800 text-orange-800";
+      case "BREAK":
+        return "bg-red-200 border-red-500 text-red-500";
+      case "IN_REVIEW":
+        return "bg-blue-200 border-blue-600 text-blue-500";
+      case "COMPLETE":
+        return "bg-green-200 border-green-500 text-green-800";
+      case "COMPLETE_OTHER":
+        return "bg-brown-200 border-brown-500 text-brown-800";
+      case "VALIDATE_COMPLETE":
+        return "bg-lime-200 border-lime-500 text-lime-800";
+      default:
+        return "text-gray-700";
+    }
+  }
+
+  function color(priority) {
+    switch (priority) {
+      case 0:
+        return "bg-green-200 border-green-800 text-green-800";
+      case 1:
+        return "bg-yellow-200 border-yellow-800 text-yellow-800";
+      case 2:
+        return "bg-purple-200 border-purple-800 text-purple-800";
+      case 3:
+        return "bg-red-200 border-red-700 text-red-700";
+      default:
+        return "";
+    }
+  }
+
+  function setPriorityValue(value) {
+    switch (value) {
+      case 0:
+        return "LOW";
+      case 1:
+        return "MEDIUM";
+      case 2:
+        return "HIGH";
+      case 3:
+        return "CRITICAL";
+      default:
+        return "";
+    }
+  }
+
+  // ✅ Filtering logic
   // ✅ Filtering logic
   useEffect(() => {
     let filtered = [...tasks];
@@ -46,7 +98,7 @@ const AllTask = () => {
       filtered = filtered.filter((task) => task.status === filters.status);
     }
 
-    // date filter (same as yours)
+    // date filter (updated to include specificDate)
     if (dateFilter.type !== "all") {
       filtered = filtered.filter((task) => {
         const dueDate = new Date(task.due_date);
@@ -72,6 +124,15 @@ const AllTask = () => {
           const start = new Date(dateFilter.startDate);
           const end = new Date(dateFilter.endDate);
           return dueDate >= start && dueDate <= end;
+        }
+        if (dateFilter.type === "specificDate") {
+          const specific = new Date(dateFilter.date);
+          // only match the day, month, year
+          return (
+            dueDate.getFullYear() === specific.getFullYear() &&
+            dueDate.getMonth() === specific.getMonth() &&
+            dueDate.getDate() === specific.getDate()
+          );
         }
         return true;
       });
@@ -128,7 +189,6 @@ const AllTask = () => {
   const data = useMemo(() => taskFilter, [taskFilter]);
   const columns = useMemo(
     () => [
-      
       {
         Header: "Project",
         accessor: (row) =>
@@ -151,6 +211,31 @@ const AllTask = () => {
       {
         Header: "Status",
         accessor: "status",
+        Cell: ({ value }) => {
+          const displayStatus =
+            value === "COMPLETE_OTHER" ? "Completed(T.I.)" : value;
+          return (
+            <span
+              className={`px-2 py-1 rounded-full border flex-nowrap ${statusColor(value)}`}
+            >
+              {displayStatus}
+            </span>
+          );
+        },
+      },
+      {
+        Header: "Priority",
+        accessor: "priority",
+        Cell: ({ value }) => (
+          <span className={`px-2 py-1 rounded-full border ${color(value)}`}>
+            {setPriorityValue(value)}
+          </span>
+        ),
+      },
+      {
+        Header: "Due Date",
+        accessor: "due_date",
+        Cell: ({ value }) => new Date(value).toLocaleDateString(),
       },
       {
         Header: "Allocated Hours",
@@ -176,13 +261,6 @@ const AllTask = () => {
           return `${h} h ${m} min`;
         },
       },
-      {
-        Header: "Actions",
-        accessor: "actions",
-        Cell: ({ row }) => (
-          <Button onClick={() => handleViewClick(row.original.id)}>View</Button>
-        ),
-      },
     ],
     [],
   );
@@ -206,7 +284,7 @@ const AllTask = () => {
     {
       columns,
       data,
-      initialState: { pageIndex: 0, pageSize: 15 },
+      initialState: { pageIndex: 0, pageSize: 25 },
     },
     useSortBy,
     usePagination,
@@ -235,24 +313,27 @@ const AllTask = () => {
                 setFilters((prev) => ({ ...prev, user: value || "" }));
               }}
             />
-            <select
+            <CustomSelect
+              label="Select Project"
               name="project"
+              placeholder="Filter by Project"
+              options={[
+                { label: "All Projects", value: "" },
+                ...(projects?.map((proj) => ({
+                  label: proj.name,
+                  value: proj.name,
+                })) || []),
+              ]}
               value={filters.project}
-              onChange={handleFilterChange}
-              className="border p-2 rounded-lg w-full"
-            >
-              <option value="">All Projects</option>
-              {projects?.map((proj) => (
-                <option key={proj.id} value={proj.name}>
-                  {proj?.name}
-                </option>
-              ))}
-            </select>
+              onChange={(_, value) => {
+                setFilters((prev) => ({ ...prev, project: value || "" }));
+              }}
+            />
             <select
               name="status"
               value={filters.status}
               onChange={handleFilterChange}
-              className="border p-2 rounded-lg w-full"
+              className="border p-2 rounded-lg w-full bg-white border-gray-500"
             >
               <option value="">All Status</option>
               <option value="ASSIGNED">ASSIGNED</option>
@@ -270,7 +351,7 @@ const AllTask = () => {
         </div>
 
         {/* ✅ Table */}
-        <div className="overflow-x-auto h-[90vh] border rounded-md">
+        <div className="overflow-x-auto h-[80vh] border rounded-md">
           <table
             {...getTableProps()}
             className="min-w-full text-sm text-center border"
@@ -290,7 +371,7 @@ const AllTask = () => {
                     <th
                       key={column.id || colIdx}
                       {...column.getHeaderProps(column.getSortByToggleProps())}
-                      className="px-4 py-2 font-semibold border whitespace-nowrap"
+                      className="px-2 py-1 font-semibold border whitespace-nowrap"
                     >
                       {column.render("Header")}
                       {column.isSorted
@@ -321,13 +402,14 @@ const AllTask = () => {
                       key={row.id}
                       {...row.getRowProps()}
                       className="hover:bg-teal-100"
+                      onClick={() => handleViewClick(row.original.id)}
                     >
-                      <td className="px-4 py-2 border">{index + 1}</td>
+                      <td className="px-2 py-2 border">{index + 1}</td>
                       {row.cells.map((cell) => (
                         <td
                           key={cell.id}
                           {...cell.getCellProps()}
-                          className="px-4 py-2 border"
+                          className="px-2 py-2 text-sm border"
                         >
                           {cell.render("Cell")}
                         </td>
@@ -338,6 +420,53 @@ const AllTask = () => {
               )}
             </tbody>
           </table>
+        </div>
+        <div className="flex justify-between items-center mt-1 px-4">
+          <div className="space-x-1">
+            <button
+              onClick={() => gotoPage(0)}
+              disabled={!canPreviousPage}
+              className="px-3 py-1 border rounded disabled:opacity-50"
+            >
+              {"<<"}
+            </button>
+            <button
+              onClick={() => previousPage()}
+              disabled={!canPreviousPage}
+              className="px-3 py-1 border rounded disabled:opacity-50"
+            >
+              {"<"}
+            </button>
+            <span className="text-sm">
+              Page <strong>{pageIndex + 1}</strong> of{" "}
+              <strong>{pageOptions.length}</strong>
+            </span>
+            <button
+              onClick={() => nextPage()}
+              disabled={!canNextPage}
+              className="px-3 py-1 border rounded disabled:opacity-50"
+            >
+              {">"}
+            </button>
+            <button
+              onClick={() => gotoPage(pageCount - 1)}
+              disabled={!canNextPage}
+              className="px-3 py-1 border rounded disabled:opacity-50"
+            >
+              {">>"}
+            </button>
+          </div>
+          <select
+            value={pageSize}
+            onChange={(e) => setPageSize(Number(e.target.value))}
+            className="border p-1 rounded"
+          >
+            {[25, 50, 75, 100].map((size) => (
+              <option key={size} value={size}>
+                Show {size}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
 
