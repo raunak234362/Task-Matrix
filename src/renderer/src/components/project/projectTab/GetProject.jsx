@@ -139,15 +139,15 @@ const GetProject = ({ projectId, projectData, getProject, onClose, files }) => {
     setSelectedEditProject(null);
   };
 
-  const handleStatusView = (projectID) => {
-    setSelectedProjectStatus(projectID);
-    setIsStatusModalOpen(true);
-  };
+  // const handleStatusView = (projectID) => {
+  //   setSelectedProjectStatus(projectID);
+  //   setIsStatusModalOpen(true);
+  // };
 
-  const handleStatusClose = () => {
-    setSelectedProjectStatus(null);
-    setIsStatusModalOpen(false);
-  };
+  // const handleStatusClose = () => {
+  //   setSelectedProjectStatus(null);
+  //   setIsStatusModalOpen(false);
+  // };
 
   const tabs = [
     { id: "details", label: "Details & Fabricator" },
