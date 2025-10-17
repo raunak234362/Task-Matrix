@@ -18,8 +18,13 @@ const FileLinks = ({ files, rfiId, isResponse = false, responseId = null }) => {
 
   return files.map((file, index) => {
     const fileUrl = isResponse
-      ? `${baseURL}/api/RFI/rfi/response/viewfile/${responseId}/${file.id}`
-      : `${baseURL}/api/RFI/rfi/viewfile/${rfiId}/${file.id}`;
+      ? `${baseURL.replace(
+          /\/$/,
+          "",
+        )}/api/RFI/rfi/response/viewfile/${responseId}/${file.id}`
+      : `${baseURL.replace(/\/$/, "")}/api/RFI/rfi/viewfile/${rfiId}/${
+          file.id
+        }`;
 
     return (
       <a
@@ -127,7 +132,7 @@ const GetRFI = ({ rfiId, isOpen, onClose }) => {
         disableSortBy: true,
       },
     ],
-    [userType, handleViewModalOpen]
+    [userType, handleViewModalOpen],
   );
 
   const tableData = useMemo(() => rfi?.rfiresponse || [], [rfi?.rfiresponse]);
@@ -174,7 +179,9 @@ const GetRFI = ({ rfiId, isOpen, onClose }) => {
         </div>
 
         <div className="px-6 pt-5 pb-6 overflow-y-auto h-full space-y-6">
-          <div className={`grid gap-4 ${userType === "client" ? "grid-cols-1 md:grid-cols-2" : "grid-cols-1"}`}>
+          <div
+            className={`grid gap-4 ${userType === "client" ? "grid-cols-1 md:grid-cols-2" : "grid-cols-1"}`}
+          >
             <RFIDetail rfi={rfi} FileLinks={FileLinks} rfiId={rfiID} />
             {userType === "client" && (
               <RFIResponse
@@ -204,7 +211,7 @@ const GetRFI = ({ rfiId, isOpen, onClose }) => {
                       {headerGroup.headers.map((column) => (
                         <th
                           {...column.getHeaderProps(
-                            column.getSortByToggleProps()
+                            column.getSortByToggleProps(),
                           )}
                           className="px-2 py-2 border-2 whitespace-nowrap"
                           key={column.id}

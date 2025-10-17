@@ -10,7 +10,7 @@ import { useSortBy, useTable } from "react-table";
 import ResponseFromClient from "./response/ResponseFromClient";
 import ResponseSubmittals from "./response/SubmittalsResponse";
 
-const FileLinks = ({ files, rfiId, isResponse = false, responseId = null }) => {
+const FileLinks = ({ files, submittalId, isResponse = false, responseId = null }) => {
   const baseURL = import.meta.env.VITE_BASE_URL;
 
   if (!Array.isArray(files) || files.length === 0) {
@@ -19,8 +19,8 @@ const FileLinks = ({ files, rfiId, isResponse = false, responseId = null }) => {
 
   return files.map((file, index) => {
     const fileUrl = isResponse
-      ? `${baseURL}/api/RFI/rfi/response/viewfile/${responseId}/${file.id}`
-      : `${baseURL}/api/RFI/rfi/viewfile/${rfiId}/${file.id}`;
+      ? `${baseURL}/api/Submittals/submittals/${responseId}/${file.id}`
+      : `${baseURL}/api/Submittals/submittals/${submittalId}/${file.id}`;
 
     return (
       <a
@@ -131,7 +131,7 @@ const GetSubmittals = ({ submittalId, isOpen, onClose }) => {
         disableSortBy: true,
       },
     ],
-    [userType, handleViewModalOpen]
+    [userType, handleViewModalOpen],
   );
 
   console.log("Submittal Responses:", submittal);
@@ -142,7 +142,7 @@ const GetSubmittals = ({ submittalId, isOpen, onClose }) => {
     }
     console.warn(
       "❗ Expected array for submittalsResponse, got:",
-      submittal?.submittalsResponse
+      submittal?.submittalsResponse,
     );
     return [];
   }, [submittal?.submittalsResponse]);
@@ -229,7 +229,7 @@ const GetSubmittals = ({ submittalId, isOpen, onClose }) => {
                       {headerGroup.headers.map((column) => (
                         <th
                           {...column.getHeaderProps(
-                            column.getSortByToggleProps()
+                            column.getSortByToggleProps(),
                           )}
                           className="px-2 py-2 border-2 whitespace-nowrap"
                           key={column.id}
