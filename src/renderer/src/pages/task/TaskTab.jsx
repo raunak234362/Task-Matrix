@@ -80,7 +80,7 @@ const TaskTab = () => {
         <div className="mx-1 space-y-3">
           <div className="grid grid-cols-2 gap-5 my-1 md:grid-cols-4">
             <div
-              className={`p-6 rounded-2xl shadow-xl text-white flex items-center justify-between transition-all hover:scale-[1.02] duration-300
+              className={`p-6 rounded-2xl shadow-xl text-white grid items-center justify-between transition-all hover:scale-[1.02] duration-300
     ${
       hourTaken?.totalWorkingHours / 60 >= 8
         ? "bg-gradient-to-r from-green-500 via-emerald-500 to-teal-50 border-r-4 border-green-500"
@@ -108,9 +108,9 @@ const TaskTab = () => {
                     />
                   </svg>
                 </div>
-                <div>
+                <div className="w-full">
                   <p className="text-sm opacity-90">Total Hours Utilized</p>
-                  <h2 className="text-2xl font-bold tracking-wide">
+                  <h2 className="text-xl font-bold tracking-wide">
                     {(() => {
                       const totalMinutes = hourTaken?.totalWorkingHours || 0;
                       const hours = Math.floor(totalMinutes / 60);
@@ -125,14 +125,14 @@ const TaskTab = () => {
 
               {/* Dynamic message */}
               <div
-                className={`w-1/2 text-sm px-4 py-2 rounded-full backdrop-blur-sm font-medium ${
+                className={`w-full lg:text-sm text-xs px-4 py-2 rounded-full backdrop-blur-sm font-medium ${
                   hourTaken?.totalWorkingHours >= 8
-                    ? "bg-green-500/20"
+                    ? "bg-gradient-to-r from-green-100 to-emerald-100 text-green-800"
                     : hourTaken?.totalWorkingHours >= 6
-                      ? "bg-teal-500/20"
+                      ? "bg-gradient-to-r from-cyan-100 to-blue-100 text-blue-800"
                       : hourTaken?.totalWorkingHours >= 4
-                        ? "bg-yellow-500/20"
-                        : "bg-red-500/20"
+                        ? "bg-gradient-to-r from-yellow-100 to-orange-100 text-yellow-800"
+                        : "bg-gradient-to-r from-white  to-pink-100/40 text-red-800"
                 }`}
               >
                 {hourTaken?.totalWorkingHours >= 8
