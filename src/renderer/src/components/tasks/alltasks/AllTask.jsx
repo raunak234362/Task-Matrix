@@ -209,6 +209,34 @@ const AllTask = () => {
         id: "assignedTo",
       },
       {
+        Header: "Project Manager",
+        accessor: (row) => {
+          if (typeof row.manager === "string") {
+            return row.manager;
+          } else if (row.manager && typeof row.manager === "object") {
+            return [row.manager.f_name, row.manager.m_name, row.manager.l_name]
+              .filter(Boolean)
+              .join(" ");
+          } else if (
+            row.project?.manager &&
+            typeof row.project.manager === "object"
+          ) {
+            return [
+              row.project.manager.f_name,
+              row.project.manager.m_name,
+              row.project.manager.l_name,
+            ]
+              .filter(Boolean)
+              .join(" ");
+          }
+          return "N/A";
+        },
+        id: "projectManager",
+        Cell: ({ value }) => (
+          <span className="px-2 py-1 text-gray-800">{value || "N/A"}</span>
+        ),
+      },
+      {
         Header: "Status",
         accessor: "status",
         Cell: ({ value }) => {
