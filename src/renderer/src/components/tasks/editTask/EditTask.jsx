@@ -264,7 +264,6 @@ const EditTask = ({ onClose, task }) => {
                 { label: "RE-WORK", value: "REWORK" },
                 { label: "COMPLETED", value: "COMPLETE" },
                 { label: "VALIDATE & COMPLETED", value: "VALIDATE_COMPLETE" },
-                { label: "ON HOLD", value: "ONHOLD" },
                 {
                   label: "COMPLETED(TECHNICAL ISSUE)",
                   value: "COMPLETE_OTHER",
