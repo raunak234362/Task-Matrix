@@ -10,6 +10,8 @@ import Button from "../../fields/Button";
 import Service from "../../../api/configAPI";
 import DateFilter from "../../../util/DateFilter";
 import { CustomSelect } from "../..";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
 
 const AllTask = () => {
   const tasks = useSelector((state) => state.taskData.taskData);
@@ -82,6 +84,7 @@ const AllTask = () => {
     }
   }
 
+  console.log(tasks, "=-=-=-=-=-=-");
   // ✅ Filtering logic
   // ✅ Filtering logic
   useEffect(() => {
@@ -318,6 +321,80 @@ const AllTask = () => {
     usePagination,
   );
 
+  const exportReport = () => {
+    if (!taskFilter || taskFilter.length === 0) {
+      alert("No tasks found for the selected date or filters.");
+      return;
+    }
+
+    const exportData = taskFilter.map((task) => {
+      const user = task.user || {};
+      const fullName =
+        [user.f_name, user.m_name, user.l_name].filter(Boolean).join(" ") ||
+        "N/A";
+
+      // Convert "4:0:00" → hours and minutes
+      let allocatedHours = "N/A";
+      if (task.duration) {
+        const [h = "0", m = "0"] = task.duration.split(":");
+        allocatedHours = `${parseInt(h)} h ${parseInt(m)} min`;
+      }
+
+      // Convert workingHourTask[0].duration (in minutes) → hours/minutes
+      let takenHours = "N/A";
+      if (
+        task.workingHourTask?.length > 0 &&
+        task.workingHourTask[0].duration
+      ) {
+        const total = parseInt(task.workingHourTask[0].duration, 10);
+        const h = Math.floor(total / 60);
+        const m = total % 60;
+        takenHours = `${h} h ${m} min`;
+      }
+
+      // ✅ Extract only the `.data` field from taskcomment
+      const commentData = Array.isArray(task.taskcomment)
+        ? task.taskcomment
+            .map((c) =>
+              typeof c === "object" && c.data ? c.data.trim() : null,
+            )
+            .filter(Boolean)
+        : [];
+
+      // Also include any simple comments array if present
+      const otherComments = Array.isArray(task.comments)
+        ? task.comments.filter(Boolean)
+        : [];
+
+      // Combine both
+      const allComments = [...commentData, ...otherComments];
+
+      const commentsText =
+        allComments.length > 0 ? allComments.join("\n") : "No Comments";
+
+      return {
+        "Task Name": task.name || "N/A",
+        "User Name": fullName,
+        "Project Name": task.project?.name || "N/A",
+        Status: task.status || "N/A",
+        "Due Date": new Date(task.due_date).toLocaleDateString(),
+        "Allocated Hours": allocatedHours,
+        "Taken Hours": takenHours,
+        Comments: commentsText,
+      };
+    });
+
+    const ws = XLSX.utils.json_to_sheet(exportData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Task Report");
+
+    const wbout = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+    saveAs(
+      new Blob([wbout], { type: "application/octet-stream" }),
+      `Task_Report_${new Date().toISOString().split("T")[0]}.xlsx`,
+    );
+  };
+
   return (
     <div className="h-fit bg-white/70 rounded-lg shadow-md overflow-y-auto">
       <div className="p-4 my-2 space-y-2">
@@ -449,6 +526,10 @@ const AllTask = () => {
             </tbody>
           </table>
         </div>
+        <Button
+          onClick={exportReport}
+          className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded"
+        >Export Report</Button>
         <div className="flex justify-between items-center mt-1 px-4">
           <div className="space-x-1">
             <button
