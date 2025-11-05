@@ -1,11 +1,7 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
-import {
-  Input,
-  CustomSelect,
-  Button,
-} from "../../index";
+import { Input, CustomSelect, Button } from "../../index";
 import { useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
 import Service from "../../../api/configAPI";
@@ -22,8 +18,9 @@ const AddWB = ({ projectId, projectData }) => {
   const [wbTotalHours, setWBTotalHours] = useState();
   const [projectStage, setProjectStage] = useState(null);
   const workBreakdown = useSelector(
-    (state) => state?.projectData.workBreakdown
+    (state) => state?.projectData.workBreakdown,
   );
+  const [searchTerm, setSearchTerm] = useState("");
   const { register, handleSubmit, watch, setValue } = useForm();
   const selectedTask = watch("taskName");
   const selectedStage = watch("stage");
@@ -38,30 +35,34 @@ const AddWB = ({ projectId, projectData }) => {
     const totalHours = await Service.fetchWorkBreakdownHours(
       selectedTask,
       projectId,
-      selectedStage
+      selectedStage,
     );
     setWBTotalHours(totalHours?._sum || {});
-  }
-
+  };
 
   const fetchTotalHours = async () => {
     const totalHours = await Service.fetchWorkBreakdownTotalHours(
       projectId,
-      selectedStage
+      selectedStage,
     );
     console.log("Total Hours:", totalHours);
     const exec = totalHours?._sum?.totalExecHr;
     const check = totalHours?._sum?.totalCheckHr;
     setTotalHours(check + exec);
     // setWBTotalHours(totalHours?._sum || {});
-  }
-  const EstimatedHr = projectData?.estimatedHours * 60
+  };
+  const EstimatedHr = projectData?.estimatedHours * 60;
   // console.log(EstimatedHr);
   console.log(totalHours);
   // console.log(Estimate`dHr- totalHours);
   const percentage =
     EstimatedHr && Number(EstimatedHr) !== 0
-      ? parseFloat(((Number(EstimatedHr - totalHours) / (Number(EstimatedHr)) * 100) / 63).toFixed(2))
+      ? parseFloat(
+          (
+            ((Number(EstimatedHr - totalHours) / Number(EstimatedHr)) * 100) /
+            63
+          ).toFixed(2),
+        )
       : 0;
   // console.log("Percentage of Total Hours:", percentage);
   useEffect(() => {
@@ -86,11 +87,10 @@ const AddWB = ({ projectId, projectData }) => {
     fetchProject();
   }, [projectId]);
 
-
   // Update selected task data when task changes
   useEffect(() => {
     const selectedTaskDetails = workBreakdown.find(
-      (item) => item?.taskName === selectedTask
+      (item) => item?.taskName === selectedTask,
     )?.workBreakdown;
     setSelectedTaskData(selectedTaskDetails);
   }, [selectedTask, workBreakdown]);
@@ -108,11 +108,16 @@ const AddWB = ({ projectId, projectData }) => {
   };
 
   const userType = sessionStorage.getItem("userType");
+
+  const filteredWbActivity =
+    wbActivity?.filter((taskItem) =>
+      taskItem.name.toLowerCase().includes(searchTerm.toLowerCase()),
+    ) || [];
+
   console.log("User Type:", userType);
   return (
     // <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
     <div className="bg-white h-[90%] md:p-5 p-2 rounded-lg shadow-lg md:w-full w-11/12">
-
       <div className="z-10 flex justify-center w-full top-2">
         <div className="px-3 py-2 font-bold text-white bg-teal-400 rounded-lg shadow-md md:px-4 md:text-2xl">
           Work-Break Down Structure
@@ -124,7 +129,9 @@ const AddWB = ({ projectId, projectData }) => {
         <div className="mt-10 font-semibold">Work Breakdown Structure -</div>
         <div className="flex justify-center py-5">
           <div className="overflow-x-auto md:w-[80vw] w-full my-3">
-            <p className="text-red-500 text-xs">*Select the task type as well as stage to overview</p>
+            <p className="text-red-500 text-xs">
+              *Select the task type as well as stage to overview
+            </p>
             <div className="flex flex-row-[40%,50%] gap-5 w-full justify-between">
               <div className="w-full">
                 <CustomSelect
@@ -165,11 +172,20 @@ const AddWB = ({ projectId, projectData }) => {
               <div className="flex flex-row justify-between">
                 <div className="text-sm font-semibold text-gray-600">
                   {console.log("Selected Task:", wbTotalHours)}
-                  Total Execution Hours: {wbTotalHours?.totalExecHr ? ((wbTotalHours.totalExecHr) / 60).toFixed(2) : "0"} Hr
+                  Total Execution Hours:{" "}
+                  {wbTotalHours?.totalExecHr
+                    ? (wbTotalHours.totalExecHr / 60).toFixed(2)
+                    : "0"}{" "}
+                  Hr
                   <br />
-                  Total Checking Hours: {wbTotalHours?.totalCheckHr ? ((wbTotalHours.totalCheckHr) / 60).toFixed(2) : "0"} Hr
+                  Total Checking Hours:{" "}
+                  {wbTotalHours?.totalCheckHr
+                    ? (wbTotalHours.totalCheckHr / 60).toFixed(2)
+                    : "0"}{" "}
+                  Hr
                   <br />
-                  Total Quantity: {wbTotalHours?.totalQtyNo ? wbTotalHours.totalQtyNo : "0"}
+                  Total Quantity:{" "}
+                  {wbTotalHours?.totalQtyNo ? wbTotalHours.totalQtyNo : "0"}
                 </div>
                 {/* <Button
                     className="bg-blue-500"
@@ -179,6 +195,15 @@ const AddWB = ({ projectId, projectData }) => {
                   </Button> */}
               </div>
             </div>
+            <div className="my-4">
+              <Input
+                label="Search by Description:"
+                placeholder="Type to search..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full"
+              />
+            </div>
             <div className="mt-5 bg-whiall-projectste h-[60vh] overflow-auto rounded-lg">
               <table className="w-full mt-3 text-sm text-center border border-collapse border-gray-600">
                 <thead className="bg-gray-200">
@@ -187,18 +212,20 @@ const AddWB = ({ projectId, projectData }) => {
                     <th className="px-2 py-1 border border-gray-600">
                       Description of WBS
                     </th>
-                    {userType === "admin" || userType === "department-manager" ? (
-                    <th className="px-2 py-1 border border-gray-600">
-                      Qty. (No.)
-                    </th>
-                    ):null}
+                    {userType === "admin" ||
+                    userType === "department-manager" ? (
+                      <th className="px-2 py-1 border border-gray-600">
+                        Qty. (No.)
+                      </th>
+                    ) : null}
                     <th className="px-2 py-1 border border-gray-600">
                       Execution Time (Hr)
                     </th>
                     <th className="px-2 py-1 border border-gray-600">
                       Checking Time (Hr)
                     </th>
-                    {userType === "admin" || userType === "department-manager" ? (
+                    {userType === "admin" ||
+                    userType === "department-manager" ? (
                       <>
                         <th className="px-2 py-1 border border-gray-600">
                           Execution including <br /> rework Time (Hr)
@@ -215,7 +242,7 @@ const AddWB = ({ projectId, projectData }) => {
                 </thead>
 
                 <tbody>
-                  {wbActivity?.map((taskItem, index) => (
+                  {filteredWbActivity.map((taskItem, index) => (
                     <tr key={index} className="bg-green-100">
                       <td className="px-2 py-1 border border-gray-600">
                         {index + 1}
@@ -223,11 +250,12 @@ const AddWB = ({ projectId, projectData }) => {
                       <td className="px-2 py-1 border border-gray-600">
                         {taskItem?.name}
                       </td>
-                      {userType === "admin" || userType === "department-manager" ? (
+                      {userType === "admin" ||
+                      userType === "department-manager" ? (
                         <td className="px-2 py-1 border border-gray-600">
                           {taskItem?.totalQtyNo}
                         </td>
-                      ):null}
+                      ) : null}
 
                       <td className="px-2 py-1 border border-gray-600">
                         {(taskItem?.totalExecHr / 60).toFixed(2)}
@@ -235,13 +263,20 @@ const AddWB = ({ projectId, projectData }) => {
                       <td className="px-2 py-1 border border-gray-600">
                         {(taskItem?.totalCheckHr / 60).toFixed(2)}
                       </td>
-                      {userType === "admin" || userType === "department-manager" ? (
+                      {userType === "admin" ||
+                      userType === "department-manager" ? (
                         <>
                           <td className="px-2 py-1 border border-gray-600">
-                            {Math.max(0, ((taskItem?.totalExecHr * percentage) / 60)).toFixed(2)}
+                            {Math.max(
+                              0,
+                              (taskItem?.totalExecHr * percentage) / 60,
+                            ).toFixed(2)}
                           </td>
                           <td className="px-2 py-1 border border-gray-600">
-                            {Math.max(0, ((taskItem?.totalCheckHr * percentage) / 60)).toFixed(2)}
+                            {Math.max(
+                              0,
+                              (taskItem?.totalCheckHr * percentage) / 60,
+                            ).toFixed(2)}
                           </td>
                           <td className="px-2 py-1 border border-gray-600">
                             <Button

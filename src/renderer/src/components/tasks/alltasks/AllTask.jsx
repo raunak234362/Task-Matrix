@@ -9,7 +9,7 @@ import SelectedTask from "./SelectedTask";
 import Button from "../../fields/Button";
 import Service from "../../../api/configAPI";
 import DateFilter from "../../../util/DateFilter";
-import { CustomSelect } from "../..";
+import { CustomSelect, Input } from "../..";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 
@@ -400,6 +400,17 @@ const AllTask = () => {
       <div className="p-4 my-2 space-y-2">
         <div className="flex flex-col md:flex-row items-center gap-4 mb-4 w-full">
           <div className="flex gap-4 w-full z-40">
+            {/* SEARCH BOX */}
+            <div className="w-full md:w-64">
+              <Input
+                type="text"
+                label="Search Task"
+                placeholder="Type task name..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full"
+              />
+            </div>
             {/* ✅ CustomSelect for User */}
             <CustomSelect
               label="Select User"
@@ -529,7 +540,9 @@ const AllTask = () => {
         <Button
           onClick={exportReport}
           className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded"
-        >Export Report</Button>
+        >
+          Export Report
+        </Button>
         <div className="flex justify-between items-center mt-1 px-4">
           <div className="space-x-1">
             <button
