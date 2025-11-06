@@ -29,7 +29,8 @@ const MyTask = () => {
     return tasks.filter(
       (task) =>
         task.status !== "VALIDATE_COMPLETE" &&
-        task.status !== "COMPLETE_OTHER"
+        task.status !== "COMPLETE_OTHER" &&
+        task.status !== "USER_FAULT" 
     );
   }, [tasks]);
   const columns = useMemo(

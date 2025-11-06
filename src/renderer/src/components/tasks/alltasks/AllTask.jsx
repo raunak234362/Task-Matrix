@@ -49,6 +49,8 @@ const AllTask = () => {
         return "bg-brown-200 border-brown-500 text-brown-800";
       case "VALIDATE_COMPLETE":
         return "bg-lime-200 border-lime-500 text-lime-800";
+      case "USER_FAULT":
+        return "bg-red-200 border-red-500 text-red-600";
       default:
         return "text-gray-700";
     }
@@ -457,6 +459,7 @@ const AllTask = () => {
               <option value="BREAK">BREAK</option>
               <option value="IN_REVIEW">IN REVIEW</option>
               <option value="VALIDATE_COMPLETE">VALIDATE & COMPLETED</option>
+              <option value="USER_FAULT">USER FAULT</option>
               <option value="COMPLETE_OTHER">
                 COMPLETED (TECHNICAL ISSUE)
               </option>

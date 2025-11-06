@@ -32,6 +32,7 @@ const TaskTab = () => {
   const completedTaskCount =
     countByStatus(STATUS?.COMPLETE) +
     countByStatus(STATUS?.COMPLETE_OTHER) +
+    countByStatus(STATUS?.USER_FAULT) +
     countByStatus(STATUS?.VALIDATE_COMPLETE);
   const inReviewTaskCount = countByStatus(STATUS?.IN_REVIEW);
   const assignedTaskCount = countByStatus(STATUS?.ASSIGNED);

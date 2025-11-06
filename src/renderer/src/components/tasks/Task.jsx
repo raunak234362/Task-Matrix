@@ -215,6 +215,7 @@ const Task = ({ taskId, fetchTaskData, setDisplay }) => {
           status: "BREAK",
         };
       });
+      console.log("Pause Response: ", pause);
       toast.success("Task Paused");
       fetchTask();
       fetchWorkId();
@@ -242,6 +243,7 @@ const Task = ({ taskId, fetchTaskData, setDisplay }) => {
           status: "IN_PROGRESS",
         };
       });
+      console.log("Resume Response: ", resume);
       toast.success("Task Resumed");
       fetchTask();
       fetchWorkId();

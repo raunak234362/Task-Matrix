@@ -133,6 +133,15 @@ const EditTask = ({ onClose, task }) => {
           work_id,
         );
       }
+      if (data.status === "USER_FAULT" && takenHour) {
+        const durationInMinutes = hhmmssToMinutes(taskData.duration);
+        const updatedDuration = durationInMinutes;
+        taskData.workingHourTask = [{ duration: updatedDuration }];
+        await Service.getEditWorkHoursById(
+          { duration: updatedDuration },
+          work_id,
+        );
+      }
 
       if (data.status === "REWORK") {
         taskData = { ...taskData, reworkStartTime: new Date().toISOString() };
@@ -264,6 +273,7 @@ const EditTask = ({ onClose, task }) => {
                 { label: "RE-WORK", value: "REWORK" },
                 { label: "COMPLETED", value: "COMPLETE" },
                 { label: "VALIDATE & COMPLETED", value: "VALIDATE_COMPLETE" },
+                { label: "USER'S FAULT", value: "USER_FAULT" },
                 {
                   label: "COMPLETED(TECHNICAL ISSUE)",
                   value: "COMPLETE_OTHER",
