@@ -3,14 +3,10 @@
 import { useEffect, useState } from "react";
 import {
   Calendar,
-  Edit2,
   FileText,
   Globe,
   HardDrive,
-  Plus,
-  X,
   ChevronRight,
-  BarChart2,
   Layers,
 } from "lucide-react";
 import EditProject from "./EditProject";
