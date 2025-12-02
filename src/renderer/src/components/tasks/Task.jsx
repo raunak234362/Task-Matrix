@@ -4,6 +4,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import Service from "../../api/configAPI";
 import { Button, Input, CustomSelect } from "../index";
+import Comment from "./Comment";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
@@ -448,7 +449,7 @@ const Task = ({ taskId, fetchTaskData, setDisplay }) => {
                       </span>
                       <div className="flex flex-wrap gap-3 mt-2">
                         {tasks?.status === "ASSIGNED" ||
-                        tasks?.status === "ONHOLD" ? (
+                          tasks?.status === "ONHOLD" ? (
                           <button
                             className="flex items-center justify-center cursor-pointer px-4 py-2 font-semibold text-white transition-colors duration-300 bg-green-500 rounded-md hover:bg-green-600"
                             onClick={handleStart}
@@ -473,7 +474,7 @@ const Task = ({ taskId, fetchTaskData, setDisplay }) => {
 
                             {/* Show Resume button if the task is paused */}
                             {tasks?.status === "BREAK" ||
-                            tasks?.status === "REWORK" ? (
+                              tasks?.status === "REWORK" ? (
                               <button
                                 className="flex items-center justify-center cursor-pointer gap-1 px-4 py-2 font-medium text-sm text-white transition-colors duration-300 bg-green-500 rounded-md hover:bg-green-600"
                                 value={workdata?.id}
@@ -711,128 +712,42 @@ const Task = ({ taskId, fetchTaskData, setDisplay }) => {
                     Comments
                   </h2>
 
-                  <form
-                    onSubmit={handleSubmit(onSubmitComment)}
-                    className="mb-6"
-                  >
-                    <div className="p-4 bg-white rounded-lg shadow-sm">
-                      <div className="mb-3">
-                        <label
-                          htmlFor="comment"
-                          className="block mb-2 text-sm font-medium text-gray-700"
-                        >
-                          Add Comment
-                        </label>
-                        <textarea
-                          id="comment"
-                          className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-                          rows="3"
-                          placeholder="Type a message (Shift + Enter for newline)"
-                          {...register("comment")}
-                        ></textarea>
-                      </div>
-                      <button
-                        type="submit"
-                        className="px-4 py-2 text-white transition-colors duration-300 bg-teal-600 rounded-md hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
-                      >
-                        Post Comment
-                      </button>
-                    </div>
-                  </form>
+                  <Comment
+                    comments={tasks?.taskcomment}
+                    onAddComment={onSubmitComment}
+                    staffData={staffData}
+                  />
 
-                  {tasks?.taskcomment?.length > 0 ? (
-                    <div className="space-y-4">
-                      {tasks?.taskcomment?.map((comment, index) => (
-                        <div
-                          className="p-4 transition-shadow duration-300 bg-white rounded-lg shadow-sm hover:shadow-md"
-                          key={index}
-                        >
-                          <div className="flex items-center mb-3">
-                            <div className="p-2 mr-3 text-white bg-teal-600 rounded-full">
-                              {staffData
-                                ?.find(
-                                  (staff) => staff?.id === comment?.user_id,
-                                )
-                                ?.f_name?.charAt(0) || "U"}
-                            </div>
-                            <div>
-                              <div className="font-medium text-gray-800">
-                                {staffData?.find(
-                                  (staff) => staff?.id === comment?.user_id,
-                                )?.f_name || "Unknown User"}
-                              </div>
-                              <div className="text-xs text-gray-500">
-                                {new Date(comment?.created_on).toLocaleString(
-                                  "en-US",
-                                  {
-                                    year: "numeric",
-                                    month: "short",
-                                    day: "numeric",
-                                    hour: "2-digit",
-                                    minute: "2-digit",
-                                  },
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                          <div className="pl-12 text-gray-700 whitespace-pre-wrap break-words">
-                            {comment?.data}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="flex flex-col items-center justify-center p-6 text-center bg-white rounded-lg">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="w-12 h-12 mb-4 text-gray-400"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                      </svg>
-                      <h3 className="mb-1 text-lg font-medium text-gray-900">
-                        No comments yet
-                      </h3>
-                      <p className="text-gray-500">
-                        Be the first to add a comment to this task.
-                      </p>
-                    </div>
-                  )}
-                </div>
-              </>
-            ) : (
-              <div className="flex flex-col items-center justify-center h-64 p-6 bg-white rounded-lg shadow-md">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="w-16 h-16 mb-4 text-gray-400"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <circle cx="12" cy="12" r="10"></circle>
-                  <line x1="12" y1="8" x2="12" y2="12"></line>
-                  <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                </svg>
-                <h1 className="mb-2 text-2xl font-bold text-gray-800">
-                  No Task Found
-                </h1>
-                <p className="text-gray-600">
-                  The requested task could not be found or has been deleted.
-                </p>
-              </div>
-            )}
           </div>
+        </>
+        ) : (
+        <div className="flex flex-col items-center justify-center h-64 p-6 bg-white rounded-lg shadow-md">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="w-16 h-16 mb-4 text-gray-400"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+          <h1 className="mb-2 text-2xl font-bold text-gray-800">
+            No Task Found
+          </h1>
+          <p className="text-gray-600">
+            The requested task could not be found or has been deleted.
+          </p>
         </div>
+            )}
       </div>
     </div>
+      </div >
+    </div >
   );
 };
 

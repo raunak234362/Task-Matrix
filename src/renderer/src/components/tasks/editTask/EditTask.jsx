@@ -261,33 +261,6 @@ const EditTask = ({ onClose, task }) => {
             />
           </div>
 
-          <div className="">
-            <CustomSelect
-              label="Status:"
-              name="status"
-              options={[
-                { label: "ASSIGNED", value: "ASSIGNED" },
-                { label: "IN PROGRESS", value: "IN_PROGRESS" },
-                { label: "BREAK", value: "BREAK" },
-                { label: "IN REVIEW", value: "IN_REVIEW" },
-                { label: "RE-WORK", value: "REWORK" },
-                { label: "COMPLETED", value: "COMPLETE" },
-                { label: "VALIDATE & COMPLETED", value: "VALIDATE_COMPLETE" },
-                { label: "USER'S FAULT", value: "USER_FAULT" },
-                {
-                  label: "COMPLETED(TECHNICAL ISSUE)",
-                  value: "COMPLETE_OTHER",
-                },
-              ]}
-              className="w-full"
-              defaultValues={task?.status}
-              {...register("status")}
-              onChange={setValue}
-            />
-            {errors.status && (
-              <p className="text-red-600">{errors.status.message}</p>
-            )}
-          </div>
           <div>
             <CustomSelect
               label="Stage:"
