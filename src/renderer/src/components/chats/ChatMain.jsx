@@ -289,7 +289,7 @@ const ChatMain = ({ activeChat, setActiveChat }) => {
       <div className="sticky bottom-0 z-0 bg-white border-t border-gray-200 p-3">
         <form onSubmit={(e) => e.preventDefault()} className="flex items-center space-x-2 w-full">
           <textarea
-            rows={1}
+            rows={4}
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyDown={handleKeyDown}
