@@ -23,7 +23,6 @@ const MyTask = () => {
   //   { label: "(RFI)Request for Information", value: "RFI" },
 
   // ];
-
   // Filter out tasks with status "VALIDATE_COMPLETE"
   const filteredTasks = useMemo(() => {
     return tasks.filter(

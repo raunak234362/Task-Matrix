@@ -158,7 +158,7 @@ const Sidebar = ({ refresh, isMinimized, toggleSidebar }) => {
             <div className="text-xs text-gray-500 mb-2">
               {userType?.toUpperCase()}
             </div>
-            <div className="text-xs text-gray-500 mb-2">Version - 1.4.0</div>
+            <div className="text-xs text-gray-500 mb-2">Version - 1.4.1</div>
           </div>
         )}
         <div className={`flex ${isMinimized ? "flex-col" : "flex-row"} gap-2 w-full justify-center items-center px-4`}>
