@@ -69,9 +69,9 @@ const UpdateTaskStatus = ({ task, onClose, onUpdateSuccess }) => {
                 status: selectedStatus,
             };
 
-            if (selectedStatus === "VALIDATE_COMPLETE" && takenHour) {
-                taskData.duration = minutesToHHMMSS(takenHour);
-            }
+            // if (selectedStatus === "VALIDATE_COMPLETE" && takenHour) {
+            //     taskData.duration = minutesToHHMMSS(takenHour);
+            // }
 
             if (selectedStatus === "COMPLETE_OTHER" && takenHour) {
                 const durationInMinutes = hhmmssToMinutes(task?.duration);
