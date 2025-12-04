@@ -3,7 +3,6 @@ import { app, shell, BrowserWindow, Notification, ipcMain } from "electron";
 import { join } from "path";
 import { electronApp, optimizer, is } from "@electron-toolkit/utils";
 import icon from "../../resources/icon.png?asset";
-import { updateElectronApp } from "update-electron-app";
 
 // Disable SSL certificate errors
 app.commandLine.appendSwitch("ignore-certificate-errors");
@@ -79,6 +78,7 @@ app.whenReady().then(() => {
     if (Notification.isSupported()) {
       console.log("Notifications are supported");
     }
+    autoUpdater.checkForUpdatesAndNotify();
   });
 
   // IPC test
@@ -102,7 +102,40 @@ app.on("window-all-closed", () => {
   }
 });
 
-updateElectronApp();
+import { autoUpdater } from "electron-updater";
+import log from "electron-log";
+
+// Configure logging
+log.transports.file.level = "info";
+autoUpdater.logger = log;
+
+// Auto-update event listeners
+autoUpdater.on("checking-for-update", () => {
+  log.info("Checking for update...");
+});
+
+autoUpdater.on("update-available", (info) => {
+  log.info("Update available.", info);
+});
+
+autoUpdater.on("update-not-available", (info) => {
+  log.info("Update not available.", info);
+});
+
+autoUpdater.on("error", (err) => {
+  log.error("Error in auto-updater. " + err);
+});
+
+autoUpdater.on("download-progress", (progressObj) => {
+  let log_message = "Download speed: " + progressObj.bytesPerSecond;
+  log_message = log_message + " - Downloaded " + progressObj.percent + "%";
+  log_message = log_message + " (" + progressObj.transferred + "/" + progressObj.total + ")";
+  log.info(log_message);
+});
+
+autoUpdater.on("update-downloaded", (info) => {
+  log.info("Update downloaded", info);
+});
 
 // In this file you can include the rest of your app"s specific main process
 // code. You can also put them in separate files and require them here.
