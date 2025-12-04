@@ -18,6 +18,11 @@ contextBridge.exposeInMainWorld('electron', {
         ipcRenderer.send(channel, data)
       }
     }
+  },
+  update: {
+    onUpdateAvailable: (callback) => ipcRenderer.on('update-available', callback),
+    onUpdateDownloaded: (callback) => ipcRenderer.on('update-downloaded', callback),
+    installUpdate: () => ipcRenderer.send('restart_app')
   }
 })
 // Use `contextBridge` APIs to expose Electron APIs to

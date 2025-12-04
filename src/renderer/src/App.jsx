@@ -12,6 +12,7 @@ import { showProjects, showTeam } from "./store/projectSlice";
 import { showTask, showTaskRecord } from "./store/taskSlice";
 import socket, { connectSocket } from "./socket";
 import NotificationReceiver from "./util/NotificationReceiver";
+import { toast } from "react-toastify";
 
 const App = () => {
   const [isSidebarMinimized, setIsSidebarMinimized] = useState(true);
@@ -117,6 +118,26 @@ const App = () => {
       update.onUpdateDownloaded(() => {
         setUpdateAvailable(false);
         setUpdateDownloaded(true);
+        toast.info(
+          ({ closeToast }) => (
+            <div className="flex flex-col gap-2">
+              <span>Update Downloaded. Restart to install?</span>
+              <button
+                className="bg-blue-500 text-white px-4 py-2 rounded"
+                onClick={() => {
+                  closeToast();
+                  handleInstallUpdate();
+                }}
+              >
+                Restart
+              </button>
+            </div>
+          ),
+          {
+            autoClose: false,
+            position: "bottom-right",
+          },
+        );
       });
     }
 
@@ -145,9 +166,8 @@ const App = () => {
       <div className="flex h-screen w-screen p-2 gap-2 overflow-hidden bg-gradient-to-br from-gray-700 to-teal-200">
         <NotificationReceiver />
         <div
-          className={`h-full transition-all duration-300 ${
-            isSidebarMinimized ? "w-16" : "w-64"
-          }`}
+          className={`h-full transition-all duration-300 ${isSidebarMinimized ? "w-16" : "w-64"
+            }`}
         >
           <Sidebar
             refresh={reloadWindow}

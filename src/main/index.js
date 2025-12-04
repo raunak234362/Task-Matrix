@@ -116,6 +116,9 @@ autoUpdater.on("checking-for-update", () => {
 
 autoUpdater.on("update-available", (info) => {
   log.info("Update available.", info);
+  BrowserWindow.getAllWindows().forEach((win) => {
+    win.webContents.send("update-available", info);
+  });
 });
 
 autoUpdater.on("update-not-available", (info) => {
@@ -135,6 +138,13 @@ autoUpdater.on("download-progress", (progressObj) => {
 
 autoUpdater.on("update-downloaded", (info) => {
   log.info("Update downloaded", info);
+  BrowserWindow.getAllWindows().forEach((win) => {
+    win.webContents.send("update-downloaded", info);
+  });
+});
+
+ipcMain.on("restart_app", () => {
+  autoUpdater.quitAndInstall();
 });
 
 // In this file you can include the rest of your app"s specific main process
