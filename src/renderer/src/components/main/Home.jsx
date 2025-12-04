@@ -64,7 +64,7 @@ const Home = () => {
     () =>
       tasks.filter(
         (task) =>
-          task?.status?.toUpperCase() === "COMPLETE" ||
+          task?.status?.toUpperCase() === "COMPLETED" ||
           task?.status?.toUpperCase() === "VALIDATE_COMPLETE" ||
           task?.status?.toUpperCase() === "USER_FAULT" ||
           task?.status?.toUpperCase() === "COMPLETE_OTHER",
@@ -117,6 +117,7 @@ const Home = () => {
             task.status &&
             ![
               "COMPLETED",
+              "COMPLETE",
               "IN_REVIEW",
               "ONHOLD",
               "COMPLETE_OTHER",
@@ -295,14 +296,13 @@ const Home = () => {
                                 </p>
                               </div>
                               <span
-                                className={`px-2 py-1 text-xs rounded-full ${
-                                  project.status?.toUpperCase() === "COMPLETE"
+                                className={`px-2 py-1 text-xs rounded-full ${project.status?.toUpperCase() === "COMPLETE"
                                     ? "bg-green-100 text-green-800"
                                     : project.status?.toUpperCase() ===
-                                        "IN_PROGRESS"
+                                      "IN_PROGRESS"
                                       ? "bg-blue-100 text-blue-800"
                                       : "bg-gray-100 text-gray-800"
-                                }`}
+                                  }`}
                               >
                                 {project.status || "N/A"}
                               </span>
@@ -363,29 +363,27 @@ const Home = () => {
                                 </td>
                                 <td className="px-4 py-3 whitespace-nowrap">
                                   <div
-                                    className={`text-sm ${
-                                      task.due_date &&
-                                      new Date(task.due_date) < new Date()
+                                    className={`text-sm ${task.due_date &&
+                                        new Date(task.due_date) < new Date()
                                         ? "text-red-600 font-medium"
                                         : "text-gray-900"
-                                    }`}
+                                      }`}
                                   >
                                     {formatDate(task.due_date)}
                                   </div>
                                 </td>
                                 <td className="px-4 py-3 whitespace-nowrap">
                                   <span
-                                    className={`px-2 py-1 text-xs rounded-full ${
-                                      task.status?.toUpperCase() === "COMPLETE"
+                                    className={`px-2 py-1 text-xs rounded-full ${task.status?.toUpperCase() === "COMPLETE"
                                         ? "bg-green-100 text-green-800"
                                         : task.status?.toUpperCase() ===
-                                            "IN_PROGRESS"
+                                          "IN_PROGRESS"
                                           ? "bg-blue-100 text-blue-800"
                                           : task.status?.toUpperCase() ===
-                                              "IN_REVIEW"
+                                            "IN_REVIEW"
                                             ? "bg-amber-100 text-amber-800"
                                             : "bg-gray-100 text-gray-800"
-                                    }`}
+                                      }`}
                                   >
                                     {task.status || "N/A"}
                                   </span>
