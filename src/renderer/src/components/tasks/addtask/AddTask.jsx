@@ -330,7 +330,7 @@ const AddTask = () => {
                   { label: "Modeling", value: "MODELING" },
                   { label: "Model Checking", value: "MC" },
                   { label: "Detailing", value: "DETAILING" },
-                  { label: "Detailing Checking", value: "DC" },
+                  { label: "Detail Checking", value: "DC" },
                   { label: "Erection", value: "ERECTION" },
                   { label: "Erection Checking", value: "EC" },
                   { label: "Designing", value: "DESIGNING" },

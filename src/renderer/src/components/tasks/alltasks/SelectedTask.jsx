@@ -606,10 +606,6 @@ const SelectedTask = ({ taskDetail, taskId, isOpen, onClose, setTasks }) => {
         <UpdateTaskStatus
           task={task}
           onClose={handleStatusClose}
-          onUpdateSuccess={() => {
-            // Refresh logic if needed, e.g., dispatch update or reload
-            window.location.reload(); // Simple reload for now as per existing patterns or better, fetch data again
-          }}
         />
       )}
     </div>
