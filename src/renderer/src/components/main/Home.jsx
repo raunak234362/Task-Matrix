@@ -116,7 +116,7 @@ const Home = () => {
             task &&
             task.status &&
             ![
-              "COMPLETE",
+              "COMPLETED",
               "IN_REVIEW",
               "ONHOLD",
               "COMPLETE_OTHER",
