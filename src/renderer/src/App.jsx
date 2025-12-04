@@ -144,7 +144,6 @@ const App = () => {
     }
 
     return () => {
-      // Optional cleanup
     };
   }, []);
 
@@ -180,38 +179,6 @@ const App = () => {
         <div
           className={`flex-1 h-full overflow-hidden transition-all duration-300 bg-gradient-to-t from-gray-50/70 to-gray-100/70 rounded-lg border-4 border-white`}
         >
-          {/* Temporary Test Button */}
-          <button
-            className="absolute top-0 right-0 z-50 bg-red-500 text-white p-2"
-            onClick={() => {
-              console.log("Simulating update downloaded");
-              const { update } = window.electron || {};
-              // We can't directly trigger the listener from here easily without exposing a trigger, 
-              // but we can verify if the toast works by calling it directly.
-              toast.info(
-                ({ closeToast }) => (
-                  <div className="flex flex-col gap-2">
-                    <span>Update Downloaded. Restart to install?</span>
-                    <button
-                      className="bg-blue-500 text-white px-4 py-2 rounded"
-                      onClick={() => {
-                        closeToast();
-                        handleInstallUpdate();
-                      }}
-                    >
-                      Restart
-                    </button>
-                  </div>
-                ),
-                {
-                  autoClose: false,
-                  position: "bottom-right",
-                },
-              );
-            }}
-          >
-            Test Popup
-          </button>
           <Outlet />
         </div>
       </div>
