@@ -66,6 +66,7 @@ const Home = () => {
         (task) =>
           task?.status?.toUpperCase() === "COMPLETE" ||
           task?.status?.toUpperCase() === "VALIDATE_COMPLETE" ||
+          task?.status?.toUpperCase() === "USER_FAULT" ||
           task?.status?.toUpperCase() === "COMPLETE_OTHER",
       )?.length || 0,
     [tasks],
@@ -120,6 +121,7 @@ const Home = () => {
               "ONHOLD",
               "COMPLETE_OTHER",
               "VALIDATE_COMPLETE",
+              "USER_FAULT",
             ].includes(task.status.toUpperCase()),
         )
         .sort((a, b) => new Date(a.due_date) - new Date(b.due_date))
