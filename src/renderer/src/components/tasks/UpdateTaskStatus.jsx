@@ -51,10 +51,12 @@ const UpdateTaskStatus = ({ task, onClose, onUpdateSuccess }) => {
 
     const onSubmit = async (data) => {
         try {
+            let newComment = null;
             // 1. Add Comment if present
             if (data.comment) {
                 try {
-                    await Service.addComment(TaskID, { comment: data.comment });
+                    const commentRes = await Service.addComment(TaskID, { comment: data.comment });
+                    newComment = commentRes.data;
                 } catch (commentError) {
                     console.error("Error adding comment:", commentError);
                     toast.error("Failed to add comment, but proceeding with status update.");
@@ -100,10 +102,20 @@ const UpdateTaskStatus = ({ task, onClose, onUpdateSuccess }) => {
             // Call API to update task
             const updatedTask = await Service.editTask(TaskID, taskData);
 
+            // Merge comments and preserve existing data
+            const finalTask = {
+                ...task, // Keep existing data
+                ...updatedTask, // Overwrite with updated data
+                taskcomment: newComment
+                    ? [...(task.taskcomment || []), newComment]
+                    : (task.taskcomment || [])
+            };
+
             toast.success("Task status updated successfully");
-            dispatch(updateTask(updatedTask)); // Update redux store
+            dispatch(updateTask(finalTask)); // Update redux store
 
             if (onUpdateSuccess) onUpdateSuccess();
+            if (onClose) onClose();
         } catch (error) {
             console.error("Error updating status:", error);
             toast.error(error?.message || "Failed to update task status");
