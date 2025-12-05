@@ -24,7 +24,7 @@ const UpdateTaskStatus = ({ task, onClose, onUpdateSuccess }) => {
         // Add other statuses as needed, or pass them as props
         { label: "IN PROGRESS", value: "IN_PROGRESS" },
         { label: "ON HOLD", value: "ONHOLD" },
-        { label: "COMPLETED", value: "COMPLETED" },
+        { label: "COMPLETE", value: "COMPLETE" },
         { label: "ASSIGNED", value: "ASSIGNED" },
         { label: "BREAK", value: "BREAK" },
         { label: "IN REVIEW", value: "IN_REVIEW" },
