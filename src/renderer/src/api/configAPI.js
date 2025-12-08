@@ -982,6 +982,70 @@ class Service {
   }
 
   //Fetch RFI by ID
+  static async addRFI(rfiData) {
+    const token = sessionStorage.getItem("token");
+    try {
+      const response = await api.post(`/api/RFI/rfi/`, rfiData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.log("Error adding RFI:", error);
+      throw error;
+    }
+  }
+
+  static async respondRfi(rfiId, formData) {
+    const token = sessionStorage.getItem("token");
+    try {
+      const response = await api.post(`/api/RFI/rfi/response/${rfiId}`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.log("Error responding to RFI:", error);
+      throw error;
+    }
+  }
+  // Fetch all clients -- updated
+  static async allClient() {
+    try {
+      const token = sessionStorage.getItem("token");
+      const response = await api.get(`/api/client/client/getallclients`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data.data;
+    } catch (error) {
+      console.log("Error fetching clients:", error);
+      throw error;
+    }
+  }
+
+  static async addSubmittal(submittalData) {
+    const token = sessionStorage.getItem("token");
+    try {
+      const response = await api.post(`/api/submittals/addSubmittals`, submittalData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.log("Error adding Submittal:", error);
+      throw error;
+    }
+  }
+
   static async fetchRFIById(id) {
     try {
       const token = sessionStorage.getItem("token");
@@ -994,6 +1058,23 @@ class Service {
       return response.data;
     } catch (error) {
       console.log("Error fetching RFI:", error);
+      throw error;
+    }
+  }
+
+  // Fetch all fabricators -- updated
+  static async allFabricator() {
+    try {
+      const token = sessionStorage.getItem("token");
+      const response = await api.get(`/api/fabricator/fabricator`, {
+        headers: {
+          "Content-Type": "Application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data.data;
+    } catch (error) {
+      console.log("Error fetching fabricators:", error);
       throw error;
     }
   }

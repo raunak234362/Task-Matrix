@@ -13,6 +13,7 @@ import { showTask, showTaskRecord } from "./store/taskSlice";
 import socket, { connectSocket } from "./socket";
 import NotificationReceiver from "./util/NotificationReceiver";
 import { toast } from "react-toastify";
+import { showClient } from "./store/fabricatorSlice";
 
 const App = () => {
   const [isSidebarMinimized, setIsSidebarMinimized] = useState(true);
@@ -67,7 +68,14 @@ const App = () => {
 
   const fetchFabricators = async () => {
     const fabricatorData = await Service.getAllFabricators(token);
-    dispatch(showFabricator(fabricatorData));
+    console.log("Fabricators:", fabricatorData);
+    
+    // dispatch(showFabricator(fabricatorData));
+  }
+
+  const fetchClients = async () => {
+    const clientData = await Service.allClient(token);    
+    dispatch(showClient(clientData));
   }
 
   const fetchUser = async () => {
@@ -97,6 +105,8 @@ const App = () => {
 
   useEffect(() => {
     fetchUser();
+    fetchClients()
+    fetchFabricators()
     fetchMyTasks();
     fetchProjects();
     fetchUserData();
