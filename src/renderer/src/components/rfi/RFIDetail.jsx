@@ -1,4 +1,5 @@
 /* eslint-disable react/prop-types */
+import RenderFiles from "../project/RenderFiles";
 const InfoItem = ({ label, value }) => (
   <div className="flex flex-col w-full">
     <span className="text-sm font-semibold text-gray-500 uppercase">
@@ -23,11 +24,10 @@ const RFIDetail = ({ rfi, FileLinks, rfiId }) => {
           </h4>
         </div>
         <span
-          className={`px-4 py-1 rounded-full text-sm font-semibold ${
-            statusText === "Replied"
-              ? "bg-green-100 text-green-700"
-              : "bg-yellow-100 text-yellow-700"
-          }`}
+          className={`px-4 py-1 rounded-full text-sm font-semibold ${statusText === "Replied"
+            ? "bg-green-100 text-green-700"
+            : "bg-yellow-100 text-yellow-700"
+            }`}
         >
           {statusText}
         </span>
@@ -52,7 +52,7 @@ const RFIDetail = ({ rfi, FileLinks, rfiId }) => {
             Files:
           </span>
           <div className="flex flex-wrap gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
-            <FileLinks files={rfi.files} rfiId={rfiId} />
+            <RenderFiles files={rfi.files} parentId={rfiId} modelType="rFI" />
           </div>
         </div>
       </div>

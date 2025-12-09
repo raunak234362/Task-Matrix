@@ -1,3 +1,5 @@
+import RenderFiles from "../project/RenderFiles";
+
 /* eslint-disable react/prop-types */
 const InfoItem = ({ label, value }) => (
   <div className="flex flex-col">
@@ -45,7 +47,7 @@ const SubmittalDetail = ({ submittal, FileLinks, submittalId }) => {
             Files:
           </span>
           <div className="flex flex-wrap gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
-            <FileLinks files={submittal.files} submittalId={submittalId} />
+            <RenderFiles files={submittal.files} parentId={submittalId} modelType="submittals" />
           </div>
         </div>
 

@@ -1,71 +1,13 @@
 /* eslint-disable react/prop-types */
-import { ChevronRight, FileText, Share2, Download } from "lucide-react";
-import Service from "../../api/configAPI";
+import { ChevronRight, FileText, Plus, Share2, Download } from "lucide-react";
+import Button from "./fields/Button";
+import { createShareLink } from "../config/Service";
 import toast from "react-hot-toast";
 
-const MODEL_MAP = {
-  notes: "notes",
-  project: "project",
-  meeting: "meeting",
-  fabricator: "fabricator",
-  designDrawings: "designDrawings",
-  designDrawingsResponses: "designDrawingsResponses",
-  submittals: "submittals",
-  submittalsResponse: "submittalsResponse",
-  rFI: "rFI",
-  rFIResponse: "rFIResponse",
-  rFQ: "rFQ",
-  rFQResponse: "rFQResponse",
-  changeOrders: "changeOrders",
-  cOResponse: "cOResponse",
-  estimation: "estimation",
-};
-
-
-const RenderFiles = ({ files, formatDate, modelType = "designDrawings", parentId: propParentId }) => {
-  const handleShare = async (file) => {
-    try {
-      const table = MODEL_MAP[modelType];
-      if (!table) {
-        toast.error("Invalid model type");
-        return;
-      }
-      // Use documentID from file or fallback to propParentId
-      const parentId = file.documentID || propParentId;
-      const fileId = file.id;
-
-      if (!parentId) {
-        toast.error("Parent ID not found");
-        return;
-      }
-
-      const response = await Service.createShareLink(table, parentId, fileId);
-      console.log(response.data.shareUrl);
-      if (response.data.shareUrl) {
-        navigator.clipboard.writeText(response.data.shareUrl);
-        alert("Share link copied to clipboard!", response.data.shareUrl);
-        toast.success("Share link copied to clipboard!");
-      } else {
-        toast.error("Failed to generate share link");
-      }
-    } catch (error) {
-      toast.error("Error creating share link");
-      console.error(error);
-    }
-  };
-
-
-  const handleDownload = async (file) => {
-    // Constructing the URL as per existing code
-    // Use documentID from file or fallback to propParentId
-    const parentId = file.documentID || propParentId;
-    const url = `${import.meta.env.VITE_BASE_URL
-      }/api/${MODEL_MAP[modelType]}/${MODEL_MAP[modelType] === 'designDrawings' ? 'designdrawing' : MODEL_MAP[modelType]}/viewfile/${parentId
-      }/${file.id}`;
-    window.open(url, "_blank");
-  };
-
+const RenderFiles = ({ files, onAddFilesClick, formatDate, table, parentId }) => {
   // Step 1: Normalize and flatten files
+  console.log(files);
+
   const projectFiles = Array.isArray(files)
     ? files.map((doc) => {
       const fileData = doc.file ? { ...doc.file, ...doc } : { ...doc };
@@ -76,43 +18,85 @@ const RenderFiles = ({ files, formatDate, modelType = "designDrawings", parentId
 
   // Step 2: Group files by description
   const groupedFiles = projectFiles.reduce((acc, curr) => {
-    const desc = curr.description || "No Description";
-    if (!acc[desc]) acc[desc] = [];
-
-    if (Array.isArray(curr.files)) {
-      // Case 1: Nested files (e.g. Project Documents)
+    if (curr.files && Array.isArray(curr.files)) {
+      // Handle "Document" structure (nested files)
+      const desc = curr.description || "No Description";
+      if (!acc[desc]) acc[desc] = [];
       curr.files.forEach((f) => {
         acc[desc].push({
           ...f,
           uploadedAt: curr.uploadedAt,
           user: curr.user,
           documentID: curr.id,
-          stage: curr.stage, // Include stage info
+          stage: curr.stage,
         });
       });
     } else {
-      // Case 2: Flat files (e.g. RFI, Submittals)
-      // Assuming 'curr' is the file object itself
-      // We need to ensure it has necessary properties or fallback
+      // Handle "Flat File" structure (e.g., RFI, Submittals)
+      const desc = "Attachments";
+      if (!acc[desc]) acc[desc] = [];
       acc[desc].push({
         ...curr,
-        uploadedAt: curr.uploadedAt || curr.date, // Fallback for RFI date
-        user: curr.user || { f_name: 'Unknown', l_name: 'User' }, // Fallback user
-        documentID: curr.documentID || propParentId, // Use propParentId if documentID missing
-        stage: curr.stage,
+        documentID: parentId, // Use passed parentId for flat files
       });
     }
     return acc;
   }, {});
 
+  const getDownloadUrl = (table, parentId, fileId) => {
+    const baseURL = import.meta.env.VITE_BASE_URL?.replace(/\/$/, "");
+    switch (table) {
+      case "rFI":
+        return `${baseURL}/api/RFI/rfi/viewfile/${parentId}/${fileId}`;
+      case "rFIResponse":
+        return `${baseURL}/api/RFI/rfi/response/viewfile/${parentId}/${fileId}`;
+      case "submittals":
+      case "submittalsResponse":
+        return `${baseURL}/api/Submittals/submittals/${parentId}/${fileId}`;
+      case "rFQ":
+        return `${baseURL}/api/RFQ/rfq/${parentId}/${fileId}`;
+      case "changeOrders":
+      case "cOResponse":
+        return `${baseURL}/api/co/viewfile/${parentId}/${fileId}`;
+      case "designDrawings":
+      default:
+        return `${baseURL}/api/${table}/designdrawing/viewfile/${parentId}/${fileId}`;
+    }
+  };
+
+  const handleShare = async (e, file) => {
+    e.preventDefault();
+    e.stopPropagation();
+    try {
+      const response = await createShareLink(table, file.documentID, file.id);
+      console.log(response.data);
+      if (response.data.shareUrl) {
+        navigator.clipboard.writeText(response.data.shareUrl);
+        toast.success("Link copied to clipboard!");
+      } else {
+        toast.error("Failed to generate link");
+      }
+    } catch (error) {
+      console.error("Error sharing file:", error);
+      toast.error("Error generating share link");
+    }
+  };
+
+  const handleDownload = async (e, file) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const downloadUrl = getDownloadUrl(table, file.documentID, file.id);
+    window.open(downloadUrl, "_blank");
+  };
+
   // Step 3: Render grouped sections
   return (
     <div className="space-y-6">
       {/* Header */}
-      {/* <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center">
         <h4 className="text-sm font-medium text-gray-700">Project Files</h4>
-        <Button onClick={onAddFilesClick}>Add Document</Button>
-      </div> */}
+        {onAddFilesClick && <Button onClick={onAddFilesClick}>Add Document</Button>}
+      </div>
 
       {/* Files grouped by description */}
       {Object.keys(groupedFiles).length > 0 ? (
@@ -160,9 +144,7 @@ const RenderFiles = ({ files, formatDate, modelType = "designDrawings", parentId
                     className="flex items-center gap-2 p-3 rounded-lg border border-gray-100 hover:bg-gray-50 transition-colors group"
                   >
                     <a
-                      href={`${import.meta.env.VITE_BASE_URL
-                        }/api/${MODEL_MAP[modelType]}/${MODEL_MAP[modelType] === 'designDrawings' ? 'designdrawing' : MODEL_MAP[modelType]}/viewfile/${file.documentID || propParentId
-                        }/${file.id}`}
+                      href={getDownloadUrl(table, file.documentID, file.id)}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center gap-2 flex-1 min-w-0"
@@ -180,16 +162,16 @@ const RenderFiles = ({ files, formatDate, modelType = "designDrawings", parentId
                       </div>
                     </a>
 
-                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                       <button
-                        onClick={() => handleShare(file)}
+                        onClick={(e) => handleShare(e, file)}
                         className="p-1.5 text-gray-500 hover:text-teal-600 hover:bg-teal-50 rounded-md transition-colors"
                         title="Share Link"
                       >
                         <Share2 size={16} />
                       </button>
                       <button
-                        onClick={() => handleDownload(file)}
+                        onClick={(e) => handleDownload(e, file)}
                         className="p-1.5 text-gray-500 hover:text-teal-600 hover:bg-teal-50 rounded-md transition-colors"
                         title="Download"
                       >
@@ -211,15 +193,17 @@ const RenderFiles = ({ files, formatDate, modelType = "designDrawings", parentId
         // Empty State
         <div className="text-center py-8 border border-dashed border-gray-200 rounded-lg">
           <p className="text-gray-500">No files available for this project</p>
-          {/* <Button
-            size="sm"
-            variant="ghost"
-            onClick={onAddFilesClick}
-            className="mt-2"
-          >
-            <Plus size={14} />
-            Upload Files
-          </Button> */}
+          {onAddFilesClick && (
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={onAddFilesClick}
+              className="mt-2"
+            >
+              <Plus size={14} />
+              Upload Files
+            </Button>
+          )}
         </div>
       )}
     </div>

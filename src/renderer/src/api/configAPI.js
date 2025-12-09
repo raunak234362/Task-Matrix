@@ -798,6 +798,38 @@ class Service {
   }
 
   //Comment APIs
+ 
+static async createShareLink (table, parentId, fileId) {
+  try {
+    const response = await api.post(
+      `/api/share/${table}/${parentId}/${fileId}`,
+      {},
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.log("Error creating share link:", error);
+    throw error;
+  }
+};
+
+static async downloadShare (token) {
+  try {
+    const response = await api.get(`/api/shareLink/${token}`, {
+      responseType: "blob",
+    });
+    return response.data;
+  } catch (error) {
+    console.log("Error downloading shared file:", error);
+    throw error;
+  }
+};
+
   static async getComment() {
     const token = sessionStorage.getItem("token");
     try {
