@@ -118,6 +118,13 @@ const SelectedTask = ({ taskDetail, taskId, isOpen, onClose, setTasks }) => {
 
     return `${hours}h ${minutes}m`;
   }
+
+  const formatTime = (dateString) => {
+    if (!dateString) return "N/A";
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return "Invalid Date";
+    return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  };
   const addComment = async (commentData) => {
     try {
       const comment = await Service.addComment(task?.id, commentData);
@@ -355,6 +362,30 @@ const SelectedTask = ({ taskDetail, taskId, isOpen, onClose, setTasks }) => {
                           )}
                         </p>
                       </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-500">
+                          Start Timing
+                        </p>
+                        <p className="text-gray-800">
+                          {formatTime(
+                            task?.workingHourTask?.find((rec) =>
+                              taskIds.includes(rec.task_id),
+                            )?.start,
+                          )}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-500">
+                          End Timing
+                        </p>
+                        <p className="text-gray-800">
+                          {formatTime(
+                            task?.workingHourTask?.find((rec) =>
+                              taskIds.includes(rec.task_id),
+                            )?.end,
+                          )}
+                        </p>
+                      </div>
                     </div>
                     <div className="flex items-start gap-3">
                       <Clock className="w-5 h-5 mt-0.5 text-gray-500" />
@@ -435,7 +466,7 @@ const SelectedTask = ({ taskDetail, taskId, isOpen, onClose, setTasks }) => {
               {/* Action Buttons */}
               {userType !== "user" && userType !== "system-admin" && (
                 <div className="flex gap-3 mt-6">
-                   <button
+                  <button
                     onClick={handleStatusClick}
                     className="flex items-center px-4 py-2 text-sm font-medium text-white transition-colors bg-cyan-600 rounded-lg hover:bg-cyan-700"
                   >
@@ -449,7 +480,7 @@ const SelectedTask = ({ taskDetail, taskId, isOpen, onClose, setTasks }) => {
                     <Pencil className="w-4 h-4 mr-2" />
                     Update Task
                   </button>
-                 
+
                   {userType !== "user" &&
                     userType !== "system-admin" &&
                     userType !== "project-manager" &&
