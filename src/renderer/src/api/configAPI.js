@@ -1065,7 +1065,7 @@ static async downloadShare (token) {
   static async addSubmittal(submittalData) {
     const token = sessionStorage.getItem("token");
     try {
-      const response = await api.post(`/api/submittals/addSubmittals`, submittalData, {
+      const response = await api.post(`/api/submittals/submittals`, submittalData, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
@@ -1074,6 +1074,136 @@ static async downloadShare (token) {
       return response.data;
     } catch (error) {
       console.log("Error adding Submittal:", error);
+      throw error;
+    }
+  }
+
+  // Get sent Submittals
+  static async getSentSubmittals(submittalsId) {
+    try {
+      const token = sessionStorage.getItem("token");
+      const response = await api.get(
+        `/api/submittals/getSubmittals/${submittalsId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      return response.data.data;
+    } catch (error) {
+      console.log("Error adding RFI:", error);
+      throw error;
+    }
+  }
+
+  static async getSubmittalByProjectId(projectId) {
+    try {
+      const token = sessionStorage.getItem("token");
+      const response = await api.get(`/api/Submittals/${projectId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.log("Error fetching RFI:", error);
+      throw error;
+    }
+  }
+
+   // Fetch sent submittals
+  static async sentSubmittal() {
+    try {
+      const token = sessionStorage.getItem("token");
+      const response = await api.get(`/api/submittals/submittals/sent`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      return response.data.data;
+    } catch (error) {
+      console.log("Error adding RFI:", error);
+      throw error;
+    }
+  }
+
+  // Fetch recivied Submittal
+  static async reciviedSubmittal() {
+    try {
+      const token = sessionStorage.getItem("token");
+      const response = await api.get(`/api/submittals/submittals/recieved`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.log("Error adding RFI:", error);
+      throw error;
+    }
+  }
+  // Fetch submittal response client->admin
+  static async fetchSubmittalsResponse(submittalResponseId) {
+    try {
+      const token = sessionStorage.getItem("token");
+      const response = await api.get(
+        `/api/submittals/getResponse/${submittalResponseId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.log("Error adding RFI:", error);
+      throw error;
+    }
+  }
+
+  static async respondSubmittals(submittalsId, formData) {
+    try {
+      const token = sessionStorage.getItem("token");
+      const response = await api.post(
+        `/api/submittals/addresponse/${submittalsId}`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error uploading files:", error);
+      throw error;
+    }
+  }
+
+  // Edit Submittal
+  static async editSubmittal(submittalId, formData) {
+    try {
+      const token = sessionStorage.getItem("token");
+      const response = await api.put(
+        `/api/submittals/update/${submittalId}`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error uploading files:", error);
       throw error;
     }
   }
