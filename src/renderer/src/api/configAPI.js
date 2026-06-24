@@ -1062,10 +1062,24 @@ static async downloadShare (token) {
     }
   }
 
-  static async addSubmittal(submittalData) {
-    const token = sessionStorage.getItem("token");
+  static async addSubmittal(submittals) {
+    const data = new FormData();
+
+    // Append files
+    for (let i = 0; i < submittals?.files.length; i++) {
+      data.append("files", submittals?.files[i]);
+    }
+
+    // Append other fields
+    data.append("fabricator_id", submittals?.fabricator_id);
+    data.append("project_id", submittals?.project_id);
+    data.append("recepient_id", submittals?.recepient_id);
+    data.append("subject", submittals?.subject);
+    data.append("description", submittals?.description);
+
     try {
-      const response = await api.post(`/api/submittals/submittals`, submittalData, {
+      const token = sessionStorage.getItem("token");
+      const response = await api.post(`/api/submittals/submittals`, data, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
@@ -1073,7 +1087,7 @@ static async downloadShare (token) {
       });
       return response.data;
     } catch (error) {
-      console.log("Error adding Submittal:", error);
+      console.log("Error adding RFI:", error);
       throw error;
     }
   }

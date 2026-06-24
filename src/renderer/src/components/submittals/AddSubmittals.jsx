@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -11,12 +11,12 @@ import {
   MultipleFileUpload,
 } from "../index";
 import JoditEditor from "jodit-react";
+import Service from "../../api/configAPI";
 import socket from "../../socket";
 import toast, { Toaster } from "react-hot-toast";
-import Service from "../../api/configAPI";
-import { showClient } from "../../store/fabricatorSlice";
+import { prependSubmittal } from "../../signals";
 
-const AddSubmittals = ({ projectData }) => {
+const AddSubmittals = ({ projectData, setActiveTab }) => {
   const project = projectData || {};
   const fabricatorID = project?.fabricatorID;
   const projectID = project?.id;
@@ -33,7 +33,8 @@ const AddSubmittals = ({ projectData }) => {
     enter: "p", // Use paragraph as default block element
     processPasteHTML: true,
     askBeforePasteHTML: false,
-    defaultActionOnPaste: "custom",
+    askBeforePasteFromWord: false,
+    defaultActionOnPaste: "insert_as_html",
     link: {
       processPastedLink: true,
       openInNewTabCheckbox: true,
@@ -48,20 +49,6 @@ const AddSubmittals = ({ projectData }) => {
   const clientData = useSelector((state) => state?.fabricatorData?.clientData);
   console.log(clientData);
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    const fetchClients = async () => {
-      const token = sessionStorage.getItem("token");
-      try {
-        const client = await Service.allClient(token);
-        dispatch(showClient(client));
-      } catch (error) {
-        console.error("Failed to fetch clients", error);
-      }
-    };
-    fetchClients();
-  }, [dispatch]);
-
   console.log(projectData);
   const {
     register,
@@ -71,6 +58,7 @@ const AddSubmittals = ({ projectData }) => {
     formState: { errors },
   } = useForm();
   const [files, setFiles] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const recipientID = watch("recipient_id");
   console.log("Selected Recipient ID:", recipientID);
@@ -81,7 +69,7 @@ const AddSubmittals = ({ projectData }) => {
     ? clientData?.find((client) => client.id === selectedFabricator.clientID)
       ?.name
     : "";
-  console.log("Client Name:", clientName);
+  console.log("Client Name:", selectedFabricator);
 
   const onFilesChange = (updatedFiles) => {
     setFiles(updatedFiles);
@@ -124,6 +112,7 @@ const AddSubmittals = ({ projectData }) => {
     console.log("Sending Data:", submittalData); // Debugging
 
     try {
+      setLoading(true);
       const response = await Service.addSubmittal(submittalData);
       toast.success("Submittal created successfully");
       console.log("Submittal created successfully:", response);
@@ -134,9 +123,20 @@ const AddSubmittals = ({ projectData }) => {
           title: "New Task",
         });
       }
+      // Optimistically update the submittals list
+      const created = response?.data?.data || response?.data || null;
+      if (created) {
+        prependSubmittal(created);
+      }
+      // Switch back to the list view
+      if (setActiveTab) {
+        setActiveTab("allSubmittals");
+      }
     } catch (error) {
       toast.error("Error creating Submittal");
       console.error("Error creating Submittal:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -181,6 +181,7 @@ const AddSubmittals = ({ projectData }) => {
                       {...register("subject")}
                     />
                   </div>
+                  
                   <div className="w-full my-3">
                     <JoditEditor
                       value={joditContent}
@@ -209,7 +210,7 @@ const AddSubmittals = ({ projectData }) => {
                 </div>
 
                 <div className="w-full my-5">
-                  <Button type="submit">Send Message</Button>
+                  <Button type="submit" loading={loading}>Send Message</Button>
                 </div>
               </form>
             </div>
